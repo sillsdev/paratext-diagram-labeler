@@ -1,46 +1,59 @@
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
-
+/* Existing styles (assumed) */
 .app-container {
   display: flex;
   flex-direction: column;
-  height: 100vh; /* Full viewport height */
-  width: 100%;
-  overflow: hidden;
+  height: 100vh;
 }
 
 .top-section {
   display: flex;
-  flex-direction: row;
-  flex: 0 0 80%; /* Takes 80% of the height, leaving 20% for third pane */
-  min-height: 0;
+  flex: 1;
 }
 
 .map-pane {
-  flex: 0 0 70%; /* Map takes 70% of the width */
-  min-width: 0;
+  flex: 1;
 }
 
 .details-pane {
-  flex: 0 0 30%; /* Details takes 30% of the width */
-  min-width: 0;
-  overflow-y: auto; /* Allow scrolling if content overflows */
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
 }
 
 .third-pane {
-  flex: 0 0 20%; /* Bottom 20% of the window height */
-  width: 100%; /* Span the full width */
-  min-height: 0;
-  overflow: hidden; /* Crop image if too tall */
+  flex: 1;
+  padding: 10px;
 }
 
-.leaflet-marker-icon span {
-  overflow: visible; /* Ensure long labels are not clipped */
+.vertical-divider {
+  cursor: col-resize;
+  padding: 5px;
+  background: #ddd;
+  text-align: center;
+}
+
+.horizontal-divider {
+  cursor: row-resize;
+  padding: 5px;
+  background: #ddd;
+  text-align: center;
+}
+
+.form-control {
+  width: 100%;
+  padding: 5px;
 }
 
 .no-selection {
   padding: 10px;
+  color: #666;
+}
+
+.term-renderings {
+  margin-top: 10px;
+}
+
+/* New style for selected label */
+.selected-label {
+  border: 2px solid black; /* Strong border */
 }
