@@ -72,12 +72,23 @@ function FitBounds({ bounds }) {
   return null;
 }
 
+// Third Pane component to display an image based on termId
+function ThirdPane({ termId }) {
+  const imageUrl = termId ? `${termId}.jpg` : '';
+  return (
+    <div className="third-pane">
+      {imageUrl && <img src={imageUrl} alt={termId} style={{ width: '100%', height: 'auto', objectFit: 'cover' }} />}
+    </div>
+  );
+}
+
 function App() {
   const [locations, setLocations] = useState([
     {
       id: 1,
       englishName: 'Jerusalem',
-      vernacularName: '', // Red marker, (Jerusalem) label on left
+      vernacularName: '',
+      termId: 'Ἱεροσόλυμα',
       x: 603,
       y: 762,
       description: 'City of David',
@@ -87,7 +98,8 @@ function App() {
     {
       id: 2,
       englishName: 'Bethlehem',
-      vernacularName: 'Bayt Lahm', // Green marker, Bayt Lahm label on right
+      vernacularName: 'Bayt Lahm',
+      termId: 'Βηθλεέμ',
       x: 594,
       y: 821,
       description: 'Birthplace of Jesus',
@@ -97,7 +109,8 @@ function App() {
     {
       id: 3,
       englishName: 'Jordan River',
-      vernacularName: '', // Red marker, (Jordan River) label rotated 80deg
+      vernacularName: '',
+      termId: 'Ἰορδάνης',
       x: 820,
       y: 340,
       description: 'Site of Jesus’ baptism',
@@ -117,14 +130,12 @@ function App() {
 
   const handleNextLocation = (e) => {
     if ((e.key === 'Enter' || e.key === 'Tab') && selectedLocation) {
-      e.preventDefault(); // Prevent default Tab behavior (e.g., moving focus)
+      e.preventDefault();
       const currentIndex = locations.findIndex(loc => loc.id === selectedLocation.id);
       let nextIndex;
       if (e.shiftKey) {
-        // Cycle backwards with Shift+Tab or Shift+Enter
         nextIndex = (currentIndex - 1 + locations.length) % locations.length;
       } else {
-        // Cycle forward with Tab or Enter
         nextIndex = (currentIndex + 1) % locations.length;
       }
       const nextLocation = locations[nextIndex];
@@ -134,20 +145,25 @@ function App() {
 
   return (
     <div className="app-container">
-      <div className="map-pane">
-        <MapPane
-          imageUrl="/assets/biblical-map.jpg"
-          locations={locations}
-          onSelectLocation={handleSelectLocation}
-          selectedLocation={selectedLocation}
-        />
+      <div className="top-section">
+        <div className="map-pane">
+          <MapPane
+            imageUrl="/assets/biblical-map.jpg"
+            locations={locations}
+            onSelectLocation={handleSelectLocation}
+            selectedLocation={selectedLocation}
+          />
+        </div>
+        <div className="details-pane">
+          <DetailsPane
+            selectedLocation={selectedLocation}
+            onUpdateVernacular={handleUpdateVernacular}
+            onNextLocation={handleNextLocation}
+          />
+        </div>
       </div>
-      <div className="details-pane">
-        <DetailsPane
-          selectedLocation={selectedLocation}
-          onUpdateVernacular={handleUpdateVernacular}
-          onNextLocation={handleNextLocation}
-        />
+      <div className="third-pane">
+        <ThirdPane termId={selectedLocation?.termId} />
       </div>
     </div>
   );
@@ -231,7 +247,9 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation }) {
   return (
     <div>
       <h2>{selectedLocation.englishName}</h2>
-      <p>{selectedLocation.description}</p>
+      <p>
+        {selectedLocation.description} <span style={{ fontStyle: 'italic' }}>({selectedLocation.termId})</span>
+      </p>
       <input
         ref={inputRef}
         type="text"
