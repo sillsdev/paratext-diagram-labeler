@@ -137,7 +137,7 @@ export const allMapData = {
                 "x": "227",
                 "y": "682",
                 "align": "left",
-                "size": "4",
+                "size": "3",
                 "angle": "0"
             },
             {
@@ -197,7 +197,7 @@ export const allMapData = {
                 "x": "681",
                 "y": "87",
                 "align": "right",
-                "size": "3",
+                "size": "4",
                 "angle": "0"
             },
             {

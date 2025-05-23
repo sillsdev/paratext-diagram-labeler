@@ -34,7 +34,7 @@ function mapFromUsfm(usfm) {
   let match;
   while ((match = regex.exec(usfm)) !== null) {
     const [_, key, termId, gloss, label] = match;
-    map.labels.push({ key: key, termId: termId, gloss: gloss, label: label });
+    map.labels.push({ mergeKey: key, termId: termId, gloss: gloss, vernLabel: label });
   }
   
   try {
