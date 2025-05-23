@@ -139,6 +139,17 @@ function BottomPane({ termId }) {
   );
 }
 
+function usfmFromMap(map) {
+  // Reconstruct USFM string from current map state
+  let usfm = `\\zdiagram-s |template="${map.template}"\\*\n`;
+  if (map.fig) usfm += `${map.fig}\n`;
+  map.labels.forEach(label => {
+    usfm += `\\zlabel |key="${label.mergeKey}" termid="${label.termId}" gloss="${label.gloss}" label="${label.vernLabel || ''}"\\*\n`;
+  });
+  usfm += '\\zdiagram-e \\*';
+  return usfm;
+}
+
 function App() {
   const [locations, setLocations] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
@@ -146,6 +157,7 @@ function App() {
   const [topHeight, setTopHeight] = useState(80);
   const [renderings, setRenderings] = useState('');
   const [isApproved, setIsApproved] = useState(false);
+  const [mapPaneView, setMapPaneView] = useState(map.mapView ? 0 : 1); // 0: Map, 1: Table, 2: USFM
   const isDraggingVertical = useRef(false);
   const isDraggingHorizontal = useRef(false);
   const termRenderings = useMemo(() => new TermRenderings('/data/term-renderings.json'), []);
@@ -346,16 +358,139 @@ function App() {
     }
   }, [termRenderings, updateMarkerColor, handleSelectLocation]);
 
+  // Handler to cycle views
+  const handleSwitchView = useCallback(() => {
+    setMapPaneView(prev => {
+      if (!map.mapView) return (prev + 2) % 3; // skip Map view if not available
+      return (prev + 1) % 3;
+    });
+  }, []);
+
+  // Table View component
+  function TableView({ locations, selectedLocation, onUpdateVernacular, onNextLocation, termRenderings, onSelectLocation }) {
+    const inputRefs = useRef([]);
+    useEffect(() => {
+      // Focus the input for the selected row
+      const idx = locations.findIndex(l => l.termId === selectedLocation?.termId);
+      if (idx >= 0 && inputRefs.current[idx]) {
+        inputRefs.current[idx].focus();
+      }
+    }, [selectedLocation, locations]);
+    return (
+      <table className="table-view" style={{ borderCollapse: 'collapse' }}>
+        <thead>
+          <tr>
+            <th>Gloss</th>
+            <th>Label</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {locations.map((loc, i) => {
+            const { status, color } = termRenderings.getStatus(loc.termId, loc.vernLabel);
+            const isSelected = selectedLocation && selectedLocation.termId === loc.termId;
+            return (
+              <tr
+              key={loc.termId}
+              style={{
+                background: color,
+                color: "white",
+                fontWeight: isSelected ? 'bold' : 'normal',
+                cursor: 'pointer',
+                border: isSelected ? '4px solid black' : undefined,
+                paddingTop: isSelected ? 12 : undefined,
+                paddingBottom: isSelected ? 12 : undefined,
+                height: isSelected ? 48 : undefined,
+              }}
+              onClick={() => onSelectLocation(loc)}
+              >
+              <td style={isSelected ? { paddingTop: 4, paddingBottom: 4 } : {}}>{loc.gloss}</td>
+              <td style={isSelected ? { paddingTop: 4, paddingBottom: 4 } : {}}>
+                <input
+                ref={el => inputRefs.current[i] = el}
+                type="text"
+                value={loc.vernLabel || ''}
+                onChange={e => onUpdateVernacular(loc.termId, e.target.value)}
+                onFocus={() => onSelectLocation(loc)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' && e.shiftKey) {
+                    // Shift+Enter: cycle backward
+                    e.preventDefault();
+                    const prevIdx = (i - 1 + locations.length) % locations.length;
+                    if (inputRefs.current[prevIdx]) inputRefs.current[prevIdx].focus();
+                    onSelectLocation(locations[prevIdx]);
+                  } else if (e.key === 'Enter') {
+                    // Enter: cycle forward
+                    e.preventDefault();
+                    const nextIdx = (i + 1) % locations.length;
+                    if (inputRefs.current[nextIdx]) inputRefs.current[nextIdx].focus();
+                    onSelectLocation(locations[nextIdx]);
+                  } else if (e.key === 'ArrowUp') {
+                    // Up arrow: cycle backward
+                    e.preventDefault();
+                    const prevIdx = (i - 1 + locations.length) % locations.length;
+                    if (inputRefs.current[prevIdx]) inputRefs.current[prevIdx].focus();
+                    onSelectLocation(locations[prevIdx]);
+                  } else if (e.key === 'ArrowDown') {
+                    // Down arrow: cycle forward
+                    e.preventDefault();
+                    const nextIdx = (i + 1) % locations.length;
+                    if (inputRefs.current[nextIdx]) inputRefs.current[nextIdx].focus();
+                    onSelectLocation(locations[nextIdx]);
+                  }
+                }}
+                style={{ }}
+                />
+              </td>
+              <td style={isSelected ? { paddingTop: 4, paddingBottom: 4 } : {}}>{status}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    );
+  }
+
+  // USFM View component
+  function USFMView({ map }) {
+    const [usfmText, setUsfmText] = useState(usfmFromMap(map));
+    useEffect(() => {
+      setUsfmText(usfmFromMap(map));
+    }, [map]);
+    return (
+      <textarea
+        style={{ width: '100%', height: '100%', minHeight: 300 }}
+        value={usfmText}
+        readOnly
+      />
+    );
+  }
+
   return (
     <div className="app-container">
       <div className="top-section" style={{ flex: `0 0 ${topHeight}%` }}>
         <div className="map-pane" style={{ flex: `0 0 ${mapWidth}%` }}>
-          <MapPane
-            imageUrl="/assets/SMP2_185wbt-sm.jpg"
-            locations={locations}
-            onSelectLocation={handleSelectLocation}
-            selectedLocation={selectedLocation}
-          />
+          {mapPaneView === 0 && map.mapView && (
+            <MapPane
+              imageUrl="/assets/SMP2_185wbt-sm.jpg"
+              locations={locations}
+              onSelectLocation={handleSelectLocation}
+              selectedLocation={selectedLocation}
+            />
+          )}
+          {mapPaneView === 1 && (
+            <TableView
+              locations={locations}
+              selectedLocation={selectedLocation}
+              onSelectLocation={handleSelectLocation}
+              onUpdateVernacular={handleUpdateVernacular}
+              termRenderings={termRenderings}
+              onNextLocation={handleNextLocation}
+            />
+          )}
+          {mapPaneView === 2 && (
+            <USFMView map={{ ...map, labels: locations }} />
+          )}
         </div>
         <div
           className="vertical-divider"
@@ -374,6 +509,7 @@ function App() {
             onSaveRenderings={handleSaveRenderings}
             termRenderings={termRenderings}
             locations={locations}
+            onSwitchView={handleSwitchView}
           />
         </div>
       </div>
@@ -461,7 +597,7 @@ function MapPane({ imageUrl, locations, onSelectLocation, selectedLocation }) {
   );
 }
 
-function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, onSaveRenderings, termRenderings, locations }) {
+function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, onSaveRenderings, termRenderings, locations, onSwitchView }) {
   const [vernacular, setVernacular] = useState(selectedLocation?.vernLabel || '');
   const inputRef = useRef(null);
 
@@ -516,8 +652,45 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
     }
   };
 
+  // --- Button Row Handlers (implement as needed) ---
+  const handleCancel = () => {
+    // Implement cancel logic here
+    alert('Cancel clicked');
+  };
+  const handleOk = () => {
+    // Implement OK logic here
+    alert('OK clicked');
+  };
+  const handleSettings = () => {
+    // Implement settings logic here
+    alert('Settings clicked');
+  };
+
   return (
     <div>
+      {/* Button Row */}
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
+        <button onClick={onSwitchView} style={{ marginRight: 8 }}>Switch view</button>
+        <button onClick={handleCancel} style={{ marginRight: 8 }}>Cancel</button>
+        <button onClick={handleOk}>OK</button>
+        <div style={{ flex: 1 }} />
+        <button
+          onClick={handleSettings}
+          style={{
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            fontSize: 22,
+            marginLeft: 8,
+            color: '#555',
+            padding: 4,
+            alignSelf: 'flex-start'
+          }}
+          aria-label="Settings"
+        >
+          <span role="img" aria-label="Settings">&#9881;</span>
+        </button>
+      </div>
       {/* Status Tally Table */}
       <div style={{ border: '1px solid #ccc', borderRadius: 6, marginBottom: 16, padding: 8, background: '#f9f9f9' }}>
         <table >
