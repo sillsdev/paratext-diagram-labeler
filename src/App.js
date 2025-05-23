@@ -26,7 +26,7 @@ const createCustomIcon = (englishName, vernacularName, labelPosition = 'right', 
   const isLeft = labelPosition === 'left';
   const labelHtml = `
     <span class="${isSelected ? 'selected-label' : ''}" style="
-      color: ${color === 'green' ? '#006400' : color === 'red' ? '#8B0000' : '#000'};
+      color: ${color};
       font-size: 14px;
       font-weight: bold;
       white-space: nowrap;
@@ -128,9 +128,10 @@ function App() {
     if (selectedLocation) {
       const { color } = termRenderings.getStatus(selectedLocation.termId, selectedLocation.vernacularName || '');
       if (selectedLocation.color !== color) {
-        setSelectedLocation({ ...selectedLocation, color });
+        setSelectedLocation(prev => ({ ...prev, color }));
       }
     }
+    console.log('Updated colors:', newLocations.map(l => ({ id: l.id, color: l.color })), 'Selected:', selectedLocation ? { id: selectedLocation.id, color: selectedLocation.color } : null);
   }, [locations, selectedLocation, termRenderings]);
 
   const handleSelectLocation = useCallback((location) => {
@@ -154,7 +155,7 @@ function App() {
     );
     setLocations(newLocations);
     if (selectedLocation && selectedLocation.id === id) {
-      setSelectedLocation({ ...selectedLocation, vernacularName: newVernacular });
+      setSelectedLocation(prev => ({ ...prev, vernacularName: newVernacular }));
     }
     updateMarkerColor();
   }, [locations, selectedLocation, updateMarkerColor]);
@@ -317,16 +318,20 @@ function App() {
               labelPosition: 'right',
               labelRotation: 80,
             },
-          ].map(loc => ({
-            ...loc,
-            vernacularName: loc.vernacularName || termRenderings.getMapForm(loc.termId),
-            color: termRenderings.getStatus(loc.termId, loc.vernacularName || '').color,
-          }));
-          console.log('Initial locations:', initialLocations);
+          ].map(loc => {
+            // If vernacularName is empty, use getMapForm
+            if (!loc.vernacularName) {
+              loc.vernacularName = termRenderings.getMapForm(loc.termId);
+            }
+
+            const { color } = termRenderings.getStatus(loc.termId, loc.vernacularName);
+            return { ...loc, color };
+          });
+          console.log('Initial locations with colors:', initialLocations);
           setLocations(initialLocations);
-          updateMarkerColor(); // Ensure initial colors are set
           if (initialLocations.length > 0) {
             handleSelectLocation(initialLocations[0]); // Auto-select first location
+            updateMarkerColor(); // Ensure colors are applied
           }
           clearInterval(interval);
         }
@@ -431,6 +436,29 @@ function MapPane({ imageUrl, locations, onSelectLocation, selectedLocation }) {
   );
 }
 
+function colorForStatus(status) {
+  switch (status) {
+    case 'Error':
+      return 'red';
+    case 'Approved':
+      return 'darkgreen';
+    case 'Does not match':
+      return 'darkmagenta';
+    case 'No renderings':
+      return 'darkslategray';
+    case "Must select one":
+      return "darkorange";
+      case 'Blank':
+      return 'darkred';
+    case "Guessed rendering not yet approved":
+      return 'darkblue';
+    case "Needs checked":
+      return 'darkgoldenrod';
+    default:
+      return 'gray';
+  }
+}
+
 function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, onSaveRenderings, termRenderings }) {
   const [vernacular, setVernacular] = useState(selectedLocation?.vernacularName || '');
   const inputRef = useRef(null);
@@ -438,7 +466,8 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
   // Debounce the onUpdateVernacular call to reduce re-renders
   const debouncedUpdateVernacular = useDebounce((id, newVernacular) => {
     onUpdateVernacular(id, newVernacular);
-  }, 300);
+    setVernacular(newVernacular); // Sync state after debounce
+  }, 200); // Reduced delay to 200ms
 
   useEffect(() => {
     console.log('DetailsPane updating with selectedLocation:', selectedLocation);
@@ -453,7 +482,7 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
 
   const handleChange = (e) => {
     const newVernacular = e.target.value;
-    setVernacular(newVernacular);
+    setVernacular(newVernacular); // Update state immediately
     if (selectedLocation) {
       debouncedUpdateVernacular(selectedLocation.id, newVernacular);
     }
@@ -472,7 +501,7 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
       <p>
         {selectedLocation.description} <span style={{ fontStyle: 'italic' }}>({selectedLocation.termId})</span>
       </p>
-      <div style={{ backgroundColor: selectedLocation.color || 'gray', margin: '10px', padding: '10px' }}>
+      <div className="vernacularGroup" style={{ backgroundColor: colorForStatus(status), margin: '10px', padding: '10px' }}>
         <input
           ref={inputRef}
           type="text"
@@ -484,7 +513,7 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
           aria-label={`Vernacular name for ${selectedLocation.englishName}`}
           style={{ width: '100%', border: 'none' }} // Remove border, ensure it fits
         />
-        {selectedLocation.color && <p>{status}</p>}
+        {selectedLocation.color && <p style={{color: "white"}}>{status}</p>}
       </div>
       <h4>Term Renderings</h4> {/* Changed to h4 for smaller size */}
       <div className="term-renderings">

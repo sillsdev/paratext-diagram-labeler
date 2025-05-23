@@ -53,20 +53,32 @@ class TermRenderings {
       return { status: "Error", color: "red" };
     }
     
-    if (!vernacularName || vernacularName.includes('—')) {
-      return { status: "Incomplete", color: "red" };
+    if (!vernacularName) {
+      return { status: "Blank", color: "darkred" };
+    }
+    
+    if (vernacularName.includes('—')) {
+      return { status: "Must select one", color: "darkorange" };
     }
     
     const mapForm = this.getMapForm(termId);
+    if (!mapForm) {
+      return { status: "No renderings", color: "darkslategray" };
+    }
+    
     if (vernacularName !== mapForm) {
-      return { status: "Unmatched", color: "orange" };
+      return { status: "Does not match", color: "darkmagenta" };
     }
     
     if (vernacularName === mapForm && !entry.isGuessed) {
-      return { status: "Approved", color: "green" };
+      return { status: "Approved", color: "darkgreen" };
     }
     
-    return { status: "Needs checked", color: "yellow" };
+    if (vernacularName === mapForm && entry.isGuessed) {
+      return { status: "Guessed rendering not yet approved", color: "darkblue" };
+    }
+    
+    return { status: "Needs checked", color: "darkgoldenrod" };
   }
 }
 
