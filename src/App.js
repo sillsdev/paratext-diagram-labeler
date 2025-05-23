@@ -5,6 +5,8 @@ import L from 'leaflet';
 import TermRenderings from './TermRenderings';
 import './App.css';
 import MapBibTerms from './MapBibTerms';
+import { allMapData } from './AllMapData.json';
+//const mapDef = require(mapDefFilename);
 
 const mapBibTerms = new MapBibTerms();
 
@@ -21,8 +23,10 @@ var usfm = String.raw`\zdiagram-s |template="SMP2_185wbt-sm"\*
 function mapFromUsfm(usfm) {
   // Extract template value from \zdiagram-s |template="..." line
   const templateMatch = usfm.match(/\\zdiagram-s\s+\|template="([^"]*)"/);
+  const figMatch = usfm.match(/\\fig\s[^\\]*\\fig\*"/);
   const map = {
     template: templateMatch ? templateMatch[1] : '',
+    fig: figMatch ? figMatch[0] : '',
     mapView: false,
     labels: []
   };
@@ -32,12 +36,33 @@ function mapFromUsfm(usfm) {
     const [_, key, termId, gloss, label] = match;
     map.labels.push({ key: key, termId: termId, gloss: gloss, label: label });
   }
+  
+  try {
+      const mapDefData = allMapData[map.template];
+      Object.keys(mapDefData).forEach(key => {
+        if (key !== 'labels') {
+          map[key] = mapDefData[key];
+        }
+      });
+      const usfmLabelsByTermId = {};
+      map.labels.forEach(label => {
+        usfmLabelsByTermId[label.termId] = label;
+      });
+      map.labels = mapDefData.labels.map(jsonLabel => {
+        const usfmLabel = usfmLabelsByTermId[jsonLabel.termId] || {};
+        return { ...usfmLabel, ...jsonLabel };
+      });
+      map.mapView = true;
+    
+  } catch (err) {
+    console.warn('Could not load map definition for:', map.template, err);
+    // If loading fails, leave map as-is and mapView as false
+  }
   return map;
 }
 
 var map = mapFromUsfm(usfm);
-console.log('Parsed map:', map);
-console.log('Parsed labels:', map.labels);
+console.log('Map:', map);
 
 // Fix Leaflet default marker icons (optional, not needed with custom SVG icons)
 delete L.Icon.Default.prototype._getIconUrl;
@@ -48,8 +73,8 @@ L.Icon.Default.mergeOptions({
 });
 
 // Function to create custom SVG icon with permanent label
-const createCustomIcon = (gloss, vernacularName, labelPosition = 'right', labelRotation = 0, color, isSelected = false) => {
-  const label = vernacularName || `(${gloss})`;
+const createCustomIcon = (gloss, vernLabel, align = 'right', angle = 0, size = 3, color, isSelected = false) => {
+  const label = vernLabel || `(${gloss})`;
 
   const svg = `
     <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -57,17 +82,17 @@ const createCustomIcon = (gloss, vernacularName, labelPosition = 'right', labelR
     </svg>
   `;
 
-  const isLeft = labelPosition === 'left';
+  const isLeft = align === 'left';
   const labelHtml = `
     <span class="${isSelected ? 'selected-label' : ''}" style="
       color: ${color};
-      font-size: 14px;
+      font-size: ${12 + 6 * (4 - size)}px;
       font-weight: bold;
       white-space: nowrap;
       background: ${isSelected ? '#FFFACD' : 'rgba(255, 255, 255, 0.9)'}; /* Pale yellow for selected */
       padding: 2px 6px;
       border-radius: 3px;
-      transform: rotate(-${labelRotation}deg);
+      transform: rotate(-${angle}deg);
       transform-origin: ${isLeft ? 'right center' : 'left center'};
       position: absolute;
       ${isLeft ? 'right: 24px;' : 'left: 24px;'}
@@ -126,19 +151,19 @@ function App() {
   // Memoize updateMarkerColor to prevent infinite loops
   const updateMarkerColor = useCallback(() => {
     const newLocations = locations.map(loc => {
-      const { color } = termRenderings.getStatus(loc.termId, loc.vernacularName || '');
+      const { color } = termRenderings.getStatus(loc.termId, loc.vernLabel || '');
       return { ...loc, color };
     });
     if (JSON.stringify(newLocations) !== JSON.stringify(locations)) {
       setLocations(newLocations);
     }
     if (selectedLocation) {
-      const { color } = termRenderings.getStatus(selectedLocation.termId, selectedLocation.vernacularName || '');
+      const { color } = termRenderings.getStatus(selectedLocation.termId, selectedLocation.vernLabel || '');
       if (selectedLocation.color !== color) {
         setSelectedLocation(prev => ({ ...prev, color }));
       }
     }
-    console.log('Updated colors:', newLocations.map(l => ({ id: l.id, color: l.color })), 'Selected:', selectedLocation ? { id: selectedLocation.id, color: selectedLocation.color } : null);
+    console.log('Updated colors:', newLocations.map(l => ({ termId: l.termId, color: l.color })), 'Selected:', selectedLocation ? { termId: selectedLocation.termId, color: selectedLocation.color } : null);
   }, [locations, selectedLocation, termRenderings]);
 
   const handleSelectLocation = useCallback((location) => {
@@ -151,23 +176,23 @@ function App() {
     } else {
       setRenderings('');
       setIsApproved(false);
-      console.warn(`No term renderings entry for termId: ${location.termId}`);
+      //console.warn(`No term renderings entry for termId: ${location.termId}`);
     }
     updateMarkerColor();
   }, [termRenderings, setRenderings, setIsApproved, updateMarkerColor]);
 
-  const handleUpdateVernacular = useCallback((id, newVernacular) => {
+  const handleUpdateVernacular = useCallback((termId, newVernacular) => {
     setLocations(prevLocations => prevLocations.map(loc => {
-      if (loc.id === id) {
+      if (loc.termId === termId) {
         const { color } = termRenderings.getStatus(loc.termId, newVernacular);
-        return { ...loc, vernacularName: newVernacular, color };
+        return { ...loc, vernLabel: newVernacular, color };
       }
       return loc;
     }));
     setSelectedLocation(prev => {
-      if (prev && prev.id === id) {
+      if (prev && prev.termId === termId) {
         const { color } = termRenderings.getStatus(prev.termId, newVernacular);
-        return { ...prev, vernacularName: newVernacular, color };
+        return { ...prev, vernLabel: newVernacular, color };
       }
       return prev;
     });
@@ -176,7 +201,7 @@ function App() {
   const handleNextLocation = useCallback((e) => {
     if ((e.key === 'Enter' || e.key === 'Tab') && selectedLocation) {
       e.preventDefault();
-      const currentIndex = locations.findIndex(loc => loc.id === selectedLocation.id);
+      const currentIndex = locations.findIndex(loc => loc.termId === selectedLocation.termId);
       let nextIndex;
       if (e.shiftKey) {
         nextIndex = (currentIndex - 1 + locations.length) % locations.length;
@@ -297,46 +322,15 @@ function App() {
     if (!checkData()) {
       const interval = setInterval(() => {
         if (checkData()) {
-          const initialLocations = [
-            {
-              id: 1,
-              gloss: 'Jerusalem',
-              vernacularName: '',
-              termId: 'Ἱεροσόλυμα-1',
-              x: 603,
-              y: 762,
-              labelPosition: 'left',
-              labelRotation: 0,
-            },
-            {
-              id: 2,
-              gloss: 'Bethlehem',
-              vernacularName: '',
-              termId: 'Βηθλεέμ',
-              x: 594,
-              y: 821,
-              labelPosition: 'right',
-              labelRotation: 0,
-            },
-            {
-              id: 3,
-              gloss: 'Jordan River',
-              vernacularName: '',
-              termId: 'Ἰορδάνης',
-              x: 820,
-              y: 340,
-              labelPosition: 'right',
-              labelRotation: 80,
-            },
-          ].map(loc => {
-            // If vernacularName is empty, use getMapForm
-            if (!loc.vernacularName) {
-              loc.vernacularName = termRenderings.getMapForm(loc.termId);
+            const initialLocations = map.labels.map(loc => {
+            // If vernLabel is empty, use getMapForm
+            if (!loc.vernLabel) {
+              loc.vernLabel = termRenderings.getMapForm(loc.termId);
             }
 
-            const { color } = termRenderings.getStatus(loc.termId, loc.vernacularName);
+            const { color } = termRenderings.getStatus(loc.termId, loc.vernLabel);
             return { ...loc, color };
-          });
+            });
           console.log('Initial locations with colors:', initialLocations);
           setLocations(initialLocations);
           if (initialLocations.length > 0) {
@@ -355,7 +349,7 @@ function App() {
       <div className="top-section" style={{ flex: `0 0 ${topHeight}%` }}>
         <div className="map-pane" style={{ flex: `0 0 ${mapWidth}%` }}>
           <MapPane
-            imageUrl="/assets/biblical-map.jpg"
+            imageUrl="/assets/SMP2_185wbt-sm.jpg"
             locations={locations}
             onSelectLocation={handleSelectLocation}
             selectedLocation={selectedLocation}
@@ -395,8 +389,8 @@ function App() {
 }
 
 function MapPane({ imageUrl, locations, onSelectLocation, selectedLocation }) {
-  const imageHeight = 988;
-  const imageWidth = 1165;
+  const imageHeight = 852;
+  const imageWidth = 1000;
   const bounds = useMemo(() => [[0, 0], [imageHeight, imageWidth]], [imageHeight, imageWidth]);
   const crs = L.CRS.Simple;
 
@@ -440,15 +434,16 @@ function MapPane({ imageUrl, locations, onSelectLocation, selectedLocation }) {
       {transformedLocations.length > 0 ? (
         transformedLocations.map((loc) => (
           <Marker
-            key={loc.id}
+            key={loc.termId}
             position={[loc.yLeaflet, loc.x]}
             icon={createCustomIcon(
               loc.gloss,
-              loc.vernacularName,
-              loc.labelPosition,
-              loc.labelRotation,
+              loc.vernLabel,
+              loc.align,
+              loc.angle,
+              loc.size,
               loc.color || 'gray',
-              selectedLocation && selectedLocation.id === loc.id
+              selectedLocation && selectedLocation.termId === loc.termId
             )}
             eventHandlers={{ click: () => onSelectLocation(loc) }}
             aria-label={`Marker for ${loc.gloss}`}
@@ -465,11 +460,11 @@ function MapPane({ imageUrl, locations, onSelectLocation, selectedLocation }) {
 }
 
 function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, onSaveRenderings, termRenderings, locations }) {
-  const [vernacular, setVernacular] = useState(selectedLocation?.vernacularName || '');
+  const [vernacular, setVernacular] = useState(selectedLocation?.vernLabel || '');
   const inputRef = useRef(null);
 
   useEffect(() => {
-    setVernacular(selectedLocation?.vernacularName || '');
+    setVernacular(selectedLocation?.vernLabel || '');
   }, [selectedLocation]);
 
   useEffect(() => {
@@ -482,7 +477,7 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
     const newVernacular = e.target.value;
     setVernacular(newVernacular); // Update state immediately
     if (selectedLocation) {
-      onUpdateVernacular(selectedLocation.id, newVernacular);
+      onUpdateVernacular(selectedLocation.termId, newVernacular);
     }
   };
 
@@ -491,7 +486,7 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
     const tally = {};
     if (locations && locations.length > 0) {
       locations.forEach(loc => {
-        const { status, color } = termRenderings.getStatus(loc.termId, loc.vernacularName);
+        const { status, color } = termRenderings.getStatus(loc.termId, loc.vernLabel);
         if (!tally[status]) tally[status] = { count: 0, color };
         tally[status].count++;
       });

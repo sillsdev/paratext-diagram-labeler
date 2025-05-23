@@ -21,7 +21,7 @@ class TermRenderings {
   getMapForm(termId) {
     const entry = this.data[termId];
     if (!entry) {
-      console.warn(`TermId "${termId}" not found in term renderings`);
+      //console.warn(`TermId "${termId}" not found in term renderings`);
       return '';
     }
     let renderingsStr = entry.renderings;
@@ -46,35 +46,35 @@ class TermRenderings {
     return processedItems.join('—');
   }
 
-  getStatus(termId, vernacularName) {
+  getStatus(termId, vernLabel) {
     const entry = this.data[termId];
     if (!entry) {
-      console.warn(`TermId "${termId}" not found in term renderings`);
-      return { status: "Error", color: "red" };
+      //console.warn(`TermId "${termId}" not found in term renderings`);
+      return { status: "No renderings", color: "indianred" };
     }
     
-    if (!vernacularName) {
+    if (!vernLabel) {
       return { status: "Blank", color: "darkred" };
     }
     
-    if (vernacularName.includes('—')) {
+    if (vernLabel.includes('—')) {
       return { status: "Must select one", color: "darkorange" };
     }
     
     const mapForm = this.getMapForm(termId);
     if (!mapForm) {
-      return { status: "No renderings", color: "darkslategray" };
+      return { status: "No renderings", color: "indianred" };
     }
     
-    if (vernacularName !== mapForm) {
+    if (vernLabel !== mapForm) {
       return { status: "Does not match", color: "darkmagenta" };
     }
     
-    if (vernacularName === mapForm && !entry.isGuessed) {
+    if (vernLabel === mapForm && !entry.isGuessed) {
       return { status: "Approved", color: "darkgreen" };
     }
     
-    if (vernacularName === mapForm && entry.isGuessed) {
+    if (vernLabel === mapForm && entry.isGuessed) {
       return { status: "Guessed rendering not yet approved", color: "darkblue" };
     }
     
