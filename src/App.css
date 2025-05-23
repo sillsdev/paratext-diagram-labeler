@@ -27,15 +27,15 @@
 
 .vertical-divider {
   cursor: col-resize;
-  padding: 5px;
-  background: #ddd;
+  padding: 1px;
+  background: #757575;
   text-align: center;
 }
 
 .horizontal-divider {
   cursor: row-resize;
-  padding: 5px;
-  background: #ddd;
+  padding: 1px;
+  background: #757575;
   text-align: center;
 }
 

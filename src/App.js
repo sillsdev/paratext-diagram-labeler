@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { MapContainer, ImageOverlay, Marker, useMap } from 'react-leaflet';
+import { MapContainer, ImageOverlay, Marker, ZoomControl } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import TermRenderings from './TermRenderings';
@@ -57,15 +57,6 @@ const createCustomIcon = (englishName, vernacularName, labelPosition = 'right', 
   });
 };
 
-// Component to handle fitBounds
-function FitBounds({ bounds }) {
-  const map = useMap();
-  useEffect(() => {
-    map.fitBounds(bounds);
-  }, [map, bounds]);
-  return null;
-}
-
 // Third Pane component to display an image based on termId
 function ThirdPane({ termId }) {
   const imageUrl = termId ? `/assets/${termId}.jpg` : '';
@@ -85,24 +76,6 @@ function ThirdPane({ termId }) {
       )}
     </div>
   );
-}
-
-// Custom debounce hook
-function useDebounce(callback, delay) {
-  const callbackRef = useRef(callback);
-  useEffect(() => {
-    callbackRef.current = callback;
-  }, [callback]);
-
-  const debouncedCallback = useCallback((...args) => {
-    const handler = setTimeout(() => {
-      callbackRef.current(...args);
-    }, delay);
-
-    return () => clearTimeout(handler);
-  }, [delay]);
-
-  return debouncedCallback;
 }
 
 function App() {
@@ -150,15 +123,21 @@ function App() {
   }, [termRenderings, setRenderings, setIsApproved, updateMarkerColor]);
 
   const handleUpdateVernacular = useCallback((id, newVernacular) => {
-    const newLocations = locations.map(loc =>
-      loc.id === id ? { ...loc, vernacularName: newVernacular } : loc
-    );
-    setLocations(newLocations);
-    if (selectedLocation && selectedLocation.id === id) {
-      setSelectedLocation(prev => ({ ...prev, vernacularName: newVernacular }));
-    }
-    updateMarkerColor();
-  }, [locations, selectedLocation, updateMarkerColor]);
+    setLocations(prevLocations => prevLocations.map(loc => {
+      if (loc.id === id) {
+        const { color } = termRenderings.getStatus(loc.termId, newVernacular);
+        return { ...loc, vernacularName: newVernacular, color };
+      }
+      return loc;
+    }));
+    setSelectedLocation(prev => {
+      if (prev && prev.id === id) {
+        const { color } = termRenderings.getStatus(prev.termId, newVernacular);
+        return { ...prev, vernacularName: newVernacular, color };
+      }
+      return prev;
+    });
+  }, [termRenderings]);
 
   const handleNextLocation = useCallback((e) => {
     if ((e.key === 'Enter' || e.key === 'Tab') && selectedLocation) {
@@ -367,6 +346,7 @@ function App() {
             onApprovedChange={handleApprovedChange}
             onSaveRenderings={handleSaveRenderings}
             termRenderings={termRenderings}
+            locations={locations}
           />
         </div>
       </div>
@@ -385,12 +365,25 @@ function App() {
 
 function MapPane({ imageUrl, locations, onSelectLocation, selectedLocation }) {
   const imageHeight = 988;
-  const bounds = [[0, 0], [imageHeight, 1165]];
+  const imageWidth = 1165;
+  const bounds = useMemo(() => [[0, 0], [imageHeight, imageWidth]], [imageHeight, imageWidth]);
   const crs = L.CRS.Simple;
+
+  // Calculate initial zoom to fit the image fully in the pane
+  // Use a ref to store the calculated initial zoom
+  const mapRef = useRef();
+  const [initialZoom, setInitialZoom] = useState(null);
+
+  useEffect(() => {
+    if (mapRef.current) {
+      const map = mapRef.current;
+      map.fitBounds(bounds, { padding: [20, 20] }); // Add padding to ensure full image is visible
+      setInitialZoom(map.getZoom());
+    }
+  }, [bounds]);
 
   const transformedLocations = locations.map((loc) => {
     const yLeaflet = imageHeight - loc.y;
-    console.log(`Transformed: ${loc.englishName}, [${yLeaflet}, ${loc.x}], color: ${loc.color}`);
     return { ...loc, yLeaflet };
   });
 
@@ -398,17 +391,21 @@ function MapPane({ imageUrl, locations, onSelectLocation, selectedLocation }) {
     <MapContainer
       crs={crs}
       bounds={bounds}
-      maxBounds={bounds}
-      maxBoundsViscosity={1.0}
+      // maxBounds and maxBoundsViscosity removed to allow panning and avoid snap-back
       style={{ height: '100%', width: '100%' }}
-      zoom={0}
       minZoom={-2}
       maxZoom={3}
-      center={[imageHeight / 2, 1165 / 2]}
+      zoom={initialZoom !== null ? initialZoom : 0}
       scrollWheelZoom={false}
+      zoomDelta={0.25}
+      zoomSnap={0.25}
+      whenCreated={mapInstance => { mapRef.current = mapInstance; }}
+      zoomControl={false}
     >
+      <ZoomControl position="topright" />
       <ImageOverlay url={imageUrl} bounds={bounds} />
-      <FitBounds bounds={bounds} />
+      {/* Only fit bounds on initial mount, not on every render */}
+      {/* <FitBounds bounds={bounds} /> */}
       {transformedLocations.length > 0 ? (
         transformedLocations.map((loc) => (
           <Marker
@@ -420,7 +417,7 @@ function MapPane({ imageUrl, locations, onSelectLocation, selectedLocation }) {
               loc.labelPosition,
               loc.labelRotation,
               loc.color || 'gray',
-              selectedLocation && selectedLocation.id === loc.id // Pass isSelected
+              selectedLocation && selectedLocation.id === loc.id
             )}
             eventHandlers={{ click: () => onSelectLocation(loc) }}
             aria-label={`Marker for ${loc.englishName}`}
@@ -436,41 +433,11 @@ function MapPane({ imageUrl, locations, onSelectLocation, selectedLocation }) {
   );
 }
 
-function colorForStatus(status) {
-  switch (status) {
-    case 'Error':
-      return 'red';
-    case 'Approved':
-      return 'darkgreen';
-    case 'Does not match':
-      return 'darkmagenta';
-    case 'No renderings':
-      return 'darkslategray';
-    case "Must select one":
-      return "darkorange";
-      case 'Blank':
-      return 'darkred';
-    case "Guessed rendering not yet approved":
-      return 'darkblue';
-    case "Needs checked":
-      return 'darkgoldenrod';
-    default:
-      return 'gray';
-  }
-}
-
-function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, onSaveRenderings, termRenderings }) {
+function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, onSaveRenderings, termRenderings, locations }) {
   const [vernacular, setVernacular] = useState(selectedLocation?.vernacularName || '');
   const inputRef = useRef(null);
 
-  // Debounce the onUpdateVernacular call to reduce re-renders
-  const debouncedUpdateVernacular = useDebounce((id, newVernacular) => {
-    onUpdateVernacular(id, newVernacular);
-    setVernacular(newVernacular); // Sync state after debounce
-  }, 200); // Reduced delay to 200ms
-
   useEffect(() => {
-    console.log('DetailsPane updating with selectedLocation:', selectedLocation);
     setVernacular(selectedLocation?.vernacularName || '');
   }, [selectedLocation]);
 
@@ -484,24 +451,50 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
     const newVernacular = e.target.value;
     setVernacular(newVernacular); // Update state immediately
     if (selectedLocation) {
-      debouncedUpdateVernacular(selectedLocation.id, newVernacular);
+      onUpdateVernacular(selectedLocation.id, newVernacular);
     }
   };
 
+  // Tally status counts for all locations
+  const statusTallies = useMemo(() => {
+    const tally = {};
+    if (locations && locations.length > 0) {
+      locations.forEach(loc => {
+        const { status, color } = termRenderings.getStatus(loc.termId, loc.vernacularName);
+        if (!tally[status]) tally[status] = { count: 0, color };
+        tally[status].count++;
+      });
+    }
+    return tally;
+  }, [locations, termRenderings]);
+
   if (!selectedLocation) {
-    console.log('No selected location, showing default message');
     return <div className="no-selection">Select a location</div>;
   }
 
-  const status = selectedLocation ? termRenderings.getStatus(selectedLocation.termId, selectedLocation.vernacularName).status : '';
+  // Always compute status and color from latest data
+  const { status, color } = termRenderings.getStatus(selectedLocation.termId, vernacular);
 
   return (
     <div>
+      {/* Status Tally Table */}
+      <div style={{ border: '1px solid #ccc', borderRadius: 6, marginBottom: 16, padding: 8, background: '#f9f9f9' }}>
+        <table >
+          <tbody>
+            {Object.entries(statusTallies).map(([status, { count, color }]) => (
+              <tr key={status}>
+                <td style={{ color, fontWeight: 'bold', padding: '2px 8px' }}>{count}</td>
+                <td style={{ color, fontWeight: 'bold', padding: '2px 8px' }}>{status}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       <h2>{selectedLocation.englishName}</h2>
       <p>
         {selectedLocation.description} <span style={{ fontStyle: 'italic' }}>({selectedLocation.termId})</span>
       </p>
-      <div className="vernacularGroup" style={{ backgroundColor: colorForStatus(status), margin: '10px', padding: '10px' }}>
+      <div className="vernacularGroup" style={{ backgroundColor: color, margin: '10px', padding: '10px' }}>
         <input
           ref={inputRef}
           type="text"
@@ -511,11 +504,11 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
           placeholder="Enter vernacular name"
           className="form-control mb-2"
           aria-label={`Vernacular name for ${selectedLocation.englishName}`}
-          style={{ width: '100%', border: 'none' }} // Remove border, ensure it fits
+          style={{ width: '100%', border: 'none' }}
         />
-        {selectedLocation.color && <p style={{color: "white"}}>{status}</p>}
+        <p style={{color: "white"}}>{status}</p>
       </div>
-      <h4>Term Renderings</h4> {/* Changed to h4 for smaller size */}
+      <h4>Term Renderings</h4>
       <div className="term-renderings">
         <label>
           <input
