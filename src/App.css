@@ -20,7 +20,7 @@
   overflow-y: auto;
 }
 
-.third-pane {
+.bottom-pane {
   flex: 1;
   padding: 10px;
 }
@@ -55,5 +55,5 @@
 
 /* New style for selected label */
 .selected-label {
-  border: 2px solid black; /* Strong border */
+  border: 6px double black; /* Strong border */
 }

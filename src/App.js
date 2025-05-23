@@ -116,14 +116,16 @@ const createCustomIcon = (gloss, vernLabel, align = 'right', angle = 0, size = 3
   });
 };
 
-// Third Pane component to display an image based on termId
-function ThirdPane({ termId }) {
-  const imageUrl = termId ? `/assets/${termId}.jpg` : '';
+// Bottom Pane component to display an image based on termId
+function BottomPane({ termId }) {
+  const gloss = mapBibTerms.getGloss(termId) || 'default';
+  const imageUrl = termId ? `/assets/${gloss}.jpg` : '';
   console.log('Attempting to load image:', imageUrl);
   return (
-    <div className="third-pane">
+    <div className="bottom-pane">
       {imageUrl && (
         <img
+          key={imageUrl}
           src={imageUrl}
           alt={termId}
           style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
@@ -381,8 +383,8 @@ function App() {
       >
         ═════
       </div>
-      <div className="third-pane" style={{ flex: `0 0 ${100 - topHeight}%` }}>
-        <ThirdPane termId={selectedLocation?.termId} />
+      <div className="bottom-pane" style={{ flex: `0 0 ${100 - topHeight}%` }}>
+        <BottomPane termId={selectedLocation?.termId} />
       </div>
     </div>
   );
