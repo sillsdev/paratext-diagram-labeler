@@ -4,6 +4,40 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import TermRenderings from './TermRenderings';
 import './App.css';
+import MapBibTerms from './MapBibTerms';
+
+const mapBibTerms = new MapBibTerms();
+
+var usfm = String.raw`\zdiagram-s |template="SMP2_185wbt-sm"\* 
+\fig |src="185wbt - Philips Travels [sm] (fcr) @en.jpg" size="span" loc="paw" copy="WBT" ref="8:5-40"\fig*
+\zlabel |key="philipstravels_title" termid="philipstravels_title" gloss="Philip’s Travels" label=""\*
+\zlabel |key="jerusalem_nt" termid="Ἱεροσόλυμα-1" gloss="Jerusalem" label="Yarūśalēma"\*
+\zlabel |key="apollonia" termid="Ἀπολλωνία" gloss="Apollonia" label=""\*
+\zlabel |key="jordan_river_nt" termid="Ἰορδάνης" gloss="Jordan River" label="Yardana"\*
+\zlabel |key="azotus" termid="Ἄζωτος" gloss="Azotus" label="Azotus–Asotus"\*
+\zlabel |key="decapolis" termid="Δεκάπολις" gloss="Decapolis" label="daśa sahar"\*
+\zdiagram-e \* `;
+
+function mapFromUsfm(usfm) {
+  // Extract template value from \zdiagram-s |template="..." line
+  const templateMatch = usfm.match(/\\zdiagram-s\s+\|template="([^"]*)"/);
+  const map = {
+    template: templateMatch ? templateMatch[1] : '',
+    mapView: false,
+    labels: []
+  };
+  const regex = /\\zlabel\s+\|key="([^"]+)"\s+termid="([^"]+)"\s+gloss="([^"]+)"\s+label="([^"]*)"/g;
+  let match;
+  while ((match = regex.exec(usfm)) !== null) {
+    const [_, key, termId, gloss, label] = match;
+    map.labels.push({ key: key, termId: termId, gloss: gloss, label: label });
+  }
+  return map;
+}
+
+var map = mapFromUsfm(usfm);
+console.log('Parsed map:', map);
+console.log('Parsed labels:', map.labels);
 
 // Fix Leaflet default marker icons (optional, not needed with custom SVG icons)
 delete L.Icon.Default.prototype._getIconUrl;
@@ -14,8 +48,8 @@ L.Icon.Default.mergeOptions({
 });
 
 // Function to create custom SVG icon with permanent label
-const createCustomIcon = (englishName, vernacularName, labelPosition = 'right', labelRotation = 0, color, isSelected = false) => {
-  const label = vernacularName || `(${englishName})`;
+const createCustomIcon = (gloss, vernacularName, labelPosition = 'right', labelRotation = 0, color, isSelected = false) => {
+  const label = vernacularName || `(${gloss})`;
 
   const svg = `
     <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -266,34 +300,31 @@ function App() {
           const initialLocations = [
             {
               id: 1,
-              englishName: 'Jerusalem',
+              gloss: 'Jerusalem',
               vernacularName: '',
-              termId: 'Ἱεροσόλυμα',
+              termId: 'Ἱεροσόλυμα-1',
               x: 603,
               y: 762,
-              description: 'City of David',
               labelPosition: 'left',
               labelRotation: 0,
             },
             {
               id: 2,
-              englishName: 'Bethlehem',
+              gloss: 'Bethlehem',
               vernacularName: '',
               termId: 'Βηθλεέμ',
               x: 594,
               y: 821,
-              description: 'Birthplace of Jesus',
               labelPosition: 'right',
               labelRotation: 0,
             },
             {
               id: 3,
-              englishName: 'Jordan River',
+              gloss: 'Jordan River',
               vernacularName: '',
               termId: 'Ἰορδάνης',
               x: 820,
               y: 340,
-              description: 'Site of Jesus’ baptism',
               labelPosition: 'right',
               labelRotation: 80,
             },
@@ -412,7 +443,7 @@ function MapPane({ imageUrl, locations, onSelectLocation, selectedLocation }) {
             key={loc.id}
             position={[loc.yLeaflet, loc.x]}
             icon={createCustomIcon(
-              loc.englishName,
+              loc.gloss,
               loc.vernacularName,
               loc.labelPosition,
               loc.labelRotation,
@@ -420,10 +451,10 @@ function MapPane({ imageUrl, locations, onSelectLocation, selectedLocation }) {
               selectedLocation && selectedLocation.id === loc.id
             )}
             eventHandlers={{ click: () => onSelectLocation(loc) }}
-            aria-label={`Marker for ${loc.englishName}`}
+            aria-label={`Marker for ${loc.gloss}`}
             tabIndex={0}
           >
-            {/* <Popup>{loc.englishName}</Popup> */}
+            {/* <Popup>{loc.gloss}</Popup> */}
           </Marker>
         ))
       ) : (
@@ -503,9 +534,9 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
           </tbody>
         </table>
       </div>
-      <h2>{selectedLocation.englishName}</h2>
+      <h2>{selectedLocation.gloss}</h2>
       <p>
-        {selectedLocation.description} <span style={{ fontStyle: 'italic' }}>({selectedLocation.termId})</span>
+        {mapBibTerms.getDefinition(selectedLocation.termId)} <span style={{ fontStyle: 'italic' }}>({selectedLocation.termId})</span>
       </p>
       <div className="vernacularGroup" style={{ backgroundColor: color, margin: '10px', padding: '10px' }}>
         <input
@@ -521,7 +552,7 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
           }}
           placeholder="Enter vernacular name"
           className="form-control mb-2"
-          aria-label={`Vernacular name for ${selectedLocation.englishName}`}
+          aria-label={`Vernacular name for ${selectedLocation.gloss}`}
           style={{ width: '100%', border: 'none' }}
         />
         <span style={{color: "white"}}>
