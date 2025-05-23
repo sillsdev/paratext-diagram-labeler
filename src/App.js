@@ -475,6 +475,19 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
   // Always compute status and color from latest data
   const { status, color } = termRenderings.getStatus(selectedLocation.termId, vernacular);
 
+  // Handler for Add to renderings button
+  const handleAddToRenderings = () => {
+    if (selectedLocation) {
+      // Set renderings and isGuessed to false
+      onRenderingsChange({ target: { value: vernacular } });
+      if (termRenderings.data[selectedLocation.termId]) {
+        termRenderings.data[selectedLocation.termId].isGuessed = false;
+      }
+      // Also update isApproved state to true (since isGuessed is now false)
+      onApprovedChange({ target: { checked: true } });
+    }
+  };
+
   return (
     <div>
       {/* Status Tally Table */}
@@ -500,13 +513,23 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
           type="text"
           value={vernacular}
           onChange={handleChange}
-          onKeyDown={onNextLocation}
+          onKeyDown={e => {
+            if (e.key === 'Enter') {
+              onNextLocation(e);
+            }
+            // Tab key now does default behavior (move to next control)
+          }}
           placeholder="Enter vernacular name"
           className="form-control mb-2"
           aria-label={`Vernacular name for ${selectedLocation.englishName}`}
           style={{ width: '100%', border: 'none' }}
         />
-        <p style={{color: "white"}}>{status}</p>
+        <span style={{color: "white"}}>
+          {status}
+          {status === 'No renderings' && (
+            <button style={{ marginLeft: 8 }} onClick={handleAddToRenderings}>Add to renderings</button>
+          )}
+        </span>
       </div>
       <h4>Term Renderings</h4>
       <div className="term-renderings">
