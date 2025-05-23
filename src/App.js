@@ -358,14 +358,6 @@ function App() {
     }
   }, [termRenderings, updateMarkerColor, handleSelectLocation]);
 
-  // Handler to cycle views
-  const handleSwitchView = useCallback(() => {
-    setMapPaneView(prev => {
-      if (!map.mapView) return (prev + 2) % 3; // skip Map view if not available
-      return (prev + 1) % 3;
-    });
-  }, []);
-
   // Table View component
   function TableView({ locations, selectedLocation, onUpdateVernacular, onNextLocation, termRenderings, onSelectLocation }) {
     const inputRefs = useRef([]);
@@ -451,20 +443,81 @@ function App() {
     );
   }
 
-  // USFM View component
-  function USFMView({ map }) {
-    const [usfmText, setUsfmText] = useState(usfmFromMap(map));
-    useEffect(() => {
-      setUsfmText(usfmFromMap(map));
-    }, [map]);
+  // USFM View component (now editable, uncontrolled)
+  const usfmTextareaRef = useRef();
+  const USFMView = React.memo(function USFMView({ usfmText }) {
     return (
       <textarea
+        ref={usfmTextareaRef}
         style={{ width: '100%', height: '100%', minHeight: 300 }}
-        value={usfmText}
-        readOnly
+        defaultValue={usfmText}
       />
     );
-  }
+  });
+
+  // --- USFM state for editing ---
+  const [usfmText, setUsfmText] = useState(() => usfmFromMap({ ...map, labels: locations }));
+
+  // Only update USFM text when switching TO USFM view (not on every locations change)
+  const prevMapPaneView = useRef();
+  useEffect(() => {
+    if (prevMapPaneView.current !== 2 && mapPaneView === 2) {
+      setUsfmText(usfmFromMap({ ...map, labels: locations }));
+    }
+    prevMapPaneView.current = mapPaneView;
+  }, [mapPaneView]);
+
+  // --- USFM to map/locations sync ---
+  // Helper to update map/locations from USFM text
+  const updateMapFromUsfm = useCallback(() => {
+    if (!usfmTextareaRef.current) return;
+    const text = usfmTextareaRef.current.value;
+    try {
+      const newMap = mapFromUsfm(text);
+      // Re-init locations and selection
+      const initialLocations = newMap.labels.map(loc => {
+        if (!loc.vernLabel) {
+          loc.vernLabel = termRenderings.getMapForm(loc.termId);
+        }
+        const { color } = termRenderings.getStatus(loc.termId, loc.vernLabel);
+        return { ...loc, color };
+      });
+      setLocations(initialLocations);
+      if (initialLocations.length > 0) {
+        setSelectedLocation(initialLocations[0]);
+      } else {
+        setSelectedLocation(null);
+      }
+      // Optionally update map object if needed elsewhere
+      map.labels = newMap.labels;
+      map.template = newMap.template;
+      map.fig = newMap.fig;
+      map.mapView = newMap.mapView;
+      setUsfmText(text); // keep USFM text in sync after parse
+    } catch (e) {
+      alert('Invalid USFM format. Changes not applied.');
+    }
+  }, [termRenderings, setLocations, setSelectedLocation]);
+
+  // Intercept view switch to update map if leaving USFM view
+  const handleSwitchViewWithUsfm = useCallback(() => {
+    if (mapPaneView === 2) {
+      updateMapFromUsfm();
+    }
+    setMapPaneView(prev => {
+      if (!map.mapView) return (prev + 2) % 3;
+      return (prev + 1) % 3;
+    });
+  }, [mapPaneView, updateMapFromUsfm]);
+
+  // Intercept OK button in DetailsPane
+  const handleOkWithUsfm = useCallback(() => {
+    if (mapPaneView === 2) {
+      updateMapFromUsfm();
+    }
+    // Optionally: do other OK logic here
+    alert('OK clicked');
+  }, [mapPaneView, updateMapFromUsfm]);
 
   return (
     <div className="app-container">
@@ -489,7 +542,7 @@ function App() {
             />
           )}
           {mapPaneView === 2 && (
-            <USFMView map={{ ...map, labels: locations }} />
+            <USFMView usfmText={usfmText} />
           )}
         </div>
         <div
@@ -509,7 +562,9 @@ function App() {
             onSaveRenderings={handleSaveRenderings}
             termRenderings={termRenderings}
             locations={locations}
-            onSwitchView={handleSwitchView}
+            onSwitchView={handleSwitchViewWithUsfm}
+            onOk={handleOkWithUsfm}
+            mapPaneView={mapPaneView}
           />
         </div>
       </div>
@@ -597,7 +652,7 @@ function MapPane({ imageUrl, locations, onSelectLocation, selectedLocation }) {
   );
 }
 
-function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, onSaveRenderings, termRenderings, locations, onSwitchView }) {
+function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, onSaveRenderings, termRenderings, locations, onSwitchView, mapPaneView }) {
   const [vernacular, setVernacular] = useState(selectedLocation?.vernLabel || '');
   const inputRef = useRef(null);
 
@@ -632,8 +687,51 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
     return tally;
   }, [locations, termRenderings]);
 
+  // --- Button Row Handlers (implement as needed) ---
+  const handleCancel = () => {
+    alert('Cancel clicked');
+  };
+  const handleOk = () => {
+    alert('OK clicked');
+  };
+  const handleSettings = () => {
+    alert('Settings clicked');
+  };
+
+  // Only show the button row if in USFM view
+  if (mapPaneView === 2) {
+    return (
+      <div>
+        {/* Button Row */}
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
+          <button onClick={onSwitchView} style={{ marginRight: 8 }}>Switch view</button>
+          <button onClick={handleCancel} style={{ marginRight: 8 }}>Cancel</button>
+          <button onClick={handleOk}>OK</button>
+          <div style={{ flex: 1 }} />
+          <button
+            onClick={handleSettings}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: 22,
+              marginLeft: 8,
+              color: '#555',
+              padding: 4,
+              alignSelf: 'flex-start'
+            }}
+            aria-label="Settings"
+          >
+            <span role="img" aria-label="Settings">&#9881;</span>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // If no selection, show nothing (prevents null.termId error)
   if (!selectedLocation) {
-    return <div className="no-selection">Select a location</div>;
+    return null;
   }
 
   // Always compute status and color from latest data
@@ -652,45 +750,33 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
     }
   };
 
-  // --- Button Row Handlers (implement as needed) ---
-  const handleCancel = () => {
-    // Implement cancel logic here
-    alert('Cancel clicked');
-  };
-  const handleOk = () => {
-    // Implement OK logic here
-    alert('OK clicked');
-  };
-  const handleSettings = () => {
-    // Implement settings logic here
-    alert('Settings clicked');
-  };
-
   return (
     <div>
       {/* Button Row */}
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
-        <button onClick={onSwitchView} style={{ marginRight: 8 }}>Switch view</button>
-        <button onClick={handleCancel} style={{ marginRight: 8 }}>Cancel</button>
-        <button onClick={handleOk}>OK</button>
-        <div style={{ flex: 1 }} />
-        <button
-          onClick={handleSettings}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            fontSize: 22,
-            marginLeft: 8,
-            color: '#555',
-            padding: 4,
-            alignSelf: 'flex-start'
-          }}
-          aria-label="Settings"
-        >
-          <span role="img" aria-label="Settings">&#9881;</span>
-        </button>
-      </div>
+      {mapPaneView !== 2 && (
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
+          <button onClick={onSwitchView} style={{ marginRight: 8 }}>Switch view</button>
+          <button onClick={handleCancel} style={{ marginRight: 8 }}>Cancel</button>
+          <button onClick={handleOk}>OK</button>
+          <div style={{ flex: 1 }} />
+          <button
+            onClick={handleSettings}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: 22,
+              marginLeft: 8,
+              color: '#555',
+              padding: 4,
+              alignSelf: 'flex-start'
+            }}
+            aria-label="Settings"
+          >
+            <span role="img" aria-label="Settings">&#9881;</span>
+          </button>
+        </div>
+      )}
       {/* Status Tally Table */}
       <div style={{ border: '1px solid #ccc', borderRadius: 6, marginBottom: 16, padding: 8, background: '#f9f9f9' }}>
         <table >
