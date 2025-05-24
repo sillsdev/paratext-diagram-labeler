@@ -578,6 +578,11 @@ function App() {
             onSwitchView={handleSwitchViewWithUsfm}
             onOk={handleOkWithUsfm}
             mapPaneView={mapPaneView}
+            onSetView={viewIdx => {
+              if (viewIdx === 0 && !map.mapView) return;
+              if (mapPaneView === 2) updateMapFromUsfm();
+              setMapPaneView(viewIdx);
+            }}
           />
         </div>
       </div>
@@ -665,7 +670,7 @@ function MapPane({ imageUrl, locations, onSelectLocation, selectedLocation }) {
   );
 }
 
-function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, onSaveRenderings, termRenderings, locations, onSwitchView, mapPaneView }) {
+function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, onSaveRenderings, termRenderings, locations, onSwitchView, mapPaneView, onSetView }) {
   const [vernacular, setVernacular] = useState(selectedLocation?.vernLabel || '');
   const inputRef = useRef(null);
 
@@ -768,9 +773,81 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
       {/* Button Row */}
       {mapPaneView !== 2 && (
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
-          <button onClick={onSwitchView} style={{ marginRight: 8 }}>Switch view</button>
-          <button onClick={handleCancel} style={{ marginRight: 8 }}>Cancel</button>
-          <button onClick={handleOk}>OK</button>
+          {/* Icon view buttons */}
+          <button
+            onClick={() => onSetView(0)}
+            disabled={!map.mapView}
+            style={{
+              marginRight: 4,
+              background: mapPaneView === 0 ? '#d0eaff' : undefined,
+              border: mapPaneView === 0 ? '2px inset #2196f3' : undefined,
+              opacity: map.mapView ? 1 : 0.5,
+              padding: '4px 8px',
+              borderRadius: 4,
+              height: 32,
+              minWidth: 32,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            title="Map View"
+          >
+            {/* Marker icon (SVG) */}
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 2C6.686 2 4 4.686 4 8c0 3.314 4.09 8.36 5.29 9.79a1 1 0 0 0 1.42 0C11.91 16.36 16 11.314 16 8c0-3.314-2.686-6-6-6zm0 8.5A2.5 2.5 0 1 1 10 5a2.5 2.5 0 0 1 0 5.5z" fill="#2196f3" stroke="#1976d2" strokeWidth="1.2"/>
+            </svg>
+          </button>
+          <button
+            onClick={() => onSetView(1)}
+            style={{
+              marginRight: 4,
+              background: mapPaneView === 1 ? '#d0eaff' : undefined,
+              border: mapPaneView === 1 ? '2px inset #2196f3' : undefined,
+              padding: '4px 8px',
+              borderRadius: 4,
+              height: 32,
+              minWidth: 32,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            title="Table View"
+          >
+            {/* Table icon (SVG) */}
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="4" width="16" height="12" fill="#90caf9" stroke="#1976d2" strokeWidth="1.5"/>
+              <line x1="2" y1="8" x2="18" y2="8" stroke="#1976d2" strokeWidth="1.5"/>
+              <line x1="2" y1="12" x2="18" y2="12" stroke="#1976d2" strokeWidth="1.5"/>
+              <line x1="7" y1="4" x2="7" y2="16" stroke="#1976d2" strokeWidth="1.5"/>
+              <line x1="13" y1="4" x2="13" y2="16" stroke="#1976d2" strokeWidth="1.5"/>
+            </svg>
+          </button>
+          <button
+            onClick={() => onSetView(2)}
+            style={{
+              marginRight: 32,
+              background: mapPaneView === 2 ? '#d0eaff' : undefined,
+              border: mapPaneView === 2 ? '2px inset #2196f3' : undefined,
+              padding: '4px 8px',
+              borderRadius: 4,
+              height: 32,
+              minWidth: 32,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            title="USFM View"
+          >
+            {/* USFM icon (document with text lines) */}
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4" y="3" width="12" height="14" rx="2" fill="#fffde7" stroke="#1976d2" strokeWidth="1.5"/>
+              <line x1="6" y1="7" x2="14" y2="7" stroke="#1976d2" strokeWidth="1.2"/>
+              <line x1="6" y1="10" x2="14" y2="10" stroke="#1976d2" strokeWidth="1.2"/>
+              <line x1="6" y1="13" x2="12" y2="13" stroke="#1976d2" strokeWidth="1.2"/>
+            </svg>
+          </button>
+          <button onClick={handleCancel} style={{ marginRight: 8, height: 32, minWidth: 48, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Cancel</button>
+          <button onClick={handleOk} style={{ height: 32, minWidth: 48, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>OK</button>
           <div style={{ flex: 1 }} />
           <button
             onClick={handleSettings}
