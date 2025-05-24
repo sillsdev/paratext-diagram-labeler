@@ -720,29 +720,29 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
   if (mapPaneView === 2) {
     return (
       <div>
-        {/* Button Row */}
-        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
-          <button onClick={onSwitchView} style={{ marginRight: 8 }}>Switch view</button>
-          <button onClick={handleCancel} style={{ marginRight: 8 }}>Cancel</button>
-          <button onClick={handleOk}>OK</button>
-          <div style={{ flex: 1 }} />
-          <button
-            onClick={handleSettings}
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              fontSize: 22,
-              marginLeft: 8,
-              color: '#555',
-              padding: 4,
-              alignSelf: 'flex-start'
-            }}
-            aria-label="Settings"
-          >
-            <span role="img" aria-label="Settings">&#9881;</span>
-          </button>
-        </div>
+      {/* Button Row */}
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
+        <button onClick={onSwitchView} style={{ marginRight: 60 }}>Switch view</button>
+        <button onClick={handleCancel} style={{ marginRight: 8, width:80 }}>Cancel</button>
+        <button onClick={handleOk}  style={{ width:80 }}>OK</button>
+        <div style={{ flex: 1 }} />
+        <button
+        onClick={handleSettings}
+        style={{
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          fontSize: 22,
+          marginLeft: 8,
+          color: '#555',
+          padding: 4,
+          alignSelf: 'flex-start'
+        }}
+        aria-label="Settings"
+        >
+        <span role="img" aria-label="Settings">&#9881;</span>
+        </button>
+      </div>
       </div>
     );
   }
@@ -846,8 +846,8 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
               <line x1="6" y1="13" x2="12" y2="13" stroke="#1976d2" strokeWidth="1.2"/>
             </svg>
           </button>
-          <button onClick={handleCancel} style={{ marginRight: 8, height: 32, minWidth: 48, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Cancel</button>
-          <button onClick={handleOk} style={{ height: 32, minWidth: 48, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>OK</button>
+          <button onClick={handleCancel} style={{ marginRight: 8, height: 32, minWidth: 80, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Cancel</button>
+          <button onClick={handleOk} style={{ height: 32, minWidth: 80, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>OK</button>
           <div style={{ flex: 1 }} />
           <button
             onClick={handleSettings}
