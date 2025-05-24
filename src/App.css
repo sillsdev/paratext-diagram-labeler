@@ -26,17 +26,33 @@
 }
 
 .vertical-divider {
-  cursor: col-resize;
+  cursor: ew-resize;
+  user-select: none;
+  transition: background 0.2s;
   padding: 1px;
   background: #757575;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  vertical-align: middle;
+}
+.vertical-divider:hover {
+  background: mediumblue;
+  color: white;
 }
 
 .horizontal-divider {
-  cursor: row-resize;
-  padding: 1px;
+  cursor: ns-resize;
+  user-select: none;
+  transition: background 0.2s;
   background: #757575;
   text-align: center;
+}
+.horizontal-divider:hover {
+  background: mediumblue;
+  color: white;
 }
 
 .form-control {

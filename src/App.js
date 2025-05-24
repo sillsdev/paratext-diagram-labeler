@@ -21,9 +21,9 @@ var usfm = String.raw`\zdiagram-s |template="SMP2_185wbt-sm"\*
 \zdiagram-e \* `;
 
 function mapFromUsfm(usfm) {
-  // Extract template value from \zdiagram-s |template="..." line
+  // Extract template and \fig field
   const templateMatch = usfm.match(/\\zdiagram-s\s+\|template="([^"]*)"/);
-  const figMatch = usfm.match(/\\fig\s[^\\]*\\fig\*"/);
+  const figMatch = usfm.match(/\\fig[\s\S]*?\\fig\*/);
   const map = {
     template: templateMatch ? templateMatch[1] : '',
     fig: figMatch ? figMatch[0] : '',
@@ -33,6 +33,7 @@ function mapFromUsfm(usfm) {
   const regex = /\\zlabel\s+\|key="([^"]+)"\s+termid="([^"]+)"\s+gloss="([^"]+)"\s+label="([^"]*)"/g;
   let match;
   while ((match = regex.exec(usfm)) !== null) {
+    // eslint-disable-next-line
     const [_, key, termId, gloss, label] = match;
     map.labels.push({ mergeKey: key, termId: termId, gloss: gloss, vernLabel: label });
   }
@@ -142,12 +143,18 @@ function BottomPane({ termId }) {
 function usfmFromMap(map) {
   // Reconstruct USFM string from current map state
   let usfm = `\\zdiagram-s |template="${map.template}"\\*\n`;
-  if (map.fig) usfm += `${map.fig}\n`;
+  // Always include the \fig line if present, and ensure it is in correct USFM format
+  if (map.fig && !/^\\fig/.test(map.fig)) {
+    usfm += `\\fig ${map.fig}\\fig*\n`;
+  } else if (map.fig) {
+    usfm += `${map.fig}\n`;
+  }
   map.labels.forEach(label => {
     usfm += `\\zlabel |key="${label.mergeKey}" termid="${label.termId}" gloss="${label.gloss}" label="${label.vernLabel || ''}"\\*\n`;
   });
   usfm += '\\zdiagram-e \\*';
-  return usfm;
+  // Remove unnecessary escaping for output
+  return usfm.replace(/\\/g, '\\');
 }
 
 function App() {
@@ -369,77 +376,79 @@ function App() {
       }
     }, [selectedLocation, locations]);
     return (
-      <table className="table-view" style={{ borderCollapse: 'collapse' }}>
-        <thead>
-          <tr>
-            <th>Gloss</th>
-            <th>Label</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {locations.map((loc, i) => {
-            const { status, color } = termRenderings.getStatus(loc.termId, loc.vernLabel);
-            const isSelected = selectedLocation && selectedLocation.termId === loc.termId;
-            return (
-              <tr
-              key={loc.termId}
-              style={{
-                background: color,
-                color: "white",
-                fontWeight: isSelected ? 'bold' : 'normal',
-                cursor: 'pointer',
-                border: isSelected ? '4px solid black' : undefined,
-                paddingTop: isSelected ? 12 : undefined,
-                paddingBottom: isSelected ? 12 : undefined,
-                height: isSelected ? 48 : undefined,
-              }}
-              onClick={() => onSelectLocation(loc)}
-              >
-              <td style={isSelected ? { paddingTop: 4, paddingBottom: 4 } : {}}>{loc.gloss}</td>
-              <td style={isSelected ? { paddingTop: 4, paddingBottom: 4 } : {}}>
-                <input
-                ref={el => inputRefs.current[i] = el}
-                type="text"
-                value={loc.vernLabel || ''}
-                onChange={e => onUpdateVernacular(loc.termId, e.target.value)}
-                onFocus={() => onSelectLocation(loc)}
-                onKeyDown={e => {
-                  if (e.key === 'Enter' && e.shiftKey) {
-                    // Shift+Enter: cycle backward
-                    e.preventDefault();
-                    const prevIdx = (i - 1 + locations.length) % locations.length;
-                    if (inputRefs.current[prevIdx]) inputRefs.current[prevIdx].focus();
-                    onSelectLocation(locations[prevIdx]);
-                  } else if (e.key === 'Enter') {
-                    // Enter: cycle forward
-                    e.preventDefault();
-                    const nextIdx = (i + 1) % locations.length;
-                    if (inputRefs.current[nextIdx]) inputRefs.current[nextIdx].focus();
-                    onSelectLocation(locations[nextIdx]);
-                  } else if (e.key === 'ArrowUp') {
-                    // Up arrow: cycle backward
-                    e.preventDefault();
-                    const prevIdx = (i - 1 + locations.length) % locations.length;
-                    if (inputRefs.current[prevIdx]) inputRefs.current[prevIdx].focus();
-                    onSelectLocation(locations[prevIdx]);
-                  } else if (e.key === 'ArrowDown') {
-                    // Down arrow: cycle forward
-                    e.preventDefault();
-                    const nextIdx = (i + 1) % locations.length;
-                    if (inputRefs.current[nextIdx]) inputRefs.current[nextIdx].focus();
-                    onSelectLocation(locations[nextIdx]);
-                  }
+      <div style={{ padding: 6 }}>
+        <table className="table-view" style={{ borderCollapse: 'collapse' }}>
+          <thead>
+            <tr>
+              <th>Gloss</th>
+              <th>Label</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {locations.map((loc, i) => {
+              const { status, color } = termRenderings.getStatus(loc.termId, loc.vernLabel);
+              const isSelected = selectedLocation && selectedLocation.termId === loc.termId;
+              return (
+                <tr
+                key={loc.termId}
+                style={{
+                  background: color,
+                  color: "white",
+                  fontWeight: isSelected ? 'bold' : 'normal',
+                  cursor: 'pointer',
+                  border: isSelected ? '4px solid black' : undefined,
+                  paddingTop: isSelected ? 12 : undefined,
+                  paddingBottom: isSelected ? 12 : undefined,
+                  height: isSelected ? 48 : undefined,
                 }}
-                style={{ }}
-                />
-              </td>
-              <td style={isSelected ? { paddingTop: 4, paddingBottom: 4 } : {}}>{status}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+                onClick={() => onSelectLocation(loc)}
+                >
+                <td style={isSelected ? { paddingTop: 4, paddingBottom: 4 } : {}}>{loc.gloss}</td>
+                <td style={isSelected ? { paddingTop: 4, paddingBottom: 4 } : {}}>
+                  <input
+                  ref={el => inputRefs.current[i] = el}
+                  type="text"
+                  value={loc.vernLabel || ''}
+                  onChange={e => onUpdateVernacular(loc.termId, e.target.value)}
+                  onFocus={() => onSelectLocation(loc)}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' && e.shiftKey) {
+                      // Shift+Enter: cycle backward
+                      e.preventDefault();
+                      const prevIdx = (i - 1 + locations.length) % locations.length;
+                      if (inputRefs.current[prevIdx]) inputRefs.current[prevIdx].focus();
+                      onSelectLocation(locations[prevIdx]);
+                    } else if (e.key === 'Enter') {
+                      // Enter: cycle forward
+                      e.preventDefault();
+                      const nextIdx = (i + 1) % locations.length;
+                      if (inputRefs.current[nextIdx]) inputRefs.current[nextIdx].focus();
+                      onSelectLocation(locations[nextIdx]);
+                    } else if (e.key === 'ArrowUp') {
+                      // Up arrow: cycle backward
+                      e.preventDefault();
+                      const prevIdx = (i - 1 + locations.length) % locations.length;
+                      if (inputRefs.current[prevIdx]) inputRefs.current[prevIdx].focus();
+                      onSelectLocation(locations[prevIdx]);
+                    } else if (e.key === 'ArrowDown') {
+                      // Down arrow: cycle forward
+                      e.preventDefault();
+                      const nextIdx = (i + 1) % locations.length;
+                      if (inputRefs.current[nextIdx]) inputRefs.current[nextIdx].focus();
+                      onSelectLocation(locations[nextIdx]);
+                    }
+                  }}
+                  style={{ }}
+                  />
+                </td>
+                <td style={isSelected ? { paddingTop: 4, paddingBottom: 4 } : {}}>{status}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     );
   }
 
@@ -465,7 +474,7 @@ function App() {
       setUsfmText(usfmFromMap({ ...map, labels: locations }));
     }
     prevMapPaneView.current = mapPaneView;
-  }, [mapPaneView]);
+  }, [mapPaneView, locations]);
 
   // --- USFM to map/locations sync ---
   // Helper to update map/locations from USFM text
@@ -505,7 +514,11 @@ function App() {
       updateMapFromUsfm();
     }
     setMapPaneView(prev => {
-      if (!map.mapView) return (prev + 2) % 3;
+      if (!map.mapView) {
+        // Only cycle between Table (1) and USFM (2)
+        return prev === 1 ? 2 : 1;
+      }
+      // Cycle through Map (0), Table (1), USFM (2)
       return (prev + 1) % 3;
     });
   }, [mapPaneView, updateMapFromUsfm]);
@@ -806,9 +819,9 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
             }
             // Tab key now does default behavior (move to next control)
           }}
-          placeholder="Enter vernacular name"
+          placeholder="Enter translated label"
           className="form-control mb-2"
-          aria-label={`Vernacular name for ${selectedLocation.gloss}`}
+          aria-label={`Translation for ${selectedLocation.gloss}`}
           style={{ width: '100%', border: 'none' }}
         />
         <span style={{color: "white"}}>

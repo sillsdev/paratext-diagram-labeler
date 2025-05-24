@@ -47,18 +47,18 @@ class TermRenderings {
   }
 
   getStatus(termId, vernLabel) {
-    const entry = this.data[termId];
-    if (!entry) {
-      //console.warn(`TermId "${termId}" not found in term renderings`);
-      return { status: "No renderings", color: "indianred" };
-    }
-    
     if (!vernLabel) {
-      return { status: "Blank", color: "darkred" };
+      return { status: "Blank", color: "crimson" };
     }
     
     if (vernLabel.includes('—')) {
       return { status: "Must select one", color: "darkorange" };
+    }
+    
+    const entry = this.data[termId];
+    if (!entry) {
+      //console.warn(`TermId "${termId}" not found in term renderings`);
+      return { status: "No renderings", color: "indianred" };
     }
     
     const mapForm = this.getMapForm(termId);

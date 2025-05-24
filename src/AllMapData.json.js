@@ -13,7 +13,7 @@ export const allMapData = {
             {
                 "mergeKey": "philipstravels_title",
                 "termId": "philipstravels_title",
-                "gloss": "Philip’s Travels ",
+                "gloss": "Philip’s Travels",
                 "x": "30",
                 "y": "85",
                 "align": "right",
@@ -23,7 +23,7 @@ export const allMapData = {
             {
                 "mergeKey": "capernaum",
                 "termId": "Καφαρναούμ",
-                "gloss": "Capernaum ",
+                "gloss": "Capernaum",
                 "x": "698",
                 "y": "36",
                 "align": "right",
@@ -33,7 +33,7 @@ export const allMapData = {
             {
                 "mergeKey": "nazareth",
                 "termId": "Ναζαρά",
-                "gloss": "Nazareth ",
+                "gloss": "Nazareth",
                 "x": "548",
                 "y": "147",
                 "align": "left",
@@ -43,7 +43,7 @@ export const allMapData = {
             {
                 "mergeKey": "caesarea",
                 "termId": "Καισάρεια",
-                "gloss": "Caesarea ",
+                "gloss": "Caesarea",
                 "x": "355",
                 "y": "236",
                 "align": "right",
@@ -53,7 +53,7 @@ export const allMapData = {
             {
                 "mergeKey": "samaria_city_nt",
                 "termId": "Σαμάρεια-2",
-                "gloss": "Samaria ",
+                "gloss": "Samaria",
                 "x": "492",
                 "y": "397",
                 "align": "right",
@@ -63,7 +63,7 @@ export const allMapData = {
             {
                 "mergeKey": "apollonia",
                 "termId": "Ἀπολλωνία",
-                "gloss": "Apollonia ",
+                "gloss": "Apollonia",
                 "x": "319",
                 "y": "413",
                 "align": "left",
@@ -73,7 +73,7 @@ export const allMapData = {
             {
                 "mergeKey": "joppa_nt",
                 "termId": "Ἰόππη",
-                "gloss": "Joppa ",
+                "gloss": "Joppa",
                 "x": "292",
                 "y": "486",
                 "align": "left",
@@ -83,7 +83,7 @@ export const allMapData = {
             {
                 "mergeKey": "jericho_nt",
                 "termId": "Ἰεριχώ",
-                "gloss": "Jericho ",
+                "gloss": "Jericho",
                 "x": "641",
                 "y": "630",
                 "align": "left",
@@ -93,7 +93,7 @@ export const allMapData = {
             {
                 "mergeKey": "jamnia",
                 "termId": "jamnia",
-                "gloss": "Jamnia ",
+                "gloss": "Jamnia",
                 "x": "291",
                 "y": "612",
                 "align": "right",
@@ -103,7 +103,7 @@ export const allMapData = {
             {
                 "mergeKey": "jerusalem_nt",
                 "termId": "Ἱεροσόλυμα-1",
-                "gloss": "Jerusalem ",
+                "gloss": "Jerusalem",
                 "x": "521",
                 "y": "663",
                 "align": "left",
@@ -113,7 +113,7 @@ export const allMapData = {
             {
                 "mergeKey": "bethlehem_nt",
                 "termId": "Βηθλέεμ",
-                "gloss": "Bethlehem ",
+                "gloss": "Bethlehem",
                 "x": "508",
                 "y": "707",
                 "align": "right",
@@ -123,7 +123,7 @@ export const allMapData = {
             {
                 "mergeKey": "gaza_nt",
                 "termId": "Γάζα",
-                "gloss": "Gaza ",
+                "gloss": "Gaza",
                 "x": "129",
                 "y": "809",
                 "align": "right",
@@ -133,7 +133,7 @@ export const allMapData = {
             {
                 "mergeKey": "azotus",
                 "termId": "ἌΖωτος",
-                "gloss": "Azotus ",
+                "gloss": "Azotus",
                 "x": "227",
                 "y": "682",
                 "align": "left",
@@ -143,7 +143,7 @@ export const allMapData = {
             {
                 "mergeKey": "galilee_nt",
                 "termId": "Γαλιλαία-1",
-                "gloss": "Galilee ",
+                "gloss": "Galilee",
                 "x": "476",
                 "y": "75",
                 "align": "right",
@@ -153,7 +153,7 @@ export const allMapData = {
             {
                 "mergeKey": "decapolis",
                 "termId": "Δεκάπολις",
-                "gloss": "Decapolis ",
+                "gloss": "Decapolis",
                 "x": "764",
                 "y": "217",
                 "align": "right",
@@ -163,7 +163,7 @@ export const allMapData = {
             {
                 "mergeKey": "samaria_region",
                 "termId": "Σαμάρεια-1",
-                "gloss": "Samaria ",
+                "gloss": "Samaria",
                 "x": "471",
                 "y": "351",
                 "align": "right",
@@ -173,7 +173,7 @@ export const allMapData = {
             {
                 "mergeKey": "judea",
                 "termId": "Ἰουδαία",
-                "gloss": "Judea ",
+                "gloss": "Judea",
                 "x": "440",
                 "y": "803",
                 "align": "right",
@@ -183,7 +183,7 @@ export const allMapData = {
             {
                 "mergeKey": "mediterranean_sea",
                 "termId": "mediterranean_sea",
-                "gloss": "Mediterranean Sea ",
+                "gloss": "Mediterranean Sea",
                 "x": "40",
                 "y": "567",
                 "align": "right",
@@ -193,7 +193,7 @@ export const allMapData = {
             {
                 "mergeKey": "sea_of_galilee_nt",
                 "termId": "Γαλιλαία-2",
-                "gloss": "Sea of Galilee ",
+                "gloss": "Sea of Galilee",
                 "x": "681",
                 "y": "87",
                 "align": "right",
@@ -203,7 +203,7 @@ export const allMapData = {
             {
                 "mergeKey": "jordan_river_nt",
                 "termId": "Ἰορδάνης",
-                "gloss": "Jordan River ",
+                "gloss": "Jordan River",
                 "x": "699",
                 "y": "370",
                 "align": "right",
@@ -213,7 +213,7 @@ export const allMapData = {
             {
                 "mergeKey": "dead_sea",
                 "termId": "יָם הַמֶּלַח",
-                "gloss": "Dead Sea ",
+                "gloss": "Dead Sea",
                 "x": "636",
                 "y": "833",
                 "align": "right",
