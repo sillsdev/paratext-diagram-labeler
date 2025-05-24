@@ -49,6 +49,9 @@
   transition: background 0.2s;
   background: #757575;
   text-align: center;
+  height: 10px;
+  line-height: 10px;
+  padding: 0;
 }
 .horizontal-divider:hover {
   background: mediumblue;
