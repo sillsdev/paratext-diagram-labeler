@@ -86,27 +86,50 @@ const createCustomIcon = (gloss, vernLabel, align = 'right', angle = 0, size = 3
   const isLeft = align === 'left';
   const labelHtml = `
     <span class="${isSelected ? 'selected-label' : ''}" style="
-      color: ${color};
+      color: white;
       font-size: ${12 + 6 * (4 - size)}px;
       font-weight: bold;
       white-space: nowrap;
-      background: ${isSelected ? '#FFFACD' : 'rgba(255, 255, 255, 0.9)'}; /* Pale yellow for selected */
+      background: ${color ? `color-mix(in srgb, ${color} 75%, transparent)` : 'rgba(0,0,0,0.75)'};
       padding: 2px 6px;
       border-radius: 3px;
       transform: rotate(-${angle}deg);
       transform-origin: ${isLeft ? 'right center' : 'left center'};
       position: absolute;
-      ${isLeft ? 'right: 24px;' : 'left: 24px;'}
+      ${isLeft ? 'right: 8px;' : 'left: 8px;'}
       line-height: 24px;
     ">${label}</span>
   `;
 
-  const html = `
-    <div style="display: flex; align-items: center; width: 24px; height: 24px; position: relative;">
-      ${svg}
-      ${labelHtml}
-    </div>
-  `;
+  // Support align: 'left', 'right', 'or 'center'
+  let html;
+  if (align === 'center') {
+    html = `
+      <div style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; position: relative;">
+        <span class="${isSelected ? 'selected-label' : ''}" style="
+          color: white;
+          font-size: ${12 + 6 * (4 - size)}px;
+          font-weight: bold;
+          white-space: nowrap;
+          background: ${color ? `color-mix(in srgb, ${color} 75%, transparent)` : 'rgba(0,0,0,0.75)'};
+          padding: 2px 6px;
+          border-radius: 3px;
+          transform: rotate(-${angle}deg);
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%) rotate(-${angle}deg);
+          line-height: 24px;
+        ">${label}</span>
+      </div>
+    `;
+  } else {
+    html = `
+      <div style="display: flex; align-items: center; width: 24px; height: 24px; position: relative;">
+        ${labelHtml}
+      </div>
+    `;
+  }
 
   return L.divIcon({
     html,
