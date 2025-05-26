@@ -42,6 +42,11 @@ body {
 
 .map-pane {
   flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .details-pane {
@@ -105,4 +110,37 @@ body {
 /* New style for selected label */
 .selected-label {
   border: 6px double black; /* Strong border */
+}
+
+/* Table view styles */
+.table-view {
+  width: 100%;
+  max-height: 100%;
+  overflow-y: auto;
+  display: block;
+}
+
+.table-view tbody {
+  display: block;
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+.table-view thead, .table-view tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.table-view thead {
+  width: 100%;
+  table-layout: fixed;
+}
+
+/* Table view scrollable wrapper */
+.table-view-scroll-wrapper {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  width: 100%;
 }

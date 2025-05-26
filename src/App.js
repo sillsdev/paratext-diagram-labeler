@@ -87,12 +87,12 @@ const createCustomIcon = (gloss, vernLabel, align = 'right', angle = 0, size = 3
   const labelHtml = `
     <span class="${isSelected ? 'selected-label' : ''}" style="
       color: white;
-      font-size: ${12 + 6 * (4 - size)}px;
+      font-size: ${7 + 5 * (4 - size)}px;
       font-weight: bold;
       white-space: nowrap;
       background: ${color ? `color-mix(in srgb, ${color} 75%, transparent)` : 'rgba(0,0,0,0.75)'};
-      padding: 2px 6px;
-      border-radius: 3px;
+      padding: 0px 6px;
+      border-radius: 10px;
       transform: rotate(-${angle}deg);
       transform-origin: ${isLeft ? 'right center' : 'left center'};
       position: absolute;
@@ -108,12 +108,12 @@ const createCustomIcon = (gloss, vernLabel, align = 'right', angle = 0, size = 3
       <div style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; position: relative;">
         <span class="${isSelected ? 'selected-label' : ''}" style="
           color: white;
-          font-size: ${12 + 6 * (4 - size)}px;
+          font-size: ${7 + 5 * (4 - size)}px;
           font-weight: bold;
           white-space: nowrap;
           background: ${color ? `color-mix(in srgb, ${color} 75%, transparent)` : 'rgba(0,0,0,0.75)'};
-          padding: 2px 6px;
-          border-radius: 3px;
+          padding: 0px 6px;
+          border-radius: 10px;
           transform: rotate(-${angle}deg);
           position: absolute;
           left: 50%;
@@ -399,7 +399,7 @@ function App() {
       }
     }, [selectedLocation, locations]);
     return (
-      <div style={{ padding: 6 }}>
+      <div className="table-view-scroll-wrapper">
         <table className="table-view" style={{ borderCollapse: 'collapse' }}>
           <thead>
             <tr>
