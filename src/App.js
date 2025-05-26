@@ -10,7 +10,7 @@ import { getMapData } from './MapData';
 
 const mapBibTerms = new MapBibTerms();
 
-var usfm = String.raw`\zdiagram-s |template="SMR1_185wbt - Philips Travels [sm]"\* 
+var usfm = String.raw`\zdiagram-s |template="SMR1_075wbt - Conquest Canaan"\* 
 \fig |src="185wbt - Philips Travels [sm] (fcr) @en.jpg" size="span" loc="paw" copy="WBT" ref="8:5-40"\fig*
 \zlabel |key="philipstravels_title" termid="philipstravels_title" gloss="Philip’s Travels" label=""\*
 \zlabel |key="jerusalem_nt" termid="Ἱεροσόλυμα-1" gloss="Jerusalem" label="Yarūśalēma"\*
@@ -85,17 +85,21 @@ const createCustomIcon = (gloss, vernLabel, align = 'right', angle = 0, size = 3
 
   const isLeft = align === 'left';
   const isCenter = align === 'center';
-
-  // Common style properties
+  const labelScale = 0.4; // Scale factor for label size
+  // Base font size in px (matches your app's base font size)
+  const baseFontSize = 12 * labelScale;
+  // Calculate scale factor for font size (matches previous logic)
+  const fontSizePx = baseFontSize * (0.7 + 0.5 * (4 - size));
+  // Use em units for all scalable properties
   const baseStyle = [
     'color: white;',
-    `font-size: ${7 + 5 * (4 - size)}px;`,
+    `font-size: ${fontSizePx}px;`,
     'font-weight: bold;',
     'white-space: nowrap;',
     `background: ${color ? `color-mix(in srgb, ${color} 75%, transparent)` : 'rgba(0,0,0,0.75)'};`,
-    'padding: 0px 6px;',
-    'border-radius: 10px;',
-    'line-height: 24px;',
+    'padding: 0 0.5em;', // 0px top/bottom, 0.5em left/right
+    'border-radius: 0.83em;', // 10px if font-size is 12px
+    'line-height: 2em;', // 24px if font-size is 12px
     'position: absolute;'
   ];
   // Alignment-specific style properties
@@ -109,13 +113,13 @@ const createCustomIcon = (gloss, vernLabel, align = 'right', angle = 0, size = 3
     baseStyle.push(
       `transform: rotate(-${angle}deg);`,
       `transform-origin: ${isLeft ? 'left center' : 'right center'};`,
-      isLeft ? 'left: 8px;' : 'right: 8px;'
+      isLeft ? 'left: 0.67em;' : 'right: 0.67em;'
     );
   }
   const spanStyle = baseStyle.join(' ');
 
   const html = `
-    <div style="display: flex; align-items: center;${isCenter ? ' justify-content: center;' : ''} width: 24px; height: 24px; position: relative;">
+    <div style="display: flex; align-items: center;${isCenter ? ' justify-content: center;' : ''} width: 2em; height: 2em; position: relative;">
       <span class="${isSelected ? 'selected-label' : ''}" style="${spanStyle}">${label}</span>
     </div>
   `;
@@ -123,9 +127,9 @@ const createCustomIcon = (gloss, vernLabel, align = 'right', angle = 0, size = 3
   return L.divIcon({
     html,
     className: '',
-    iconSize: [120, 24],
-    iconAnchor: [12, 12],
-    popupAnchor: [isLeft ? 60 : -24, -12],
+    iconSize: [10 * (fontSizePx / baseFontSize), 2 * fontSizePx], // scale icon size with font size
+    iconAnchor: [1 * (fontSizePx / baseFontSize), 1 * fontSizePx],
+    popupAnchor: [isLeft ? 5 * (fontSizePx / baseFontSize) : -2 * (fontSizePx / baseFontSize), -1 * fontSizePx],
   });
 };
 
