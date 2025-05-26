@@ -728,6 +728,10 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
     alert('Settings clicked');
   };
 
+  // --- Template info/browse group ---
+  // Access the template name from the global map object
+  const templateName = map.template || '(no template)';
+
   // Only show the button row if in USFM view
   if (mapPaneView === 2) {
     return (
@@ -879,6 +883,18 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
           </button>
         </div>
       )}
+
+      {/* Template info/browse group */}
+      <div className="details-group-frame" style={{ border: '1px solid #ccc', borderRadius: 6, marginBottom: 16, padding: 8, background: '#f9f9f9', display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <span style={{ fontWeight: 'bold', color: 'black', fontSize: '0.6em' }}>{templateName}</span>
+        <button title="Template info" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginLeft: 8 }}>
+          <span role="img" aria-label="info" style={{ fontSize: '1.2em', color: '#6cf' }}>ℹ️</span>
+        </button>
+        <button title="Browse for template" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginLeft: 8 }}>
+          <span role="img" aria-label="browse" style={{ fontSize: '1.2em', color: '#fc6' }}>📂</span>
+        </button>
+      </div>
+
       {/* Status Tally Table */}
       <div style={{ border: '1px solid #ccc', borderRadius: 6, marginBottom: 16, padding: 8, background: '#f9f9f9' }}>
         <table >
