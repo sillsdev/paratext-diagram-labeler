@@ -77,59 +77,48 @@ L.Icon.Default.mergeOptions({
 const createCustomIcon = (gloss, vernLabel, align = 'right', angle = 0, size = 3, color, isSelected = false) => {
   const label = vernLabel || `(${gloss})`;
 
-  const svg = `
-    <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="12" cy="12" r="10" fill="${color}" fill-opacity="1" stroke="black" stroke-width="2"/>
-    </svg>
-  `;
+  // const svg = `
+  //   <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  //     <circle cx="12" cy="12" r="10" fill="${color}" fill-opacity="1" stroke="black" stroke-width="2"/>
+  //   </svg>
+  // `;
 
   const isLeft = align === 'left';
-  const labelHtml = `
-    <span class="${isSelected ? 'selected-label' : ''}" style="
-      color: white;
-      font-size: ${7 + 5 * (4 - size)}px;
-      font-weight: bold;
-      white-space: nowrap;
-      background: ${color ? `color-mix(in srgb, ${color} 75%, transparent)` : 'rgba(0,0,0,0.75)'};
-      padding: 0px 6px;
-      border-radius: 10px;
-      transform: rotate(-${angle}deg);
-      transform-origin: ${isLeft ? 'left center' : 'right center'};
-      position: absolute;
-      ${isLeft ? 'left: 8px;' : 'right: 8px;'}
-      line-height: 24px;
-    ">${label}</span>
-  `;
+  const isCenter = align === 'center';
 
-  // Support align: 'left', 'right', 'or 'center'
-  let html;
-  if (align === 'center') {
-    html = `
-      <div style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; position: relative;">
-        <span class="${isSelected ? 'selected-label' : ''}" style="
-          color: white;
-          font-size: ${7 + 5 * (4 - size)}px;
-          font-weight: bold;
-          white-space: nowrap;
-          background: ${color ? `color-mix(in srgb, ${color} 75%, transparent)` : 'rgba(0,0,0,0.75)'};
-          padding: 0px 6px;
-          border-radius: 10px;
-          transform: rotate(-${angle}deg);
-          position: absolute;
-          left: 50%;
-          top: 50%;
-          transform: translate(-50%, -50%) rotate(-${angle}deg);
-          line-height: 24px;
-        ">${label}</span>
-      </div>
-    `;
+  // Common style properties
+  const baseStyle = [
+    'color: white;',
+    `font-size: ${7 + 5 * (4 - size)}px;`,
+    'font-weight: bold;',
+    'white-space: nowrap;',
+    `background: ${color ? `color-mix(in srgb, ${color} 75%, transparent)` : 'rgba(0,0,0,0.75)'};`,
+    'padding: 0px 6px;',
+    'border-radius: 10px;',
+    'line-height: 24px;',
+    'position: absolute;'
+  ];
+  // Alignment-specific style properties
+  if (isCenter) {
+    baseStyle.push(
+      `left: 50%;`,
+      `top: 50%;`,
+      `transform: translate(-50%, -50%) rotate(-${angle}deg);`
+    );
   } else {
-    html = `
-      <div style="display: flex; align-items: center; width: 24px; height: 24px; position: relative;">
-        ${labelHtml}
-      </div>
-    `;
+    baseStyle.push(
+      `transform: rotate(-${angle}deg);`,
+      `transform-origin: ${isLeft ? 'left center' : 'right center'};`,
+      isLeft ? 'left: 8px;' : 'right: 8px;'
+    );
   }
+  const spanStyle = baseStyle.join(' ');
+
+  const html = `
+    <div style="display: flex; align-items: center;${isCenter ? ' justify-content: center;' : ''} width: 24px; height: 24px; position: relative;">
+      <span class="${isSelected ? 'selected-label' : ''}" style="${spanStyle}">${label}</span>
+    </div>
+  `;
 
   return L.divIcon({
     html,
