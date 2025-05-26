@@ -912,6 +912,8 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
             <h4 style={{ marginTop: 0}}>{templateName}</h4>
             {templateData.title && <p style={{ margin: '8px 0', fontWeight: 'bold', fontStyle: 'italic'}}>{templateData.title}</p>}
             {templateData.description && <p style={{ margin: '8px 0' }}>{templateData.description}</p>}
+            {templateData.mapTypes && <div style={{ margin: '8px 0' }}><b>Base layer types:</b> {templateData.mapTypes}</div>}
+            {templateData.formats && <div style={{ margin: '8px 0' }}><b>File formats:</b> {templateData.formats}</div>}
             {templateData.owner && <div style={{ margin: '8px 0' }}><b>Owner:</b> {templateData.owner}</div>}
             {templateData.ownerRules && (
               <div style={{ margin: '8px 0' }}>
