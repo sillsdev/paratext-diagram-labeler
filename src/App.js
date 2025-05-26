@@ -685,6 +685,8 @@ function MapPane({ imageUrl, locations, onSelectLocation, selectedLocation }) {
 function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, onSaveRenderings, termRenderings, locations, onSwitchView, mapPaneView, onSetView }) {
   const [vernacular, setVernacular] = useState(selectedLocation?.vernLabel || '');
   const inputRef = useRef(null);
+  const [showTemplateInfo, setShowTemplateInfo] = useState(false);
+  const templateData = getMapData(map.template) || {};
 
   useEffect(() => {
     setVernacular(selectedLocation?.vernLabel || '');
@@ -887,13 +889,38 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
       {/* Template info/browse group */}
       <div className="details-group-frame" style={{ border: '1px solid #ccc', borderRadius: 6, marginBottom: 16, padding: 8, background: '#f9f9f9', display: 'flex', alignItems: 'center', gap: '12px' }}>
         <span style={{ fontWeight: 'bold', color: 'black', fontSize: '0.6em' }}>{templateName}</span>
-        <button title="Template info" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginLeft: 8 }}>
+        <button
+          title="Template info"
+          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginLeft: 8 }}
+          onClick={() => setShowTemplateInfo(true)}
+        >
           <span role="img" aria-label="info" style={{ fontSize: '1.2em', color: '#6cf' }}>ℹ️</span>
         </button>
         <button title="Browse for template" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginLeft: 8 }}>
           <span role="img" aria-label="browse" style={{ fontSize: '1.2em', color: '#fc6' }}>📂</span>
         </button>
       </div>
+
+      {/* Modal dialog for template info */}
+      {showTemplateInfo && (
+        <div style={{
+          position: 'fixed', left: 0, top: 0, width: '100vw', height: '100vh', zIndex: 1000,
+          background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center'
+        }}>
+          <div style={{ background: 'white', borderRadius: 10, padding: 24, minWidth: 520, maxWidth: 900, boxShadow: '0 4px 24px #0008', position: 'relative' }}>
+            <button onClick={() => setShowTemplateInfo(false)} style={{ position: 'absolute', top: 8, right: 12, background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#888' }} title="Close">×</button>
+            <h4 style={{ marginTop: 0}}>{templateName}</h4>
+            {templateData.title && <p style={{ margin: '8px 0', fontWeight: 'bold', fontStyle: 'italic'}}>{templateData.title}</p>}
+            {templateData.description && <p style={{ margin: '8px 0' }}>{templateData.description}</p>}
+            {templateData.owner && <div style={{ margin: '8px 0' }}><b>Owner:</b> {templateData.owner}</div>}
+            {templateData.ownerRules && (
+              <div style={{ margin: '8px 0' }}>
+                <b>Usage and Attribution Rules:</b> <a href={templateData.ownerRules} target="_blank" rel="noopener noreferrer">{templateData.ownerRules}</a>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Status Tally Table */}
       <div style={{ border: '1px solid #ccc', borderRadius: 6, marginBottom: 16, padding: 8, background: '#f9f9f9' }}>
