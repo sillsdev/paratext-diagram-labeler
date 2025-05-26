@@ -1,10 +1,10 @@
 {
-    "005wbt - Gen10 Descendants Of Noah": {
+    "SMR1_005wbt - Gen10 Descendants Of Noah": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_005wbt - Gen10 Descendants Of Noah.jpg",
+        "imgFilename": "SMR1_005wbt - Gen10 Descendants Of Noah.jpg",
         "width": 1000,
         "height": 600,
         "mapTypes": "fcr bbr bbf bwr bwf",
@@ -287,12 +287,12 @@
             }
         ]
     },
-    "015wbt - Ancient World [bwf]": {
+    "SMR1_015wbt - Ancient World [bwf]": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_015wbt - Ancient World [bwf].jpg",
+        "imgFilename": "SMR1_015wbt - Ancient World [bwf].jpg",
         "width": 1000,
         "height": 628,
         "mapTypes": "0",
@@ -960,12 +960,12 @@
             }
         ]
     },
-    "015wbt - Ancient World": {
+    "SMR1_015wbt - Ancient World": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_015wbt - Ancient World.jpg",
+        "imgFilename": "SMR1_015wbt - Ancient World.jpg",
         "width": 1000,
         "height": 600,
         "mapTypes": "fcr bbr bbf bwr bwf",
@@ -1699,12 +1699,12 @@
             }
         ]
     },
-    "025wbt - Abraham To Canaan": {
+    "SMR1_025wbt - Abraham To Canaan": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_025wbt - Abraham To Canaan.jpg",
+        "imgFilename": "SMR1_025wbt - Abraham To Canaan.jpg",
         "width": 1000,
         "height": 675,
         "mapTypes": "fcr mcr bbr bbf bwr bwf",
@@ -1921,12 +1921,12 @@
             }
         ]
     },
-    "028wbt - Abraham To Egypt": {
+    "SMR1_028wbt - Abraham To Egypt": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_028wbt - Abraham To Egypt.jpg",
+        "imgFilename": "SMR1_028wbt - Abraham To Egypt.jpg",
         "width": 1000,
         "height": 673,
         "mapTypes": "fcr mcr bbr bbf bwr bwf",
@@ -2066,12 +2066,12 @@
             }
         ]
     },
-    "035wbt - Gen28 Jacob To Haran": {
+    "SMR1_035wbt - Gen28 Jacob To Haran": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_035wbt - Gen28 Jacob To Haran.jpg",
+        "imgFilename": "SMR1_035wbt - Gen28 Jacob To Haran.jpg",
         "width": 942,
         "height": 1000,
         "mapTypes": "0",
@@ -2178,12 +2178,12 @@
             }
         ]
     },
-    "038wbt - Gen32-33 Jacob Returns": {
+    "SMR1_038wbt - Gen32-33 Jacob Returns": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_038wbt - Gen32-33 Jacob Returns.jpg",
+        "imgFilename": "SMR1_038wbt - Gen32-33 Jacob Returns.jpg",
         "width": 845,
         "height": 1000,
         "mapTypes": "fcr bbr bbf bwr bwf",
@@ -2378,12 +2378,12 @@
             }
         ]
     },
-    "055wbt - Exodus": {
+    "SMR1_055wbt - Exodus": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_055wbt - Exodus.jpg",
+        "imgFilename": "SMR1_055wbt - Exodus.jpg",
         "width": 1000,
         "height": 760,
         "mapTypes": "fcr bbr bbf bwr bwf",
@@ -2809,12 +2809,12 @@
             }
         ]
     },
-    "065wbt - Ruth": {
+    "SMR1_065wbt - Ruth": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_065wbt - Ruth.jpg",
+        "imgFilename": "SMR1_065wbt - Ruth.jpg",
         "width": 1000,
         "height": 810,
         "mapTypes": "mcr bwr",
@@ -2976,12 +2976,12 @@
             }
         ]
     },
-    "075wbt - Conquest Canaan": {
+    "SMR1_075wbt - Conquest Canaan": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_075wbt - Conquest Canaan.jpg",
+        "imgFilename": "SMR1_075wbt - Conquest Canaan.jpg",
         "width": 600,
         "height": 1000,
         "mapTypes": "fcr bbr bbf bwr bwf",
@@ -4078,12 +4078,12 @@
             }
         ]
     },
-    "085wbt - Canaan": {
+    "SMR1_085wbt - Canaan": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_085wbt - Canaan.jpg",
+        "imgFilename": "SMR1_085wbt - Canaan.jpg",
         "width": 633,
         "height": 1000,
         "mapTypes": "bwf",
@@ -4740,12 +4740,12 @@
             }
         ]
     },
-    "095wbt - Kingdoms Israel Judah [bwf]": {
+    "SMR1_095wbt - Kingdoms Israel Judah [bwf]": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_095wbt - Kingdoms Israel Judah [bwf].jpg",
+        "imgFilename": "SMR1_095wbt - Kingdoms Israel Judah [bwf].jpg",
         "width": 632,
         "height": 1000,
         "mapTypes": "0",
@@ -5292,12 +5292,12 @@
             }
         ]
     },
-    "095wbt - Kingdoms Israel Judah": {
+    "SMR1_095wbt - Kingdoms Israel Judah": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_095wbt - Kingdoms Israel Judah.jpg",
+        "imgFilename": "SMR1_095wbt - Kingdoms Israel Judah.jpg",
         "width": 600,
         "height": 1000,
         "mapTypes": "fcr bbr bbf bwr bwf",
@@ -6207,12 +6207,12 @@
             }
         ]
     },
-    "105gt - Persian Empire": {
+    "SMR1_105gt - Persian Empire": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_105gt - Persian Empire.jpg",
+        "imgFilename": "SMR1_105gt - Persian Empire.jpg",
         "width": 1000,
         "height": 650,
         "mapTypes": "0",
@@ -6671,12 +6671,12 @@
             }
         ]
     },
-    "108gt - Jewish Calendar": {
+    "SMR1_108gt - Jewish Calendar": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_108gt - Jewish Calendar.jpg",
+        "imgFilename": "SMR1_108gt - Jewish Calendar.jpg",
         "width": 1000,
         "height": 932,
         "mapTypes": "0",
@@ -6816,12 +6816,12 @@
             }
         ]
     },
-    "110hk - Jerusalem Illustration": {
+    "SMR1_110hk - Jerusalem Illustration": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_110hk - Jerusalem Illustration.jpg",
+        "imgFilename": "SMR1_110hk - Jerusalem Illustration.jpg",
         "width": 634,
         "height": 1000,
         "mapTypes": "0",
@@ -7027,12 +7027,12 @@
             }
         ]
     },
-    "115wbt - Jerusalem": {
+    "SMR1_115wbt - Jerusalem": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_115wbt - Jerusalem.jpg",
+        "imgFilename": "SMR1_115wbt - Jerusalem.jpg",
         "width": 667,
         "height": 1000,
         "mapTypes": "bbr bbf bwr",
@@ -7634,12 +7634,12 @@
             }
         ]
     },
-    "120gt - Tabernacle": {
+    "SMR1_120gt - Tabernacle": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_120gt - Tabernacle.jpg",
+        "imgFilename": "SMR1_120gt - Tabernacle.jpg",
         "width": 1000,
         "height": 636,
         "mapTypes": "0",
@@ -7768,12 +7768,12 @@
             }
         ]
     },
-    "125hk - Temple": {
+    "SMR1_125hk - Temple": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_125hk - Temple.jpg",
+        "imgFilename": "SMR1_125hk - Temple.jpg",
         "width": 636,
         "height": 1000,
         "mapTypes": "0",
@@ -7847,12 +7847,12 @@
             }
         ]
     },
-    "135hk - Temple Layout": {
+    "SMR1_135hk - Temple Layout": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_135hk - Temple Layout.jpg",
+        "imgFilename": "SMR1_135hk - Temple Layout.jpg",
         "width": 563,
         "height": 1000,
         "mapTypes": "0",
@@ -7970,12 +7970,12 @@
             }
         ]
     },
-    "135mh - Temple Layout": {
+    "SMR1_135mh - Temple Layout": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_135mh - Temple Layout.jpg",
+        "imgFilename": "SMR1_135mh - Temple Layout.jpg",
         "width": 1000,
         "height": 869,
         "mapTypes": "0",
@@ -8093,12 +8093,12 @@
             }
         ]
     },
-    "138gt - Ezekiels Temple": {
+    "SMR1_138gt - Ezekiels Temple": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_138gt - Ezekiels Temple.jpg",
+        "imgFilename": "SMR1_138gt - Ezekiels Temple.jpg",
         "width": 1000,
         "height": 575,
         "mapTypes": "0",
@@ -8260,12 +8260,12 @@
             }
         ]
     },
-    "140gt - High Priest": {
+    "SMR1_140gt - High Priest": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_140gt - High Priest.jpg",
+        "imgFilename": "SMR1_140gt - High Priest.jpg",
         "width": 694,
         "height": 1000,
         "mapTypes": "0",
@@ -8416,12 +8416,12 @@
             }
         ]
     },
-    "143gt - Roman Soldier": {
+    "SMR1_143gt - Roman Soldier": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_143gt - Roman Soldier.jpg",
+        "imgFilename": "SMR1_143gt - Roman Soldier.jpg",
         "width": 747,
         "height": 1000,
         "mapTypes": "0",
@@ -8517,12 +8517,12 @@
             }
         ]
     },
-    "155wbt - Holy Land [bwf]": {
+    "SMR1_155wbt - Holy Land [bwf]": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_155wbt - Holy Land [bwf].jpg",
+        "imgFilename": "SMR1_155wbt - Holy Land [bwf].jpg",
         "width": 627,
         "height": 1000,
         "mapTypes": "0",
@@ -9102,12 +9102,12 @@
             }
         ]
     },
-    "155wbt - Holy Land": {
+    "SMR1_155wbt - Holy Land": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_155wbt - Holy Land.jpg",
+        "imgFilename": "SMR1_155wbt - Holy Land.jpg",
         "width": 600,
         "height": 1000,
         "mapTypes": "fcr bbr bbf bwr bwf",
@@ -9544,12 +9544,12 @@
             }
         ]
     },
-    "165wbt - Christs Ministry": {
+    "SMR1_165wbt - Christs Ministry": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_165wbt - Christs Ministry.jpg",
+        "imgFilename": "SMR1_165wbt - Christs Ministry.jpg",
         "width": 600,
         "height": 1000,
         "mapTypes": "fcr bbr bbf bwr bwf",
@@ -10041,12 +10041,12 @@
             }
         ]
     },
-    "175wbt - Pentecost [bwf-dark]": {
+    "SMR1_175wbt - Pentecost [bwf-dark]": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_175wbt - Pentecost [bwf-dark].jpg",
+        "imgFilename": "SMR1_175wbt - Pentecost [bwf-dark].jpg",
         "width": 1000,
         "height": 671,
         "mapTypes": "0",
@@ -10384,12 +10384,12 @@
             }
         ]
     },
-    "175wbt - Pentecost [bwf-light]": {
+    "SMR1_175wbt - Pentecost [bwf-light]": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_175wbt - Pentecost [bwf-light].jpg",
+        "imgFilename": "SMR1_175wbt - Pentecost [bwf-light].jpg",
         "width": 1000,
         "height": 627,
         "mapTypes": "0",
@@ -10661,12 +10661,12 @@
             }
         ]
     },
-    "185wbt - Philips Travels [sm-bwf]": {
+    "SMR1_185wbt - Philips Travels [sm-bwf]": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_185wbt - Philips Travels [sm-bwf].jpg",
+        "imgFilename": "SMR1_185wbt - Philips Travels [sm-bwf].jpg",
         "width": 999,
         "height": 1000,
         "mapTypes": "0",
@@ -10905,12 +10905,12 @@
             }
         ]
     },
-    "185wbt - Philips Travels [sm]": {
+    "SMR1_185wbt - Philips Travels [sm]": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_185wbt - Philips Travels [sm].jpg",
+        "imgFilename": "SMR1_185wbt - Philips Travels [sm].jpg",
         "width": 1000,
         "height": 852,
         "mapTypes": "fcr bbr bbf bwr bwf",
@@ -11149,12 +11149,12 @@
             }
         ]
     },
-    "185wbt - Philips Travels": {
+    "SMR1_185wbt - Philips Travels": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_185wbt - Philips Travels.jpg",
+        "imgFilename": "SMR1_185wbt - Philips Travels.jpg",
         "width": 600,
         "height": 1000,
         "mapTypes": "fcr bbr bbf bwr bwf",
@@ -11470,12 +11470,12 @@
             }
         ]
     },
-    "195wbt - Paul journey 1 [bwf-dark]": {
+    "SMR1_195wbt - Paul journey 1 [bwf-dark]": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_195wbt - Paul journey 1 [bwf-dark].jpg",
+        "imgFilename": "SMR1_195wbt - Paul journey 1 [bwf-dark].jpg",
         "width": 1000,
         "height": 923,
         "mapTypes": "0",
@@ -11890,12 +11890,12 @@
             }
         ]
     },
-    "195wbt - Paul journey 1 [bwf-light]": {
+    "SMR1_195wbt - Paul journey 1 [bwf-light]": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_195wbt - Paul journey 1 [bwf-light].jpg",
+        "imgFilename": "SMR1_195wbt - Paul journey 1 [bwf-light].jpg",
         "width": 1000,
         "height": 620,
         "mapTypes": "0",
@@ -12134,12 +12134,12 @@
             }
         ]
     },
-    "195wbt - Paul journey 1 [bwr]": {
+    "SMR1_195wbt - Paul journey 1 [bwr]": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_195wbt - Paul journey 1 [bwr].jpg",
+        "imgFilename": "SMR1_195wbt - Paul journey 1 [bwr].jpg",
         "width": 830,
         "height": 1000,
         "mapTypes": "0",
@@ -12411,12 +12411,12 @@
             }
         ]
     },
-    "205wbt - Paul journey 2 [bwf-dark]": {
+    "SMR1_205wbt - Paul journey 2 [bwf-dark]": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_205wbt - Paul journey 2 [bwf-dark].jpg",
+        "imgFilename": "SMR1_205wbt - Paul journey 2 [bwf-dark].jpg",
         "width": 1000,
         "height": 927,
         "mapTypes": "0",
@@ -12919,12 +12919,12 @@
             }
         ]
     },
-    "205wbt - Paul journey 2 [bwf-light]": {
+    "SMR1_205wbt - Paul journey 2 [bwf-light]": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_205wbt - Paul journey 2 [bwf-light].jpg",
+        "imgFilename": "SMR1_205wbt - Paul journey 2 [bwf-light].jpg",
         "width": 1000,
         "height": 650,
         "mapTypes": "0",
@@ -13306,12 +13306,12 @@
             }
         ]
     },
-    "205wbt - Paul journey 2 [bwr]": {
+    "SMR1_205wbt - Paul journey 2 [bwr]": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_205wbt - Paul journey 2 [bwr].jpg",
+        "imgFilename": "SMR1_205wbt - Paul journey 2 [bwr].jpg",
         "width": 1000,
         "height": 854,
         "mapTypes": "bwr",
@@ -13858,12 +13858,12 @@
             }
         ]
     },
-    "215wbt - Paul journey 3 [bwf-dark]": {
+    "SMR1_215wbt - Paul journey 3 [bwf-dark]": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_215wbt - Paul journey 3 [bwf-dark].jpg",
+        "imgFilename": "SMR1_215wbt - Paul journey 3 [bwf-dark].jpg",
         "width": 1000,
         "height": 923,
         "mapTypes": "0",
@@ -14300,12 +14300,12 @@
             }
         ]
     },
-    "215wbt - Paul journey 3 [bwf-light]": {
+    "SMR1_215wbt - Paul journey 3 [bwf-light]": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_215wbt - Paul journey 3 [bwf-light].jpg",
+        "imgFilename": "SMR1_215wbt - Paul journey 3 [bwf-light].jpg",
         "width": 1000,
         "height": 644,
         "mapTypes": "0",
@@ -14742,12 +14742,12 @@
             }
         ]
     },
-    "215wbt - Paul journey 3 [bwr]": {
+    "SMR1_215wbt - Paul journey 3 [bwr]": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_215wbt - Paul journey 3 [bwr].jpg",
+        "imgFilename": "SMR1_215wbt - Paul journey 3 [bwr].jpg",
         "width": 1000,
         "height": 862,
         "mapTypes": "bwr",
@@ -15239,12 +15239,12 @@
             }
         ]
     },
-    "225wbt - Paul to Rome [bwf-dark]": {
+    "SMR1_225wbt - Paul to Rome [bwf-dark]": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_225wbt - Paul to Rome [bwf-dark].jpg",
+        "imgFilename": "SMR1_225wbt - Paul to Rome [bwf-dark].jpg",
         "width": 1000,
         "height": 692,
         "mapTypes": "0",
@@ -15670,12 +15670,12 @@
             }
         ]
     },
-    "225wbt - Paul to Rome [bwf-light]": {
+    "SMR1_225wbt - Paul to Rome [bwf-light]": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_225wbt - Paul to Rome [bwf-light].jpg",
+        "imgFilename": "SMR1_225wbt - Paul to Rome [bwf-light].jpg",
         "width": 1000,
         "height": 651,
         "mapTypes": "0",
@@ -15991,12 +15991,12 @@
             }
         ]
     },
-    "225wbt - Paul to Rome [bwr]": {
+    "SMR1_225wbt - Paul to Rome [bwr]": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_225wbt - Paul to Rome [bwr].jpg",
+        "imgFilename": "SMR1_225wbt - Paul to Rome [bwr].jpg",
         "width": 1000,
         "height": 672,
         "mapTypes": "0",
@@ -16477,12 +16477,12 @@
             }
         ]
     },
-    "235wbt - Paul Journeys [2pg]": {
+    "SMR1_235wbt - Paul Journeys [2pg]": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_235wbt - Paul Journeys [2pg].jpg",
+        "imgFilename": "SMR1_235wbt - Paul Journeys [2pg].jpg",
         "width": 1000,
         "height": 769,
         "mapTypes": "fcr bbr bbf bwr bwf",
@@ -17458,12 +17458,12 @@
             }
         ]
     },
-    "235wbt - Paul Journeys [bwf-light]": {
+    "SMR1_235wbt - Paul Journeys [bwf-light]": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_235wbt - Paul Journeys [bwf-light].jpg",
+        "imgFilename": "SMR1_235wbt - Paul Journeys [bwf-light].jpg",
         "width": 1000,
         "height": 734,
         "mapTypes": "0",
@@ -18648,12 +18648,12 @@
             }
         ]
     },
-    "245wbt - Seven Churches [bwf-dark]": {
+    "SMR1_245wbt - Seven Churches [bwf-dark]": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_245wbt - Seven Churches [bwf-dark].jpg",
+        "imgFilename": "SMR1_245wbt - Seven Churches [bwf-dark].jpg",
         "width": 1000,
         "height": 791,
         "mapTypes": "0",
@@ -18793,12 +18793,12 @@
             }
         ]
     },
-    "245wbt - Seven Churches": {
+    "SMR1_245wbt - Seven Churches": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_245wbt - Seven Churches.jpg",
+        "imgFilename": "SMR1_245wbt - Seven Churches.jpg",
         "width": 923,
         "height": 1000,
         "mapTypes": "fcr bwr bwf",
@@ -18927,12 +18927,12 @@
             }
         ]
     },
-    "265wbt - World": {
+    "SMR1_265wbt - World": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_265wbt - World.jpg",
+        "imgFilename": "SMR1_265wbt - World.jpg",
         "width": 1000,
         "height": 600,
         "mapTypes": "mcr bbr bbf bwr bwf",
@@ -19105,12 +19105,12 @@
             }
         ]
     },
-    "265wbt - World [flipped]": {
+    "SMR1_265wbt - World [flipped]": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_265wbt - World [flipped].jpg",
+        "imgFilename": "SMR1_265wbt - World [flipped].jpg",
         "width": 1000,
         "height": 600,
         "mapTypes": "mcr fcr",
@@ -19283,12 +19283,12 @@
             }
         ]
     },
-    "275wbt - World Simple": {
+    "SMR1_275wbt - World Simple": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_275wbt - World Simple.jpg",
+        "imgFilename": "SMR1_275wbt - World Simple.jpg",
         "width": 1000,
         "height": 629,
         "mapTypes": "0",
@@ -19340,12 +19340,12 @@
             }
         ]
     },
-    "278wbt - Africa": {
+    "SMR1_278wbt - Africa": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_278wbt - Africa.jpg",
+        "imgFilename": "SMR1_278wbt - Africa.jpg",
         "width": 601,
         "height": 1000,
         "mapTypes": "bbf bwf",
@@ -19397,12 +19397,12 @@
             }
         ]
     },
-    "285wbt - Mediterranean Area": {
+    "SMR1_285wbt - Mediterranean Area": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_285wbt - Mediterranean Area.jpg",
+        "imgFilename": "SMR1_285wbt - Mediterranean Area.jpg",
         "width": 1000,
         "height": 769,
         "mapTypes": "fcr mcr bbr bbf bwr bwf",
@@ -20345,12 +20345,12 @@
             }
         ]
     },
-    "288gt - Roman Empire": {
+    "SMR1_288gt - Roman Empire": {
         "title": "tbd",
         "description": "tbd",
         "owner": "WBT",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR_288gt - Roman Empire.jpg",
+        "imgFilename": "SMR1_288gt - Roman Empire.jpg",
         "width": 1000,
         "height": 767,
         "mapTypes": "0",

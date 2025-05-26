@@ -10,7 +10,7 @@ import { getMapData } from './MapData';
 
 const mapBibTerms = new MapBibTerms();
 
-var usfm = String.raw`\zdiagram-s |template="185wbt - Philips Travels [sm]"\* 
+var usfm = String.raw`\zdiagram-s |template="SMR1_185wbt - Philips Travels [sm]"\* 
 \fig |src="185wbt - Philips Travels [sm] (fcr) @en.jpg" size="span" loc="paw" copy="WBT" ref="8:5-40"\fig*
 \zlabel |key="philipstravels_title" termid="philipstravels_title" gloss="Philip’s Travels" label=""\*
 \zlabel |key="jerusalem_nt" termid="Ἱεροσόλυμα-1" gloss="Jerusalem" label="Yarūśalēma"\*
@@ -543,14 +543,14 @@ function App() {
     // Optionally: do other OK logic here
     alert('OK clicked');
   }, [mapPaneView, updateMapFromUsfm]);
-
+  console.log("map: ", map);
   return (
     <div className="app-container">
       <div className="top-section" style={{ flex: `0 0 ${topHeight}%` }}>
         <div className="map-pane" style={{ flex: `0 0 ${mapWidth}%` }}>
           {mapPaneView === 0 && map.mapView && (
             <MapPane
-              imageUrl="/assets/SMP2_185wbt-sm.jpg"
+              imageUrl={map.imgFilename ? `/assets/maps/${map.imgFilename}` : ''}
               locations={locations}
               onSelectLocation={handleSelectLocation}
               selectedLocation={selectedLocation}
@@ -612,8 +612,8 @@ function App() {
 }
 
 function MapPane({ imageUrl, locations, onSelectLocation, selectedLocation }) {
-  const imageHeight = 852;
-  const imageWidth = 1000;
+  const imageHeight = map.height;
+  const imageWidth = map.width;
   const bounds = useMemo(() => [[0, 0], [imageHeight, imageWidth]], [imageHeight, imageWidth]);
   const crs = L.CRS.Simple;
 
