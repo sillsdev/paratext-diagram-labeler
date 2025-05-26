@@ -1,5 +1,7 @@
-export const allMapData = {
-    "SMP2_185wbt-sm": {
+const allMapData = require('./data/all-map-data.json');
+
+const sallMapData = {
+    "185wbt - Philips Travels [sm]": {
         "id": "SMP2_185wbt-sm",
         "title": "Philip's Travels",
         "owner": "WBT",
@@ -223,3 +225,15 @@ export const allMapData = {
         ]
     },
 }
+
+function getMapData(mapId) {
+    // Dynamically import the JSON file and return the requested map data
+    try {
+        return allMapData[mapId] || null;
+    } catch (e) {
+        console.error('Failed to load all-map-data.json:', e);
+        return null;
+    }
+}
+
+export { getMapData };

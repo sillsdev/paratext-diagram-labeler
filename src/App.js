@@ -5,12 +5,12 @@ import L from 'leaflet';
 import TermRenderings from './TermRenderings';
 import './App.css';
 import MapBibTerms from './MapBibTerms';
-import { allMapData } from './AllMapData.json';
+import { getMapData } from './MapData';
 //const mapDef = require(mapDefFilename);
 
 const mapBibTerms = new MapBibTerms();
 
-var usfm = String.raw`\zdiagram-s |template="SMP2_185wbt-sm"\* 
+var usfm = String.raw`\zdiagram-s |template="185wbt - Philips Travels [sm]"\* 
 \fig |src="185wbt - Philips Travels [sm] (fcr) @en.jpg" size="span" loc="paw" copy="WBT" ref="8:5-40"\fig*
 \zlabel |key="philipstravels_title" termid="philipstravels_title" gloss="Philip’s Travels" label=""\*
 \zlabel |key="jerusalem_nt" termid="Ἱεροσόλυμα-1" gloss="Jerusalem" label="Yarūśalēma"\*
@@ -39,7 +39,7 @@ function mapFromUsfm(usfm) {
   }
   
   try {
-      const mapDefData = allMapData[map.template];
+      const mapDefData = getMapData(map.template);
       Object.keys(mapDefData).forEach(key => {
         if (key !== 'labels') {
           map[key] = mapDefData[key];
@@ -94,9 +94,9 @@ const createCustomIcon = (gloss, vernLabel, align = 'right', angle = 0, size = 3
       padding: 0px 6px;
       border-radius: 10px;
       transform: rotate(-${angle}deg);
-      transform-origin: ${isLeft ? 'right center' : 'left center'};
+      transform-origin: ${isLeft ? 'left center' : 'right center'};
       position: absolute;
-      ${isLeft ? 'right: 8px;' : 'left: 8px;'}
+      ${isLeft ? 'left: 8px;' : 'right: 8px;'}
       line-height: 24px;
     ">${label}</span>
   `;
@@ -136,7 +136,7 @@ const createCustomIcon = (gloss, vernLabel, align = 'right', angle = 0, size = 3
     className: '',
     iconSize: [120, 24],
     iconAnchor: [12, 12],
-    popupAnchor: [isLeft ? -24 : 60, -12],
+    popupAnchor: [isLeft ? 60 : -24, -12],
   });
 };
 
