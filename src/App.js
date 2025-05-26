@@ -74,18 +74,10 @@ L.Icon.Default.mergeOptions({
 });
 
 // Function to create custom SVG icon with permanent label
-const createCustomIcon = (gloss, vernLabel, align = 'right', angle = 0, size = 3, color, isSelected = false) => {
+const createCustomIcon = (gloss, vernLabel, align = 'right', angle = 0, size = 3, color, isSelected = false, labelScale = 1) => {
   const label = vernLabel || `(${gloss})`;
-
-  // const svg = `
-  //   <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-  //     <circle cx="12" cy="12" r="10" fill="${color}" fill-opacity="1" stroke="black" stroke-width="2"/>
-  //   </svg>
-  // `;
-
   const isLeft = align === 'left';
   const isCenter = align === 'center';
-  const labelScale = 0.4; // Scale factor for label size
   // Base font size in px (matches your app's base font size)
   const baseFontSize = 12 * labelScale;
   // Calculate scale factor for font size (matches previous logic)
@@ -102,7 +94,6 @@ const createCustomIcon = (gloss, vernLabel, align = 'right', angle = 0, size = 3
     'line-height: 2em;', // 24px if font-size is 12px
     'position: absolute;'
   ];
-  // Alignment-specific style properties
   if (isCenter) {
     baseStyle.push(
       `left: 50%;`,
@@ -117,17 +108,15 @@ const createCustomIcon = (gloss, vernLabel, align = 'right', angle = 0, size = 3
     );
   }
   const spanStyle = baseStyle.join(' ');
-
   const html = `
     <div style="display: flex; align-items: center;${isCenter ? ' justify-content: center;' : ''} width: 2em; height: 2em; position: relative;">
       <span class="${isSelected ? 'selected-label' : ''}" style="${spanStyle}">${label}</span>
     </div>
   `;
-
   return L.divIcon({
     html,
     className: '',
-    iconSize: [10 * (fontSizePx / baseFontSize), 2 * fontSizePx], // scale icon size with font size
+    iconSize: [10 * (fontSizePx / baseFontSize), 2 * fontSizePx],
     iconAnchor: [1 * (fontSizePx / baseFontSize), 1 * fontSizePx],
     popupAnchor: [isLeft ? 5 * (fontSizePx / baseFontSize) : -2 * (fontSizePx / baseFontSize), -1 * fontSizePx],
   });
@@ -181,6 +170,12 @@ function App() {
   const [renderings, setRenderings] = useState('');
   const [isApproved, setIsApproved] = useState(false);
   const [mapPaneView, setMapPaneView] = useState(map.mapView ? 0 : 1); // 0: Map, 1: Table, 2: USFM
+  const [labelScale, setLabelScale] = useState(() => {
+    // Persist labelScale in localStorage
+    const saved = localStorage.getItem('labelScale');
+    return saved ? parseFloat(saved) : 1;
+  });
+  const [showSettings, setShowSettings] = useState(false);
   const isDraggingVertical = useRef(false);
   const isDraggingHorizontal = useRef(false);
   const termRenderings = useMemo(() => new TermRenderings('/data/term-renderings.json'), []);
@@ -558,6 +553,7 @@ function App() {
               locations={locations}
               onSelectLocation={handleSelectLocation}
               selectedLocation={selectedLocation}
+              labelScale={labelScale} // <-- pass labelScale
             />
           )}
           {mapPaneView === 1 && (
@@ -599,6 +595,7 @@ function App() {
               if (mapPaneView === 2) updateMapFromUsfm();
               setMapPaneView(viewIdx);
             }}
+            onShowSettings={() => setShowSettings(true)} // <-- add onShowSettings
           />
         </div>
       </div>
@@ -611,11 +608,12 @@ function App() {
       <div className="bottom-pane" style={{ flex: `0 0 ${100 - topHeight}%` }}>
         <BottomPane termId={selectedLocation?.termId} />
       </div>
+      <SettingsModal open={showSettings} onClose={() => setShowSettings(false)} labelScale={labelScale} setLabelScale={setLabelScale} />
     </div>
   );
 }
 
-function MapPane({ imageUrl, locations, onSelectLocation, selectedLocation }) {
+function MapPane({ imageUrl, locations, onSelectLocation, selectedLocation, labelScale }) {
   const imageHeight = map.height;
   const imageWidth = map.width;
   const bounds = useMemo(() => [[0, 0], [imageHeight, imageWidth]], [imageHeight, imageWidth]);
@@ -670,7 +668,8 @@ function MapPane({ imageUrl, locations, onSelectLocation, selectedLocation }) {
               loc.angle,
               loc.size,
               loc.color || 'gray',
-              selectedLocation && selectedLocation.termId === loc.termId
+              selectedLocation && selectedLocation.termId === loc.termId,
+              labelScale // <-- pass labelScale
             )}
             eventHandlers={{ click: () => onSelectLocation(loc) }}
             aria-label={`Marker for ${loc.gloss}`}
@@ -686,7 +685,7 @@ function MapPane({ imageUrl, locations, onSelectLocation, selectedLocation }) {
   );
 }
 
-function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, onSaveRenderings, termRenderings, locations, onSwitchView, mapPaneView, onSetView }) {
+function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, onSaveRenderings, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings }) {
   const [vernacular, setVernacular] = useState(selectedLocation?.vernLabel || '');
   const inputRef = useRef(null);
   const [showTemplateInfo, setShowTemplateInfo] = useState(false);
@@ -731,7 +730,7 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
     alert('OK clicked');
   };
   const handleSettings = () => {
-    alert('Settings clicked');
+    if (onShowSettings) onShowSettings();
   };
 
   // --- Template info/browse group ---
@@ -989,5 +988,36 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
     </div>
   );
 }
+
+// Settings Modal Dialog
+const SettingsModal = ({ open, onClose, labelScale, setLabelScale }) => {
+  if (!open) return null;
+  return (
+    <div style={{
+      position: 'fixed', left: 0, top: 0, width: '100vw', height: '100vh', zIndex: 2000,
+      background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center'
+    }}>
+      <div style={{ background: 'white', borderRadius: 10, padding: 32, minWidth: 400, maxWidth: 600, boxShadow: '0 4px 24px #0008', position: 'relative' }}>
+        <button onClick={onClose} style={{ position: 'absolute', top: 8, right: 12, background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#888' }} title="Close">×</button>
+        <h3 style={{ marginTop: 0 }}>UI Settings</h3>
+        <div style={{ margin: '24px 0' }}>
+          <label htmlFor="labelScaleSlider" style={{ fontWeight: 'bold', marginRight: 12 }}>Label Size</label>
+          <input
+            id="labelScaleSlider"
+            type="range"
+            min={0.3}
+            max={2}
+            step={0.01}
+            value={labelScale}
+            onChange={e => setLabelScale(parseFloat(e.target.value))}
+            style={{ width: 200, verticalAlign: 'middle' }}
+          />
+          <span style={{ marginLeft: 16, fontFamily: 'monospace' }}>{labelScale.toFixed(2)}x</span>
+        </div>
+        {/* Future: interface language, etc. */}
+      </div>
+    </div>
+  );
+};
 
 export default App;
