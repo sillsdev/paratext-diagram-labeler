@@ -137,10 +137,20 @@ body {
   table-layout: fixed;
 }
 
+.table-view th, .table-view td {
+  padding: 2px 6px;
+}
+
+.table-view input[type="text"] {
+  padding: 2px 4px;
+  height: 1.6em;
+}
+
 /* Table view scrollable wrapper */
 .table-view-scroll-wrapper {
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
   width: 100%;
+  font-size: 0.8em;
 }
