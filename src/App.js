@@ -231,8 +231,8 @@ function App() {
   const handleUpdateVernacular = useCallback((termId, newVernacular) => {
     setLocations(prevLocations => prevLocations.map(loc => {
       if (loc.termId === termId) {
-        const { color } = termRenderings.getStatus(loc.termId, newVernacular);
-        return { ...loc, vernLabel: newVernacular, color };
+        const status = termRenderings.getStatus(loc.termId, newVernacular);
+        return { ...loc, vernLabel: newVernacular, status };
       }
       return loc;
     }));
@@ -317,9 +317,11 @@ function App() {
       const updatedData = { ...termRenderings.data };
       updatedData[selectedLocation.termId] = {
         ...updatedData[selectedLocation.termId],
-        renderings: e.target.value,
+        renderings: e.target.value
       };
       termRenderings.data = updatedData;
+      // Update status for selectedLocation if needed
+      // setSelectedLocation(prev => prev ? { ...prev, status: termRenderings.getStatus(prev.termId, prev.vernLabel) } : prev);
       updateMarkerColor();
     }
   };
@@ -1030,7 +1032,7 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
         />
         <span style={{color: statusValue[status].textColor}}>
           {statusValue[status].text}
-          {status == 2 && (  // If status is "no renderings", show Add to renderings button
+          {status === 2 && (  // If status is "no renderings", show Add to renderings button
             <button style={{ marginLeft: 8 }} onClick={handleAddToRenderings}>Add to renderings</button>
           )}
         </span>
