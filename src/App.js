@@ -81,7 +81,7 @@ const createCustomIcon = (gloss, vernLabel, align = 'right', angle = 0, size = 3
   // Base font size in px (matches your app's base font size)
   const baseFontSize = 12 * labelScale;
   // Calculate scale factor for font size (matches previous logic)
-  const fontSizePx = baseFontSize * (0.7 + 0.5 * (4 - size));
+  const fontSizePx = baseFontSize * (0.7 + 0.1 * (4 - size));
   // Use em units for all scalable properties
   const baseStyle = [
     'color: white;',
@@ -91,7 +91,7 @@ const createCustomIcon = (gloss, vernLabel, align = 'right', angle = 0, size = 3
     `background: ${color ? `color-mix(in srgb, ${color} 75%, transparent)` : 'rgba(0,0,0,0.75)'};`,
     'padding: 0 0.5em;', // 0px top/bottom, 0.5em left/right
     'border-radius: 0.83em;', // 10px if font-size is 12px
-    'line-height: 2em;', // 24px if font-size is 12px
+    'line-height: 1.6em;', // scale height of label
     'position: absolute;'
   ];
   if (isCenter) {
@@ -595,6 +595,7 @@ function App() {
         <div className="map-pane" style={{ flex: `0 0 ${mapWidth}%` }}>
           {mapPaneView === 0 && map.mapView && (
             <MapPane
+              key={mapDef.imgFilename || mapDef.template} // Force remount on template/image change
               imageUrl={mapDef.imgFilename ? `/assets/maps/${mapDef.imgFilename}` : ''}
               locations={locations}
               onSelectLocation={handleSelectLocation}

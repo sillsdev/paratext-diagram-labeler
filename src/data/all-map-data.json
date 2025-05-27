@@ -295,7 +295,7 @@
         "imgFilename": "SMR1_015wbt - Ancient World [bwf].jpg",
         "width": 1000,
         "height": 628,
-        "mapTypes": "0",
+        "mapTypes": "",
         "formats": "idml mapx",
         "labels": [
             {
@@ -2074,7 +2074,7 @@
         "imgFilename": "SMR1_035wbt - Gen28 Jacob To Haran.jpg",
         "width": 942,
         "height": 1000,
-        "mapTypes": "0",
+        "mapTypes": "",
         "formats": "idml",
         "labels": [
             {
@@ -4748,7 +4748,7 @@
         "imgFilename": "SMR1_095wbt - Kingdoms Israel Judah [bwf].jpg",
         "width": 632,
         "height": 1000,
-        "mapTypes": "0",
+        "mapTypes": "",
         "formats": "idml",
         "labels": [
             {
@@ -6215,7 +6215,7 @@
         "imgFilename": "SMR1_105gt - Persian Empire.jpg",
         "width": 1000,
         "height": 650,
-        "mapTypes": "0",
+        "mapTypes": "",
         "formats": "idml",
         "labels": [
             {
@@ -6679,7 +6679,7 @@
         "imgFilename": "SMR1_108gt - Jewish Calendar.jpg",
         "width": 1000,
         "height": 932,
-        "mapTypes": "0",
+        "mapTypes": "",
         "formats": "idml",
         "labels": [
             {
@@ -6824,7 +6824,7 @@
         "imgFilename": "SMR1_110hk - Jerusalem Illustration.jpg",
         "width": 634,
         "height": 1000,
-        "mapTypes": "0",
+        "mapTypes": "",
         "formats": "idml",
         "labels": [
             {
@@ -7642,7 +7642,7 @@
         "imgFilename": "SMR1_120gt - Tabernacle.jpg",
         "width": 1000,
         "height": 636,
-        "mapTypes": "0",
+        "mapTypes": "",
         "formats": "idml",
         "labels": [
             {
@@ -7776,7 +7776,7 @@
         "imgFilename": "SMR1_125hk - Temple.jpg",
         "width": 636,
         "height": 1000,
-        "mapTypes": "0",
+        "mapTypes": "",
         "formats": "idml",
         "labels": [
             {
@@ -7855,7 +7855,7 @@
         "imgFilename": "SMR1_135hk - Temple Layout.jpg",
         "width": 563,
         "height": 1000,
-        "mapTypes": "0",
+        "mapTypes": "",
         "formats": "idml",
         "labels": [
             {
@@ -7978,7 +7978,7 @@
         "imgFilename": "SMR1_135mh - Temple Layout.jpg",
         "width": 1000,
         "height": 869,
-        "mapTypes": "0",
+        "mapTypes": "",
         "formats": "idml",
         "labels": [
             {
@@ -8101,7 +8101,7 @@
         "imgFilename": "SMR1_138gt - Ezekiels Temple.jpg",
         "width": 1000,
         "height": 575,
-        "mapTypes": "0",
+        "mapTypes": "",
         "formats": "idml",
         "labels": [
             {
@@ -8268,7 +8268,7 @@
         "imgFilename": "SMR1_140gt - High Priest.jpg",
         "width": 694,
         "height": 1000,
-        "mapTypes": "0",
+        "mapTypes": "",
         "formats": "idml mapx",
         "labels": [
             {
@@ -8424,7 +8424,7 @@
         "imgFilename": "SMR1_143gt - Roman Soldier.jpg",
         "width": 747,
         "height": 1000,
-        "mapTypes": "0",
+        "mapTypes": "",
         "formats": "idml mapx",
         "labels": [
             {
@@ -8525,7 +8525,7 @@
         "imgFilename": "SMR1_155wbt - Holy Land [bwf].jpg",
         "width": 627,
         "height": 1000,
-        "mapTypes": "0",
+        "mapTypes": "",
         "formats": "idml",
         "labels": [
             {
@@ -10049,7 +10049,7 @@
         "imgFilename": "SMR1_175wbt - Pentecost [bwf-dark].jpg",
         "width": 1000,
         "height": 671,
-        "mapTypes": "0",
+        "mapTypes": "",
         "formats": "idml",
         "labels": [
             {
@@ -10392,7 +10392,7 @@
         "imgFilename": "SMR1_175wbt - Pentecost [bwf-light].jpg",
         "width": 1000,
         "height": 627,
-        "mapTypes": "0",
+        "mapTypes": "",
         "formats": "idml",
         "labels": [
             {
@@ -10669,7 +10669,7 @@
         "imgFilename": "SMR1_185wbt - Philips Travels [sm-bwf].jpg",
         "width": 999,
         "height": 1000,
-        "mapTypes": "0",
+        "mapTypes": "",
         "formats": "idml",
         "labels": [
             {
@@ -11478,7 +11478,7 @@
         "imgFilename": "SMR1_195wbt - Paul journey 1 [bwf-dark].jpg",
         "width": 1000,
         "height": 923,
-        "mapTypes": "0",
+        "mapTypes": "",
         "formats": "idml mapx",
         "labels": [
             {
@@ -11898,7 +11898,7 @@
         "imgFilename": "SMR1_195wbt - Paul journey 1 [bwf-light].jpg",
         "width": 1000,
         "height": 620,
-        "mapTypes": "0",
+        "mapTypes": "",
         "formats": "idml",
         "labels": [
             {
@@ -12142,7 +12142,7 @@
         "imgFilename": "SMR1_195wbt - Paul journey 1 [bwr].jpg",
         "width": 830,
         "height": 1000,
-        "mapTypes": "0",
+        "mapTypes": "",
         "formats": "idml",
         "labels": [
             {
@@ -12419,7 +12419,7 @@
         "imgFilename": "SMR1_205wbt - Paul journey 2 [bwf-dark].jpg",
         "width": 1000,
         "height": 927,
-        "mapTypes": "0",
+        "mapTypes": "",
         "formats": "idml mapx",
         "labels": [
             {
@@ -12927,7 +12927,7 @@
         "imgFilename": "SMR1_205wbt - Paul journey 2 [bwf-light].jpg",
         "width": 1000,
         "height": 650,
-        "mapTypes": "0",
+        "mapTypes": "",
         "formats": "idml",
         "labels": [
             {
@@ -13866,7 +13866,7 @@
         "imgFilename": "SMR1_215wbt - Paul journey 3 [bwf-dark].jpg",
         "width": 1000,
         "height": 923,
-        "mapTypes": "0",
+        "mapTypes": "",
         "formats": "idml mapx",
         "labels": [
             {
@@ -14308,7 +14308,7 @@
         "imgFilename": "SMR1_215wbt - Paul journey 3 [bwf-light].jpg",
         "width": 1000,
         "height": 644,
-        "mapTypes": "0",
+        "mapTypes": "",
         "formats": "idml",
         "labels": [
             {
@@ -15247,7 +15247,7 @@
         "imgFilename": "SMR1_225wbt - Paul to Rome [bwf-dark].jpg",
         "width": 1000,
         "height": 692,
-        "mapTypes": "0",
+        "mapTypes": "",
         "formats": "idml mapx",
         "labels": [
             {
@@ -15678,7 +15678,7 @@
         "imgFilename": "SMR1_225wbt - Paul to Rome [bwf-light].jpg",
         "width": 1000,
         "height": 651,
-        "mapTypes": "0",
+        "mapTypes": "",
         "formats": "idml",
         "labels": [
             {
@@ -15999,7 +15999,7 @@
         "imgFilename": "SMR1_225wbt - Paul to Rome [bwr].jpg",
         "width": 1000,
         "height": 672,
-        "mapTypes": "0",
+        "mapTypes": "",
         "formats": "idml",
         "labels": [
             {
@@ -17466,7 +17466,7 @@
         "imgFilename": "SMR1_235wbt - Paul Journeys [bwf-light].jpg",
         "width": 1000,
         "height": 734,
-        "mapTypes": "0",
+        "mapTypes": "",
         "formats": "idml mapx",
         "labels": [
             {
@@ -18656,7 +18656,7 @@
         "imgFilename": "SMR1_245wbt - Seven Churches [bwf-dark].jpg",
         "width": 1000,
         "height": 791,
-        "mapTypes": "0",
+        "mapTypes": "",
         "formats": "idml mapx",
         "labels": [
             {
@@ -19291,7 +19291,7 @@
         "imgFilename": "SMR1_275wbt - World Simple.jpg",
         "width": 1000,
         "height": 629,
-        "mapTypes": "0",
+        "mapTypes": "",
         "formats": "idml",
         "labels": [
             {
@@ -20353,7 +20353,7 @@
         "imgFilename": "SMR1_288gt - Roman Empire.jpg",
         "width": 1000,
         "height": 767,
-        "mapTypes": "0",
+        "mapTypes": "",
         "formats": "idml",
         "labels": [
             {
