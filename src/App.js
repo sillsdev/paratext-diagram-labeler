@@ -236,7 +236,7 @@ function App() {
 
   const handleNextLocation = useCallback((e) => {
     if ((e.key === 'Enter' || e.key === 'Tab')) {
-      e.preventDefault();
+      //e.preventDefault();
       const currentIndex = selLocation;
       let nextIndex;
       if (e.shiftKey) {
@@ -485,30 +485,16 @@ function App() {
                   onChange={e => onUpdateVernacular(loc.termId, e.target.value)}
                   onFocus={() => onSelectLocation(loc)}
                   onKeyDown={e => {
-                    if (e.key === 'Enter' && e.shiftKey) {
-                      // Shift+Enter: cycle backward
-                      e.preventDefault();
-                      const prevIdx = (i - 1 + locations.length) % locations.length;
-                      if (inputRefs.current[prevIdx]) inputRefs.current[prevIdx].focus();
-                      onSelectLocation(locations[prevIdx]);
-                    } else if (e.key === 'Enter') {
-                      // Enter: cycle forward
-                      e.preventDefault();
+                    if (e.key === 'PageDown') {
+                      //e.preventDefault();
                       const nextIdx = (i + 1) % locations.length;
                       if (inputRefs.current[nextIdx]) inputRefs.current[nextIdx].focus();
                       onSelectLocation(locations[nextIdx]);
-                    } else if (e.key === 'ArrowUp') {
-                      // Up arrow: cycle backward
-                      e.preventDefault();
+                    } else if (e.key === 'PageUp') {
+                     // e.preventDefault();
                       const prevIdx = (i - 1 + locations.length) % locations.length;
                       if (inputRefs.current[prevIdx]) inputRefs.current[prevIdx].focus();
                       onSelectLocation(locations[prevIdx]);
-                    } else if (e.key === 'ArrowDown') {
-                      // Down arrow: cycle forward
-                      e.preventDefault();
-                      const nextIdx = (i + 1) % locations.length;
-                      if (inputRefs.current[nextIdx]) inputRefs.current[nextIdx].focus();
-                      onSelectLocation(locations[nextIdx]);
                     }
                   }}
                   style={{ }}
@@ -1002,8 +988,12 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
           value={vernacular}
           onChange={handleVernChange}
           onKeyDown={e => {
-            if (e.key === 'Enter') {
-              onNextLocation(e);
+            if (e.key === 'PageDown') {
+              e.preventDefault();
+              onNextLocation({ key: 'Enter', shiftKey: false });
+            } else if (e.key === 'PageUp') {
+              e.preventDefault();
+              onNextLocation({ key: 'Enter', shiftKey: true });
             }
           }}
           placeholder="Enter translated label"
