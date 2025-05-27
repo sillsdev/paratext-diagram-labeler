@@ -383,7 +383,7 @@ function App() {
           return { ...loc, vernLabel: loc.vernLabel || '', status };
         });
         setLocations(newLocations);
-        setMapPaneView(foundTemplate.mapView ? 1 : 0);
+        setMapPaneView(0); // Map View
       }
     } catch (e) {
       // User cancelled or not supported
