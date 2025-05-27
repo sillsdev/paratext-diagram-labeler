@@ -180,7 +180,6 @@ function App() {
   const [mapDef, setMapDef] = useState({template: map.template, fig: map.fig, mapView: map.mapView, imgFilename: map.imgFilename, width: map.width, height: map.height});
   const [locations, setLocations] = useState([]);
   const [selLocation, setSelLocation] = useState(0);
-//  const [selectedLocation, setSelectedLocation] = useState(null);
   const [mapWidth, setMapWidth] = useState(70);
   const [topHeight, setTopHeight] = useState(80);
   const [renderings, setRenderings] = useState('');
@@ -199,7 +198,6 @@ function App() {
   const handleSelectLocation = useCallback((location) => {
     console.log('Selected location:', location);
     setSelLocation(location.idx);
-    // setSelectedLocation(location);
     const entry = termRenderings.data[location.termId];
     if (entry) {
       setRenderings(entry.renderings);
@@ -223,9 +221,7 @@ function App() {
 
   const handleNextLocation = useCallback((e) => {
     if ((e.key === 'Enter' || e.key === 'Tab')) {
-    // if ((e.key === 'Enter' || e.key === 'Tab') && selectedLocation) {
       e.preventDefault();
-      // const currentIndex = locations.findIndex(loc => loc.termId === selectedLocation.termId);
       const currentIndex = selLocation;
       let nextIndex;
       if (e.shiftKey) {
@@ -237,7 +233,6 @@ function App() {
       handleSelectLocation(nextLocation);
     }
   }, [locations, selLocation, handleSelectLocation]);
-  // }, [locations, selLocation, selectedLocation, handleSelectLocation]);
 
   const handleVerticalDragStart = (e) => {
     e.preventDefault();
@@ -292,22 +287,20 @@ function App() {
 
   const handleRenderingsChange = (e) => {
     setRenderings(e.target.value);
-    // if (selectedLocation) {
-      const updatedData = { ...termRenderings.data };
-      updatedData[locations[selLocation].termId] = {
-        ...updatedData[locations[selLocation].termId],
-        renderings: e.target.value
-      };
-      termRenderings.data = updatedData;
-      // The renderings change might affect the status of the location indexed by selLocation
-      const status = termRenderings.getStatus(locations[selLocation].termId, locations[selLocation].vernLabel || '');
-      setLocations(prevLocations => prevLocations.map(loc => {
-        if (loc.termId === locations[selLocation].termId) {
-          return { ...loc, status };
-        }
-        return loc;
-      }));
-    // }
+    const updatedData = { ...termRenderings.data };
+    updatedData[locations[selLocation].termId] = {
+      ...updatedData[locations[selLocation].termId],
+      renderings: e.target.value
+    };
+    termRenderings.data = updatedData;
+    // The renderings change might affect the status of the location indexed by selLocation
+    const status = termRenderings.getStatus(locations[selLocation].termId, locations[selLocation].vernLabel || '');
+    setLocations(prevLocations => prevLocations.map(loc => {
+      if (loc.termId === locations[selLocation].termId) {
+        return { ...loc, status };
+      }
+      return loc;
+    }));
   };
 
   const handleApprovedChange = (e) => {
@@ -379,7 +372,6 @@ function App() {
             return { ...loc, vernLabel: loc.vernLabel || '', status };
           });
           setLocations(newLocations);
-          // setSelectedLocation(newLocations[0] || null);
           setMapPaneView(foundTemplate.mapView ? 1 : 0);
         } else {
           alert('No template found for template ID: ' + fileName);
@@ -429,13 +421,11 @@ function App() {
     const inputRefs = useRef([]);
     useEffect(() => {
       // Focus the input for the selected row
-      // const idx = locations.findIndex(l => l.termId === selectedLocation?.termId);
       const idx = selLocation;
       if (idx >= 0 && inputRefs.current[idx]) {
         inputRefs.current[idx].focus();
       }
     }, [selLocation, locations]);
-    // }, [selectedLocation, locations]);
     return (
       <div className="table-view-scroll-wrapper">
         <table className="table-view" style={{ borderCollapse: 'collapse' }}>
@@ -450,7 +440,6 @@ function App() {
             {locations.map((loc, i) => {
               const status = termRenderings.getStatus(loc.termId, loc.vernLabel);
               const isSelected = selLocation === loc.idx;
-              // const isSelected = selectedLocation && selectedLocation.termId === loc.termId;
               return (
                 <tr
                 key={loc.termId}
@@ -720,7 +709,6 @@ function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScal
               loc.size,
               loc.status,
               selLocation === loc.idx,
-              // selectedLocation && selectedLocation.termId === loc.termId,
               labelScale 
             )}
             eventHandlers={{ click: () => onSelectLocation(loc) }}
@@ -747,7 +735,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
     setVernacular(locations[selLocation]?.vernLabel || '');
   }, [selLocation]);
 
-  const handleChange = (e) => {
+  const handleVernChange = (e) => {
     const newVernacular = e.target.value;
     setVernacular(newVernacular); // Update state immediately
     onUpdateVernacular(locations[selLocation].termId, newVernacular);
@@ -990,7 +978,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
           ref={inputRef}
           type="text"
           value={vernacular}
-          onChange={handleChange}
+          onChange={handleVernChange}
           onKeyDown={e => {
             if (e.key === 'Enter') {
               onNextLocation(e);
