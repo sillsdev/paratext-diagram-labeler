@@ -364,32 +364,26 @@ function App() {
         // Strip .jpg or .jpeg extension
         const fileName = fileHandle.name.replace(/\.(jpg|jpeg)$/i, '');
         // Use the stripped filename as the template ID
-        const mapDefData = getMapData(fileName);
-        if (!mapDefData) {
+        const foundTemplate = getMapData(fileName);
+        if (!foundTemplate) {
           alert('No map template found for: ' + fileName);
           return;
         }
-        const allMapData = require('./data/all-map-data.json');
-        const foundTemplate = allMapData[fileName];
-        if (foundTemplate) {
-          // Set mapDef and locations 
-          setMapDef({
-            template: fileName,
-            fig: foundTemplate.fig || '',
-            mapView: true,
-            imgFilename: foundTemplate.imgFilename,
-            width: foundTemplate.width,
-            height: foundTemplate.height
-          });
-          const newLocations = foundTemplate.labels.map(loc => {
-            const status = termRenderings.getStatus(loc.termId, loc.vernLabel || '');
-            return { ...loc, vernLabel: loc.vernLabel || '', status };
-          });
-          setLocations(newLocations);
-          setMapPaneView(foundTemplate.mapView ? 1 : 0);
-        } else {
-          alert('No template found for template ID: ' + fileName);
-        }
+        // Set mapDef and locations 
+        setMapDef({
+          template: fileName,
+          fig: foundTemplate.fig || '',
+          mapView: true,
+          imgFilename: foundTemplate.imgFilename,
+          width: foundTemplate.width,
+          height: foundTemplate.height
+        });
+        const newLocations = foundTemplate.labels.map(loc => {
+          const status = termRenderings.getStatus(loc.termId, loc.vernLabel || '');
+          return { ...loc, vernLabel: loc.vernLabel || '', status };
+        });
+        setLocations(newLocations);
+        setMapPaneView(foundTemplate.mapView ? 1 : 0);
       }
     } catch (e) {
       // User cancelled or not supported
