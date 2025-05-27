@@ -355,7 +355,31 @@ function App() {
         multiple: false,
       });
       if (fileHandle) {
-        alert(`Selected file: ${fileHandle.name}`);
+        // Strip .jpg or .jpeg extension
+        const fileName = fileHandle.name.replace(/\.(jpg|jpeg)$/i, '');
+        // Use the stripped filename as the template ID
+        const allMapData = require('./data/all-map-data.json');
+        const foundTemplate = allMapData[fileName];
+        if (foundTemplate) {
+          // Set mapDef and locations as if switching template
+          setMapDef({
+            template: fileName,
+            fig: foundTemplate.fig || '',
+            mapView: true,
+            imgFilename: foundTemplate.imgFilename,
+            width: foundTemplate.width,
+            height: foundTemplate.height
+          });
+          const newLocations = foundTemplate.labels.map(loc => {
+            const { color } = termRenderings.getStatus(loc.termId, loc.vernLabel || '');
+            return { ...loc, vernLabel: loc.vernLabel || '', color };
+          });
+          setLocations(newLocations);
+          setSelectedLocation(newLocations[0] || null);
+          setMapPaneView(foundTemplate.mapView ? 1 : 0);
+        } else {
+          alert('No template found for template ID: ' + fileName);
+        }
       }
     } catch (e) {
       // User cancelled or not supported
