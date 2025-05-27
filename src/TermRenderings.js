@@ -51,7 +51,7 @@ class TermRenderings {
     if (termId === "philipstravels_title") {
       console.warn("======================");
     }
-    console.log(`Checking status for termId: ${termId}, vernLabel: ${vernLabel}`);
+    //console.log(`Checking status for termId: ${termId}, vernLabel: ${vernLabel}`);
     if (!vernLabel) {
       return 0; //{ status: "Blank", color: "crimson" };
     }

@@ -31,44 +31,52 @@ var usfm = String.raw`\zdiagram-s |template="SMR1_185wbt - Philips Travels [sm]"
 
 function mapFromUsfm(usfm) {
   // Extract template and \fig field
-  const templateMatch = usfm.match(/\\zdiagram-s\s+\|template="([^"]*)"/);
   const figMatch = usfm.match(/\\fig[\s\S]*?\\fig\*/);
-  const map = {
-    template: templateMatch ? templateMatch[1] : '',
-    fig: figMatch ? figMatch[0] : '',
-    mapView: false,
-    labels: []
-  };
+  const templateMatch = usfm.match(/\\zdiagram-s\s+\|template="([^"]*)"/);
+  
+  // 
+  let mapDefData;
+  try {
+    mapDefData = getMapData(templateMatch[1]);
+    mapDefData.mapView = true;
+  } catch (e) {
+    mapDefData = {
+      template: templateMatch ? templateMatch[1] : '',
+      fig: figMatch ? figMatch[0] : '',
+      mapView: false,
+      imgFilename: '',
+      width: 1000,
+      height: 1000,
+      labels: []
+    }
+  }
+  mapDefData.fig = figMatch ? figMatch[0] : '';
+  let maxIdx = mapDefData.labels.length;
   const regex = /\\zlabel\s+\|key="([^"]+)"\s+termid="([^"]+)"\s+gloss="([^"]+)"\s+label="([^"]*)"/g;
   let match;
   while ((match = regex.exec(usfm)) !== null) {
     // eslint-disable-next-line
-    const [_, key, termId, gloss, label] = match;
-    map.labels.push({ mergeKey: key, termId: termId, gloss: gloss, vernLabel: label });
+    const [_, mergeKey, termId, gloss, vernLabel] = match;
+    // If mapDefData already has a label with this mergeKey, add vernLabel to it.
+    const existingLabel = mapDefData.labels.find(label => label.mergeKey === mergeKey);
+    if (existingLabel) {
+      if (vernLabel) {
+        existingLabel.vernLabel = vernLabel;
+      }
+    } else {
+      // If not, create a new label object
+      const label = {
+        mergeKey,
+        termId,
+        gloss,
+        vernLabel: vernLabel || '',
+        idx: maxIdx++ // Assign an index for ordering
+      };
+      mapDefData.labels.push(label);
+    }
   }
   
-  try {
-      const mapDefData = getMapData(map.template);
-      Object.keys(mapDefData).forEach(key => {
-        if (key !== 'labels') {
-          map[key] = mapDefData[key];
-        }
-      });
-      const usfmLabelsByTermId = {};
-      map.labels.forEach(label => {
-        usfmLabelsByTermId[label.termId] = label;
-      });
-      map.labels = mapDefData.labels.map(jsonLabel => {
-        const usfmLabel = usfmLabelsByTermId[jsonLabel.termId] || {};
-        return { ...usfmLabel, ...jsonLabel };
-      });
-      map.mapView = true;
-    
-  } catch (err) {
-    console.warn('Could not load map definition for:', map.template, err);
-    // If loading fails, leave map as-is and mapView as false
-  }
-  return map;
+  return mapDefData;
 }
 
 var map = mapFromUsfm(usfm);
@@ -197,6 +205,7 @@ function App() {
 
   const handleSelectLocation = useCallback((location) => {
     console.log('Selected location:', location);
+    if (!location) return;
     setSelLocation(location.idx);
     const entry = termRenderings.data[location.termId];
     if (entry) {
@@ -340,7 +349,7 @@ function App() {
   };
 
   // Handler for map image browse
-  const handleBrowseMapImage = async () => {
+  const handleBrowseMapTemplate = async () => {
     try {
       const [fileHandle] = await window.showOpenFilePicker({
         types: [
@@ -355,6 +364,11 @@ function App() {
         // Strip .jpg or .jpeg extension
         const fileName = fileHandle.name.replace(/\.(jpg|jpeg)$/i, '');
         // Use the stripped filename as the template ID
+        const mapDefData = getMapData(fileName);
+        if (!mapDefData) {
+          alert('No map template found for: ' + fileName);
+          return;
+        }
         const allMapData = require('./data/all-map-data.json');
         const foundTemplate = allMapData[fileName];
         if (foundTemplate) {
@@ -636,7 +650,7 @@ function App() {
             }}
             onShowSettings={() => setShowSettings(true)} // <-- add onShowSettings
             mapDef={mapDef} // <-- pass map definition
-            onBrowseMapImage={handleBrowseMapImage}
+            onBrowseMapTemplate={handleBrowseMapTemplate}
           />
         </div>
       </div>
@@ -725,7 +739,7 @@ function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScal
   );
 }
 
-function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, onSaveRenderings, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings, mapDef, onBrowseMapImage }) {
+function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, onSaveRenderings, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings, mapDef, onBrowseMapTemplate }) {
   const [vernacular, setVernacular] = useState(locations[selLocation]?.vernLabel || '');
   const inputRef = useRef(null);
   const [showTemplateInfo, setShowTemplateInfo] = useState(false);
@@ -925,9 +939,9 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
           <span role="img" aria-label="info" style={{ fontSize: '1.2em', color: '#6cf' }}>ℹ️</span>
         </button>
         <button
-          title="Browse for map image"
+          title="Browse for map template"
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginLeft: 8 }}
-          onClick={onBrowseMapImage}
+          onClick={onBrowseMapTemplate}
         >
           <span role="img" aria-label="browse" style={{ fontSize: '1.2em', color: '#fc6' }}>📂</span>
         </button>
@@ -983,7 +997,6 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
             if (e.key === 'Enter') {
               onNextLocation(e);
             }
-            // Tab key now does default behavior (move to next control)
           }}
           placeholder="Enter translated label"
           className="form-control mb-2"
@@ -1010,7 +1023,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
           value={renderings}
           onChange={onRenderingsChange}
           style={{ width: '100%', minHeight: '100px' }}
-          placeholder="Enter renderings (use \n for new lines)"
+          placeholder={"Enter renderings here, one per line.\nOptionally, explicitly mark the map form of the rendering by adding it as a comment that begins with '@'.\ne.g. Misra* (@Misradesh)"}
         />
         <button onClick={onSaveRenderings}>Save Renderings</button>
       </div>
