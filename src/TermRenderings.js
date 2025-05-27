@@ -47,39 +47,42 @@ class TermRenderings {
   }
 
   getStatus(termId, vernLabel) {
+
+    console.log(`Checking status for termId: ${termId}, vernLabel: ${vernLabel}`);
     if (!vernLabel) {
-      return { status: "Blank", color: "crimson" };
+      return 0; //{ status: "Blank", color: "crimson" };
     }
     
     if (vernLabel.includes('—')) {
-      return { status: "Must select one", color: "darkorange" };
+      return 1; //{ status: "Must select one", color: "darkorange" };
     }
     
     const entry = this.data[termId];
     if (!entry) {
       //console.warn(`TermId "${termId}" not found in term renderings`);
-      return { status: "No renderings", color: "indianred" };
+      return 2; // { status: "No renderings", color: "indianred" };
     }
     
     const mapForm = this.getMapForm(termId);
     if (!mapForm) {
-      return { status: "No renderings", color: "indianred" };
+      return 2; // { status: "No renderings", color: "indianred" };
     }
     
     if (vernLabel !== mapForm) {
-      return { status: "Does not match", color: "darkmagenta" };
+      return 3; //{ status: "Does not match", color: "darkmagenta" };
     }
     
     if (vernLabel === mapForm && !entry.isGuessed) {
-      return { status: "Approved", color: "darkgreen" };
+      return 4; //{ status: "Approved", color: "darkgreen" };
     }
     
     if (vernLabel === mapForm && entry.isGuessed) {
-      return { status: "Guessed rendering not yet approved", color: "darkblue" };
+      return 5; // { status: "Guessed rendering not yet approved", color: "darkblue" };
     }
     
-    return { status: "Needs checked", color: "darkgoldenrod" };
+    return 6; //{ status: "Needs checked", color: "darkgoldenrod" };
   }
+
 }
 
 export default TermRenderings;

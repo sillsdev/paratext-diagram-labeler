@@ -6,11 +6,20 @@ import TermRenderings from './TermRenderings';
 import './App.css';
 import MapBibTerms from './MapBibTerms';
 import { getMapData } from './MapData';
-//const mapDef = require(mapDefFilename);
 
 const mapBibTerms = new MapBibTerms();
 
-var usfm = String.raw`\zdiagram-s |template="SMR1_075wbt - Conquest Canaan"\* 
+const statusValue = [
+  { text: "Blank", bkColor: "crimson", textColor: 'white'},  // 0
+  { text: "Must select one", bkColor: "darkorange", textColor: 'white'},    // 1
+  { text: "No renderings", bkColor: "indianred", textColor: 'white'}, // 2
+  { text: "Does not match", bkColor: "darkmagenta", textColor: 'white'},  // 3
+  { text: "Approved", bkColor: "darkgreen", textColor: 'white'},      // 4
+  { text: "Guessed rendering not yet approved", bkColor: "darkblue", textColor: 'white'}, // 5
+  { text: "Needs checked", bkColor: "darkgoldenrod", textColor: 'white'}, // 6
+];
+
+var usfm = String.raw`\zdiagram-s |template="SMR1_185wbt - Philips Travels [sm]"\* 
 \fig |src="185wbt - Philips Travels [sm] (fcr) @en.jpg" size="span" loc="paw" copy="WBT" ref="8:5-40"\fig*
 \zlabel |key="philipstravels_title" termid="philipstravels_title" gloss="Philip’s Travels" label=""\*
 \zlabel |key="jerusalem_nt" termid="Ἱεροσόλυμα-1" gloss="Jerusalem" label="Yarūśalēma"\*
@@ -73,22 +82,23 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
 });
 
-// Function to create custom SVG icon with permanent label
-const createCustomIcon = (gloss, vernLabel, align = 'right', angle = 0, size = 3, color, isSelected = false, labelScale = 1) => {
-  const label = vernLabel || `(${gloss})`;
+// Function to create a map label
+const createLabel = (labelText, align = 'right', angle = 0, size = 3, status, isSelected = false, labelScale = 1) => {
   const isLeft = align === 'left';
   const isCenter = align === 'center';
+  const backgroundColor = statusValue[status].bkColor;
+  const textColor = statusValue[status].textColor; 
   // Base font size in px (matches your app's base font size)
   const baseFontSize = 12 * labelScale;
   // Calculate scale factor for font size (matches previous logic)
   const fontSizePx = baseFontSize * (0.7 + 0.1 * (4 - size));
   // Use em units for all scalable properties
   const baseStyle = [
-    'color: white;',
+    `color: ${textColor};`,
     `font-size: ${fontSizePx}px;`,
     'font-weight: bold;',
     'white-space: nowrap;',
-    `background: ${color ? `color-mix(in srgb, ${color} 75%, transparent)` : 'rgba(0,0,0,0.75)'};`,
+    `background: ${backgroundColor ? `color-mix(in srgb, ${backgroundColor} 75%, transparent)` : 'rgba(0,0,0,0.75)'};`,
     'padding: 0 0.5em;', // 0px top/bottom, 0.5em left/right
     'border-radius: 0.83em;', // 10px if font-size is 12px
     'line-height: 1.6em;', // scale height of label
@@ -110,16 +120,20 @@ const createCustomIcon = (gloss, vernLabel, align = 'right', angle = 0, size = 3
   const spanStyle = baseStyle.join(' ');
   const html = `
     <div style="display: flex; align-items: center;${isCenter ? ' justify-content: center;' : ''} width: 2em; height: 2em; position: relative;">
-      <span class="${isSelected ? 'selected-label' : ''}" style="${spanStyle}">${label}</span>
+      <span class="${isSelected ? 'selected-label' : ''}" style="${spanStyle}">${labelText}</span>
     </div>
   `;
   return L.divIcon({
     html,
     className: '',
-    iconSize: [10 * (fontSizePx / baseFontSize), 2 * fontSizePx],
-    iconAnchor: [1 * (fontSizePx / baseFontSize), 1 * fontSizePx],
-    popupAnchor: [isLeft ? 5 * (fontSizePx / baseFontSize) : -2 * (fontSizePx / baseFontSize), -1 * fontSizePx],
   });
+  // return L.divIcon({
+  //   html,
+  //   className: '',
+  //   iconSize: [10 * (fontSizePx / baseFontSize), 2 * fontSizePx],
+  //   iconAnchor: [1 * (fontSizePx / baseFontSize), 1 * fontSizePx],
+  //   popupAnchor: [isLeft ? 5 * (fontSizePx / baseFontSize) : -2 * (fontSizePx / baseFontSize), -1 * fontSizePx],
+  // });
 };
 
 // Bottom Pane component to display an image based on termId
@@ -184,16 +198,16 @@ function App() {
   // Memoize updateMarkerColor to prevent infinite loops
   const updateMarkerColor = useCallback(() => {
     const newLocations = locations.map(loc => {
-      const { color } = termRenderings.getStatus(loc.termId, loc.vernLabel || '');
-      return { ...loc, color };
+      const status = termRenderings.getStatus(loc.termId, loc.vernLabel || '');
+      return { ...loc, status};
     });
     if (JSON.stringify(newLocations) !== JSON.stringify(locations)) {
       setLocations(newLocations);
     }
     if (selectedLocation) {
-      const { color } = termRenderings.getStatus(selectedLocation.termId, selectedLocation.vernLabel || '');
-      if (selectedLocation.color !== color) {
-        setSelectedLocation(prev => ({ ...prev, color }));
+      const status = termRenderings.getStatus(selectedLocation.termId, selectedLocation.vernLabel || '');
+      if (selectedLocation.status !== status) {
+        setSelectedLocation(prev => ({ ...prev, status }));
       }
     }
     console.log('Updated colors:', newLocations.map(l => ({ termId: l.termId, color: l.color })), 'Selected:', selectedLocation ? { termId: selectedLocation.termId, color: selectedLocation.color } : null);
@@ -224,8 +238,8 @@ function App() {
     }));
     setSelectedLocation(prev => {
       if (prev && prev.termId === termId) {
-        const { color } = termRenderings.getStatus(prev.termId, newVernacular);
-        return { ...prev, vernLabel: newVernacular, color };
+        const status = termRenderings.getStatus(prev.termId, newVernacular);
+        return { ...prev, vernLabel: newVernacular, status };
       }
       return prev;
     });
@@ -361,7 +375,7 @@ function App() {
         const allMapData = require('./data/all-map-data.json');
         const foundTemplate = allMapData[fileName];
         if (foundTemplate) {
-          // Set mapDef and locations as if switching template
+          // Set mapDef and locations 
           setMapDef({
             template: fileName,
             fig: foundTemplate.fig || '',
@@ -371,8 +385,8 @@ function App() {
             height: foundTemplate.height
           });
           const newLocations = foundTemplate.labels.map(loc => {
-            const { color } = termRenderings.getStatus(loc.termId, loc.vernLabel || '');
-            return { ...loc, vernLabel: loc.vernLabel || '', color };
+            const status = termRenderings.getStatus(loc.termId, loc.vernLabel || '');
+            return { ...loc, vernLabel: loc.vernLabel || '', status };
           });
           setLocations(newLocations);
           setSelectedLocation(newLocations[0] || null);
@@ -405,8 +419,8 @@ function App() {
               loc.vernLabel = termRenderings.getMapForm(loc.termId);
             }
 
-            const { color } = termRenderings.getStatus(loc.termId, loc.vernLabel);
-            return { ...loc, color };
+            const status = termRenderings.getStatus(loc.termId, loc.vernLabel);
+            return { ...loc, status };
             });
           console.log('Initial locations with colors:', initialLocations);
           setLocations(initialLocations);
@@ -443,14 +457,14 @@ function App() {
           </thead>
           <tbody>
             {locations.map((loc, i) => {
-              const { status, color } = termRenderings.getStatus(loc.termId, loc.vernLabel);
+              const status = termRenderings.getStatus(loc.termId, loc.vernLabel);
               const isSelected = selectedLocation && selectedLocation.termId === loc.termId;
               return (
                 <tr
                 key={loc.termId}
                 style={{
-                  background: color,
-                  color: "white",
+                  background: statusValue[status].bkColor,
+                  color: statusValue[status].textColor,
                   fontWeight: isSelected ? 'bold' : 'normal',
                   cursor: 'pointer',
                   border: isSelected ? '4px solid black' : undefined,
@@ -498,7 +512,7 @@ function App() {
                   style={{ }}
                   />
                 </td>
-                <td style={isSelected ? { paddingTop: 4, paddingBottom: 4 } : {}}>{status}</td>
+                <td style={isSelected ? { paddingTop: 4, paddingBottom: 4 } : {}}>{statusValue[status].text}</td>
                 </tr>
               );
             })}
@@ -544,8 +558,8 @@ function App() {
         if (!loc.vernLabel) {
           loc.vernLabel = termRenderings.getMapForm(loc.termId);
         }
-        const { color } = termRenderings.getStatus(loc.termId, loc.vernLabel);
-        return { ...loc, color };
+        const status = termRenderings.getStatus(loc.termId, loc.vernLabel);
+        return { ...loc, status };
       });
       setLocations(initialLocations);
       if (initialLocations.length > 0) {
@@ -711,15 +725,14 @@ function MapPane({ imageUrl, locations, onSelectLocation, selectedLocation, labe
           <Marker
             key={loc.termId}
             position={[loc.yLeaflet, loc.x]}
-            icon={createCustomIcon(
-              loc.gloss,
-              loc.vernLabel,
+            icon={createLabel(
+              loc.vernLabel || `(${loc.gloss})`, // Fallback to gloss if vernLabel is empty
               loc.align,
               loc.angle,
               loc.size,
-              loc.color || 'gray',
+              loc.status,
               selectedLocation && selectedLocation.termId === loc.termId,
-              labelScale // <-- pass labelScale
+              labelScale 
             )}
             eventHandlers={{ click: () => onSelectLocation(loc) }}
             aria-label={`Marker for ${loc.gloss}`}
@@ -764,9 +777,9 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
     const tally = {};
     if (locations && locations.length > 0) {
       locations.forEach(loc => {
-        const { status, color } = termRenderings.getStatus(loc.termId, loc.vernLabel);
-        if (!tally[status]) tally[status] = { count: 0, color };
-        tally[status].count++;
+        const status = termRenderings.getStatus(loc.termId, loc.vernLabel);
+        if (!tally[status]) tally[status] = 0;
+        tally[status]++;
       });
     }
     return tally;
@@ -824,7 +837,7 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
   }
 
   // Always compute status and color from latest data
-  const { status, color } = termRenderings.getStatus(selectedLocation.termId, vernacular);
+  const status = termRenderings.getStatus(selectedLocation.termId, vernacular);
 
   // Handler for Add to renderings button
   const handleAddToRenderings = () => {
@@ -985,10 +998,10 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
       <div style={{ border: '1px solid #ccc', borderRadius: 6, marginBottom: 16, padding: 8, background: '#f9f9f9' }}>
         <table >
           <tbody>
-            {Object.entries(statusTallies).map(([status, { count, color }]) => (
+            {Object.entries(statusTallies).map(([status, count ]) => (
               <tr key={status}>
-                <td style={{ color, fontWeight: 'bold', padding: '2px 8px' }}>{count}</td>
-                <td style={{ color, fontWeight: 'bold', padding: '2px 8px' }}>{status}</td>
+                <td style={{ color: statusValue[status].bkColor, fontWeight: 'bold', padding: '2px 8px' }}>{count}</td>
+                <td style={{ color: statusValue[status].bkColor, fontWeight: 'bold', padding: '2px 8px' }}>{statusValue[status].text}</td>
               </tr>
             ))}
           </tbody>
@@ -998,7 +1011,7 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
       <p>
         {mapBibTerms.getDefinition(selectedLocation.termId)} <span style={{ fontStyle: 'italic' }}>({selectedLocation.termId})</span>
       </p>
-      <div className="vernacularGroup" style={{ backgroundColor: color, margin: '10px', padding: '10px' }}>
+      <div className="vernacularGroup" style={{ backgroundColor: statusValue[status].bkColor, margin: '10px', padding: '10px' }}>
         <input
           ref={inputRef}
           type="text"
@@ -1015,9 +1028,9 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
           aria-label={`Translation for ${selectedLocation.gloss}`}
           style={{ width: '100%', border: 'none' }}
         />
-        <span style={{color: "white"}}>
-          {status}
-          {status === 'No renderings' && (
+        <span style={{color: statusValue[status].textColor}}>
+          {statusValue[status].text}
+          {status == 2 && (  // If status is "no renderings", show Add to renderings button
             <button style={{ marginLeft: 8 }} onClick={handleAddToRenderings}>Add to renderings</button>
           )}
         </span>
