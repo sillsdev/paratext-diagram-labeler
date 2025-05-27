@@ -180,7 +180,7 @@ function App() {
   const [mapDef, setMapDef] = useState({template: map.template, fig: map.fig, mapView: map.mapView, imgFilename: map.imgFilename, width: map.width, height: map.height});
   const [locations, setLocations] = useState([]);
   const [selLocation, setSelLocation] = useState(0);
-  const [selectedLocation, setSelectedLocation] = useState(null);
+//  const [selectedLocation, setSelectedLocation] = useState(null);
   const [mapWidth, setMapWidth] = useState(70);
   const [topHeight, setTopHeight] = useState(80);
   const [renderings, setRenderings] = useState('');
@@ -196,28 +196,10 @@ function App() {
   const isDraggingHorizontal = useRef(false);
   const termRenderings = useMemo(() => new TermRenderings('/data/term-renderings.json'), []);
 
-  // Memoize updateMarkerColor to prevent infinite loops
-  const updateMarkerColor = useCallback(() => {
-    // const newLocations = locations.map(loc => {
-    //   const status = termRenderings.getStatus(loc.termId, loc.vernLabel || '');
-    //   return { ...loc, status};
-    // });
-    // if (JSON.stringify(newLocations) !== JSON.stringify(locations)) {
-    //   setLocations(newLocations);
-    // }
-    // if (selectedLocation) {
-    //   const status = termRenderings.getStatus(selectedLocation.termId, selectedLocation.vernLabel || '');
-    //   if (selectedLocation.status !== status) {
-    //     setSelectedLocation(prev => ({ ...prev, status }));
-    //   }
-    // }
-    // console.log('Updated colors:', newLocations.map(l => ({ termId: l.termId, color: l.color })), 'Selected:', selectedLocation ? { termId: selectedLocation.termId, color: selectedLocation.color } : null);
-  }, [locations, selectedLocation, termRenderings]);
-
   const handleSelectLocation = useCallback((location) => {
     console.log('Selected location:', location);
     setSelLocation(location.idx);
-    setSelectedLocation(location);
+    // setSelectedLocation(location);
     const entry = termRenderings.data[location.termId];
     if (entry) {
       setRenderings(entry.renderings);
@@ -227,8 +209,7 @@ function App() {
       setIsApproved(false);
       //console.warn(`No term renderings entry for termId: ${location.termId}`);
     }
-    updateMarkerColor();
-  }, [termRenderings, setRenderings, setIsApproved, setSelLocation, updateMarkerColor]);
+  }, [termRenderings, setRenderings, setIsApproved, setSelLocation]);
 
   const handleUpdateVernacular = useCallback((termId, newVernacular) => {
     setLocations(prevLocations => prevLocations.map(loc => {
@@ -238,13 +219,6 @@ function App() {
       }
       return loc;
     }));
-    setSelectedLocation(prev => {
-      if (prev && prev.termId === termId) {
-        const status = termRenderings.getStatus(prev.termId, newVernacular);
-        return { ...prev, vernLabel: newVernacular, status };
-      }
-      return prev;
-    });
   }, [termRenderings]);
 
   const handleNextLocation = useCallback((e) => {
@@ -262,7 +236,8 @@ function App() {
       const nextLocation = locations[nextIndex];
       handleSelectLocation(nextLocation);
     }
-  }, [locations, selLocation, selectedLocation, handleSelectLocation]);
+  }, [locations, selLocation, handleSelectLocation]);
+  // }, [locations, selLocation, selectedLocation, handleSelectLocation]);
 
   const handleVerticalDragStart = (e) => {
     e.preventDefault();
@@ -317,10 +292,10 @@ function App() {
 
   const handleRenderingsChange = (e) => {
     setRenderings(e.target.value);
-    if (selectedLocation) {
+    // if (selectedLocation) {
       const updatedData = { ...termRenderings.data };
-      updatedData[selectedLocation.termId] = {
-        ...updatedData[selectedLocation.termId],
+      updatedData[locations[selLocation].termId] = {
+        ...updatedData[locations[selLocation].termId],
         renderings: e.target.value
       };
       termRenderings.data = updatedData;
@@ -332,33 +307,29 @@ function App() {
         }
         return loc;
       }));
-    }
+    // }
   };
 
   const handleApprovedChange = (e) => {
     const approved = e.target.checked;
     setIsApproved(approved);
-    if (selectedLocation) {
-      const updatedData = { ...termRenderings.data };
-      updatedData[selectedLocation.termId] = {
-        ...updatedData[selectedLocation.termId],
-        isGuessed: !approved,
-      };
-      termRenderings.data = updatedData;
-      // The renderings change might affect the status of the location indexed by selLocation
-      const status = termRenderings.getStatus(locations[selLocation].termId, locations[selLocation].vernLabel || '');
-      setLocations(prevLocations => prevLocations.map(loc => {
-        if (loc.termId === locations[selLocation].termId) {
-          return { ...loc, status };
-        }
-        return loc;
-      }));
-      updateMarkerColor();
-    }
+    const updatedData = { ...termRenderings.data };
+    updatedData[locations[selLocation].termId] = {
+      ...updatedData[locations[selLocation].termId],
+      isGuessed: !approved,
+    };
+    termRenderings.data = updatedData;
+    // The renderings change might affect the status of the location indexed by selLocation
+    const status = termRenderings.getStatus(locations[selLocation].termId, locations[selLocation].vernLabel || '');
+    setLocations(prevLocations => prevLocations.map(loc => {
+      if (loc.termId === locations[selLocation].termId) {
+        return { ...loc, status };
+      }
+      return loc;
+    }));
   };
 
   const handleSaveRenderings = async () => {
-    if (!selectedLocation) return;
     const blob = new Blob([JSON.stringify(termRenderings.data, null, 2)], { type: 'application/json' });
     try {
       const handle = await window.showSaveFilePicker({
@@ -408,7 +379,7 @@ function App() {
             return { ...loc, vernLabel: loc.vernLabel || '', status };
           });
           setLocations(newLocations);
-          setSelectedLocation(newLocations[0] || null);
+          // setSelectedLocation(newLocations[0] || null);
           setMapPaneView(foundTemplate.mapView ? 1 : 0);
         } else {
           alert('No template found for template ID: ' + fileName);
@@ -445,17 +416,16 @@ function App() {
           setLocations(initialLocations);
           if (initialLocations.length > 0) {
             handleSelectLocation(initialLocations[0]); // Auto-select first location
-            updateMarkerColor(); // Ensure colors are applied
           }
           clearInterval(interval);
         }
       }, 100); // Check every 100ms
       return () => clearInterval(interval);
     }
-  }, [termRenderings, updateMarkerColor, handleSelectLocation]);
+  }, [termRenderings, handleSelectLocation]);
 
   // Table View component
-  function TableView({ locations, selectedLocation, onUpdateVernacular, onNextLocation, termRenderings, onSelectLocation }) {
+  function TableView({ locations, selLocation, onUpdateVernacular, onNextLocation, termRenderings, onSelectLocation }) {
     const inputRefs = useRef([]);
     useEffect(() => {
       // Focus the input for the selected row
@@ -585,12 +555,7 @@ function App() {
       });
       setSelLocation(0);
       setLocations(initialLocations);
-      if (initialLocations.length > 0) {
-        setSelectedLocation(initialLocations[0]);
-      } else {
-        setSelectedLocation(null);
-      }
-      // Optionally update map object if needed elsewhere
+      //  update map object
       map.labels = newMap.labels;
       map.template = newMap.template;
       map.fig = newMap.fig;
@@ -600,7 +565,7 @@ function App() {
     } catch (e) {
       alert('Invalid USFM format. Changes not applied.');
     }
-  }, [termRenderings, setLocations, setSelLocation, setSelectedLocation]);
+  }, [termRenderings, setLocations, setSelLocation]);
 
   // Intercept view switch to update map if leaving USFM view
   const handleSwitchViewWithUsfm = useCallback(() => {
@@ -636,7 +601,6 @@ function App() {
               imageUrl={mapDef.imgFilename ? `/assets/maps/${mapDef.imgFilename}` : ''}
               locations={locations}
               onSelectLocation={handleSelectLocation}
-              selectedLocation={selectedLocation}
               selLocation={selLocation}
               labelScale={labelScale} // <-- pass labelScale
               mapDef={mapDef} // <-- pass map definition
@@ -645,7 +609,7 @@ function App() {
           {mapPaneView === 1 && (
             <TableView
               locations={locations}
-              selectedLocation={selectedLocation}
+              selLocation={selLocation}
               onSelectLocation={handleSelectLocation}
               onUpdateVernacular={handleUpdateVernacular}
               termRenderings={termRenderings}
@@ -663,7 +627,6 @@ function App() {
         />
         <div className="details-pane" style={{ flex: `0 0 ${100 - mapWidth}%` }}>
           <DetailsPane
-            selectedLocation={selectedLocation}
             selLocation={selLocation}
             onUpdateVernacular={handleUpdateVernacular}
             onNextLocation={handleNextLocation}
@@ -695,14 +658,14 @@ function App() {
         ═════
       </div>
       <div className="bottom-pane" style={{ flex: `0 0 ${100 - topHeight}%` }}>
-        <BottomPane termId={selectedLocation?.termId} />
+        <BottomPane termId={locations[selLocation]?.termId} />
       </div>
       <SettingsModal open={showSettings} onClose={() => setShowSettings(false)} labelScale={labelScale} setLabelScale={setLabelScale} />
     </div>
   );
 }
 
-function MapPane({ imageUrl, locations, onSelectLocation, selectedLocation, selLocation, labelScale, mapDef }) {
+function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScale, mapDef }) {
   const imageHeight = mapDef.height;
   const imageWidth = mapDef.width;
   const bounds = useMemo(() => [[0, 0], [imageHeight, imageWidth]], [imageHeight, imageWidth]);
@@ -774,30 +737,20 @@ function MapPane({ imageUrl, locations, onSelectLocation, selectedLocation, selL
   );
 }
 
-function DetailsPane({ selectedLocation, selLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, onSaveRenderings, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings, mapDef, onBrowseMapImage }) {
+function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, onSaveRenderings, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings, mapDef, onBrowseMapImage }) {
   const [vernacular, setVernacular] = useState(locations[selLocation]?.vernLabel || '');
   const inputRef = useRef(null);
   const [showTemplateInfo, setShowTemplateInfo] = useState(false);
   const templateData = getMapData(mapDef.template) || {};
 
   useEffect(() => {
-  //   setVernacular(selectedLocation?.vernLabel || '');
-  // }, [selectedLocation]);
     setVernacular(locations[selLocation]?.vernLabel || '');
   }, [selLocation]);
-
-  useEffect(() => {
-    if (selectedLocation && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [selectedLocation]);
 
   const handleChange = (e) => {
     const newVernacular = e.target.value;
     setVernacular(newVernacular); // Update state immediately
-    // if (selectedLocation) {
-      onUpdateVernacular(selectedLocation.termId, newVernacular);
-    // }
+    onUpdateVernacular(locations[selLocation].termId, newVernacular);
   };
 
   // Tally status counts for all locations
@@ -859,25 +812,18 @@ function DetailsPane({ selectedLocation, selLocation, onUpdateVernacular, onNext
     );
   }
 
-  // If no selection, show nothing (prevents null.termId error)
-  if (!selectedLocation) {
-    return null;
-  }
-
   // Always compute status and color from latest data
-  const status = termRenderings.getStatus(selectedLocation.termId, vernacular);
+  const status = termRenderings.getStatus(locations[selLocation]?.termId, vernacular);
 
   // Handler for Add to renderings button
   const handleAddToRenderings = () => {
-    if (selectedLocation) {
-      // Set renderings and isGuessed to false
-      onRenderingsChange({ target: { value: vernacular } });
-      if (termRenderings.data[selectedLocation.termId]) {
-        termRenderings.data[selectedLocation.termId].isGuessed = false;
-      }
-      // Also update isApproved state to true (since isGuessed is now false)
-      onApprovedChange({ target: { checked: true } });
+    // Set renderings and isGuessed to false
+    onRenderingsChange({ target: { value: vernacular } });
+    if (termRenderings.data[locations[selLocation].termId]) {
+      termRenderings.data[locations[selLocation].termId].isGuessed = false;
     }
+    // Also update isApproved state to true (since isGuessed is now false)
+    onApprovedChange({ target: { checked: true } });
   };
 
   return (
@@ -1035,9 +981,9 @@ function DetailsPane({ selectedLocation, selLocation, onUpdateVernacular, onNext
           </tbody>
         </table>
       </div>
-      <h2>{selectedLocation.gloss}</h2>
+      <h2>{locations[selLocation]?.gloss}</h2>
       <p>
-        {mapBibTerms.getDefinition(selectedLocation.termId)} <span style={{ fontStyle: 'italic' }}>({selectedLocation.termId})</span>
+        {mapBibTerms.getDefinition(locations[selLocation]?.termId)} <span style={{ fontStyle: 'italic' }}>({locations[selLocation]?.termId})</span>
       </p>
       <div className="vernacularGroup" style={{ backgroundColor: statusValue[status].bkColor, margin: '10px', padding: '10px' }}>
         <input
@@ -1053,7 +999,7 @@ function DetailsPane({ selectedLocation, selLocation, onUpdateVernacular, onNext
           }}
           placeholder="Enter translated label"
           className="form-control mb-2"
-          aria-label={`Translation for ${selectedLocation.gloss}`}
+          aria-label={`Translation for ${locations[selLocation]?.gloss}`}
           style={{ width: '100%', border: 'none' }}
         />
         <span style={{color: statusValue[status].textColor}}>
