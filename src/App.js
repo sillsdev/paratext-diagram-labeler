@@ -163,6 +163,7 @@ function usfmFromMap(map) {
 }
 
 function App() {
+  const [mapDef, setMapDef] = useState({template: map.template, fig: map.fig, mapView: map.mapView, imgFilename: map.imgFilename, width: map.width, height: map.height});
   const [locations, setLocations] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [mapWidth, setMapWidth] = useState(70);
@@ -514,6 +515,7 @@ function App() {
       map.fig = newMap.fig;
       map.mapView = newMap.mapView;
       setUsfmText(text); // keep USFM text in sync after parse
+      setMapDef({template: newMap.template, fig: newMap.fig, mapView: newMap.mapView, imgFilename: newMap.imgFilename, width: newMap.width, height: newMap.height});
     } catch (e) {
       alert('Invalid USFM format. Changes not applied.');
     }
@@ -549,11 +551,12 @@ function App() {
         <div className="map-pane" style={{ flex: `0 0 ${mapWidth}%` }}>
           {mapPaneView === 0 && map.mapView && (
             <MapPane
-              imageUrl={map.imgFilename ? `/assets/maps/${map.imgFilename}` : ''}
+              imageUrl={mapDef.imgFilename ? `/assets/maps/${mapDef.imgFilename}` : ''}
               locations={locations}
               onSelectLocation={handleSelectLocation}
               selectedLocation={selectedLocation}
               labelScale={labelScale} // <-- pass labelScale
+              mapDef={mapDef} // <-- pass map definition
             />
           )}
           {mapPaneView === 1 && (
@@ -596,6 +599,7 @@ function App() {
               setMapPaneView(viewIdx);
             }}
             onShowSettings={() => setShowSettings(true)} // <-- add onShowSettings
+            mapDef={mapDef} // <-- pass map definition
           />
         </div>
       </div>
@@ -613,9 +617,9 @@ function App() {
   );
 }
 
-function MapPane({ imageUrl, locations, onSelectLocation, selectedLocation, labelScale }) {
-  const imageHeight = map.height;
-  const imageWidth = map.width;
+function MapPane({ imageUrl, locations, onSelectLocation, selectedLocation, labelScale, mapDef }) {
+  const imageHeight = mapDef.height;
+  const imageWidth = mapDef.width;
   const bounds = useMemo(() => [[0, 0], [imageHeight, imageWidth]], [imageHeight, imageWidth]);
   const crs = L.CRS.Simple;
 
@@ -685,11 +689,11 @@ function MapPane({ imageUrl, locations, onSelectLocation, selectedLocation, labe
   );
 }
 
-function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, onSaveRenderings, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings }) {
+function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, onSaveRenderings, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings, mapDef }) {
   const [vernacular, setVernacular] = useState(selectedLocation?.vernLabel || '');
   const inputRef = useRef(null);
   const [showTemplateInfo, setShowTemplateInfo] = useState(false);
-  const templateData = getMapData(map.template) || {};
+  const templateData = getMapData(mapDef.template) || {};
 
   useEffect(() => {
     setVernacular(selectedLocation?.vernLabel || '');
@@ -735,7 +739,7 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
 
   // --- Template info/browse group ---
   // Access the template name from the global map object
-  const templateName = map.template || '(no template)';
+  const templateName = mapDef.template || '(no template)';
 
   // Only show the button row if in USFM view
   if (mapPaneView === 2) {
@@ -797,12 +801,12 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
           {/* Icon view buttons */}
           <button
             onClick={() => onSetView(0)}
-            disabled={!map.mapView}
+            disabled={!mapDef.mapView}
             style={{
               marginRight: 4,
               background: mapPaneView === 0 ? '#d0eaff' : undefined,
               border: mapPaneView === 0 ? '2px inset #2196f3' : undefined,
-              opacity: map.mapView ? 1 : 0.5,
+              opacity: mapDef.mapView ? 1 : 0.5,
               padding: '4px 8px',
               borderRadius: 4,
               height: 32,
