@@ -8,6 +8,7 @@ function getMapData(mapId) {
         if (Array.isArray(mapData.labels)) {
             mapData.labels = mapData.labels.map((label, idx) => ({ ...label, idx }));
         }
+        mapData.template = mapId;
         return { ...mapData };
     } catch (e) {
         console.error('Failed to load all-map-data.json:', e);

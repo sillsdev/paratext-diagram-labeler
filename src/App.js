@@ -39,6 +39,7 @@ function mapFromUsfm(usfm) {
   try {
     mapDefData = getMapData(templateMatch[1]);
     mapDefData.mapView = true;
+    mapDefData.template = templateMatch[1];
   } catch (e) {
     mapDefData = {
       template: templateMatch ? templateMatch[1] : '',
@@ -75,7 +76,8 @@ function mapFromUsfm(usfm) {
       mapDefData.labels.push(label);
     }
   }
-  
+
+  console.log('Parsed map definition:', mapDefData);
   return mapDefData;
 }
 
@@ -168,6 +170,7 @@ function BottomPane({ termId }) {
 }
 
 function usfmFromMap(map) {
+  console.log('Converting map to USFM:', map);
   // Reconstruct USFM string from current map state
   let usfm = `\\zdiagram-s |template="${map.template}"\\*\n`;
   // Always include the \fig line if present, and ensure it is in correct USFM format
@@ -202,6 +205,9 @@ function App() {
   const isDraggingVertical = useRef(false);
   const isDraggingHorizontal = useRef(false);
   const termRenderings = useMemo(() => new TermRenderings('/data/term-renderings.json'), []);
+
+  // Add ref for vernacular input
+  const vernacularInputRef = useRef(null);
 
   const handleSelectLocation = useCallback((location) => {
     console.log('Selected location:', location);
@@ -424,6 +430,13 @@ function App() {
     }
   }, [termRenderings, handleSelectLocation]);
 
+  // Focus vernacular input after selection or locations change
+  useEffect(() => {
+    if (vernacularInputRef.current) {
+      vernacularInputRef.current.focus();
+    }
+  }, [selLocation]); // NOT locations, to avoid re-focusing while editing renderings
+
   // Table View component
   function TableView({ locations, selLocation, onUpdateVernacular, onNextLocation, termRenderings, onSelectLocation }) {
     const inputRefs = useRef([]);
@@ -524,13 +537,13 @@ function App() {
   });
 
   // --- USFM state for editing ---
-  const [usfmText, setUsfmText] = useState(() => usfmFromMap({ ...map, labels: locations }));
+  const [usfmText, setUsfmText] = useState(() => usfmFromMap({ ...mapDef, labels: locations }));
 
   // Only update USFM text when switching TO USFM view (not on every locations change)
   const prevMapPaneView = useRef();
   useEffect(() => {
     if (prevMapPaneView.current !== 2 && mapPaneView === 2) {
-      setUsfmText(usfmFromMap({ ...map, labels: locations }));
+      setUsfmText(usfmFromMap({ ...mapDef, labels: locations }));
     }
     prevMapPaneView.current = mapPaneView;
   }, [mapPaneView, locations]);
@@ -645,6 +658,7 @@ function App() {
             onShowSettings={() => setShowSettings(true)} // <-- add onShowSettings
             mapDef={mapDef} // <-- pass map definition
             onBrowseMapTemplate={handleBrowseMapTemplate}
+            vernacularInputRef={vernacularInputRef} // <-- pass ref
           />
         </div>
       </div>
@@ -733,7 +747,7 @@ function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScal
   );
 }
 
-function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, onSaveRenderings, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings, mapDef, onBrowseMapTemplate }) {
+function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, onSaveRenderings, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings, mapDef, onBrowseMapTemplate, vernacularInputRef }) {
   const [vernacular, setVernacular] = useState(locations[selLocation]?.vernLabel || '');
   const inputRef = useRef(null);
   const [showTemplateInfo, setShowTemplateInfo] = useState(false);
@@ -983,7 +997,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
       </p>
       <div className="vernacularGroup" style={{ backgroundColor: statusValue[status].bkColor, margin: '10px', padding: '10px' }}>
         <input
-          ref={inputRef}
+          ref={vernacularInputRef}
           type="text"
           value={vernacular}
           onChange={handleVernChange}
