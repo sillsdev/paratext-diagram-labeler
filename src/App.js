@@ -234,19 +234,16 @@ function App() {
     }));
   }, [termRenderings]);
 
-  const handleNextLocation = useCallback((e) => {
-    if ((e.key === 'Enter' || e.key === 'Tab')) {
-      //e.preventDefault();
-      const currentIndex = selLocation;
-      let nextIndex;
-      if (e.shiftKey) {
-        nextIndex = (currentIndex - 1 + locations.length) % locations.length;
-      } else {
-        nextIndex = (currentIndex + 1) % locations.length;
-      }
-      const nextLocation = locations[nextIndex];
-      handleSelectLocation(nextLocation);
+  const handleNextLocation = useCallback((fwd) => {
+    const currentIndex = selLocation;
+    let nextIndex;
+    if (fwd) {
+      nextIndex = (currentIndex + 1) % locations.length;
+    } else {
+      nextIndex = (currentIndex - 1 + locations.length) % locations.length;
     }
+    const nextLocation = locations[nextIndex];
+    handleSelectLocation(nextLocation);
   }, [locations, selLocation, handleSelectLocation]);
 
   const handleVerticalDragStart = (e) => {
@@ -485,16 +482,10 @@ function App() {
                   onChange={e => onUpdateVernacular(loc.termId, e.target.value)}
                   onFocus={() => onSelectLocation(loc)}
                   onKeyDown={e => {
-                    if (e.key === 'PageDown') {
-                      //e.preventDefault();
-                      const nextIdx = (i + 1) % locations.length;
-                      if (inputRefs.current[nextIdx]) inputRefs.current[nextIdx].focus();
-                      onSelectLocation(locations[nextIdx]);
-                    } else if (e.key === 'PageUp') {
-                     // e.preventDefault();
-                      const prevIdx = (i - 1 + locations.length) % locations.length;
-                      if (inputRefs.current[prevIdx]) inputRefs.current[prevIdx].focus();
-                      onSelectLocation(locations[prevIdx]);
+                    if (e.key === 'PageDown' || e.key === 'ArrowDown') {
+                      onNextLocation(true);
+                    } else if (e.key === 'PageUp' || e.key === 'ArrowUp') {
+                      onNextLocation(false);
                     }
                   }}
                   style={{ }}
@@ -988,12 +979,10 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
           value={vernacular}
           onChange={handleVernChange}
           onKeyDown={e => {
-            if (e.key === 'PageDown') {
-              e.preventDefault();
-              onNextLocation({ key: 'Enter', shiftKey: false });
-            } else if (e.key === 'PageUp') {
-              e.preventDefault();
-              onNextLocation({ key: 'Enter', shiftKey: true });
+            if (e.key === 'PageDown' || e.key === 'ArrowDown') {
+              onNextLocation(true);
+            } else if (e.key === 'PageUp' || e.key === 'ArrowUp') {
+              onNextLocation(false);
             }
           }}
           placeholder="Enter translated label"
