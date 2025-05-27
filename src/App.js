@@ -179,6 +179,7 @@ function usfmFromMap(map) {
 function App() {
   const [mapDef, setMapDef] = useState({template: map.template, fig: map.fig, mapView: map.mapView, imgFilename: map.imgFilename, width: map.width, height: map.height});
   const [locations, setLocations] = useState([]);
+  const [selLocation, setSelLocation] = useState(0);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [mapWidth, setMapWidth] = useState(70);
   const [topHeight, setTopHeight] = useState(80);
@@ -197,24 +198,25 @@ function App() {
 
   // Memoize updateMarkerColor to prevent infinite loops
   const updateMarkerColor = useCallback(() => {
-    const newLocations = locations.map(loc => {
-      const status = termRenderings.getStatus(loc.termId, loc.vernLabel || '');
-      return { ...loc, status};
-    });
-    if (JSON.stringify(newLocations) !== JSON.stringify(locations)) {
-      setLocations(newLocations);
-    }
-    if (selectedLocation) {
-      const status = termRenderings.getStatus(selectedLocation.termId, selectedLocation.vernLabel || '');
-      if (selectedLocation.status !== status) {
-        setSelectedLocation(prev => ({ ...prev, status }));
-      }
-    }
-    console.log('Updated colors:', newLocations.map(l => ({ termId: l.termId, color: l.color })), 'Selected:', selectedLocation ? { termId: selectedLocation.termId, color: selectedLocation.color } : null);
+    // const newLocations = locations.map(loc => {
+    //   const status = termRenderings.getStatus(loc.termId, loc.vernLabel || '');
+    //   return { ...loc, status};
+    // });
+    // if (JSON.stringify(newLocations) !== JSON.stringify(locations)) {
+    //   setLocations(newLocations);
+    // }
+    // if (selectedLocation) {
+    //   const status = termRenderings.getStatus(selectedLocation.termId, selectedLocation.vernLabel || '');
+    //   if (selectedLocation.status !== status) {
+    //     setSelectedLocation(prev => ({ ...prev, status }));
+    //   }
+    // }
+    // console.log('Updated colors:', newLocations.map(l => ({ termId: l.termId, color: l.color })), 'Selected:', selectedLocation ? { termId: selectedLocation.termId, color: selectedLocation.color } : null);
   }, [locations, selectedLocation, termRenderings]);
 
   const handleSelectLocation = useCallback((location) => {
     console.log('Selected location:', location);
+    setSelLocation(location.idx);
     setSelectedLocation(location);
     const entry = termRenderings.data[location.termId];
     if (entry) {
@@ -226,7 +228,7 @@ function App() {
       //console.warn(`No term renderings entry for termId: ${location.termId}`);
     }
     updateMarkerColor();
-  }, [termRenderings, setRenderings, setIsApproved, updateMarkerColor]);
+  }, [termRenderings, setRenderings, setIsApproved, setSelLocation, updateMarkerColor]);
 
   const handleUpdateVernacular = useCallback((termId, newVernacular) => {
     setLocations(prevLocations => prevLocations.map(loc => {
@@ -246,9 +248,11 @@ function App() {
   }, [termRenderings]);
 
   const handleNextLocation = useCallback((e) => {
-    if ((e.key === 'Enter' || e.key === 'Tab') && selectedLocation) {
+    if ((e.key === 'Enter' || e.key === 'Tab')) {
+    // if ((e.key === 'Enter' || e.key === 'Tab') && selectedLocation) {
       e.preventDefault();
-      const currentIndex = locations.findIndex(loc => loc.termId === selectedLocation.termId);
+      // const currentIndex = locations.findIndex(loc => loc.termId === selectedLocation.termId);
+      const currentIndex = selLocation;
       let nextIndex;
       if (e.shiftKey) {
         nextIndex = (currentIndex - 1 + locations.length) % locations.length;
@@ -258,7 +262,7 @@ function App() {
       const nextLocation = locations[nextIndex];
       handleSelectLocation(nextLocation);
     }
-  }, [locations, selectedLocation, handleSelectLocation]);
+  }, [locations, selLocation, selectedLocation, handleSelectLocation]);
 
   const handleVerticalDragStart = (e) => {
     e.preventDefault();
@@ -320,9 +324,14 @@ function App() {
         renderings: e.target.value
       };
       termRenderings.data = updatedData;
-      // Update status for selectedLocation if needed
-      // setSelectedLocation(prev => prev ? { ...prev, status: termRenderings.getStatus(prev.termId, prev.vernLabel) } : prev);
-      updateMarkerColor();
+      // The renderings change might affect the status of the location indexed by selLocation
+      const status = termRenderings.getStatus(locations[selLocation].termId, locations[selLocation].vernLabel || '');
+      setLocations(prevLocations => prevLocations.map(loc => {
+        if (loc.termId === locations[selLocation].termId) {
+          return { ...loc, status };
+        }
+        return loc;
+      }));
     }
   };
 
@@ -336,6 +345,14 @@ function App() {
         isGuessed: !approved,
       };
       termRenderings.data = updatedData;
+      // The renderings change might affect the status of the location indexed by selLocation
+      const status = termRenderings.getStatus(locations[selLocation].termId, locations[selLocation].vernLabel || '');
+      setLocations(prevLocations => prevLocations.map(loc => {
+        if (loc.termId === locations[selLocation].termId) {
+          return { ...loc, status };
+        }
+        return loc;
+      }));
       updateMarkerColor();
     }
   };
@@ -442,11 +459,13 @@ function App() {
     const inputRefs = useRef([]);
     useEffect(() => {
       // Focus the input for the selected row
-      const idx = locations.findIndex(l => l.termId === selectedLocation?.termId);
+      // const idx = locations.findIndex(l => l.termId === selectedLocation?.termId);
+      const idx = selLocation;
       if (idx >= 0 && inputRefs.current[idx]) {
         inputRefs.current[idx].focus();
       }
-    }, [selectedLocation, locations]);
+    }, [selLocation, locations]);
+    // }, [selectedLocation, locations]);
     return (
       <div className="table-view-scroll-wrapper">
         <table className="table-view" style={{ borderCollapse: 'collapse' }}>
@@ -460,7 +479,8 @@ function App() {
           <tbody>
             {locations.map((loc, i) => {
               const status = termRenderings.getStatus(loc.termId, loc.vernLabel);
-              const isSelected = selectedLocation && selectedLocation.termId === loc.termId;
+              const isSelected = selLocation === loc.idx;
+              // const isSelected = selectedLocation && selectedLocation.termId === loc.termId;
               return (
                 <tr
                 key={loc.termId}
@@ -472,7 +492,7 @@ function App() {
                   border: isSelected ? '4px solid black' : undefined,
                   paddingTop: isSelected ? 12 : undefined,
                   paddingBottom: isSelected ? 12 : undefined,
-                  height: isSelected ? 48 : undefined,
+                  // height: isSelected ? 48 : undefined,
                 }}
                 onClick={() => onSelectLocation(loc)}
                 >
@@ -524,7 +544,7 @@ function App() {
     );
   }
 
-  // USFM View component (now editable, uncontrolled)
+  // USFM View component (editable, uncontrolled)
   const usfmTextareaRef = useRef();
   const USFMView = React.memo(function USFMView({ usfmText }) {
     return (
@@ -563,6 +583,7 @@ function App() {
         const status = termRenderings.getStatus(loc.termId, loc.vernLabel);
         return { ...loc, status };
       });
+      setSelLocation(0);
       setLocations(initialLocations);
       if (initialLocations.length > 0) {
         setSelectedLocation(initialLocations[0]);
@@ -579,7 +600,7 @@ function App() {
     } catch (e) {
       alert('Invalid USFM format. Changes not applied.');
     }
-  }, [termRenderings, setLocations, setSelectedLocation]);
+  }, [termRenderings, setLocations, setSelLocation, setSelectedLocation]);
 
   // Intercept view switch to update map if leaving USFM view
   const handleSwitchViewWithUsfm = useCallback(() => {
@@ -616,6 +637,7 @@ function App() {
               locations={locations}
               onSelectLocation={handleSelectLocation}
               selectedLocation={selectedLocation}
+              selLocation={selLocation}
               labelScale={labelScale} // <-- pass labelScale
               mapDef={mapDef} // <-- pass map definition
             />
@@ -642,6 +664,7 @@ function App() {
         <div className="details-pane" style={{ flex: `0 0 ${100 - mapWidth}%` }}>
           <DetailsPane
             selectedLocation={selectedLocation}
+            selLocation={selLocation}
             onUpdateVernacular={handleUpdateVernacular}
             onNextLocation={handleNextLocation}
             renderings={renderings}
@@ -679,7 +702,7 @@ function App() {
   );
 }
 
-function MapPane({ imageUrl, locations, onSelectLocation, selectedLocation, labelScale, mapDef }) {
+function MapPane({ imageUrl, locations, onSelectLocation, selectedLocation, selLocation, labelScale, mapDef }) {
   const imageHeight = mapDef.height;
   const imageWidth = mapDef.width;
   const bounds = useMemo(() => [[0, 0], [imageHeight, imageWidth]], [imageHeight, imageWidth]);
@@ -733,7 +756,8 @@ function MapPane({ imageUrl, locations, onSelectLocation, selectedLocation, labe
               loc.angle,
               loc.size,
               loc.status,
-              selectedLocation && selectedLocation.termId === loc.termId,
+              selLocation === loc.idx,
+              // selectedLocation && selectedLocation.termId === loc.termId,
               labelScale 
             )}
             eventHandlers={{ click: () => onSelectLocation(loc) }}
@@ -750,15 +774,17 @@ function MapPane({ imageUrl, locations, onSelectLocation, selectedLocation, labe
   );
 }
 
-function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, onSaveRenderings, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings, mapDef, onBrowseMapImage }) {
-  const [vernacular, setVernacular] = useState(selectedLocation?.vernLabel || '');
+function DetailsPane({ selectedLocation, selLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, onSaveRenderings, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings, mapDef, onBrowseMapImage }) {
+  const [vernacular, setVernacular] = useState(locations[selLocation]?.vernLabel || '');
   const inputRef = useRef(null);
   const [showTemplateInfo, setShowTemplateInfo] = useState(false);
   const templateData = getMapData(mapDef.template) || {};
 
   useEffect(() => {
-    setVernacular(selectedLocation?.vernLabel || '');
-  }, [selectedLocation]);
+  //   setVernacular(selectedLocation?.vernLabel || '');
+  // }, [selectedLocation]);
+    setVernacular(locations[selLocation]?.vernLabel || '');
+  }, [selLocation]);
 
   useEffect(() => {
     if (selectedLocation && inputRef.current) {
@@ -769,9 +795,9 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
   const handleChange = (e) => {
     const newVernacular = e.target.value;
     setVernacular(newVernacular); // Update state immediately
-    if (selectedLocation) {
+    // if (selectedLocation) {
       onUpdateVernacular(selectedLocation.termId, newVernacular);
-    }
+    // }
   };
 
   // Tally status counts for all locations
