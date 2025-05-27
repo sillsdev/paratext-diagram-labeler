@@ -342,6 +342,26 @@ function App() {
     }
   };
 
+  // Handler for map image browse
+  const handleBrowseMapImage = async () => {
+    try {
+      const [fileHandle] = await window.showOpenFilePicker({
+        types: [
+          {
+            description: 'JPEG Images',
+            accept: { 'image/jpeg': ['.jpg', '.jpeg'] },
+          },
+        ],
+        multiple: false,
+      });
+      if (fileHandle) {
+        alert(`Selected file: ${fileHandle.name}`);
+      }
+    } catch (e) {
+      // User cancelled or not supported
+    }
+  };
+
   useEffect(() => {
     // Initialize locations only when termRenderings.data is loaded
     const checkData = () => {
@@ -600,6 +620,7 @@ function App() {
             }}
             onShowSettings={() => setShowSettings(true)} // <-- add onShowSettings
             mapDef={mapDef} // <-- pass map definition
+            onBrowseMapImage={handleBrowseMapImage}
           />
         </div>
       </div>
@@ -689,7 +710,7 @@ function MapPane({ imageUrl, locations, onSelectLocation, selectedLocation, labe
   );
 }
 
-function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, onSaveRenderings, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings, mapDef }) {
+function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, onSaveRenderings, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings, mapDef, onBrowseMapImage }) {
   const [vernacular, setVernacular] = useState(selectedLocation?.vernLabel || '');
   const inputRef = useRef(null);
   const [showTemplateInfo, setShowTemplateInfo] = useState(false);
@@ -903,7 +924,11 @@ function DetailsPane({ selectedLocation, onUpdateVernacular, onNextLocation, ren
         >
           <span role="img" aria-label="info" style={{ fontSize: '1.2em', color: '#6cf' }}>ℹ️</span>
         </button>
-        <button title="Browse for template" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginLeft: 8 }}>
+        <button
+          title="Browse for map image"
+          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginLeft: 8 }}
+          onClick={onBrowseMapImage}
+        >
           <span role="img" aria-label="browse" style={{ fontSize: '1.2em', color: '#fc6' }}>📂</span>
         </button>
       </div>
