@@ -1,14 +1,1330 @@
-﻿{
-  "Ἰορδάνης": {
-    "renderings": "Yardan* (@Yardana Khola)\nYordan*",
+{
+  "Αἰθίοψ": {
+    "renderings": "Ithiyopiyaa",
+    "isGuessed": true
+  },
+  "Αἰνών": {
+    "renderings": "Enona",
+    "isGuessed": true
+  },
+  "Αἴγυπτος": {
+    "renderings": "Misradesa*",
+    "isGuessed": true
+  },
+  "Βέροια": {
+    "renderings": "Beriyaa*",
+    "isGuessed": true
+  },
+  "Βέροια (DC)": {
+    "renderings": "",
     "isGuessed": false
   },
-  "Βηθλεέμ": {
+  "Βαβυλών": {
+    "renderings": "Bebilona*",
+    "isGuessed": true
+  },
+  "Βηθανία-1": {
+    "renderings": "Bethaaniyaa*",
+    "isGuessed": true
+  },
+  "Βηθανία-2": {
+    "renderings": "Bethaaniyaa*",
+    "isGuessed": true
+  },
+  "Βηθζαθά": {
+    "renderings": "Bethes‍daa",
+    "isGuessed": true
+  },
+  "Βηθλέεμ": {
+    "renderings": "Bethalehema*",
+    "isGuessed": true
+  },
+  "Βηθσαϊδά": {
+    "renderings": "Bethasedaa*",
+    "isGuessed": true
+  },
+  "Βηθφαγή": {
+    "renderings": "Bethaphaage*",
+    "isGuessed": true
+  },
+  "Βιθυνία": {
+    "renderings": "Bithiniyaa*",
+    "isGuessed": true
+  },
+  "Γάζα": {
+    "renderings": "Ga'era",
+    "isGuessed": true
+  },
+  "Γαδαρηνός": {
+    "renderings": "Gadariniharuko",
+    "isGuessed": true
+  },
+  "Γαλατία": {
+    "renderings": "Galaati*",
+    "isGuessed": true
+  },
+  "Γαλιλαία-1": {
+    "renderings": "Gaalila*",
+    "isGuessed": true
+  },
+  "Γαλιλαία-2": {
+    "renderings": "Gaalila*",
+    "isGuessed": true
+  },
+  "Γεθσημανί": {
+    "renderings": "Getasamani",
+    "isGuessed": true
+  },
+  "Γεννησαρέτ-1": {
+    "renderings": "Ganesareta",
+    "isGuessed": true
+  },
+  "Γερασηνός": {
+    "renderings": "Geraasenasa*",
+    "isGuessed": true
+  },
+  "Γολγοθᾶ": {
+    "renderings": "Galagathaa",
+    "isGuessed": true
+  },
+  "Δέρβη": {
+    "renderings": "Darbi",
+    "isGuessed": true
+  },
+  "Δαλματία": {
+    "renderings": "Dalamaatiyaamaa",
+    "isGuessed": true
+  },
+  "Δαμασκός": {
+    "renderings": "Damas‍kasa",
+    "isGuessed": true
+  },
+  "Δεκάπολις": {
+    "renderings": "Dasa",
+    "isGuessed": true
+  },
+  "Θεσσαλονίκη": {
+    "renderings": "Thesalonike*",
+    "isGuessed": true
+  },
+  "Θυάτειρα": {
+    "renderings": "Thi'aatiraa*",
+    "isGuessed": true
+  },
+  "Καισάρεια": {
+    "renderings": "Kaisariyaa*",
+    "isGuessed": true
+  },
+  "Καισαρείας τῆς Φιλίππου": {
+    "renderings": "Philip‍pi*",
+    "isGuessed": true
+  },
+  "Καλοὶ Λιμένες": {
+    "renderings": "Kinaarai-kinaara",
+    "isGuessed": true
+  },
+  "Κανά": {
+    "renderings": "Kaanaa*",
+    "isGuessed": true
+  },
+  "Καππαδοκία": {
+    "renderings": "Kaapaadokiyaa*",
+    "isGuessed": true
+  },
+  "Καφαρναούμ": {
+    "renderings": "Kapharnahuma*",
+    "isGuessed": true
+  },
+  "Καῦδα": {
+    "renderings": "K‍laudaa",
+    "isGuessed": true
+  },
+  "Κεγχρεαί": {
+    "renderings": "Kinkriyaa*",
+    "isGuessed": true
+  },
+  "Κεδρών": {
+    "renderings": "Kidrona",
+    "isGuessed": true
+  },
+  "Κιλικία": {
+    "renderings": "Kilikiyaa*",
+    "isGuessed": true
+  },
+  "Κνίδος": {
+    "renderings": "K‍nidasa",
+    "isGuessed": true
+  },
+  "Κολοσσαί": {
+    "renderings": "Kalas‍semaa",
+    "isGuessed": true
+  },
+  "Κρήτη": {
+    "renderings": "Kreta*",
+    "isGuessed": true
+  },
+  "Κυρήνη": {
+    "renderings": "Kureniko",
+    "isGuessed": true
+  },
+  "Κόρινθος": {
+    "renderings": "Korin‍tha*",
+    "isGuessed": true
+  },
+  "Κύπρος": {
+    "renderings": "Saa'iprasa",
+    "isGuessed": true
+  },
+  "Κώς": {
+    "renderings": "Kosa",
+    "isGuessed": true
+  },
+  "Λαοδίκεια": {
+    "renderings": "Laa'udikiyaa*",
+    "isGuessed": true
+  },
+  "Λασαία": {
+    "renderings": "Laasiyaa",
+    "isGuessed": true
+  },
+  "Λιβύη": {
+    "renderings": "Libiyaakaa",
+    "isGuessed": true
+  },
+  "Λυδία (DC)": {
     "renderings": "",
+    "isGuessed": false
+  },
+  "Λυκία": {
+    "renderings": "Lukiyaa",
+    "isGuessed": true
+  },
+  "Λυκαονία": {
+    "renderings": "Lukoniyaa",
+    "isGuessed": true
+  },
+  "Λύδδα": {
+    "renderings": "Luddaa*",
+    "isGuessed": true
+  },
+  "Λύστρα": {
+    "renderings": "Lus‍traa",
+    "isGuessed": true
+  },
+  "Μίλητος": {
+    "renderings": "Miletasa*",
+    "isGuessed": true
+  },
+  "Μαγαδάν": {
+    "renderings": "Magaadaana",
+    "isGuessed": true
+  },
+  "Μακεδονία": {
+    "renderings": "Maakedoniyaa*",
+    "isGuessed": true
+  },
+  "Μελίτη": {
+    "renderings": "Maal‍taa",
+    "isGuessed": true
+  },
+  "Μεσοποταμία": {
+    "renderings": "Mesopotaamiyaa*",
+    "isGuessed": true
+  },
+  "Μιτυλήνη": {
+    "renderings": "Mitilene",
+    "isGuessed": true
+  },
+  "Μυσία": {
+    "renderings": "Maa'isiyaa",
+    "isGuessed": true
+  },
+  "Μύρα": {
+    "renderings": "Maa'iraa",
+    "isGuessed": true
+  },
+  "Μῆδος": {
+    "renderings": "Maadiharu",
+    "isGuessed": true
+  },
+  "Νέα Πόλις": {
+    "renderings": "Niyaapolisa",
+    "isGuessed": true
+  },
+  "Ναΐν": {
+    "renderings": "Naa'ina",
+    "isGuessed": true
+  },
+  "Ναζαρά": {
+    "renderings": "Naasarata*",
+    "isGuessed": true
+  },
+  "Νικόπολις": {
+    "renderings": "Nikopolisamaa",
+    "isGuessed": true
+  },
+  "Πάταρα": {
+    "renderings": "Pataaraa",
+    "isGuessed": true
+  },
+  "Πάτμος": {
+    "renderings": "Pat‍mosa",
+    "isGuessed": true
+  },
+  "Πάφος": {
+    "renderings": "Paaphosa",
+    "isGuessed": true
+  },
+  "Πέργαμος": {
+    "renderings": "Pargaamama*",
+    "isGuessed": true
+  },
+  "Πέργη": {
+    "renderings": "Pargaa",
+    "isGuessed": true
+  },
+  "Παμφυλία": {
+    "renderings": "Paamaphiliyaa",
+    "isGuessed": true
+  },
+  "Περσίς": {
+    "renderings": "Parasisalaa'i",
+    "isGuessed": true
+  },
+  "Πισιδία": {
+    "renderings": "Pisidiyaa",
+    "isGuessed": true
+  },
+  "Ποτίολοι": {
+    "renderings": "Pati'oli",
+    "isGuessed": true
+  },
+  "Πτολεμαΐς": {
+    "renderings": "Tolemaa'isa",
+    "isGuessed": true
+  },
+  "Πόντος": {
+    "renderings": "Pon‍tasa",
+    "isGuessed": true
+  },
+  "Σάμος": {
+    "renderings": "Saamosa",
+    "isGuessed": true
+  },
+  "Σάρδεις": {
+    "renderings": "Saardisa*",
+    "isGuessed": true
+  },
+  "Σάρεπτα": {
+    "renderings": "Saarapata",
+    "isGuessed": true
+  },
+  "Σαλαμίς": {
+    "renderings": "Salaamisa",
+    "isGuessed": true
+  },
+  "Σαλείμ": {
+    "renderings": "Saalimako",
+    "isGuessed": true
+  },
+  "Σαλμώνη": {
+    "renderings": "Saalamone",
+    "isGuessed": true
+  },
+  "Σαμάρεια-1": {
+    "renderings": "Saamariyaa",
+    "isGuessed": true
+  },
+  "Σαμάρεια-2": {
+    "renderings": "Saamariyaa",
+    "isGuessed": true
+  },
+  "Σαμοθρᾴκη": {
+    "renderings": "Saamothraake",
+    "isGuessed": true
+  },
+  "Σελεύκεια": {
+    "renderings": "Silukiyaa",
+    "isGuessed": true
+  },
+  "Σιδών": {
+    "renderings": "Sidona*",
+    "isGuessed": true
+  },
+  "Σιλωάμ": {
+    "renderings": "Silo'aamako",
+    "isGuessed": true
+  },
+  "Σκύθης": {
+    "renderings": "Asiksita",
+    "isGuessed": true
+  },
+  "Σμύρνα": {
+    "renderings": "S‍murnaa*",
+    "isGuessed": true
+  },
+  "Συράκουσαι": {
+    "renderings": "Suraakusaa'i",
+    "isGuessed": true
+  },
+  "Συρία": {
+    "renderings": "Siriyaa",
+    "isGuessed": true
+  },
+  "Συχάρ": {
+    "renderings": "Sukhaara",
+    "isGuessed": true
+  },
+  "Συχέμ": {
+    "renderings": "Sakema",
+    "isGuessed": true
+  },
+  "Σύρτις": {
+    "renderings": "Jahaajabhitra",
+    "isGuessed": true
+  },
+  "Ταρσός": {
+    "renderings": "Taarsasa",
+    "isGuessed": true
+  },
+  "Τιβεριάς-1": {
+    "renderings": "Tiberiyaasa*",
+    "isGuessed": true
+  },
+  "Τραχωνῖτις": {
+    "renderings": "Traakhonitisa",
+    "isGuessed": true
+  },
+  "Τρῳάς": {
+    "renderings": "Tro'aasa*",
+    "isGuessed": true
+  },
+  "Τύρος": {
+    "renderings": "Turosa*",
+    "isGuessed": true
+  },
+  "Φίλιπποι": {
+    "renderings": "Philip‍pi*",
+    "isGuessed": true
+  },
+  "Φιλαδέλφεια": {
+    "renderings": "Philaadel‍phiyaa",
+    "isGuessed": true
+  },
+  "Φοινίκη": {
+    "renderings": "Phonike",
+    "isGuessed": true
+  },
+  "Φοῖνιξ": {
+    "renderings": "Phonik‍sa",
+    "isGuessed": true
+  },
+  "Φρυγία": {
+    "renderings": "Phrigiyaa",
+    "isGuessed": true
+  },
+  "Χίος": {
+    "renderings": "Khiyasa",
+    "isGuessed": true
+  },
+  "Χοραζίν": {
+    "renderings": "Khoraajina*",
+    "isGuessed": true
+  },
+  "אֱדוֹם": {
+    "renderings": "Edoma",
+    "isGuessed": true
+  },
+  "אֲדוֹמִי": {
+    "renderings": "Edomi",
+    "isGuessed": true
+  },
+  "אֲפֵק-1": {
+    "renderings": "Apeka",
+    "isGuessed": true
+  },
+  "אֲרַם נַהֲרַיִם": {
+    "renderings": "",
+    "isGuessed": false
+  },
+  "אֲרַמִּי": {
+    "renderings": "Raamota-gilaadamaa",
+    "isGuessed": true
+  },
+  "אֲרָם-1": {
+    "renderings": "Araamakaa Raajaa",
+    "isGuessed": true
+  },
+  "אֲרָרַט": {
+    "renderings": "Aaraaraata",
+    "isGuessed": true
+  },
+  "אֵילִם": {
+    "renderings": "Elima",
+    "isGuessed": true
+  },
+  "אֶדְרֶעִי-1": {
+    "renderings": "Edre'i",
+    "isGuessed": true
+  },
+  "אֶפְרַיִם": {
+    "renderings": "Ephraa'ima",
+    "isGuessed": true
+  },
+  "אֶפְרָת-1": {
+    "renderings": "Epraatalaa'i",
+    "isGuessed": true
+  },
+  "אַחְמְתָא (AR)": {
+    "renderings": "Ek‍baatanaa",
+    "isGuessed": true
+  },
+  "אַכַּד": {
+    "renderings": "Ak‍kada",
+    "isGuessed": true
+  },
+  "אַרְוָד": {
+    "renderings": "",
+    "isGuessed": false
+  },
+  "אַרְנוֹן": {
+    "renderings": "Arnona",
+    "isGuessed": true
+  },
+  "אַשְׁדּוֹד": {
+    "renderings": "As‍doda",
+    "isGuessed": true
+  },
+  "אַשְׁקְלוֹן": {
+    "renderings": "As‍kalona",
+    "isGuessed": true
+  },
+  "אַשּׁוּר-1": {
+    "renderings": "As‍suri",
+    "isGuessed": true
+  },
+  "אַשּׁוּר-2": {
+    "renderings": "As‍surakaa",
+    "isGuessed": true
+  },
+  "אָשֵׁר-1": {
+    "renderings": "Aasera",
+    "isGuessed": true
+  },
+  "אוּר-1": {
+    "renderings": "Uradekhi",
+    "isGuessed": true
+  },
+  "בְּאֵר שֶׁבַע": {
+    "renderings": "Bersebaa",
+    "isGuessed": true
+  },
+  "בִּנְיָמִין-1": {
+    "renderings": "Ben‍yaamina",
+    "isGuessed": true
+  },
+  "בֵּית לֶחֶם": {
+    "renderings": "Bethalehema*",
+    "isGuessed": true
+  },
+  "בֵּית פְּעוֹר": {
+    "renderings": "Betha-pora",
+    "isGuessed": true
+  },
+  "בֵּית־אֵל-1": {
+    "renderings": "Bethela",
+    "isGuessed": true
+  },
+  "בֵּית־שֶׁמֶשׁ-1": {
+    "renderings": "Betha-semesa",
+    "isGuessed": true
+  },
+  "בֶּצֶר-1": {
+    "renderings": "Besera",
+    "isGuessed": true
+  },
+  "בַּעַל צְפוֹן": {
+    "renderings": "Baala-sephonako",
+    "isGuessed": true
+  },
+  "בָּבֶל": {
+    "renderings": "Bebilona*",
+    "isGuessed": true
+  },
+  "בָּצְרָה-2": {
+    "renderings": "Bojraa",
+    "isGuessed": true
+  },
+  "בָּשָׁן": {
+    "renderings": "Baasaana",
+    "isGuessed": true
+  },
+  "גְּבַל": {
+    "renderings": "Gabaalakaa",
+    "isGuessed": true
+  },
+  "גְּרִזִּים": {
+    "renderings": "Girij‍jima",
+    "isGuessed": true
+  },
+  "גִּבְעָה-1": {
+    "renderings": "Gibaa",
+    "isGuessed": true
+  },
+  "גִּבְעוֹן": {
+    "renderings": "Gibona",
+    "isGuessed": true
+  },
+  "גִּיחוֹן-2": {
+    "renderings": "Gihona",
+    "isGuessed": true
+  },
+  "גִּלְבֹּעַ": {
+    "renderings": "Gil‍bo",
+    "isGuessed": true
+  },
+  "גִּלְגָּל-1": {
+    "renderings": "Gilagaalamaa",
+    "isGuessed": true
+  },
+  "גִּלְעָד-1": {
+    "renderings": "Gilaada",
+    "isGuessed": true
+  },
+  "גֵּיא־הִנֹּם": {
+    "renderings": "Besibica",
+    "isGuessed": true
+  },
+  "גֶּזֶר": {
+    "renderings": "Gejera",
+    "isGuessed": true
+  },
+  "גַּד-2": {
+    "renderings": "Gaada",
+    "isGuessed": true
+  },
+  "גַּת-2": {
+    "renderings": "Gaata",
+    "isGuessed": true
+  },
+  "גָּלִיל": {
+    "renderings": "Gaalila*",
+    "isGuessed": true
+  },
+  "גֹּמֶר-1": {
+    "renderings": "Gomera",
+    "isGuessed": true
+  },
+  "גֹּשֶׁן-1": {
+    "renderings": "Gosena",
+    "isGuessed": true
+  },
+  "גּוֹלָן": {
+    "renderings": "Golaana",
+    "isGuessed": true
+  },
+  "דְּבִיר-2": {
+    "renderings": "Dabira",
+    "isGuessed": true
+  },
+  "דִּבְלָה": {
+    "renderings": "Dib‍laa",
+    "isGuessed": true
+  },
+  "דִּיבוֹן-1": {
+    "renderings": "Dibona",
+    "isGuessed": true
+  },
+  "דָּן-2": {
+    "renderings": "Daana*",
+    "isGuessed": true
+  },
+  "דֹּאר": {
+    "renderings": "Dora",
+    "isGuessed": true
+  },
+  "דֹּתָן": {
+    "renderings": "Dotaanamaa",
+    "isGuessed": true
+  },
+  "דּוּמֶשֶׂק": {
+    "renderings": "Damas‍kasamaa",
+    "isGuessed": true
+  },
+  "הָם": {
+    "renderings": "Caudhaum",
+    "isGuessed": true
+  },
+  "הֹדּוּ": {
+    "renderings": "Ithiyopiyaa",
+    "isGuessed": true
+  },
+  "זְבוּלוּן": {
+    "renderings": "Jabuluna",
+    "isGuessed": true
+  },
+  "זֶרֶד": {
+    "renderings": "",
+    "isGuessed": false
+  },
+  "חֲמָת": {
+    "renderings": "Hamaata",
+    "isGuessed": true
+  },
+  "חִדֶּקֶל": {
+    "renderings": "Taa'igrisa",
+    "isGuessed": true
+  },
+  "חִוִּי": {
+    "renderings": "Hiv‍vi",
+    "isGuessed": true
+  },
+  "חִתִּי": {
+    "renderings": "Hitti",
+    "isGuessed": true
+  },
+  "חֶבְרוֹן-1": {
+    "renderings": "Hebrona",
+    "isGuessed": true
+  },
+  "חֶרְמוֹן": {
+    "renderings": "Hermona",
+    "isGuessed": true
+  },
+  "חֶשְׁבּוֹן": {
+    "renderings": "Hes‍bona",
+    "isGuessed": true
+  },
+  "חָצוֹר-1": {
+    "renderings": "Haasora",
+    "isGuessed": true
+  },
+  "חָרְמָה": {
+    "renderings": "Hormaa",
+    "isGuessed": true
+  },
+  "חָרָן-1": {
+    "renderings": "Haaraana*",
+    "isGuessed": true
+  },
+  "יְאֹר-1": {
+    "renderings": "Nila",
+    "isGuessed": true
+  },
+  "יְהוּדָה-1": {
+    "renderings": "Yahudaa*",
+    "isGuessed": true
+  },
+  "יְרִחוֹ": {
+    "renderings": "Yarihoko",
+    "isGuessed": true
+  },
+  "יְרוּשָׁלִַם": {
+    "renderings": "Yarusalema*",
+    "isGuessed": true
+  },
+  "יִזְרְעֶאל-2": {
+    "renderings": "Yijarela",
+    "isGuessed": true
+  },
+  "יִשְׂרָאֵל": {
+    "renderings": "Israa'ela*",
+    "isGuessed": true
+  },
+  "יִשָּׂשׂכָר-1": {
+    "renderings": "Is‍saakhaara",
+    "isGuessed": true
+  },
+  "יֶפֶת": {
+    "renderings": "Yepeta",
+    "isGuessed": true
+  },
+  "יַבְנְאֵל-1": {
+    "renderings": "Tungin‍th‍yo",
+    "isGuessed": true
+  },
+  "יַבְנֵה": {
+    "renderings": "Yab‍ne",
+    "isGuessed": true
+  },
+  "יַבֹּק": {
+    "renderings": "Yab‍boka",
+    "isGuessed": true
+  },
+  "יַם־סוּף": {
+    "renderings": "Laala",
+    "isGuessed": true
+  },
+  "יַרְדֵּן": {
+    "renderings": "Yardana",
+    "isGuessed": true
+  },
+  "יַרְמוּת-1": {
+    "renderings": "Yarmuta",
+    "isGuessed": true
+  },
+  "יָבֵשׁ-1": {
+    "renderings": "Yaabesa",
+    "isGuessed": true
+  },
+  "יָוָן": {
+    "renderings": "Yaavaanakaa",
+    "isGuessed": true
+  },
+  "יָם הַמֶּלַח": {
+    "renderings": "Mrta",
+    "isGuessed": true
+  },
+  "יָפוֹ": {
+    "renderings": "Yop‍paasam‍ma",
+    "isGuessed": true
+  },
+  "יָקְנְעָם": {
+    "renderings": "Yok‍naama",
+    "isGuessed": true
+  },
+  "כְּנַעַן-1": {
+    "renderings": "Kanaana",
+    "isGuessed": true
+  },
+  "כִּנֶּרֶת-1": {
+    "renderings": "Gaalila*",
+    "isGuessed": true
+  },
+  "כִּתִּיִּים": {
+    "renderings": "Kittima",
+    "isGuessed": true
+  },
+  "כַּרְכְּמִישׁ": {
+    "renderings": "Karkamisa",
+    "isGuessed": true
+  },
+  "כַּרְמֶל-2": {
+    "renderings": "Karmela",
+    "isGuessed": true
+  },
+  "כַּשְׂדִּי": {
+    "renderings": "",
+    "isGuessed": false
+  },
+  "כּוּשׁ-1": {
+    "renderings": "Kusa",
+    "isGuessed": true
+  },
+  "לְבָנוֹן": {
+    "renderings": "Lebanaana",
+    "isGuessed": true
+  },
+  "לִבְנָה-2": {
+    "renderings": "Lib‍naa",
+    "isGuessed": true
+  },
+  "לַיִשׁ-2": {
+    "renderings": "Lesa",
+    "isGuessed": true
+  },
+  "לָכִישׁ": {
+    "renderings": "Laakisa",
+    "isGuessed": true
+  },
+  "לוּד": {
+    "renderings": "Luda",
+    "isGuessed": true
+  },
+  "מְגִדּוֹ": {
+    "renderings": "Magiddo",
+    "isGuessed": true
+  },
+  "מְנַשֶּׁה-1": {
+    "renderings": "Manas‍se*",
+    "isGuessed": true
+  },
+  "מִדְיָן": {
+    "renderings": "Midyaani",
+    "isGuessed": true
+  },
+  "מִצְפָּה-2": {
+    "renderings": "Mis‍paamaa",
+    "isGuessed": true
+  },
+  "מִצְרַיִם": {
+    "renderings": "Misra*",
+    "isGuessed": true
+  },
+  "מֵידְבָא": {
+    "renderings": "Medabaa",
+    "isGuessed": true
+  },
+  "מֶשֶׁךְ": {
+    "renderings": "Meseka",
+    "isGuessed": true
+  },
+  "מַחֲנַיִם": {
+    "renderings": "Mahanoma",
+    "isGuessed": true
+  },
+  "מַמְרֵא-2": {
+    "renderings": "Mamreko",
+    "isGuessed": true
+  },
+  "מַקֵּדָה": {
+    "renderings": "Mak‍kedaa",
+    "isGuessed": true
+  },
+  "מָדַי": {
+    "renderings": "Maadikaa",
+    "isGuessed": true
+  },
+  "מָרֵשָׁה-1": {
+    "renderings": "Maaresaa",
+    "isGuessed": true
+  },
+  "מָרָה": {
+    "renderings": "Haale",
+    "isGuessed": true
+  },
+  "מֹף": {
+    "renderings": "Charapas‍ta",
+    "isGuessed": true
+  },
+  "מוֹאָב": {
+    "renderings": "Mo'aaba",
+    "isGuessed": true
+  },
+  "מוֹאָבִי": {
+    "renderings": "Mo'aabi",
+    "isGuessed": true
+  },
+  "נְבוֹ-2": {
+    "renderings": "Nebo",
+    "isGuessed": true
+  },
+  "נִינְוֵה": {
+    "renderings": "Ninave",
+    "isGuessed": true
+  },
+  "נֶגֶב": {
+    "renderings": "Daksina*",
+    "isGuessed": true
+  },
+  "נַפְתָּלִי": {
+    "renderings": "Nap‍taali",
+    "isGuessed": true
+  },
+  "סִינַי": {
+    "renderings": "Sinai",
+    "isGuessed": true
+  },
+  "סֻכּוֹת-1": {
+    "renderings": "Suk‍kota",
+    "isGuessed": true
+  },
+  "עֲדֻלָּם": {
+    "renderings": "Adul‍laama",
+    "isGuessed": true
+  },
+  "עֲזֵקָה": {
+    "renderings": "Aajekaa",
+    "isGuessed": true
+  },
+  "עֲרָבָה-1": {
+    "renderings": "Yardana",
+    "isGuessed": true
+  },
+  "עֲרָד-2": {
+    "renderings": "Aaraada",
+    "isGuessed": true
+  },
+  "עֲרוֹעֵר": {
+    "renderings": "Aro'era",
+    "isGuessed": true
+  },
+  "עֵיבָל-3": {
+    "renderings": "Ebaala",
+    "isGuessed": true
+  },
+  "עֵילָם-1": {
+    "renderings": "Elaama",
+    "isGuessed": true
+  },
+  "עֵין גֶּדִי": {
+    "renderings": "Ena-gadiko",
+    "isGuessed": true
+  },
+  "עֶגְלוֹן-1": {
+    "renderings": "Eg‍lona",
+    "isGuessed": true
+  },
+  "עֶצְיוֹן גֶּבֶר": {
+    "renderings": "Es‍yona-gebera",
+    "isGuessed": true
+  },
+  "עֶקְרוֹן": {
+    "renderings": "Ekrona",
+    "isGuessed": true
+  },
+  "עַזָּה": {
+    "renderings": "Gaajaa",
+    "isGuessed": true
+  },
+  "עַי-1": {
+    "renderings": "Ai",
+    "isGuessed": true
+  },
+  "עַכּוֹ": {
+    "renderings": "Ak‍ko",
+    "isGuessed": true
+  },
+  "עַמּוֹן": {
+    "renderings": "Am‍mona",
+    "isGuessed": true
+  },
+  "עַמּוֹנִי": {
+    "renderings": "Am‍moni",
+    "isGuessed": true
+  },
+  "עַרְבִי": {
+    "renderings": "Arabiharu",
+    "isGuessed": true
+  },
+  "עַשְׁתָּרֹת": {
+    "renderings": "As‍taarota",
+    "isGuessed": true
+  },
+  "פְּלִשְׁתִּי": {
+    "renderings": "Palis‍ti",
+    "isGuessed": true
+  },
+  "פְּלֶשֶׁת": {
+    "renderings": "Palis‍ti",
+    "isGuessed": true
+  },
+  "פְּנִיאֵל": {
+    "renderings": "Pani'ela",
+    "isGuessed": true
+  },
+  "פְּרָת": {
+    "renderings": "Yuphretisa",
+    "isGuessed": true
+  },
+  "פִּתֹם": {
+    "renderings": "Pitaama",
+    "isGuessed": true
+  },
+  "פֶּסַח": {
+    "renderings": "Nis‍taara-caada\nNis‍taara-caadakaa\nCaudhaum\nNis‍taara-caadako",
+    "isGuessed": true
+  },
+  "פַּדַּן אֲרָם": {
+    "renderings": "Paddana-araamamaa",
+    "isGuessed": true
+  },
+  "פָּארָן": {
+    "renderings": "Paaraana",
+    "isGuessed": true
+  },
+  "פּוּט": {
+    "renderings": "Puta",
+    "isGuessed": true
+  },
+  "פּוּנֹן": {
+    "renderings": "Punona",
+    "isGuessed": true
+  },
+  "צִידֹנִי": {
+    "renderings": "Sidoni",
+    "isGuessed": true
+  },
+  "צִידוֹן": {
+    "renderings": "Sidona",
+    "isGuessed": true
+  },
+  "צִין": {
+    "renderings": "Sinako",
+    "isGuessed": true
+  },
+  "צִקְלַג": {
+    "renderings": "Sik‍laga",
+    "isGuessed": true
+  },
+  "צָפוֹן": {
+    "renderings": "Saapona",
+    "isGuessed": true
+  },
+  "צָרְפַת": {
+    "renderings": "Vidhavaalaa'i",
+    "isGuessed": true
+  },
+  "צֹעַר": {
+    "renderings": "So'ara",
+    "isGuessed": true
+  },
+  "צוֹבָה": {
+    "renderings": "Sobaa",
+    "isGuessed": true
+  },
+  "צוֹר": {
+    "renderings": "Turosa",
+    "isGuessed": true
+  },
+  "קִיר־חֶרֶשׂ": {
+    "renderings": "Kira-haresetako",
+    "isGuessed": true
+  },
+  "קִרְיַת יְעָרִים": {
+    "renderings": "Kiryata-yaarima",
+    "isGuessed": true
+  },
+  "קֵדָר": {
+    "renderings": "Kedaara",
+    "isGuessed": true
+  },
+  "קֶדֶשׁ-1": {
+    "renderings": "Kedesa",
+    "isGuessed": true
+  },
+  "קָדֵשׁ בַּרְנֵעַ": {
+    "renderings": "Kaadesa-barne",
+    "isGuessed": true
+  },
+  "קָדֵשׁ-3": {
+    "renderings": "Kaadesa",
+    "isGuessed": true
+  },
+  "רְאוּבֵן": {
+    "renderings": "Rubena",
+    "isGuessed": true
+  },
+  "רַבָּה-1": {
+    "renderings": "Rab‍baa",
+    "isGuessed": true
+  },
+  "רָאמוֹת-1": {
+    "renderings": "Raamota",
+    "isGuessed": true
+  },
+  "רָמָה-2": {
+    "renderings": "Raamaa",
+    "isGuessed": true
+  },
+  "שְׁכֶם-1": {
+    "renderings": "Sakema",
+    "isGuessed": true
+  },
+  "שִׁילוֹ": {
+    "renderings": "Silomaa",
+    "isGuessed": true
+  },
+  "שִׁמְעוֹן-1": {
+    "renderings": "Simiyona",
+    "isGuessed": true
+  },
+  "שֵׁם": {
+    "renderings": "Sema*",
+    "isGuessed": true
+  },
+  "שֵׂעִיר-2": {
+    "renderings": "Se'irakaa",
+    "isGuessed": true
+  },
+  "שֹׁמְרוֹן": {
+    "renderings": "Saamariyaa",
+    "isGuessed": true
+  },
+  "שׁוּנֵם": {
+    "renderings": "Sunema",
+    "isGuessed": true
+  },
+  "שׁוּר": {
+    "renderings": "Sura",
+    "isGuessed": true
+  },
+  "שׁוּשַׁן-2": {
+    "renderings": "Susana",
+    "isGuessed": true
+  },
+  "תְּקוֹעַ": {
+    "renderings": "Tako",
+    "isGuessed": true
+  },
+  "תִּמְנָה-2": {
+    "renderings": "Tim‍naa",
+    "isGuessed": true
+  },
+  "תִּרְצָה-2": {
+    "renderings": "Tirsaa",
+    "isGuessed": true
+  },
+  "תֵּימָן-1": {
+    "renderings": "Temaana",
+    "isGuessed": true
+  },
+  "תַּעְנַךְ": {
+    "renderings": "Taanaaka",
+    "isGuessed": true
+  },
+  "תַּפּוּחַ-2": {
+    "renderings": "Tap‍puha",
+    "isGuessed": true
+  },
+  "תָּבוֹר-2": {
+    "renderings": "Tabora",
+    "isGuessed": true
+  },
+  "תָּמָר-5": {
+    "renderings": "Taamaara",
+    "isGuessed": true
+  },
+  "תּוּבַל": {
+    "renderings": "Tubala",
+    "isGuessed": true
+  },
+  "Ἀβιληνή": {
+    "renderings": "Abilene",
+    "isGuessed": true
+  },
+  "Ἀδραμυττηνός": {
+    "renderings": "Edraamitenosa",
+    "isGuessed": true
+  },
+  "Ἀθῆναι": {
+    "renderings": "Ethen‍sa*",
+    "isGuessed": true
+  },
+  "Ἀμφίπολις": {
+    "renderings": "Am‍phipolisa",
+    "isGuessed": true
+  },
+  "Ἀντιπατρίς": {
+    "renderings": "En‍tipaatrisa",
+    "isGuessed": true
+  },
+  "Ἀντιόχεια-1": {
+    "renderings": "En‍ti'okhiyaa*",
+    "isGuessed": true
+  },
+  "Ἀντιόχεια-2": {
+    "renderings": "En‍ti'okhiyaa*",
+    "isGuessed": true
+  },
+  "Ἀπολλωνία": {
+    "renderings": "Apol‍loniyaa",
+    "isGuessed": true
+  },
+  "Ἀππίου Φόρον": {
+    "renderings": "Ap‍piyasa",
+    "isGuessed": true
+  },
+  "Ἀραβία": {
+    "renderings": "Araba",
+    "isGuessed": true
+  },
+  "Ἀρφαξάδ": {
+    "renderings": "Arpaksada",
+    "isGuessed": true
+  },
+  "Ἀσία": {
+    "renderings": "Esiyaa*",
+    "isGuessed": true
+  },
+  "Ἀσσος": {
+    "renderings": "As‍sosa*",
+    "isGuessed": true
+  },
+  "Ἀττάλεια": {
+    "renderings": "Ataaliyaa",
+    "isGuessed": true
+  },
+  "Ἀχαΐα": {
+    "renderings": "Akhaiyaa*",
+    "isGuessed": true
+  },
+  "Ἁκελδαμάχ": {
+    "renderings": "Aakhel‍daamaa",
+    "isGuessed": true
+  },
+  "Ἁριμαθαία": {
+    "renderings": "Arimaathiyaa",
+    "isGuessed": true
+  },
+  "Ἄζωτος": {
+    "renderings": "As‍doda",
+    "isGuessed": true
+  },
+  "Ἐλαμίτης": {
+    "renderings": "Haamiharucaahim",
+    "isGuessed": true
+  },
+  "Ἐμμαοῦς": {
+    "renderings": "Im‍maa'usa",
+    "isGuessed": true
+  },
+  "Ἐφραίμ": {
+    "renderings": "Ephraa'ima",
+    "isGuessed": true
+  },
+  "Ἑλλάς": {
+    "renderings": "Grisa",
+    "isGuessed": true
+  },
+  "Ἔφεσος": {
+    "renderings": "Ephisasa*",
+    "isGuessed": true
+  },
+  "Ἰδουμαία": {
+    "renderings": "Idumi'aa",
+    "isGuessed": true
+  },
+  "Ἰεριχώ": {
+    "renderings": "Yariho",
+    "isGuessed": true
+  },
+  "Ἰκόνιον": {
+    "renderings": "Aa'ikoniyana*",
+    "isGuessed": true
+  },
+  "Ἰλλυρικόν": {
+    "renderings": "Il‍lurikana",
+    "isGuessed": true
+  },
+  "Ἰορδάνης": {
+    "renderings": "Yardana",
+    "isGuessed": true
+  },
+  "Ἰουδαία": {
+    "renderings": "Yahudiyaa*",
+    "isGuessed": true
+  },
+  "Ἰταλία": {
+    "renderings": "Itaaliyaa*",
+    "isGuessed": true
+  },
+  "Ἰτουραῖος": {
+    "renderings": "Ituriyaa",
+    "isGuessed": true
+  },
+  "Ἰόππη": {
+    "renderings": "Yop‍paa*",
+    "isGuessed": true
+  },
+  "Ἱεράπολις": {
+    "renderings": "Hiraapolisakaa",
     "isGuessed": true
   },
   "Ἱεροσόλυμα-1": {
-    "renderings": "Yerushaloma*",
+    "renderings": "Yarusalema*",
+    "isGuessed": true
+  },
+  "Ῥήγιον": {
+    "renderings": "Regiyana",
+    "isGuessed": true
+  },
+  "Ῥόδος": {
+    "renderings": "Rodasa",
+    "isGuessed": true
+  },
+  "Ῥώμη": {
+    "renderings": "Roma",
     "isGuessed": true
   }
 }

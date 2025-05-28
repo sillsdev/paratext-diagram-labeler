@@ -385,7 +385,24 @@ function App() {
           const status = termRenderings.getStatus(loc.termId, loc.vernLabel || '');
           return { ...loc, vernLabel: loc.vernLabel || '', status };
         });
-        setLocations(newLocations);
+
+          const initialLocations = newLocations.map(loc => {
+          // If vernLabel is empty, use getMapForm
+          if (!loc.vernLabel) {
+            loc.vernLabel = termRenderings.getMapForm(loc.termId);
+          }
+
+          const status = termRenderings.getStatus(loc.termId, loc.vernLabel);
+          return { ...loc, status };
+          });
+        console.log('Initial locations with colors:', initialLocations);
+        setLocations(initialLocations);
+        if (initialLocations.length > 0) {
+          handleSelectLocation(initialLocations[0]); // Auto-select first location
+        }
+
+
+        //setLocations(newLocations);
         setMapPaneView(0); // Map View
       }
     } catch (e) {
