@@ -7,6 +7,7 @@ import './App.css';
 import MapBibTerms from './MapBibTerms';
 import { getMapData } from './MapData';
 import extractedVerses from './data/extracted_verses.json';
+import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 
 const mapBibTerms = new MapBibTerms();
 
@@ -148,33 +149,85 @@ const createLabel = (labelText, align = 'right', angle = 0, size = 3, status, is
 };
 
 // Bottom Pane component to display a scrollable list of verses referencing the termId
-function BottomPane({ termId }) {
+function BottomPane({ termId, renderings }) {
   if (!termId) return <div className="bottom-pane" />;
   const refs = mapBibTerms.getRefs(termId);
+
+  // Prepare renderings: remove comments, split, trim, and convert to regex patterns
+  let renderingList = [];
+  if (renderings) {
+    // Remove content in parentheses (comments)
+    const noComments = renderings.replace(/\([^)]*\)/g, '');
+    renderingList = noComments
+      .split(/\r?\n/)
+      .map(r => r.trim())
+      .filter(r => r.length > 0)
+      .map(r => {
+        let pattern = r;
+        // Insert word boundary at start if not starting with *
+        if (!pattern.startsWith('*')) pattern = '\\b' + pattern;
+        // Insert word boundary at end if not ending with *
+        if (!pattern.endsWith('*')) pattern = pattern + '\\b';
+        // Replace * with [\u0900-\u097F\w-]* (Devanagari + word chars + dash)
+        pattern = pattern.replace(/\*/g, '[\u0900-\u097F\\w-]*');
+        return new RegExp(pattern, 'u');
+      });
+  }
+
+  // Helper to highlight match in verse text
+  function highlightMatch(text, patterns) {
+    for (const regex of patterns) {
+      const match = text.match(regex);
+      if (match) {
+        const start = match.index;
+        const end = start + match[0].length;
+        return (
+          <>
+            {text.slice(0, start)}
+            <span style={{ background: '#c8f7c5', fontWeight: 'bold' }}>{text.slice(start, end)}</span>
+            {text.slice(end)}
+          </>
+        );
+      }
+    }
+    return text;
+  }
+
   return (
     <div className="bottom-pane" style={{ maxHeight: 300, overflowY: 'auto', padding: 8 }}>
       <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
         {refs.length === 0 ? (
           <li style={{ color: '#888' }}>No references found for this term.</li>
         ) : (
-          refs.map(refId => (
-            <li key={refId} style={{
-              display: 'flex',
-              alignItems: 'center',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              fontSize: 15,
-              marginBottom: 4,
-              borderBottom: '1px solid #eee',
-              padding: '2px 0',
-            }}>
-              <span style={{ fontWeight: 'bold', marginRight: 8, flexShrink: 0 }}>{prettyRef(refId)}:</span>
-              <span style={{ fontFamily: 'Noto Sans Devanagari, sans-serif', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                {extractedVerses[refId] || <span style={{ color: '#888' }}>[Verse not found]</span>}
-              </span>
-            </li>
-          ))
+          refs.map(refId => {
+            const verse = extractedVerses[refId] || '';
+            const hasMatch = renderingList.some(r => r.test(verse));
+            return (
+              <li key={refId} style={{
+                display: 'flex',
+                alignItems: 'center',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                fontSize: 15,
+                marginBottom: 4,
+                borderBottom: '1px solid #eee',
+                padding: '2px 0',
+              }}>
+                <span style={{ width: 18, display: 'inline-flex', justifyContent: 'center', marginRight: 4 }}>
+                  {hasMatch ? (
+                    <FaCheckCircle color="#2ecc40" title="Match found" />
+                  ) : (
+                    <FaTimesCircle color="#e74c3c" title="No match" />
+                  )}
+                </span>
+                <span style={{ fontWeight: 'bold', marginRight: 8, flexShrink: 0 }}>{prettyRef(refId)}:</span>
+                <span style={{ fontFamily: 'Noto Sans Devanagari, sans-serif', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {hasMatch ? highlightMatch(verse, renderingList) : verse || <span style={{ color: '#888' }}>[Verse not found]</span>}
+                </span>
+              </li>
+            );
+          })
         )}
       </ul>
     </div>
@@ -675,7 +728,7 @@ function App() {
         ═════
       </div>
       <div className="bottom-pane" style={{ flex: `0 0 ${100 - topHeight}%` }}>
-        <BottomPane termId={locations[selLocation]?.termId} />
+        <BottomPane termId={locations[selLocation]?.termId} renderings={renderings} />
       </div>
       <SettingsModal open={showSettings} onClose={() => setShowSettings(false)} labelScale={labelScale} setLabelScale={setLabelScale} />
     </div>
