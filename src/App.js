@@ -197,9 +197,9 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
         if (!pattern.startsWith('*')) pattern = '\\b' + pattern;
         // Insert word boundary at end if not ending with *
         if (!pattern.endsWith('*')) pattern = pattern + '\\b';
-        // Replace * with [\u0900-\u097F\w-]* (Devanagari + word chars + dash)
-        pattern = pattern.replace(/\*/g, '[\u0900-\u097F\\w-]*');
-        return new RegExp(pattern, 'u');
+        // Replace * [with [\w-]* (word chars + dash)
+        pattern = pattern.replace(/\*/g, '[\\w-]*');
+        return new RegExp(pattern, 'iu');
       });
   }
 
