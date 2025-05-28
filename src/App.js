@@ -411,23 +411,6 @@ function App() {
     }));
   };
 
-  const handleSaveRenderings = async () => {
-    const blob = new Blob([JSON.stringify(termRenderings.data, null, 2)], { type: 'application/json' });
-    try {
-      const handle = await window.showSaveFilePicker({
-        suggestedName: 'term-renderings.json',
-        types: [{ description: 'JSON Files', accept: { 'application/json': ['.json'] } }],
-      });
-      const writable = await handle.createWritable();
-      await writable.write(blob);
-      await writable.close();
-      console.log('Term renderings saved successfully');
-    } catch (error) {
-      console.error('Failed to save term renderings:', error);
-      alert('Save failed. Please copy the JSON and save it manually:\n' + JSON.stringify(termRenderings.data, null, 2));
-    }
-  };
-
   // Handler for map image browse
   const handleBrowseMapTemplate = async () => {
     try {
@@ -715,7 +698,6 @@ function App() {
             isApproved={isApproved}
             onRenderingsChange={handleRenderingsChange}
             onApprovedChange={handleApprovedChange}
-            onSaveRenderings={handleSaveRenderings}
             termRenderings={termRenderings}
             locations={locations}
             onSwitchView={handleSwitchViewWithUsfm}
@@ -818,15 +800,19 @@ function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScal
   );
 }
 
-function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, onSaveRenderings, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings, mapDef, onBrowseMapTemplate, vernacularInputRef }) {
+function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings, mapDef, onBrowseMapTemplate, vernacularInputRef }) {
   const [vernacular, setVernacular] = useState(locations[selLocation]?.vernLabel || '');
+  const [localIsApproved, setLocalIsApproved] = useState(isApproved);
+  const [localRenderings, setLocalRenderings] = useState(renderings);
   const inputRef = useRef(null);
   const [showTemplateInfo, setShowTemplateInfo] = useState(false);
   const templateData = getMapData(mapDef.template) || {};
 
   useEffect(() => {
     setVernacular(locations[selLocation]?.vernLabel || '');
-  }, [selLocation]);
+    setLocalIsApproved(isApproved);
+    setLocalRenderings(renderings);
+  }, [selLocation, isApproved, renderings, locations]);
 
   const handleVernChange = (e) => {
     const newVernacular = e.target.value;
@@ -898,12 +884,10 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
 
   // Handler for Add to renderings button
   const handleAddToRenderings = () => {
-    // Set renderings and isGuessed to false
     onRenderingsChange({ target: { value: vernacular } });
     if (termRenderings.data[locations[selLocation].termId]) {
       termRenderings.data[locations[selLocation].termId].isGuessed = false;
     }
-    // Also update isApproved state to true (since isGuessed is now false)
     onApprovedChange({ target: { checked: true } });
   };
 
@@ -1088,25 +1072,50 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
           {statusValue[status].text}
           {status === 2 && (  // If status is "no renderings", show Add to renderings button
             <button style={{ marginLeft: 8 }} onClick={handleAddToRenderings}>Add to renderings</button>
+          )}{status === 5 && (  // If status is "guessed", show Add to renderings button
+            <button
+            style={{ marginBottom: 8, marginRight: 8 }}
+            onClick={() => {
+              setLocalIsApproved(true);
+              const updatedData = { ...termRenderings.data };
+              updatedData[locations[selLocation].termId] = {
+                ...updatedData[locations[selLocation].termId],
+                isGuessed: false,
+              };
+              termRenderings.data = updatedData;
+              onApprovedChange({ target: { checked: true } });
+            }}
+          >
+            Approve rendering
+          </button>
           )}
         </span>
       </div>
-      <h4>Term Renderings</h4>
+      <h4>Term Renderings ({localIsApproved ? 'Approved ' : 'Guessed'})</h4>
       <div className="term-renderings">
-        <label>
-          <input
-            type="checkbox"
-            checked={isApproved}
-            onChange={onApprovedChange}
-          /> Approved
-        </label>
         <textarea
-          value={renderings}
-          onChange={onRenderingsChange}
+          value={localRenderings}
+          onChange={e => {
+            setLocalRenderings(e.target.value);
+            const updatedData = { ...termRenderings.data };
+            updatedData[locations[selLocation].termId] = {
+              ...updatedData[locations[selLocation].termId],
+              renderings: e.target.value,
+            };
+            // If not approved, auto-approve on edit
+            if (!localIsApproved) {
+              setLocalIsApproved(true);
+              updatedData[locations[selLocation].termId].isGuessed = false;
+              onApprovedChange({ target: { checked: true } });
+            }
+            termRenderings.data = updatedData;
+            // The renderings change might affect the status of the location indexed by selLocation
+            const status = termRenderings.getStatus(locations[selLocation].termId, locations[selLocation].vernLabel || '');
+            onRenderingsChange({ target: { value: e.target.value } });
+          }}
           style={{ width: '100%', minHeight: '100px' }}
           placeholder={"Enter renderings here, one per line.\nOptionally, explicitly mark the map form of the rendering by adding it as a comment that begins with '@'.\ne.g. Misra* (@Misradesh)"}
         />
-        <button onClick={onSaveRenderings}>Save Renderings</button>
       </div>
     </div>
   );
