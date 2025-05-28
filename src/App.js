@@ -149,7 +149,7 @@ const createLabel = (labelText, align = 'right', angle = 0, size = 3, status, is
 };
 
 // Bottom Pane component to display a scrollable list of verses referencing the termId
-function BottomPane({ termId, renderings }) {
+function BottomPane({ termId, renderings, onAddRendering }) {
   const paneRef = React.useRef();
   const [selectedText, setSelectedText] = React.useState('');
 
@@ -160,7 +160,6 @@ function BottomPane({ termId, renderings }) {
         setSelectedText('');
         return;
       }
-      // Only react if selection is inside the bottom pane
       if (paneRef.current && selection.rangeCount > 0) {
         const range = selection.getRangeAt(0);
         if (paneRef.current.contains(range.commonAncestorContainer)) {
@@ -239,7 +238,7 @@ function BottomPane({ termId, renderings }) {
         {selectedText && (
           <button
             style={{ marginLeft: 12, fontSize: 13, padding: '2px 8px', borderRadius: 4, background: '#e0ffe0', border: '1px solid #b2dfdb', cursor: 'pointer' }}
-            onClick={() => alert(`Add rendering: ${selectedText}`)}
+            onClick={() => onAddRendering(selectedText)}
           >
             Add rendering
           </button>
@@ -710,6 +709,32 @@ function App() {
     // Optionally: do other OK logic here
     alert('OK clicked');
   }, [mapPaneView, updateMapFromUsfm]);
+
+  // Add rendering from bottom pane selection
+  const handleAddRendering = useCallback((text) => {
+    if (!locations[selLocation]) return;
+    const termId = locations[selLocation].termId;
+    let currentRenderings = renderings || '';
+    let newRenderings = currentRenderings.trim() ? `${currentRenderings.trim()}\n${text.trim()}` : text.trim();
+    setRenderings(newRenderings);
+    // Update in termRenderings.data
+    const updatedData = { ...termRenderings.data };
+    updatedData[termId] = {
+      ...updatedData[termId],
+      renderings: newRenderings,
+      isGuessed: false
+    };
+    termRenderings.data = updatedData;
+    setIsApproved(true);
+    setLocations(prevLocations => prevLocations.map(loc => {
+      if (loc.termId === termId) {
+        const status = termRenderings.getStatus(loc.termId, loc.vernLabel);
+        return { ...loc, status };
+      }
+      return loc;
+    }));
+  }, [renderings, selLocation, locations, termRenderings]);
+
   console.log("map: ", map);
   return (
     <div className="app-container">
@@ -778,7 +803,11 @@ function App() {
         ═════
       </div>
       <div className="bottom-pane" style={{ flex: `0 0 ${100 - topHeight}%` }}>
-        <BottomPane termId={locations[selLocation]?.termId} renderings={renderings} />
+        <BottomPane
+          termId={locations[selLocation]?.termId}
+          renderings={renderings}
+          onAddRendering={handleAddRendering}
+        />
       </div>
       <SettingsModal open={showSettings} onClose={() => setShowSettings(false)} labelScale={labelScale} setLabelScale={setLabelScale} />
     </div>
