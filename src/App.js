@@ -22,11 +22,11 @@ const statusValue = [
 var usfm = String.raw`\zdiagram-s |template="SMR1_185wbt - Philips Travels [sm]"\* 
 \fig |src="185wbt - Philips Travels [sm] (fcr) @en.jpg" size="span" loc="paw" copy="WBT" ref="8:5-40"\fig*
 \zlabel |key="philipstravels_title" termid="philipstravels_title" gloss="Philip’s Travels" label=""\*
-\zlabel |key="jerusalem_nt" termid="Ἱεροσόλυμα-1" gloss="Jerusalem" label="Yarūśalēma"\*
+\zlabel |key="jerusalem_nt" termid="Ἱεροσόλυμα-1" gloss="Jerusalem" label="Yarusalema"\*
 \zlabel |key="apollonia" termid="Ἀπολλωνία" gloss="Apollonia" label=""\*
-\zlabel |key="jordan_river_nt" termid="Ἰορδάνης" gloss="Jordan River" label="Yardana"\*
-\zlabel |key="azotus" termid="Ἄζωτος" gloss="Azotus" label="Azotus–Asotus"\*
-\zlabel |key="decapolis" termid="Δεκάπολις" gloss="Decapolis" label="daśa sahar"\*
+\zlabel |key="jordan_river_nt" termid="Ἰορδάνης" gloss="Jordan River" label="Yardana Khola"\*
+\zlabel |key="azotus" termid="Ἄζωτος" gloss="Azotus" label="Azotus"\*
+\zlabel |key="decapolis" termid="Δεκάπολις" gloss="Decapolis" label="Dasa Sahar"\*
 \zdiagram-e \* `;
 
 function mapFromUsfm(usfm) {
