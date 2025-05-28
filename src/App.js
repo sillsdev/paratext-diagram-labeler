@@ -1082,11 +1082,9 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
                 ...updatedData[locations[selLocation].termId],
                 isGuessed: false,
               };
-              termRenderings.data = updatedData;
+              termRenderings.data = updatedData;  // TODO: move this to a setter function
               onApprovedChange({ target: { checked: true } });
-            }}
-          >
-            Approve rendering
+            }}>Approve rendering
           </button>
           )}
         </span>
@@ -1100,15 +1098,15 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
             const updatedData = { ...termRenderings.data };
             updatedData[locations[selLocation].termId] = {
               ...updatedData[locations[selLocation].termId],
-              renderings: e.target.value,
+              renderings: e.target.value,  // TODO: move this to a setter function
             };
             // If not approved, auto-approve on edit
             if (!localIsApproved) {
               setLocalIsApproved(true);
-              updatedData[locations[selLocation].termId].isGuessed = false;
+              updatedData[locations[selLocation].termId].isGuessed = false;  
               onApprovedChange({ target: { checked: true } });
             }
-            termRenderings.data = updatedData;
+            termRenderings.data = updatedData;  // TODO: move this to a setter function
             // The renderings change might affect the status of the location indexed by selLocation
             const status = termRenderings.getStatus(locations[selLocation].termId, locations[selLocation].vernLabel || '');
             onRenderingsChange({ target: { value: e.target.value } });
