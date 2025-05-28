@@ -269,59 +269,53 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
         )}
       </div>
       <div style={{ overflowY: 'auto', flex: 1 }}>
-        <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-          {refs.length === 0 ? (
-            <li style={{ color: '#888' }}>No references found for this term.</li>
-          ) : (
-            refs.map((refId, i) => {
-              const verse = extractedVerses[refId] || '';
-              const hasMatch = matchResults[i];
-              return (
-                <li key={refId} style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  fontSize: 15,
-                  marginBottom: 4,
-                  borderBottom: '1px solid #eee',
-                  padding: '2px 0',
-                }}>
-                  <span style={{ width: 18, display: 'inline-flex', justifyContent: 'center', marginRight: 4 }}>
-                    {hasMatch ? (
-                      <FaCheckCircle color="#2ecc40" title="Match found" />
-                    ) : (
-                      <FaTimesCircle color="#e74c3c" title="No match" />
-                    )}
-                  </span>
-                  <button
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      padding: 0,
-                      marginRight: 6,
-                      cursor: 'pointer',
-                      color: '#888',
-                      fontSize: 14,
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                    }}
-                    title="Edit"
-                    aria-label="Edit"
-                    onClick={() => alert(`Editing is not yet implemented for verse: ${prettyRef(refId)}`)}
-                  >
-                    <FaPencilAlt />
-                  </button>
-                  <span style={{ fontWeight: 'bold', marginRight: 8, flexShrink: 0 }}>{prettyRef(refId)}:</span>
-                  <span style={{ fontFamily: 'Noto Sans Devanagari, sans-serif', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    {hasMatch ? highlightMatch(verse, renderingList) : verse || <span style={{ color: '#888' }}>[Verse not found]</span>}
-                  </span>
-                </li>
-              );
-            })
-          )}
-        </ul>
+        <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
+          <tbody>
+            {refs.length === 0 ? (
+              <tr><td colSpan={3} style={{ color: '#888', textAlign: 'center' }}>No references found for this term.</td></tr>
+            ) : (
+              refs.map((refId, i) => {
+                const verse = extractedVerses[refId] || '';
+                const hasMatch = matchResults[i];
+                return (
+                  <tr key={refId} style={{ borderBottom: '1px solid #eee', verticalAlign: 'top' }}>
+                    <td style={{ width: 28, textAlign: 'center', padding: '4px 0', verticalAlign: 'top' }}>
+                      {hasMatch ? (
+                        <FaCheckCircle color="#2ecc40" title="Match found" />
+                      ) : (
+                        <FaTimesCircle color="#e74c3c" title="No match" />
+                      )}
+                    </td>
+                    <td style={{ width: 110, minWidth: 90, padding: '4px 0', verticalAlign: 'top', whiteSpace: 'nowrap' }}>
+                      <button
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          padding: 0,
+                          marginRight: 6,
+                          cursor: 'pointer',
+                          color: '#888',
+                          fontSize: 14,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                        }}
+                        title="Edit"
+                        aria-label="Edit"
+                        onClick={() => alert(`Editing is not yet implemented for verse: ${prettyRef(refId)}`)}
+                      >
+                        <FaPencilAlt />
+                      </button>
+                      <span style={{ fontWeight: 'bold', marginRight: 4, flexShrink: 0 }}>{prettyRef(refId)}:</span>
+                    </td>
+                    <td style={{ padding: '4px 0', wordBreak: 'break-word', whiteSpace: 'pre-wrap', fontFamily: 'Noto Sans Devanagari, sans-serif', fontSize: 15 }}>
+                      {hasMatch ? highlightMatch(verse, renderingList) : verse || <span style={{ color: '#888' }}>[Verse not found]</span>}
+                    </td>
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
   );
