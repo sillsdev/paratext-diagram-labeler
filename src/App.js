@@ -193,15 +193,27 @@ function BottomPane({ termId, renderings }) {
     return text;
   }
 
+  // Compute match tally
+  let matchCount = 0;
+  const matchResults = refs.map(refId => {
+    const verse = extractedVerses[refId] || '';
+    const hasMatch = renderingList.some(r => r.test(verse));
+    if (hasMatch) matchCount++;
+    return hasMatch;
+  });
+
   return (
     <div className="bottom-pane" style={{ maxHeight: 300, overflowY: 'auto', padding: 8 }}>
+      <div style={{ fontSize: 13, color: '#333', marginBottom: 2, padding: '0 2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+        Found: {matchCount}/{refs.length}
+      </div>
       <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
         {refs.length === 0 ? (
           <li style={{ color: '#888' }}>No references found for this term.</li>
         ) : (
-          refs.map(refId => {
+          refs.map((refId, i) => {
             const verse = extractedVerses[refId] || '';
-            const hasMatch = renderingList.some(r => r.test(verse));
+            const hasMatch = matchResults[i];
             return (
               <li key={refId} style={{
                 display: 'flex',
