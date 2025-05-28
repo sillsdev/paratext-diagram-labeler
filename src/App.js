@@ -6,6 +6,7 @@ import TermRenderings from './TermRenderings';
 import './App.css';
 import MapBibTerms from './MapBibTerms';
 import { getMapData } from './MapData';
+import extractedVerses from './data/extracted_verses.json';
 
 const mapBibTerms = new MapBibTerms();
 
@@ -146,25 +147,36 @@ const createLabel = (labelText, align = 'right', angle = 0, size = 3, status, is
   // });
 };
 
-// Bottom Pane component to display an image based on termId
+// Bottom Pane component to display a scrollable list of verses referencing the termId
 function BottomPane({ termId }) {
-  const gloss = mapBibTerms.getGloss(termId) || 'default';
-  const imageUrl = termId ? `/assets/${gloss}.jpg` : '';
-  console.log('Attempting to load image:', imageUrl);
+  if (!termId) return <div className="bottom-pane" />;
+  const refs = mapBibTerms.getRefs(termId);
   return (
-    <div className="bottom-pane">
-      {imageUrl && (
-        <img
-          key={imageUrl}
-          src={imageUrl}
-          alt={termId}
-          style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
-          onError={(e) => {
-            console.error('Failed to load image:', imageUrl);
-            e.target.style.display = 'none';
-          }}
-        />
-      )}
+    <div className="bottom-pane" style={{ maxHeight: 300, overflowY: 'auto', padding: 8 }}>
+      <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+        {refs.length === 0 ? (
+          <li style={{ color: '#888' }}>No references found for this term.</li>
+        ) : (
+          refs.map(refId => (
+            <li key={refId} style={{
+              display: 'flex',
+              alignItems: 'center',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              fontSize: 15,
+              marginBottom: 4,
+              borderBottom: '1px solid #eee',
+              padding: '2px 0',
+            }}>
+              <span style={{ fontWeight: 'bold', marginRight: 8, flexShrink: 0 }}>{refId}:</span>
+              <span style={{ fontFamily: 'Noto Sans Devanagari, sans-serif', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {extractedVerses[refId] || <span style={{ color: '#888' }}>[Verse not found]</span>}
+              </span>
+            </li>
+          ))
+        )}
+      </ul>
     </div>
   );
 }

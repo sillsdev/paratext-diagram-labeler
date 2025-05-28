@@ -23,6 +23,15 @@ class MapBibTerms {
         }
         return entry.definition;   
     }
+
+    getRefs(termId) {
+        const entry = this.data[termId];
+        if (!entry) {
+            console.warn(`TermId "${termId}" not found in mapBibTerms`);
+            return [];
+        }
+        return entry.refs || [];   
+    }
 }
 
 export default MapBibTerms;
