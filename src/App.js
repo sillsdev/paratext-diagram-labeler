@@ -7,7 +7,7 @@ import './App.css';
 import MapBibTerms from './MapBibTerms';
 import { getMapData } from './MapData';
 import extractedVerses from './data/extracted_verses.json';
-import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import { FaCheckCircle, FaTimesCircle, FaPencilAlt } from 'react-icons/fa';
 
 const mapBibTerms = new MapBibTerms();
 
@@ -233,6 +233,24 @@ function BottomPane({ termId, renderings }) {
                     <FaTimesCircle color="#e74c3c" title="No match" />
                   )}
                 </span>
+                <button
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                    marginRight: 6,
+                    cursor: 'pointer',
+                    color: '#888',
+                    fontSize: 14,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                  }}
+                  title="Edit"
+                  aria-label="Edit"
+                  onClick={() => alert(`Editing is not yet implemented for verse: ${prettyRef(refId)}`)}
+                >
+                  <FaPencilAlt />
+                </button>
                 <span style={{ fontWeight: 'bold', marginRight: 8, flexShrink: 0 }}>{prettyRef(refId)}:</span>
                 <span style={{ fontFamily: 'Noto Sans Devanagari, sans-serif', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {hasMatch ? highlightMatch(verse, renderingList) : verse || <span style={{ color: '#888' }}>[Verse not found]</span>}
