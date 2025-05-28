@@ -232,13 +232,13 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
   });
 
   return (
-    <div className="bottom-pane" ref={paneRef} style={{ maxHeight: 300, padding: 8, display: 'flex', flexDirection: 'column' }}>
+    <div className="bottom-pane" ref={paneRef} style={{ maxHeight: 300, padding: 4, display: 'flex', flexDirection: 'column' }}>
       <div style={{
         display: 'flex',
         alignItems: 'center',
         fontSize: 13,
         color: '#333',
-        marginBottom: 2,
+        marginBottom: 0,
         padding: '0 2px',
         whiteSpace: 'nowrap',
         overflow: 'hidden',
@@ -248,19 +248,19 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
         background: '#fff',
         zIndex: 1,
         borderBottom: '1px solid #eee',
-        minHeight: 32
+        minHeight: 28
       }}>
         <span>Found: {matchCount}/{refs.length}</span>
         {selectedText && (
           <>
             <button
-              style={{ marginLeft: 12, fontSize: 13, padding: '2px 8px', borderRadius: 4, background: '#e0ffe0', border: '1px solid #b2dfdb', cursor: 'pointer' }}
+              style={{ marginLeft: 8, fontSize: 13, padding: '1px 6px', borderRadius: 4, background: '#e0ffe0', border: '1px solid #b2dfdb', cursor: 'pointer', height: 22 }}
               onClick={() => onAddRendering(selectedText)}
             >
               Add rendering
             </button>
             <button
-              style={{ marginLeft: 8, fontSize: 13, padding: '2px 8px', borderRadius: 4, background: '#ffe0e0', border: '1px solid #dfb2b2', cursor: 'pointer' }}
+              style={{ marginLeft: 6, fontSize: 13, padding: '1px 6px', borderRadius: 4, background: '#ffe0e0', border: '1px solid #dfb2b2', cursor: 'pointer', height: 22 }}
               onClick={() => onReplaceRendering(selectedText)}
             >
               Replace renderings
@@ -269,35 +269,34 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
         )}
       </div>
       <div style={{ overflowY: 'auto', flex: 1 }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'auto' }}>
           <tbody>
             {refs.length === 0 ? (
-              <tr><td colSpan={3} style={{ color: '#888', textAlign: 'center' }}>No references found for this term.</td></tr>
+              <tr><td colSpan={2} style={{ color: '#888', textAlign: 'center', padding: 4 }}>No references found for this term.</td></tr>
             ) : (
               refs.map((refId, i) => {
                 const verse = extractedVerses[refId] || '';
                 const hasMatch = matchResults[i];
                 return (
                   <tr key={refId} style={{ borderBottom: '1px solid #eee', verticalAlign: 'top' }}>
-                    <td style={{ width: 28, textAlign: 'center', padding: '4px 0', verticalAlign: 'top' }}>
+                    <td style={{ width: 38, textAlign: 'center', padding: '2px 0', verticalAlign: 'top', whiteSpace: 'nowrap' }}>
                       {hasMatch ? (
                         <FaCheckCircle color="#2ecc40" title="Match found" />
                       ) : (
                         <FaTimesCircle color="#e74c3c" title="No match" />
                       )}
-                    </td>
-                    <td style={{ width: 110, minWidth: 90, padding: '4px 0', verticalAlign: 'top', whiteSpace: 'nowrap' }}>
                       <button
                         style={{
                           background: 'none',
                           border: 'none',
                           padding: 0,
-                          marginRight: 6,
+                          marginLeft: 4,
                           cursor: 'pointer',
                           color: '#888',
                           fontSize: 14,
                           display: 'inline-flex',
                           alignItems: 'center',
+                          verticalAlign: 'top',
                         }}
                         title="Edit"
                         aria-label="Edit"
@@ -305,9 +304,9 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
                       >
                         <FaPencilAlt />
                       </button>
-                      <span style={{ fontWeight: 'bold', marginRight: 4, flexShrink: 0 }}>{prettyRef(refId)}:</span>
                     </td>
-                    <td style={{ padding: '4px 0', wordBreak: 'break-word', whiteSpace: 'pre-wrap', fontFamily: 'Noto Sans Devanagari, sans-serif', fontSize: 15 }}>
+                    <td style={{ padding: '2px 0 2px 8px', verticalAlign: 'top', wordBreak: 'break-word', whiteSpace: 'normal' }}>
+                      <span style={{ fontWeight: 'bold', marginRight: 4 }}>{prettyRef(refId)}:</span>
                       {hasMatch ? highlightMatch(verse, renderingList) : verse || <span style={{ color: '#888' }}>[Verse not found]</span>}
                     </td>
                   </tr>
