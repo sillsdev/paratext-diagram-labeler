@@ -169,7 +169,7 @@ function BottomPane({ termId }) {
               borderBottom: '1px solid #eee',
               padding: '2px 0',
             }}>
-              <span style={{ fontWeight: 'bold', marginRight: 8, flexShrink: 0 }}>{refId}:</span>
+              <span style={{ fontWeight: 'bold', marginRight: 8, flexShrink: 0 }}>{prettyRef(refId)}:</span>
               <span style={{ fontFamily: 'Noto Sans Devanagari, sans-serif', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {extractedVerses[refId] || <span style={{ color: '#888' }}>[Verse not found]</span>}
               </span>
@@ -1077,5 +1077,16 @@ const SettingsModal = ({ open, onClose, labelScale, setLabelScale }) => {
     </div>
   );
 };
+
+function prettyRef(ref) {
+  // ref is a 9 digit string. First 3 digits are the book code, next 3 are chapter, last 3 are verse.
+  // Convert book code digits to an integer, subtract 1, and use it to index into the bookName array.
+  const bookNames = 'GEN,EXO,LEV,NUM,DEU,JOS,JDG,RUT,1SA,2SA,1KI,2KI,1CH,2CH,EZR,NEH,EST,JOB,PSA,PRO,ECC,SNG,ISA,JER,LAM,EZK,DAN,HOS,JOL,AMO,OBA,JON,MIC,NAM,HAB,ZEP,HAG,ZEC,MAL,MAT,MRK,LUK,JHN,ACT,ROM,1CO,2CO,GAL,EPH,PHP,COL,1TH,2TH,1TI,2TI,TIT,PHM,HEB,JAS,1PE,2PE,1JN,2JN,3JN,JUD,REV';
+  const bookCode = parseInt(ref.slice(0, 3), 10) - 1;
+  const chapter = parseInt(ref.slice(3, 6), 10);    
+  const verse = parseInt(ref.slice(6, 9), 10);
+  const bookName = bookNames.slice(bookCode*4, bookCode*4+3);
+  return `${bookName} ${chapter}:${verse}`;
+}
 
 export default App;
