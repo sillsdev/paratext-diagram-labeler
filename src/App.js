@@ -306,7 +306,7 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
                       </button>
                     </td>
                     <td style={{ padding: '2px 0 2px 8px', verticalAlign: 'top', wordBreak: 'break-word', whiteSpace: 'normal' }}>
-                      <span style={{ fontWeight: 'bold', marginRight: 4 }}>{prettyRef(refId)}:</span>
+                      <span style={{ fontWeight: 'bold', marginRight: 4 }}>{prettyRef(refId)} </span>
                       {hasMatch ? highlightMatch(verse, renderingList) : verse || <span style={{ color: '#888' }}>[Verse not found]</span>}
                     </td>
                   </tr>
@@ -598,58 +598,69 @@ function App() {
     }, [selLocation, locations]);
     return (
       <div className="table-view-scroll-wrapper">
-        <table className="table-view" style={{ borderCollapse: 'collapse' }}>
-          <thead>
-            <tr>
-              <th>Gloss</th>
-              <th>Label</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {locations.map((loc, i) => {
-              const status = termRenderings.getStatus(loc.termId, loc.vernLabel);
-              const isSelected = selLocation === loc.idx;
-              return (
-                <tr
-                key={loc.termId}
-                style={{
-                  background: statusValue[status].bkColor,
-                  color: statusValue[status].textColor,
-                  fontWeight: isSelected ? 'bold' : 'normal',
-                  cursor: 'pointer',
-                  border: isSelected ? '4px solid black' : undefined,
-                  paddingTop: isSelected ? 12 : undefined,
-                  paddingBottom: isSelected ? 12 : undefined,
-                  // height: isSelected ? 48 : undefined,
-                }}
-                onClick={() => onSelectLocation(loc)}
-                >
-                <td style={isSelected ? { paddingTop: 4, paddingBottom: 4 } : {}}>{loc.gloss}</td>
-                <td style={isSelected ? { paddingTop: 4, paddingBottom: 4 } : {}}>
-                  <input
-                  ref={el => inputRefs.current[i] = el}
-                  type="text"
-                  value={loc.vernLabel || ''}
-                  onChange={e => onUpdateVernacular(loc.termId, e.target.value)}
-                  onFocus={() => onSelectLocation(loc)}
-                  onKeyDown={e => {
-                    if (e.key === 'PageDown' || e.key === 'ArrowDown') {
-                      onNextLocation(true);
-                    } else if (e.key === 'PageUp' || e.key === 'ArrowUp') {
-                      onNextLocation(false);
-                    }
-                  }}
-                  style={{ }}
-                  spellCheck={false}
-                  />
-                </td>
-                <td style={isSelected ? { paddingTop: 4, paddingBottom: 4 } : {}}>{statusValue[status].text}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+      <table className="table-view" style={{ borderCollapse: 'collapse' }}>
+        <thead>
+        <tr style={{ background: '#444', color: '#e0e0e0' }}>
+          <th>Gloss</th>
+          <th>Label</th>
+          <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        {locations.map((loc, i) => {
+          const status = termRenderings.getStatus(loc.termId, loc.vernLabel);
+          const isSelected = selLocation === loc.idx;
+          return (
+          <tr
+            key={loc.termId}
+            style={{
+            fontWeight: isSelected ? 'bold' : 'normal',
+            cursor: 'pointer',
+            border: (isSelected ? '6px' : '1px') + ' solid ' + statusValue[status].bkColor,
+            paddingTop: isSelected ? 12 : undefined,
+            paddingBottom: isSelected ? 12 : undefined,
+            }}
+            onClick={() => onSelectLocation(loc)}
+          >
+            <td style={isSelected ? { paddingTop: 4, paddingBottom: 4 } : {}}>{loc.gloss}</td>
+            <td style={isSelected ? { paddingTop: 4, paddingBottom: 4 } : {}}>
+            <input
+            ref={el => inputRefs.current[i] = el}
+            type="text"
+            value={loc.vernLabel || ''}
+            onChange={e => onUpdateVernacular(loc.termId, e.target.value)}
+            onFocus={() => onSelectLocation(loc)}
+            onKeyDown={e => {
+            if (e.key === 'PageDown' || e.key === 'ArrowDown') {
+              onNextLocation(true);
+            } else if (e.key === 'PageUp' || e.key === 'ArrowUp') {
+              onNextLocation(false);
+            }
+            }}
+            style={{}}
+            spellCheck={false}
+            />
+            </td>
+            <td>
+            <span
+            style={{
+            background: statusValue[status].bkColor,
+            color: statusValue[status].textColor,
+            borderRadius: '0.7em',
+            padding: '2px 10px',
+            display: 'inline-block',
+            fontWeight: 'bold',
+            whiteSpace: 'nowrap'
+            }}
+            >
+            {statusValue[status].text}
+            </span>
+            </td>
+          </tr>
+          );
+        })}
+        </tbody>
+      </table>
       </div>
     );
   }
@@ -676,7 +687,7 @@ function App() {
       setUsfmText(usfmFromMap({ ...mapDef, labels: locations }));
     }
     prevMapPaneView.current = mapPaneView;
-  }, [mapPaneView, locations]);
+  }, [mapPaneView, locations, mapDef]);
 
   // --- USFM to map/locations sync ---
   // Helper to update map/locations from USFM text
@@ -941,7 +952,6 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
   const [vernacular, setVernacular] = useState(locations[selLocation]?.vernLabel || '');
   const [localIsApproved, setLocalIsApproved] = useState(isApproved);
   const [localRenderings, setLocalRenderings] = useState(renderings);
-  const inputRef = useRef(null);
   const [showTemplateInfo, setShowTemplateInfo] = useState(false);
   const templateData = getMapData(mapDef.template) || {};
 
