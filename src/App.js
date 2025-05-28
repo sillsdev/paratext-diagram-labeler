@@ -641,6 +641,7 @@ function App() {
                     }
                   }}
                   style={{ }}
+                  spellCheck={false}
                   />
                 </td>
                 <td style={isSelected ? { paddingTop: 4, paddingBottom: 4 } : {}}>{statusValue[status].text}</td>
@@ -1203,6 +1204,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
           className="form-control mb-2"
           aria-label={`Translation for ${locations[selLocation]?.gloss}`}
           style={{ width: '100%', border: 'none' }}
+          spellCheck={false}
         />
         <span style={{color: statusValue[status].textColor}}>
           {statusValue[status].text}
@@ -1250,6 +1252,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
           }}
           style={{ width: '100%', minHeight: '100px' }}
           placeholder={"Enter renderings here, one per line.\nOptionally, explicitly mark the map form of the rendering by adding it as a comment that begins with '@'.\ne.g. Misra* (@Misradesh)"}
+          spellCheck={false}
         />
       </div>
     </div>
