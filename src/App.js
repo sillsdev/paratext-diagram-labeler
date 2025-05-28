@@ -149,7 +149,7 @@ const createLabel = (labelText, align = 'right', angle = 0, size = 3, status, is
 };
 
 // Bottom Pane component to display a scrollable list of verses referencing the termId
-function BottomPane({ termId, renderings, onAddRendering }) {
+function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, renderingsTextareaRef }) {
   const paneRef = React.useRef();
   const [selectedText, setSelectedText] = React.useState('');
 
@@ -236,12 +236,20 @@ function BottomPane({ termId, renderings, onAddRendering }) {
       <div style={{ display: 'flex', alignItems: 'center', fontSize: 13, color: '#333', marginBottom: 2, padding: '0 2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
         <span>Found: {matchCount}/{refs.length}</span>
         {selectedText && (
-          <button
-            style={{ marginLeft: 12, fontSize: 13, padding: '2px 8px', borderRadius: 4, background: '#e0ffe0', border: '1px solid #b2dfdb', cursor: 'pointer' }}
-            onClick={() => onAddRendering(selectedText)}
-          >
-            Add rendering
-          </button>
+          <>
+            <button
+              style={{ marginLeft: 12, fontSize: 13, padding: '2px 8px', borderRadius: 4, background: '#e0ffe0', border: '1px solid #b2dfdb', cursor: 'pointer' }}
+              onClick={() => onAddRendering(selectedText)}
+            >
+              Add rendering
+            </button>
+            <button
+              style={{ marginLeft: 8, fontSize: 13, padding: '2px 8px', borderRadius: 4, background: '#ffe0e0', border: '1px solid #dfb2b2', cursor: 'pointer' }}
+              onClick={() => onReplaceRendering(selectedText)}
+            >
+              Replace renderings
+            </button>
+          </>
         )}
       </div>
       <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
@@ -340,6 +348,7 @@ function App() {
 
   // Add ref for vernacular input
   const vernacularInputRef = useRef(null);
+  const renderingsTextareaRef = useRef();
 
   const handleSelectLocation = useCallback((location) => {
     console.log('Selected location:', location);
@@ -717,7 +726,6 @@ function App() {
     let currentRenderings = renderings || '';
     let newRenderings = currentRenderings.trim() ? `${currentRenderings.trim()}\n${text.trim()}` : text.trim();
     setRenderings(newRenderings);
-    // Update in termRenderings.data
     const updatedData = { ...termRenderings.data };
     updatedData[termId] = {
       ...updatedData[termId],
@@ -733,7 +741,36 @@ function App() {
       }
       return loc;
     }));
+    setTimeout(() => {
+      if (renderingsTextareaRef.current) renderingsTextareaRef.current.focus();
+    }, 0);
   }, [renderings, selLocation, locations, termRenderings]);
+
+  // Replace all renderings with selected text
+  const handleReplaceRendering = useCallback((text) => {
+    if (!locations[selLocation]) return;
+    const termId = locations[selLocation].termId;
+    const newRenderings = text.trim();
+    setRenderings(newRenderings);
+    const updatedData = { ...termRenderings.data };
+    updatedData[termId] = {
+      ...updatedData[termId],
+      renderings: newRenderings,
+      isGuessed: false
+    };
+    termRenderings.data = updatedData;
+    setIsApproved(true);
+    setLocations(prevLocations => prevLocations.map(loc => {
+      if (loc.termId === termId) {
+        const status = termRenderings.getStatus(loc.termId, loc.vernLabel);
+        return { ...loc, status };
+      }
+      return loc;
+    }));
+    setTimeout(() => {
+      if (renderingsTextareaRef.current) renderingsTextareaRef.current.focus();
+    }, 0);
+  }, [selLocation, locations, termRenderings]);
 
   console.log("map: ", map);
   return (
@@ -793,6 +830,7 @@ function App() {
             mapDef={mapDef} // <-- pass map definition
             onBrowseMapTemplate={handleBrowseMapTemplate}
             vernacularInputRef={vernacularInputRef} // <-- pass ref
+            renderingsTextareaRef={renderingsTextareaRef}
           />
         </div>
       </div>
@@ -807,6 +845,8 @@ function App() {
           termId={locations[selLocation]?.termId}
           renderings={renderings}
           onAddRendering={handleAddRendering}
+          onReplaceRendering={handleReplaceRendering}
+          renderingsTextareaRef={renderingsTextareaRef}
         />
       </div>
       <SettingsModal open={showSettings} onClose={() => setShowSettings(false)} labelScale={labelScale} setLabelScale={setLabelScale} />
@@ -885,7 +925,7 @@ function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScal
   );
 }
 
-function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings, mapDef, onBrowseMapTemplate, vernacularInputRef }) {
+function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings, mapDef, onBrowseMapTemplate, vernacularInputRef, renderingsTextareaRef }) {
   const [vernacular, setVernacular] = useState(locations[selLocation]?.vernLabel || '');
   const [localIsApproved, setLocalIsApproved] = useState(isApproved);
   const [localRenderings, setLocalRenderings] = useState(renderings);
@@ -1177,6 +1217,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
       <h4>Term Renderings ({localIsApproved ? 'Approved ' : 'Guessed'})</h4>
       <div className="term-renderings">
         <textarea
+          ref={renderingsTextareaRef}
           value={localRenderings}
           onChange={e => {
             setLocalRenderings(e.target.value);
