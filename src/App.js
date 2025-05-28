@@ -150,7 +150,37 @@ const createLabel = (labelText, align = 'right', angle = 0, size = 3, status, is
 
 // Bottom Pane component to display a scrollable list of verses referencing the termId
 function BottomPane({ termId, renderings }) {
-  if (!termId) return <div className="bottom-pane" />;
+  const paneRef = React.useRef();
+  const [selectedText, setSelectedText] = React.useState('');
+
+  React.useEffect(() => {
+    function handleSelectionChange() {
+      const selection = window.getSelection();
+      if (!selection || selection.isCollapsed) {
+        setSelectedText('');
+        return;
+      }
+      // Only react if selection is inside the bottom pane
+      if (paneRef.current && selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        if (paneRef.current.contains(range.commonAncestorContainer)) {
+          setSelectedText(selection.toString());
+        } else {
+          setSelectedText('');
+        }
+      } else {
+        setSelectedText('');
+      }
+    }
+    document.addEventListener('mouseup', handleSelectionChange);
+    document.addEventListener('keyup', handleSelectionChange);
+    return () => {
+      document.removeEventListener('mouseup', handleSelectionChange);
+      document.removeEventListener('keyup', handleSelectionChange);
+    };
+  }, []);
+
+  if (!termId) return <div className="bottom-pane" ref={paneRef} />;
   const refs = mapBibTerms.getRefs(termId);
 
   // Prepare renderings: remove comments, split, trim, and convert to regex patterns
@@ -203,9 +233,17 @@ function BottomPane({ termId, renderings }) {
   });
 
   return (
-    <div className="bottom-pane" style={{ maxHeight: 300, overflowY: 'auto', padding: 8 }}>
-      <div style={{ fontSize: 13, color: '#333', marginBottom: 2, padding: '0 2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-        Found: {matchCount}/{refs.length}
+    <div className="bottom-pane" ref={paneRef} style={{ maxHeight: 300, overflowY: 'auto', padding: 8 }}>
+      <div style={{ display: 'flex', alignItems: 'center', fontSize: 13, color: '#333', marginBottom: 2, padding: '0 2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+        <span>Found: {matchCount}/{refs.length}</span>
+        {selectedText && (
+          <button
+            style={{ marginLeft: 12, fontSize: 13, padding: '2px 8px', borderRadius: 4, background: '#e0ffe0', border: '1px solid #b2dfdb', cursor: 'pointer' }}
+            onClick={() => alert(`Add rendering: ${selectedText}`)}
+          >
+            Add rendering
+          </button>
+        )}
       </div>
       <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
         {refs.length === 0 ? (
