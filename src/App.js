@@ -27,7 +27,7 @@ const statusValue = [
   { text: "Multiple", help: "Multiple options have been provided for you to select from. Ensure that you don't have any bad renderings, and then edit the label to remove unwanted options.", bkColor: colors[4].bk, textColor: colors[4].tx, sort: 5},    // 1
   { text: "No renderings", help: "Your project does not yet contain any renderings for this term.", bkColor: colors[1].bk, textColor: colors[1].tx, sort: 3}, // 2
   { text: "Unmatched label", help: "The label is not matched by the rendering(s).", bkColor: colors[2].bk, textColor: colors[2].tx, sort: 4},  // 3
-  { text: "OK", help: "The term renderings will be able to supply this label to any other map in the project that needs it.", bkColor: colors[3].bk, textColor: colors[3].tx, sort: 0},      // 4
+  { text: "Matched", help: "The term renderings will be able to supply this label to any other map in the project that needs it.", bkColor: colors[3].bk, textColor: colors[3].tx, sort: 0},      // 4
   { text: "Guessed", help: "This label matches a guessed rendering which must be approved.", bkColor: colors[5].bk, textColor: colors[5].tx, sort: 2}, // 5
   { text: "Rendering shorter than label", help: "First ensure that the rendering contains everything it should. If it does, you may need to specify an explicit map form for this term.", bkColor: colors[6].bk, textColor: colors[6].tx, sort: 6}, // 6
   { text: "Bad explicit form", help: "The renderings specify an explicit map form, but it is not matched by any rendering.", bkColor: colors[7].bk, textColor: colors[7].tx, sort: 7}, // 7
@@ -101,6 +101,15 @@ console.log('Map:', map);
 function frac([num, denom], show=true) {
   console.log('Creating fraction:', num, denom, show);
   return (!denom || num===denom || !show) ? '' : ` <sup>${num}</sup>&frasl;<sub>${denom}</sub>`;
+}
+
+function fracJsx([num, denom]) {
+  if (!denom) return '';
+  return ( 
+    <>
+      {num}/{denom} {num === denom && <FaCheckCircle color="#2ecc40" />}
+    </>
+  );
 }
 
 // Fix Leaflet default marker icons (optional, not needed with custom SVG icons)
@@ -642,6 +651,7 @@ function App() {
         <tr style={{ background: '#444', color: '#e0e0e0' }}>
           <th>Gloss</th>
           <th>Label</th>
+          <th style={{textAlign: 'center'}}>Found</th>
           <th>Status</th>
         </tr>
         </thead>
@@ -680,6 +690,7 @@ function App() {
             spellCheck={false}
             />
             </td>
+            <td style={{ textAlign: 'center', ...(isSelected ? { paddingTop: 4, paddingBottom: 4 } : {}) }} >{fracJsx(termRenderings.getMatchTally(loc.termId, mapBibTerms.getRefs(loc.termId)))}</td>
             <td>
             <span
             style={{
