@@ -24,6 +24,15 @@ class MapBibTerms {
         return entry.definition;   
     }
 
+    getTransliteration(termId) {
+        const entry = this.data[termId];
+        if (!entry) {
+            console.warn(`TermId "${termId}" not found in mapBibTerms`);
+            return '';
+        }
+        return entry.transliteration;   
+    }
+
     getRefs(termId) {
         const entry = this.data[termId];
         if (!entry) {

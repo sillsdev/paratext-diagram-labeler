@@ -10662,8 +10662,8 @@
         ]
     },
     "SMR1_185wbt - Philips Travels [sm-bwf]": {
-        "title": "(title goes here)",
-        "description": "(description goes here)",
+        "title": "Los viajes de Felipe",
+        "description": "Mapa de los viajes de Felipe, el evangelista, en el libro de los Hechos de los Apóstoles.",
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
         "imgFilename": "SMR1_185wbt - Philips Travels [sm-bwf].jpg",
@@ -10906,8 +10906,8 @@
         ]
     },
     "SMR1_185wbt - Philips Travels [sm]": {
-        "title": "(title goes here)",
-        "description": "(description goes here)",
+        "title": "Philip’s Travels",
+        "description": "A shorter map showing the route of Philip the Evangelist, as he preached, baptized, and apparated. (Acts 8:5-40)",
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
         "imgFilename": "SMR1_185wbt - Philips Travels [sm].jpg",

@@ -11,14 +11,26 @@ import { FaCheckCircle, FaTimesCircle, FaPencilAlt } from 'react-icons/fa';
 
 const mapBibTerms = new MapBibTerms();
 
+const colors = [  // Maximally contrasting colors
+  { bk: "crimson", tx: "white" },      // 0
+  { bk: "#FF8000", tx: "black" },  // 1
+  { bk: "yellow", tx: "black" },   // 2
+  { bk: "#80FF00", tx: "black" },  // 3
+  { bk: "cyan", tx: "black" },     // 4
+  { bk: "blue", tx: "white" },     // 5
+  { bk: "magenta", tx: "black" },  // 6
+  { bk: "#FF0080", tx: "black" }   // 7
+];
+
 const statusValue = [
-  { text: "Blank", bkColor: "crimson", textColor: 'white'},  // 0
-  { text: "Must select one", bkColor: "darkorange", textColor: 'white'},    // 1
-  { text: "No renderings", bkColor: "indianred", textColor: 'white'}, // 2
-  { text: "Does not match", bkColor: "darkmagenta", textColor: 'white'},  // 3
-  { text: "Approved", bkColor: "darkgreen", textColor: 'white'},      // 4
-  { text: "Guessed rendering not yet approved", bkColor: "darkblue", textColor: 'white'}, // 5
-  { text: "Needs checked", bkColor: "darkgoldenrod", textColor: 'white'}, // 6
+  { text: "Blank", help: "Provide the text to be used in this label.", bkColor: colors[0].bk, textColor: colors[0].tx, sort: 1},  // 0
+  { text: "Multiple", help: "Multiple options have been provided for you to select from. Ensure that you don't have any bad renderings, and then edit the label to remove unwanted options.", bkColor: colors[4].bk, textColor: colors[4].tx, sort: 5},    // 1
+  { text: "No renderings", help: "Your project does not yet contain any renderings for this term.", bkColor: colors[1].bk, textColor: colors[1].tx, sort: 3}, // 2
+  { text: "Unmatched label", help: "The label is not matched by the rendering(s).", bkColor: colors[2].bk, textColor: colors[2].tx, sort: 4},  // 3
+  { text: "OK", help: "The term renderings will be able to supply this label to any other map in the project that needs it.", bkColor: colors[3].bk, textColor: colors[3].tx, sort: 0},      // 4
+  { text: "Guessed", help: "This label matches a guessed rendering which must be approved.", bkColor: colors[5].bk, textColor: colors[5].tx, sort: 2}, // 5
+  { text: "Rendering shorter than label", help: "First ensure that the rendering contains everything it should. If it does, you may need to specify an explicit map form for this term.", bkColor: colors[6].bk, textColor: colors[6].tx, sort: 6}, // 6
+  { text: "Bad explicit form", help: "The renderings specify an explicit map form, but it is not matched by any rendering.", bkColor: colors[7].bk, textColor: colors[7].tx, sort: 7}, // 7
 ];
 
 var usfm = String.raw`\zdiagram-s |template="SMR1_185wbt - Philips Travels [sm]"\* 
@@ -86,6 +98,11 @@ function mapFromUsfm(usfm) {
 var map = mapFromUsfm(usfm);
 console.log('Map:', map);
 
+function frac([num, denom], show=true) {
+  console.log('Creating fraction:', num, denom, show);
+  return (!denom || num===denom || !show) ? '' : ` <sup>${num}</sup>&frasl;<sub>${denom}</sub>`;
+}
+
 // Fix Leaflet default marker icons (optional, not needed with custom SVG icons)
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -95,7 +112,7 @@ L.Icon.Default.mergeOptions({
 });
 
 // Function to create a map label
-const createLabel = (labelText, align = 'right', angle = 0, size = 3, status, isSelected = false, labelScale = 1) => {
+const createLabel = (labelText, align = 'right', angle = 0, size = 3, status, isSelected = false, labelScale = 1, extra) => {
   const isLeft = align === 'left';
   const isCenter = align === 'center';
   const backgroundColor = statusValue[status].bkColor;
@@ -132,9 +149,10 @@ const createLabel = (labelText, align = 'right', angle = 0, size = 3, status, is
   const spanStyle = baseStyle.join(' ');
   const html = `
     <div style="display: flex; align-items: center;${isCenter ? ' justify-content: center;' : ''} width: 2em; height: 2em; position: relative;">
-      <span class="${isSelected ? 'selected-label' : ''}" style="${spanStyle}">${labelText}</span>
+      <span class="${isSelected ? 'selected-label' : ''}" style="${spanStyle}">${labelText}${extra}</span>
     </div>
   `;
+  // TODO: Insert fraction like frac(num, denom) if needed
   return L.divIcon({
     html,
     className: '',
@@ -185,10 +203,9 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
   // Prepare renderings: remove comments, split, trim, and convert to regex patterns
   let renderingList = [];
   if (renderings) {
-    // Remove content in parentheses (comments)
-    const noComments = renderings.replace(/\([^)]*\)/g, '');
-    renderingList = noComments
+    renderingList = renderings
       .split(/\r?\n/)
+      .map(r => r.replace(/\(.*/g, '').replace(/.*\)/g, '')) // Remove content in parentheses (comments), even if only partially enclosed. (The user may be typing a comment.)
       .map(r => r.trim())
       .filter(r => r.length > 0)
       .map(r => {
@@ -199,14 +216,26 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
         if (!pattern.endsWith('*')) pattern = pattern + '\\b';
         // Replace * [with [\w-]* (word chars + dash)
         pattern = pattern.replace(/\*/g, '[\\w-]*');
-        return new RegExp(pattern, 'iu');
-      });
+        try {
+          return new RegExp(pattern, 'iu');
+        } catch (e) {
+          // Invalid regex, skip it
+          return null;
+        }
+      })
+      .filter(Boolean); // Remove nulls (invalid regexes)
   }
 
   // Helper to highlight match in verse text
   function highlightMatch(text, patterns) {
     for (const regex of patterns) {
-      const match = text.match(regex);
+      let match;
+      try {
+        match = text.match(regex);
+      } catch (e) {
+        // Invalid regex, skip this pattern
+        continue;
+      }
       if (match) {
         const start = match.index;
         const end = start + match[0].length;
@@ -809,6 +838,7 @@ function App() {
               selLocation={selLocation}
               labelScale={labelScale} // <-- pass labelScale
               mapDef={mapDef} // <-- pass map definition
+              termRenderings={termRenderings} // <-- pass term renderings
             />
           )}
           {mapPaneView === 1 && (
@@ -877,7 +907,7 @@ function App() {
   );
 }
 
-function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScale, mapDef }) {
+function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScale, mapDef, termRenderings }) {
   const imageHeight = mapDef.height;
   const imageWidth = mapDef.width;
   const bounds = useMemo(() => [[0, 0], [imageHeight, imageWidth]], [imageHeight, imageWidth]);
@@ -932,7 +962,8 @@ function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScal
               loc.size,
               loc.status,
               selLocation === loc.idx,
-              labelScale 
+              labelScale,
+              frac(termRenderings.getMatchTally(loc.termId, mapBibTerms.getRefs(loc.termId)), true)
             )}
             eventHandlers={{ click: () => onSelectLocation(loc) }}
             aria-label={`Marker for ${loc.gloss}`}
@@ -1037,6 +1068,9 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
     }
     onApprovedChange({ target: { checked: true } });
   };
+
+  let transliteration = mapBibTerms.getTransliteration(locations[selLocation]?.termId);
+  if (transliteration) { transliteration = ` /${transliteration}/`; }
 
   return (
     <div>
@@ -1184,18 +1218,32 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
       <div style={{ border: '1px solid #ccc', borderRadius: 6, marginBottom: 16, padding: 8, background: '#f9f9f9' }}>
         <table >
           <tbody>
-            {Object.entries(statusTallies).map(([status, count ]) => (
+            {Object.entries(statusTallies).sort((a, b) => statusValue[a[0]].sort - statusValue[b[0]].sort).map(([status, count ]) => (
               <tr key={status}>
-                <td style={{ color: statusValue[status].bkColor, fontWeight: 'bold', padding: '2px 8px' }}>{count}</td>
-                <td style={{ color: statusValue[status].bkColor, fontWeight: 'bold', padding: '2px 8px' }}>{statusValue[status].text}</td>
+                <td style={{ fontWeight: 'bold', padding: '2px 8px', textAlign: 'right' }}>{count}</td>
+                <td style={{  }}>
+                  <span
+                    style={{
+                    background: statusValue[status].bkColor,
+                    color: statusValue[status].textColor,
+                    borderRadius: '0.7em',
+                    padding: '0 10px',
+                    display: 'inline-block',
+                    fontWeight: 'bold',
+                    whiteSpace: 'nowrap'
+                    }}
+                    >
+                    {statusValue[status].text}
+                  </span>
+                  </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
       <h2>{locations[selLocation]?.gloss}</h2>
-      <p>
-        {mapBibTerms.getDefinition(locations[selLocation]?.termId)} <span style={{ fontStyle: 'italic' }}>({locations[selLocation]?.termId})</span>
+      <p><span style={{ fontStyle: 'italic' }}>({locations[selLocation]?.termId})  <span style={{ display: 'inline-block', width: 12 }} />{transliteration}</span><br />
+        {mapBibTerms.getDefinition(locations[selLocation]?.termId)}
       </p>
       <div className="vernacularGroup" style={{ backgroundColor: statusValue[status].bkColor, margin: '10px', padding: '10px' }}>
         <input
@@ -1217,7 +1265,8 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
           spellCheck={false}
         />
         <span style={{color: statusValue[status].textColor}}>
-          {statusValue[status].text}
+          <span style={{ fontWeight: 'bold' }}>{statusValue[status].text + ": "}</span>
+          {statusValue[status].help}
           {status === 2 && (  // If status is "no renderings", show Add to renderings button
             <button style={{ marginLeft: 8 }} onClick={handleAddToRenderings}>Add to renderings</button>
           )}{status === 5 && (  // If status is "guessed", show Add to renderings button
@@ -1237,7 +1286,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
           )}
         </span>
       </div>
-      <h4>Term Renderings ({localIsApproved ? 'Approved ' : 'Guessed'})</h4>
+      <h4>Term Renderings  {localRenderings && !localIsApproved ? '(Guessed)' : ''}</h4>
       <div className="term-renderings">
         <textarea
           ref={renderingsTextareaRef}

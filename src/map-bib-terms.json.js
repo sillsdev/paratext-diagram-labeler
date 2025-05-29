@@ -3162,7 +3162,7 @@ export const mapBibTerms =
     "Σαμάρεια-1": {
         "transliteration": "Samareia-1",
         "gloss": "Samaria",
-        "definition": "",
+        "definition": "a region in the central part of Palestine",
         "refs": [
             "042017011",
             "043004004",
@@ -3178,7 +3178,7 @@ export const mapBibTerms =
     "Σαμάρεια-2": {
         "transliteration": "Samareia-2",
         "gloss": "Samaria",
-        "definition": "",
+        "definition": "the principal city of Samaria",
         "refs": [
             "044008009",
             "044008014"
