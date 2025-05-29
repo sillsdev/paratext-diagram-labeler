@@ -702,6 +702,7 @@ function App() {
         ref={usfmTextareaRef}
         style={{ width: '100%', height: '100%', minHeight: 300 }}
         defaultValue={usfmText}
+        spellCheck={false}
       />
     );
   });
