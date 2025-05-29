@@ -149,7 +149,7 @@ class TermRenderings {
       console.log(`num refs: ${refs.length}`, renderingList);
       // Compute match tally
       let matchCount = 0;
-      const matchResults = refs.map(refId => {
+      refs.map(refId => {
         const verse = extractedVerses[refId] || '';
         const hasMatch = renderingList.some(r => r.test(verse));
         if (hasMatch) matchCount++;

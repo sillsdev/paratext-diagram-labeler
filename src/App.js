@@ -261,7 +261,13 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
   });
 
   return (
-    <div className="bottom-pane" ref={paneRef} style={{ maxHeight: 300, padding: 4, display: 'flex', flexDirection: 'column' }}>
+    <div className="bottom-pane" ref={paneRef} style={{
+      display: 'flex',
+      flexDirection: 'column',
+      height: '100%', // Fill parent (resizes with pane)
+      minHeight: 0,   // Allow flex children to shrink
+      padding: 4
+    }}>
       <div style={{
         display: 'flex',
         alignItems: 'center',
@@ -297,7 +303,11 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
           </>
         )}
       </div>
-      <div style={{ overflowY: 'auto', flex: 1 }}>
+      <div style={{
+        overflowY: 'auto',
+        flex: 1,
+        minHeight: 0
+      }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'auto' }}>
           <tbody>
             {refs.length === 0 ? (
@@ -1307,7 +1317,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
             }
             termRenderings.data = updatedData;  // TODO: move this to a setter function
             // The renderings change might affect the status of the location indexed by selLocation
-            const status = termRenderings.getStatus(locations[selLocation].termId, locations[selLocation].vernLabel || '');
+            //const status = termRenderings.getStatus(locations[selLocation].termId, locations[selLocation].vernLabel || '');
             onRenderingsChange({ target: { value: e.target.value } });
           }}
           style={{ width: '100%', minHeight: '100px' }}
