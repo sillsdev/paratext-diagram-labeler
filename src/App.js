@@ -835,6 +835,22 @@ function App() {
     }, 0);
   }, [selLocation, locations, termRenderings]);
 
+  // Add global PageUp/PageDown navigation for Map and Table views
+useEffect(() => {
+  function handleGlobalKeyDown(e) {
+    if (mapPaneView === 2) return; // Do not trigger in USFM view
+    if (e.key === 'PageDown') {
+      handleNextLocation(true);
+      e.preventDefault();
+    } else if (e.key === 'PageUp') {
+      handleNextLocation(false);
+      e.preventDefault();
+    }
+  }
+  window.addEventListener('keydown', handleGlobalKeyDown);
+  return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+}, [mapPaneView, handleNextLocation]);
+
   console.log("map: ", map);
   return (
     <div className="app-container">
