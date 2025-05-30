@@ -9,7 +9,8 @@ import { getMapData } from './MapData';
 import extractedVerses from './data/extracted_verses.json';
 import { FaCheckCircle, FaTimesCircle, FaPencilAlt } from 'react-icons/fa';
 
-const mapBibTerms = new MapBibTerms();
+const lang = 'es';
+const mapBibTerms = new MapBibTerms(lang);
 
 const colors = [  // Maximally contrasting colors
   { bk: "crimson", tx: "white" },      // 0
@@ -51,7 +52,7 @@ function mapFromUsfm(usfm) {
   // 
   let mapDefData;
   try {
-    mapDefData = getMapData(templateMatch[1]);
+    mapDefData = getMapData(templateMatch[1], mapBibTerms);
     mapDefData.mapView = true;
     mapDefData.template = templateMatch[1];
   } catch (e) {
@@ -110,6 +111,10 @@ function fracJsx([num, denom]) {
       {num}/{denom} {num === denom && <FaCheckCircle color="#2ecc40" />}
     </>
   );
+}
+
+function propInLanguage(prop, lang = 'en') {
+  return prop[lang] || prop['en'] || '';
 }
 
 // Fix Leaflet default marker icons (optional, not needed with custom SVG icons)
@@ -550,7 +555,7 @@ function App() {
         // Strip .jpg or .jpeg extension
         const fileName = fileHandle.name.replace(/\.(jpg|jpeg)$/i, '');
         // Use the stripped filename as the template ID
-        const foundTemplate = getMapData(fileName);
+        const foundTemplate = getMapData(fileName, mapBibTerms);
         if (!foundTemplate) {
           alert('No map template found for: ' + fileName);
           return;
@@ -1022,7 +1027,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
   const [localIsApproved, setLocalIsApproved] = useState(isApproved);
   const [localRenderings, setLocalRenderings] = useState(renderings);
   const [showTemplateInfo, setShowTemplateInfo] = useState(false);
-  const templateData = getMapData(mapDef.template) || {};
+  const templateData = getMapData(mapDef.template, mapBibTerms) || {};
 
   useEffect(() => {
     setVernacular(locations[selLocation]?.vernLabel || '');
@@ -1238,8 +1243,8 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
           <div style={{ background: 'white', borderRadius: 10, padding: 24, minWidth: 520, maxWidth: 900, boxShadow: '0 4px 24px #0008', position: 'relative' }}>
             <button onClick={() => setShowTemplateInfo(false)} style={{ position: 'absolute', top: 8, right: 12, background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#888' }} title="Close">×</button>
             <h4 style={{ marginTop: 0}}>{templateName}</h4>
-            {templateData.title && <p style={{ margin: '8px 0', fontWeight: 'bold', fontStyle: 'italic'}}>{templateData.title}</p>}
-            {templateData.description && <p style={{ margin: '8px 0' }}>{templateData.description}</p>}
+            {propInLanguage(templateData.title, lang) && <p style={{ margin: '8px 0', fontWeight: 'bold', fontStyle: 'italic'}}>{propInLanguage(templateData.title, lang)}</p>}
+            {propInLanguage(templateData.description, lang) && <p style={{ margin: '8px 0' }}>{propInLanguage(templateData.description, lang)}</p>}
             {templateData.mapTypes && <div style={{ margin: '8px 0' }}><b>Base layer types:</b> {templateData.mapTypes}</div>}
             {templateData.formats && <div style={{ margin: '8px 0' }}><b>File formats:</b> {templateData.formats}</div>}
             {templateData.owner && <div style={{ margin: '8px 0' }}><b>Owner:</b> {templateData.owner}</div>}

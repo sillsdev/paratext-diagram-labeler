@@ -1,9 +1,9 @@
-import { mapBibTerms } from "./map-bib-terms.json";
-
+import mapBibTerms from './data/smr-term-list.json';
 
 class MapBibTerms {
-    constructor() {
+    constructor(language = 'en') {
         this.data = mapBibTerms;
+        this.language = language;
     }
     
     getGloss(termId) {
@@ -12,7 +12,7 @@ class MapBibTerms {
             console.warn(`TermId "${termId}" not found in mapBibTerms`);
             return '';
         }
-        return entry.gloss;   
+        return entry.gloss[this.language] || entry.gloss['en'] || '';   
     }
 
     getDefinition(termId) {
@@ -21,7 +21,7 @@ class MapBibTerms {
             console.warn(`TermId "${termId}" not found in mapBibTerms`);
             return '';
         }
-        return entry.definition;   
+        return entry.context[this.language] || entry.gloss['en'] || '';   
     }
 
     getTransliteration(termId) {
