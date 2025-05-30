@@ -6,7 +6,7 @@ function getMapData(mapId, mapBibTerms) {
         const mapData = allMapData[mapId];
         if (!mapData) return null;
         if (Array.isArray(mapData.labels)) {
-            mapData.labels = mapData.labels.map((label, idx) => ({ ...label, idx, gloss: mapBibTerms.getGloss(label.termId) || label.gloss }));
+            mapData.labels = mapData.labels.map((label, idx) => ({ ...label, idx, gloss: mapBibTerms.getGloss(label.termId) }));
         }
         mapData.template = mapId;
         return { ...mapData };

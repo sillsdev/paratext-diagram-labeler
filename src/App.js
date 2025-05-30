@@ -9,8 +9,7 @@ import { getMapData } from './MapData';
 import extractedVerses from './data/extracted_verses.json';
 import { FaCheckCircle, FaTimesCircle, FaPencilAlt } from 'react-icons/fa';
 
-const lang = 'es';
-const mapBibTerms = new MapBibTerms(lang);
+const mapBibTerms = new MapBibTerms();
 
 const colors = [  // Maximally contrasting colors
   { bk: "crimson", tx: "white" },      // 0
@@ -23,15 +22,24 @@ const colors = [  // Maximally contrasting colors
   { bk: "#FF0080", tx: "black" }   // 7
 ];
 
+const uiStr = {
+  termRenderings: { en: "Term Renderings", es: "Renderizaciones de Términos", fr: "Rendus des Termes" },
+  uiSettings: { en: "UI Settings", es: "Configuración de la Interfaz", fr: "Paramètres de l'interface" },
+  labelSize: { en: "Label Size", es: "Tamaño de etiqueta", fr: "Taille de l'étiquette" },
+  guessed: { en: "Guessed", es: "Adivinado", fr: "Deviné" },
+  found: { en: "Found", es: "Encontrado", fr: "Trouvé" },
+  approveRendering: { en: "Approve Rendering", es: "Aprobar Renderización", fr: "Approuver le Rendu" },
+}
+
 const statusValue = [
-  { text: "Blank", help: "Provide the text to be used in this label.", bkColor: colors[0].bk, textColor: colors[0].tx, sort: 1},  // 0
-  { text: "Multiple", help: "Multiple options have been provided for you to select from. Ensure that you don't have any bad renderings, and then edit the label to remove unwanted options.", bkColor: colors[4].bk, textColor: colors[4].tx, sort: 5},    // 1
-  { text: "No renderings", help: "Your project does not yet contain any renderings for this term.", bkColor: colors[1].bk, textColor: colors[1].tx, sort: 3}, // 2
-  { text: "Unmatched label", help: "The label is not matched by the rendering(s).", bkColor: colors[2].bk, textColor: colors[2].tx, sort: 4},  // 3
-  { text: "Matched", help: "The term renderings will be able to supply this label to any other map in the project that needs it.", bkColor: colors[3].bk, textColor: colors[3].tx, sort: 0},      // 4
-  { text: "Guessed", help: "This label matches a guessed rendering which must be approved.", bkColor: colors[5].bk, textColor: colors[5].tx, sort: 2}, // 5
-  { text: "Rendering shorter than label", help: "First ensure that the rendering contains everything it should. If it does, you may need to specify an explicit map form for this term.", bkColor: colors[6].bk, textColor: colors[6].tx, sort: 6}, // 6
-  { text: "Bad explicit form", help: "The renderings specify an explicit map form, but it is not matched by any rendering.", bkColor: colors[7].bk, textColor: colors[7].tx, sort: 7}, // 7
+  { text: { en: "Blank" }, help: { en: "Provide the text to be used in this label." }, bkColor: colors[0].bk, textColor: colors[0].tx, sort: 1},  // 0
+  { text: { en: "Multiple" }, help: { en: "Multiple options have been provided for you to select from. Ensure that you don't have any bad renderings, and then edit the label to remove unwanted options." }, bkColor: colors[4].bk, textColor: colors[4].tx, sort: 5},    // 1
+  { text: { en: "No renderings" }, help: { en: "Your project does not yet contain any renderings for this term." }, bkColor: colors[1].bk, textColor: colors[1].tx, sort: 3}, // 2
+  { text: { en: "Unmatched label" }, help: { en: "The label is not matched by the rendering(s)." }, bkColor: colors[2].bk, textColor: colors[2].tx, sort: 4},  // 3
+  { text: { en: "Matched" }, help: { en: "The term renderings will be able to supply this label to any other map in the project that needs it." }, bkColor: colors[3].bk, textColor: colors[3].tx, sort: 0},      // 4
+  { text: { en: "Guessed" }, help: { en: "This label matches a guessed rendering which must be approved." }, bkColor: colors[5].bk, textColor: colors[5].tx, sort: 2}, // 5
+  { text: { en: "Rendering shorter than label" }, help: { en: "First ensure that the rendering contains everything it should. If it does, you may need to specify an explicit map form for this term." }, bkColor: colors[6].bk, textColor: colors[6].tx, sort: 6}, // 6
+  { text: { en: "Bad explicit form" }, help: { en: "The renderings specify an explicit map form, but it is not matched by any rendering." }, bkColor: colors[7].bk, textColor: colors[7].tx, sort: 7}, // 7
 ];
 
 var usfm = String.raw`\zdiagram-s |template="SMR1_185wbt - Philips Travels [sm]"\* 
@@ -84,7 +92,7 @@ function mapFromUsfm(usfm) {
       const label = {
         mergeKey,
         termId,
-        gloss,
+        gloss: { en: gloss },
         vernLabel: vernLabel || '',
         idx: maxIdx++ // Assign an index for ordering
       };
@@ -113,8 +121,10 @@ function fracJsx([num, denom]) {
   );
 }
 
-function propInLanguage(prop, lang = 'en') {
-  return prop[lang] || prop['en'] || '';
+function inLang(prop, lang = 'en') {
+  if (!prop) return '';
+  if (typeof prop === 'string') return prop;
+  return prop[lang] || prop['en'] || Object.values(prop)[0] || '';
 }
 
 // Fix Leaflet default marker icons (optional, not needed with custom SVG icons)
@@ -181,7 +191,7 @@ const createLabel = (labelText, align = 'right', angle = 0, size = 3, status, is
 };
 
 // Bottom Pane component to display a scrollable list of verses referencing the termId
-function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, renderingsTextareaRef }) {
+function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, renderingsTextareaRef, lang }) {
   const paneRef = React.useRef();
   const [selectedText, setSelectedText] = React.useState('');
 
@@ -299,20 +309,20 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
         borderBottom: '1px solid #eee',
         minHeight: 28
       }}>
-        <span>Found: {matchCount}/{refs.length}</span>
+        <span>{inLang(uiStr.found, lang)}: {matchCount}/{refs.length}</span>
         {selectedText && (
           <>
             <button
               style={{ marginLeft: 8, fontSize: 13, padding: '1px 6px', borderRadius: 4, background: '#e0ffe0', border: '1px solid #b2dfdb', cursor: 'pointer', height: 22 }}
               onClick={() => onAddRendering(selectedText)}
             >
-              Add rendering
+              {inLang({en: 'Add rendering', es: 'Agregar rendering', fr: 'Ajouter un rendu'}, lang)}
             </button>
             <button
               style={{ marginLeft: 6, fontSize: 13, padding: '1px 6px', borderRadius: 4, background: '#ffe0e0', border: '1px solid #dfb2b2', cursor: 'pointer', height: 22 }}
               onClick={() => onReplaceRendering(selectedText)}
             >
-              Replace renderings
+              {inLang({en: 'Replace renderings', es: 'Reemplazar renderings', fr: 'Remplacer les rendus'}, lang)}
             </button>
           </>
         )}
@@ -325,7 +335,7 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
         <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'auto' }}>
           <tbody>
             {refs.length === 0 ? (
-              <tr><td colSpan={2} style={{ color: '#888', textAlign: 'center', padding: 4 }}>No references found for this term.</td></tr>
+              <tr><td colSpan={2} style={{ color: '#888', textAlign: 'center', padding: 4 }}>{inLang({en: 'No references found for this term.', es: 'No se encontraron referencias para este término.', fr: 'Aucune référence trouvée pour ce terme.'}, lang)}</td></tr>
             ) : (
               refs.map((refId, i) => {
                 const verse = extractedVerses[refId] || '';
@@ -373,7 +383,7 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
   );
 }
 
-function usfmFromMap(map) {
+function usfmFromMap(map, lang) {
   console.log('Converting map to USFM:', map);
   // Reconstruct USFM string from current map state
   let usfm = `\\zdiagram-s |template="${map.template}"\\*\n`;
@@ -384,7 +394,7 @@ function usfmFromMap(map) {
     usfm += `${map.fig}\n`;
   }
   map.labels.forEach(label => {
-    usfm += `\\zlabel |key="${label.mergeKey}" termid="${label.termId}" gloss="${label.gloss}" label="${label.vernLabel || ''}"\\*\n`;
+    usfm += `\\zlabel |key="${label.mergeKey}" termid="${label.termId}" gloss="${inLang(label.gloss, lang)}" label="${label.vernLabel || ''}"\\*\n`;
   });
   usfm += '\\zdiagram-e \\*';
   // Remove unnecessary escaping for output
@@ -392,6 +402,8 @@ function usfmFromMap(map) {
 }
 
 function App() {
+  // --- Language state ---
+  const [lang, setLang] = useState('en');
   const [mapDef, setMapDef] = useState({template: map.template, fig: map.fig, mapView: map.mapView, imgFilename: map.imgFilename, width: map.width, height: map.height});
   const [locations, setLocations] = useState([]);
   const [selLocation, setSelLocation] = useState(0);
@@ -640,7 +652,7 @@ function App() {
   }, [selLocation]); // NOT locations, to avoid re-focusing while editing renderings
 
   // Table View component
-  function TableView({ locations, selLocation, onUpdateVernacular, onNextLocation, termRenderings, onSelectLocation }) {
+  function TableView({ locations, selLocation, onUpdateVernacular, onNextLocation, termRenderings, onSelectLocation, lang }) {
     const inputRefs = useRef([]);
     useEffect(() => {
       // Focus the input for the selected row
@@ -654,10 +666,10 @@ function App() {
       <table className="table-view" style={{ borderCollapse: 'collapse' }}>
         <thead>
         <tr style={{ background: '#444', color: '#e0e0e0' }}>
-          <th>Gloss</th>
-          <th>Label</th>
-          <th style={{textAlign: 'center'}}>Found</th>
-          <th>Status</th>
+          <th>{inLang(uiStr.gloss, lang) || 'Gloss'}</th>
+          <th>{inLang(uiStr.label, lang) || 'Label'}</th>
+          <th style={{textAlign: 'center'}}>{inLang(uiStr.found, lang) || 'Found'}</th>
+          <th>{inLang(uiStr.status, lang) || 'Status'}</th>
         </tr>
         </thead>
         <tbody>
@@ -676,7 +688,7 @@ function App() {
             }}
             onClick={() => onSelectLocation(loc)}
           >
-            <td style={isSelected ? { paddingTop: 4, paddingBottom: 4 } : {}}>{loc.gloss}</td>
+            <td style={isSelected ? { paddingTop: 4, paddingBottom: 4 } : {}}>{inLang(loc.gloss, lang)}</td>
             <td style={isSelected ? { paddingTop: 4, paddingBottom: 4 } : {}}>
             <input
             ref={el => inputRefs.current[i] = el}
@@ -702,13 +714,13 @@ function App() {
             background: statusValue[status].bkColor,
             color: statusValue[status].textColor,
             borderRadius: '0.7em',
-            padding: '2px 10px',
+            padding: '0 10px',
             display: 'inline-block',
             fontWeight: 'bold',
             whiteSpace: 'nowrap'
             }}
             >
-            {statusValue[status].text}
+            {inLang(statusValue[status].text, lang)}
             </span>
             </td>
           </tr>
@@ -734,16 +746,16 @@ function App() {
   });
 
   // --- USFM state for editing ---
-  const [usfmText, setUsfmText] = useState(() => usfmFromMap({ ...mapDef, labels: locations }));
+  const [usfmText, setUsfmText] = useState(() => usfmFromMap({ ...mapDef, labels: locations }, lang));
 
   // Only update USFM text when switching TO USFM view (not on every locations change)
   const prevMapPaneView = useRef();
   useEffect(() => {
     if (prevMapPaneView.current !== 2 && mapPaneView === 2) {
-      setUsfmText(usfmFromMap({ ...mapDef, labels: locations }));
+      setUsfmText(usfmFromMap({ ...mapDef, labels: locations }, lang));
     }
     prevMapPaneView.current = mapPaneView;
-  }, [mapPaneView, locations, mapDef]);
+  }, [mapPaneView, locations, mapDef, lang]);
 
   // --- USFM to map/locations sync ---
   // Helper to update map/locations from USFM text
@@ -882,6 +894,7 @@ useEffect(() => {
               labelScale={labelScale} // <-- pass labelScale
               mapDef={mapDef} // <-- pass map definition
               termRenderings={termRenderings} // <-- pass term renderings
+              lang={lang} // <-- pass lang
             />
           )}
           {mapPaneView === 1 && (
@@ -892,6 +905,7 @@ useEffect(() => {
               onUpdateVernacular={handleUpdateVernacular}
               termRenderings={termRenderings}
               onNextLocation={handleNextLocation}
+              lang={lang} // <-- pass lang
             />
           )}
           {mapPaneView === 2 && (
@@ -927,6 +941,7 @@ useEffect(() => {
             onBrowseMapTemplate={handleBrowseMapTemplate}
             vernacularInputRef={vernacularInputRef} // <-- pass ref
             renderingsTextareaRef={renderingsTextareaRef}
+            lang={lang} // <-- pass lang
           />
         </div>
       </div>
@@ -943,14 +958,22 @@ useEffect(() => {
           onAddRendering={handleAddRendering}
           onReplaceRendering={handleReplaceRendering}
           renderingsTextareaRef={renderingsTextareaRef}
+          lang={lang} // <-- pass lang
         />
       </div>
-      <SettingsModal open={showSettings} onClose={() => setShowSettings(false)} labelScale={labelScale} setLabelScale={setLabelScale} />
+      <SettingsModal 
+        open={showSettings} 
+        onClose={() => setShowSettings(false)} 
+        labelScale={labelScale} 
+        setLabelScale={setLabelScale}
+        lang={lang}
+        setLang={setLang}
+      />
     </div>
   );
 }
 
-function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScale, mapDef, termRenderings }) {
+function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScale, mapDef, termRenderings, lang }) {
   const imageHeight = mapDef.height;
   const imageWidth = mapDef.width;
   const bounds = useMemo(() => [[0, 0], [imageHeight, imageWidth]], [imageHeight, imageWidth]);
@@ -999,7 +1022,7 @@ function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScal
             key={loc.termId}
             position={[loc.yLeaflet, loc.x]}
             icon={createLabel(
-              loc.vernLabel || `(${loc.gloss})`, // Fallback to gloss if vernLabel is empty
+              loc.vernLabel || `(${inLang(loc.gloss, lang)})`, // Fallback to gloss if vernLabel is empty
               loc.align,
               loc.angle,
               loc.size,
@@ -1009,20 +1032,18 @@ function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScal
               frac(termRenderings.getMatchTally(loc.termId, mapBibTerms.getRefs(loc.termId)), true)
             )}
             eventHandlers={{ click: () => onSelectLocation(loc) }}
-            aria-label={`Marker for ${loc.gloss}`}
             tabIndex={0}
           >
-            {/* <Popup>{loc.gloss}</Popup> */}
           </Marker>
         ))
       ) : (
-        <div>No locations to display</div>
+        <div>{inLang({en: 'No locations to display', es: 'No hay ubicaciones para mostrar', fr: 'Aucun emplacement à afficher'}, lang)}</div>
       )}
     </MapContainer>
   );
 }
 
-function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings, mapDef, onBrowseMapTemplate, vernacularInputRef, renderingsTextareaRef }) {
+function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings, mapDef, onBrowseMapTemplate, vernacularInputRef, renderingsTextareaRef, lang }) {
   const [vernacular, setVernacular] = useState(locations[selLocation]?.vernLabel || '');
   const [localIsApproved, setLocalIsApproved] = useState(isApproved);
   const [localRenderings, setLocalRenderings] = useState(renderings);
@@ -1243,8 +1264,8 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
           <div style={{ background: 'white', borderRadius: 10, padding: 24, minWidth: 520, maxWidth: 900, boxShadow: '0 4px 24px #0008', position: 'relative' }}>
             <button onClick={() => setShowTemplateInfo(false)} style={{ position: 'absolute', top: 8, right: 12, background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#888' }} title="Close">×</button>
             <h4 style={{ marginTop: 0}}>{templateName}</h4>
-            {propInLanguage(templateData.title, lang) && <p style={{ margin: '8px 0', fontWeight: 'bold', fontStyle: 'italic'}}>{propInLanguage(templateData.title, lang)}</p>}
-            {propInLanguage(templateData.description, lang) && <p style={{ margin: '8px 0' }}>{propInLanguage(templateData.description, lang)}</p>}
+            {inLang(templateData.title, lang) && <p style={{ margin: '8px 0', fontWeight: 'bold', fontStyle: 'italic'}}>{inLang(templateData.title, lang)}</p>}
+            {inLang(templateData.description, lang) && <p style={{ margin: '8px 0' }}>{inLang(templateData.description, lang)}</p>}
             {templateData.mapTypes && <div style={{ margin: '8px 0' }}><b>Base layer types:</b> {templateData.mapTypes}</div>}
             {templateData.formats && <div style={{ margin: '8px 0' }}><b>File formats:</b> {templateData.formats}</div>}
             {templateData.owner && <div style={{ margin: '8px 0' }}><b>Owner:</b> {templateData.owner}</div>}
@@ -1276,7 +1297,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
                     whiteSpace: 'nowrap'
                     }}
                     >
-                    {statusValue[status].text}
+                    {inLang(statusValue[status].text, lang)}
                   </span>
                   </td>
               </tr>
@@ -1284,9 +1305,9 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
           </tbody>
         </table>
       </div>
-      <h2>{locations[selLocation]?.gloss}</h2>
+      <h2>{inLang(locations[selLocation]?.gloss, lang)}</h2>
       <p><span style={{ fontStyle: 'italic' }}>({locations[selLocation]?.termId})  <span style={{ display: 'inline-block', width: 12 }} />{transliteration}</span><br />
-        {mapBibTerms.getDefinition(locations[selLocation]?.termId)}
+        {inLang(mapBibTerms.getDefinition(locations[selLocation]?.termId), lang)}
       </p>
       <div className="vernacularGroup" style={{ backgroundColor: statusValue[status].bkColor, margin: '10px', padding: '10px' }}>
         <input
@@ -1303,13 +1324,12 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
           }}
           placeholder="Enter translated label"
           className="form-control mb-2"
-          aria-label={`Translation for ${locations[selLocation]?.gloss}`}
           style={{ width: '100%', border: 'none' }}
           spellCheck={false}
         />
         <span style={{color: statusValue[status].textColor}}>
-          <span style={{ fontWeight: 'bold' }}>{statusValue[status].text + ": "}</span>
-          {statusValue[status].help}
+          <span style={{ fontWeight: 'bold' }}>{inLang(statusValue[status].text, lang) + ": "}</span>
+          {inLang(statusValue[status].help, lang)}
           {status === 2 && (  // If status is "no renderings", show Add to renderings button
             <button style={{ marginLeft: 8 }} onClick={handleAddToRenderings}>Add to renderings</button>
           )}{status === 5 && (  // If status is "guessed", show Add to renderings button
@@ -1324,12 +1344,12 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
               };
               termRenderings.data = updatedData;  // TODO: move this to a setter function
               onApprovedChange({ target: { checked: true } });
-            }}>Approve rendering
+            }}>{inLang(uiStr.approveRendering, lang)}
           </button>
           )}
         </span>
       </div>
-      <h4>Term Renderings  {localRenderings && !localIsApproved ? '(Guessed)' : ''}</h4>
+      <h4>{inLang(uiStr.termRenderings, lang)}  {localRenderings && !localIsApproved ? '(' + inLang(uiStr.guessed, lang) +')' : ''}</h4>
       <div className="term-renderings">
         <textarea
           ref={renderingsTextareaRef}
@@ -1362,31 +1382,43 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
 }
 
 // Settings Modal Dialog
-const SettingsModal = ({ open, onClose, labelScale, setLabelScale }) => {
+const SettingsModal = ({ open, onClose, labelScale, setLabelScale, lang, setLang }) => {
   if (!open) return null;
   return (
-    <div style={{
-      position: 'fixed', left: 0, top: 0, width: '100vw', height: '100vh', zIndex: 2000,
-      background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center'
-    }}>
-      <div style={{ background: 'white', borderRadius: 10, padding: 32, minWidth: 400, maxWidth: 600, boxShadow: '0 4px 24px #0008', position: 'relative' }}>
-        <button onClick={onClose} style={{ position: 'absolute', top: 8, right: 12, background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#888' }} title="Close">×</button>
-        <h3 style={{ marginTop: 0 }}>UI Settings</h3>
-        <div style={{ margin: '24px 0' }}>
-          <label htmlFor="labelScaleSlider" style={{ fontWeight: 'bold', marginRight: 12 }}>Label Size</label>
+    <div className="modal-overlay" style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.2)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className="modal-content" style={{ background: '#fff', borderRadius: 8, padding: 24, minWidth: 320, boxShadow: '0 2px 16px rgba(0,0,0,0.2)' }}>
+        <h2 style={{ marginTop: 0 }}>{inLang(uiStr.uiSettings, lang)}</h2>
+        <div style={{ marginBottom: 16 }}>
+          <label style={{ fontWeight: 'bold', marginRight: 8 }}>{inLang(uiStr.labelSize, lang)}:</label>
           <input
-            id="labelScaleSlider"
             type="range"
-            min={0.3}
+            min={0.5}
             max={2}
-            step={0.01}
+            step={0.05}
             value={labelScale}
             onChange={e => setLabelScale(parseFloat(e.target.value))}
-            style={{ width: 200, verticalAlign: 'middle' }}
+            style={{ verticalAlign: 'middle', marginRight: 8 }}
           />
-          <span style={{ marginLeft: 16, fontFamily: 'monospace' }}>{labelScale.toFixed(2)}x</span>
+          <span>{labelScale.toFixed(2)}x</span>
         </div>
-        {/* Future: interface language, etc. */}
+        <div style={{ marginBottom: 16 }}>
+          <label style={{ fontWeight: 'bold', marginRight: 8 }}>{inLang({en: 'Language', es: 'Idioma', fr: 'Langue'}, lang)}:</label>
+          <select
+            value={lang}
+            onChange={e => {
+              setLang(e.target.value);
+              localStorage.setItem('lang', e.target.value);
+            }}
+            style={{ fontSize: 15, padding: '2px 8px', borderRadius: 4 }}
+          >
+            <option value="en">English</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+          </select>
+        </div>
+        <div style={{ textAlign: 'right' }}>
+          <button onClick={onClose} style={{ fontSize: 15, padding: '4px 16px', borderRadius: 4 }}>{inLang({en: 'Close', es: 'Cerrar', fr: 'Fermer'}, lang)}</button>
+        </div>
       </div>
     </div>
   );
