@@ -1,0 +1,98 @@
+{
+  "statusValue": [
+    { 
+      "text": { "en": "Blank", "es": "En blanco", "fr": "Vide" }, 
+      "help": { 
+        "en": "Provide the text to be used in this label.", 
+        "es": "Proporcione el texto que se usará en esta etiqueta.", 
+        "fr": "Fournissez le texte à utiliser pour cette étiquette." 
+      }
+    },  
+    { 
+      "text": { "en": "Multiple", "es": "Múltiples", "fr": "Multiples" }, 
+      "help": { 
+        "en": "Multiple options have been provided for you to select from. Ensure that you don't have any bad renderings, and then edit the label to remove unwanted options.", 
+        "es": "Se han proporcionado múltiples opciones para que seleccione. Asegúrese de que no haya renderizaciones incorrectas y luego edite la etiqueta para eliminar las opciones no deseadas.", 
+        "fr": "Plusieurs options vous ont été proposées. Assurez-vous qu'il n'y a pas de mauvaises traductions, puis modifiez l'étiquette pour supprimer les options indésirables." 
+      } 
+    },    
+    { 
+      "text": { "en": "No renderings", "es": "Sin renderizaciones", "fr": "Aucune traduction" }, 
+      "help": { 
+        "en": "Your project does not yet contain any renderings for this term.", 
+        "es": "Su proyecto aún no contiene ninguna renderización para este término.", 
+        "fr": "Votre projet ne contient pas encore de traduction pour ce terme." 
+      } 
+    }, 
+    { 
+      "text": { "en": "Unmatched label", "es": "Etiqueta no coincidente", "fr": "Étiquette non correspondante" }, 
+      "help": { 
+        "en": "The label is not matched by the rendering(s).", 
+        "es": "La etiqueta no coincide con la(s) renderización(es).", 
+        "fr": "L'étiquette n'est pas couverte par la(les) traduction(s)." 
+      } 
+    },  
+    { 
+      "text": { "en": "Matched", "es": "Coincidente", "fr": "Correspondant" }, 
+      "help": { 
+        "en": "The term renderings will be able to supply this label to any other map in the project that needs it.", 
+        "es": "Las renderizaciones del término podrán suministrar esta etiqueta a cualquier otro mapa del proyecto que la necesite.", 
+        "fr": "Les traductions du terme pourront fournir cette étiquette à toute autre carte du projet qui en a besoin." 
+      } 
+    },      
+    { 
+      "text": { "en": "Guessed", "es": "Adivinado", "fr": "Deviné" }, 
+      "help": { 
+        "en": "This label matches a guessed rendering which must be approved.", 
+        "es": "Esta etiqueta coincide con una renderización adivinada que debe ser aprobada.", 
+        "fr": "Cette étiquette correspond à une traduction devinée qui doit être approuvée." 
+      } 
+    }, 
+    { 
+      "text": { "en": "Rendering shorter than label", "es": "Renderización más corta que la etiqueta", "fr": "Traduction plus courte que l'étiquette" }, 
+      "help": { 
+        "en": "First ensure that the rendering contains everything it should. If it does, you may need to specify an explicit map form for this term.", 
+        "es": "Primero asegúrese de que la renderización contenga todo lo necesario. Si es así, puede que deba especificar una forma explícita del término para el mapa.", 
+        "fr": "Assurez-vous d'abord que la traduction contient tout ce qu'elle doit. Si c'est le cas, vous devrez peut-être spécifier une forme explicite pour ce terme sur la carte." 
+      } 
+    }, 
+    { 
+      "text": { "en": "Bad explicit form", "es": "Forma explícita incorrecta", "fr": "Forme explicite incorrecte" }, 
+      "help": { 
+        "en": "The renderings specify an explicit map form, but it is not matched by any rendering.", 
+        "es": "Las renderizaciones especifican una forma explícita para el mapa, pero no coincide con ninguna renderización.", 
+        "fr": "Les traductions spécifient une forme explicite pour la carte, mais aucune traduction ne la correspond." 
+      } 
+    } 
+  ],
+  "addRendering": { "en": "Add rendering", "es": "Agregar rendering", "fr": "Ajouter un rendu" },
+  "addToRenderings": { "en": "Add to renderings", "es": "Agregar a renderings", "fr": "Ajouter aux rendus" },
+  "approveRendering": { "en": "Approve Rendering", "es": "Aprobar Renderización", "fr": "Approuver le Rendu" },
+  "baseLayerTypes": { "en": "Base layer types", "es": "Tipos de capa base", "fr": "Types de couche de base" },
+  "browseTemplate": { "en": "Browse for map template", "es": "Buscar plantilla de mapa", "fr": "Parcourir les modèles de carte" },
+  "cancel": { "en": "Cancel", "es": "Cancelar", "fr": "Annuler" },
+  "close": { "en": "Close", "es": "Cerrar", "fr": "Fermer" },
+  "enterLabel": { "en": "Enter translated label", "es": "Ingrese la etiqueta traducida", "fr": "Entrez l'étiquette traduite" },
+  "enterRenderings": { "en": "Enter renderings here, one per line.\nOptionally, explicitly mark the map form of the rendering by adding it as a comment that begins with '@'.\ne.g. Misra* (@Misradesh)", "es": "Ingrese los renderings aquí, uno por línea.\nOpcionalmente, marque explícitamente la forma del mapa agregándola como un comentario que comience con '@'.\np.ej. Misra* (@Misradesh)", "fr": "Entrez les rendus ici, un par ligne.\nOptionnellement, marquez explicitement la forme de la carte en l'ajoutant comme un commentaire commençant par '@'.\np.ex. Misra* (@Misradesh)" },
+  "fileFormats": { "en": "File formats", "es": "Formatos de archivo", "fr": "Formats de fichier" },
+  "found": { "en": "Found", "es": "Encontrado", "fr": "Trouvé" },
+  "gloss": { "en": "Gloss", "es": "Glosa", "fr": "Glossaire" },
+  "guessed": { "en": "Guessed", "es": "Adivinado", "fr": "Deviné" },
+  "invalidUsfm": { "en": "Invalid USFM format. Changes not applied.", "es": "Formato USFM inválido. Cambios no aplicados.", "fr": "Format USFM invalide. Modifications non appliquées." },
+  "label": { "en": "Label", "es": "Etiqueta", "fr": "Étiquette" },
+  "labelSize": { "en": "Label Size", "es": "Tamaño de etiqueta", "fr": "Taille de l'étiquette" },
+  "language": { "en": "Language", "es": "Idioma", "fr": "Langue" },
+  "mapView": { "en": "Map View", "es": "Vista de mapa", "fr": "Vue de la carte" },
+  "noLocations": { "en": "No locations to display", "es": "No hay ubicaciones para mostrar", "fr": "Aucun emplacement à afficher" },
+  "noReferences": { "en": "No references found for this term.", "es": "No se encontraron referencias para este término.", "fr": "Aucune référence trouvée pour ce terme." },
+  "ok": { "en": "OK", "es": "OK", "fr": "OK" },
+  "owner": { "en": "Owner", "es": "Propietario", "fr": "Propriétaire" },
+  "replaceRenderings": { "en": "Replace renderings", "es": "Reemplazar renderings", "fr": "Remplacer les rendus" },
+  "status": { "en": "Status", "es": "Estado", "fr": "Statut" },
+  "tableView": { "en": "Table View", "es": "Vista de tabla", "fr": "Vue du tableau" },
+  "templateInfo": { "en": "Template info", "es": "Información de la plantilla", "fr": "Infos du modèle" },
+  "termRenderings": { "en": "Term Renderings", "es": "Renderizaciones de Términos", "fr": "Rendus des Termes" },
+  "uiSettings": { "en": "UI Settings", "es": "Configuración de la Interfaz", "fr": "Paramètres de l'interface" },
+  "usageRules": { "en": "Usage and Attribution Rules", "es": "Reglas de uso y atribución", "fr": "Règles d'utilisation et d'attribution" },
+  "usfmView": { "en": "USFM View", "es": "Vista USFM", "fr": "Vue USFM" }
+}

@@ -8,105 +8,20 @@ import MapBibTerms from './MapBibTerms';
 import { getMapData } from './MapData';
 import extractedVerses from './data/extracted_verses.json';
 import { FaCheckCircle, FaTimesCircle, FaPencilAlt } from 'react-icons/fa';
-
+import uiStr from './data/ui-strings.json';
 const mapBibTerms = new MapBibTerms();
 
-const colors = [  // Maximally contrasting colors
-  { bk: "crimson", tx: "white" },      // 0
-  { bk: "#FF8000", tx: "black" },  // 1
-  { bk: "yellow", tx: "black" },   // 2
-  { bk: "#80FF00", tx: "black" },  // 3
-  { bk: "cyan", tx: "black" },     // 4
-  { bk: "blue", tx: "white" },     // 5
-  { bk: "magenta", tx: "black" },  // 6
-  { bk: "#FF0080", tx: "black" }   // 7
-];
-
-const uiStr = {
-  termRenderings: { en: "Term Renderings", es: "Renderizaciones de Términos", fr: "Rendus des Termes" },
-  uiSettings: { en: "UI Settings", es: "Configuración de la Interfaz", fr: "Paramètres de l'interface" },
-  labelSize: { en: "Label Size", es: "Tamaño de etiqueta", fr: "Taille de l'étiquette" },
-  guessed: { en: "Guessed", es: "Adivinado", fr: "Deviné" },
-  found: { en: "Found", es: "Encontrado", fr: "Trouvé" },
-  approveRendering: { en: "Approve Rendering", es: "Aprobar Renderización", fr: "Approuver le Rendu" },
-  gloss: { en: "Gloss", es: "Glosa", fr: "Glossaire" },
-  label: { en: "Label", es: "Etiqueta", fr: "Étiquette" },
-  status: { en: "Status", es: "Estado", fr: "Statut" },
-}
+const supportedLanguages = [ { code: 'en', name: 'English' }, { code: 'es', name: 'Español' }, { code: 'fr', name: 'Français' } ];
 
 const statusValue = [
-  { 
-    text: { en: "Blank", es: "En blanco", fr: "Vide" }, 
-    help: { 
-      en: "Provide the text to be used in this label.", 
-      es: "Proporcione el texto que se usará en esta etiqueta.", 
-      fr: "Fournissez le texte à utiliser pour cette étiquette." 
-    }, 
-    bkColor: colors[0].bk, textColor: colors[0].tx, sort: 1
-  },  // 0
-  { 
-    text: { en: "Multiple", es: "Múltiples", fr: "Multiples" }, 
-    help: { 
-      en: "Multiple options have been provided for you to select from. Ensure that you don't have any bad renderings, and then edit the label to remove unwanted options.", 
-      es: "Se han proporcionado múltiples opciones para que seleccione. Asegúrese de que no haya renderizaciones incorrectas y luego edite la etiqueta para eliminar las opciones no deseadas.", 
-      fr: "Plusieurs options vous ont été proposées. Assurez-vous qu'il n'y a pas de mauvaises traductions, puis modifiez l'étiquette pour supprimer les options indésirables." 
-    }, 
-    bkColor: colors[4].bk, textColor: colors[4].tx, sort: 5
-  },    // 1
-  { 
-    text: { en: "No renderings", es: "Sin renderizaciones", fr: "Aucune traduction" }, 
-    help: { 
-      en: "Your project does not yet contain any renderings for this term.", 
-      es: "Su proyecto aún no contiene ninguna renderización para este término.", 
-      fr: "Votre projet ne contient pas encore de traduction pour ce terme." 
-    }, 
-    bkColor: colors[1].bk, textColor: colors[1].tx, sort: 3
-  }, // 2
-  { 
-    text: { en: "Unmatched label", es: "Etiqueta no coincidente", fr: "Étiquette non correspondante" }, 
-    help: { 
-      en: "The label is not matched by the rendering(s).", 
-      es: "La etiqueta no coincide con la(s) renderización(es).", 
-      fr: "L'étiquette n'est pas couverte par la(les) traduction(s)." 
-    }, 
-    bkColor: colors[2].bk, textColor: colors[2].tx, sort: 4
-  },  // 3
-  { 
-    text: { en: "Matched", es: "Coincidente", fr: "Correspondant" }, 
-    help: { 
-      en: "The term renderings will be able to supply this label to any other map in the project that needs it.", 
-      es: "Las renderizaciones del término podrán suministrar esta etiqueta a cualquier otro mapa del proyecto que la necesite.", 
-      fr: "Les traductions du terme pourront fournir cette étiquette à toute autre carte du projet qui en a besoin." 
-    }, 
-    bkColor: colors[3].bk, textColor: colors[3].tx, sort: 0
-  },      // 4
-  { 
-    text: { en: "Guessed", es: "Adivinado", fr: "Deviné" }, 
-    help: { 
-      en: "This label matches a guessed rendering which must be approved.", 
-      es: "Esta etiqueta coincide con una renderización adivinada que debe ser aprobada.", 
-      fr: "Cette étiquette correspond à une traduction devinée qui doit être approuvée." 
-    }, 
-    bkColor: colors[5].bk, textColor: colors[5].tx, sort: 2
-  }, // 5
-  { 
-    text: { en: "Rendering shorter than label", es: "Renderización más corta que la etiqueta", fr: "Traduction plus courte que l'étiquette" }, 
-    help: { 
-      en: "First ensure that the rendering contains everything it should. If it does, you may need to specify an explicit map form for this term.", 
-      es: "Primero asegúrese de que la renderización contenga todo lo necesario. Si es así, puede que deba especificar una forma explícita del término para el mapa.", 
-      fr: "Assurez-vous d'abord que la traduction contient tout ce qu'elle doit. Si c'est le cas, vous devrez peut-être spécifier une forme explicite pour ce terme sur la carte." 
-    }, 
-    bkColor: colors[6].bk, textColor: colors[6].tx, sort: 6
-  }, // 6
-  { 
-    text: { en: "Bad explicit form", es: "Forma explícita incorrecta", fr: "Forme explicite incorrecte" }, 
-    help: { 
-      en: "The renderings specify an explicit map form, but it is not matched by any rendering.", 
-      es: "Las renderizaciones especifican una forma explícita para el mapa, pero no coincide con ninguna renderización.", 
-      fr: "Les traductions spécifient une forme explicite pour la carte, mais aucune traduction ne la correspond." 
-    }, 
-    bkColor: colors[7].bk, textColor: colors[7].tx, sort: 7
-  }, // 7
+  { bkColor: "black",   textColor: "white", sort: 1  }, // 0  - blank
+  { bkColor: "cyan",    textColor: "black", sort: 5  },    // 1 - multiple
+  { bkColor: "#FF8000", textColor: "black", sort: 3  }, // 2 - no renderings
+  { bkColor: "yellow",  textColor: "black", sort: 4  },  // 3 - unmatched
+  { bkColor: "#80FF00", textColor: "black", sort: 0  }, // 4 - matched
+  { bkColor: "blue",    textColor: "white", sort: 2  },    // 5 - guessed
+  { bkColor: "crimson", textColor: "white", sort: 6  }, // 6 - Rendering shorter than label
+  { bkColor: "magenta", textColor: "black", sort: 7  }, // 7 - Bad explicit form
 ];
 
 var usfm = String.raw`\zdiagram-s |template="SMR1_185wbt - Philips Travels [sm]"\* 
@@ -383,13 +298,13 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
               style={{ marginLeft: 8, fontSize: 13, padding: '1px 6px', borderRadius: 4, background: '#e0ffe0', border: '1px solid #b2dfdb', cursor: 'pointer', height: 22 }}
               onClick={() => onAddRendering(selectedText)}
             >
-              {inLang({en: 'Add rendering', es: 'Agregar rendering', fr: 'Ajouter un rendu'}, lang)}
+              {inLang(uiStr.addRendering, lang)}
             </button>
             <button
               style={{ marginLeft: 6, fontSize: 13, padding: '1px 6px', borderRadius: 4, background: '#ffe0e0', border: '1px solid #dfb2b2', cursor: 'pointer', height: 22 }}
               onClick={() => onReplaceRendering(selectedText)}
             >
-              {inLang({en: 'Replace renderings', es: 'Reemplazar renderings', fr: 'Remplacer les rendus'}, lang)}
+              {inLang(uiStr.replaceRenderings, lang)}
             </button>
           </>
         )}
@@ -402,7 +317,7 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
         <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'auto' }}>
           <tbody>
             {refs.length === 0 ? (
-              <tr><td colSpan={2} style={{ color: '#888', textAlign: 'center', padding: 4 }}>{inLang({en: 'No references found for this term.', es: 'No se encontraron referencias para este término.', fr: 'Aucune référence trouvée pour ce terme.'}, lang)}</td></tr>
+              <tr><td colSpan={2} style={{ color: '#888', textAlign: 'center', padding: 4 }}>{inLang(uiStr.noReferences, lang)}</td></tr>
             ) : (
               refs.map((refId, i) => {
                 const verse = extractedVerses[refId] || '';
@@ -636,7 +551,7 @@ function App() {
         // Use the stripped filename as the template ID
         const foundTemplate = getMapData(fileName, mapBibTerms);
         if (!foundTemplate) {
-          alert(inLang({en: 'No map template found for'}, lang) + ": " + fileName);
+          alert(inLang(uiStr.noTemplate, lang) + ": " + fileName);
           return;
         }
         // Set mapDef and locations 
@@ -787,7 +702,7 @@ function App() {
             whiteSpace: 'nowrap'
             }}
             >
-            {inLang(statusValue[status].text, lang)}
+            {inLang(uiStr.statusValue[status].text, lang)}
             </span>
             </td>
           </tr>
@@ -849,7 +764,7 @@ function App() {
       setUsfmText(text); // keep USFM text in sync after parse
       setMapDef({template: newMap.template, fig: newMap.fig, mapView: newMap.mapView, imgFilename: newMap.imgFilename, width: newMap.width, height: newMap.height});
     } catch (e) {
-      alert(inLang({en: 'Invalid USFM format. Changes not applied.'}, lang));
+      alert(inLang(uiStr.invalidUsfm, lang));
     }
   }, [termRenderings, setLocations, setSelLocation]);
 
@@ -1104,7 +1019,7 @@ function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScal
           </Marker>
         ))
       ) : (
-        <div>{inLang({en: 'No locations to display', es: 'No hay ubicaciones para mostrar', fr: 'Aucun emplacement à afficher'}, lang)}</div>
+        <div>{inLang(uiStr.noLocations, lang)}</div>
       )}
     </MapContainer>
   );
@@ -1164,8 +1079,8 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
       {/* Button Row */}
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
         <button onClick={onSwitchView} style={{ marginRight: 60 }}>Switch view</button>
-        <button onClick={handleCancel} style={{ marginRight: 8, width:80 }}>Cancel</button>
-        <button onClick={handleOk}  style={{ width:80 }}>OK</button>
+        <button onClick={handleCancel} style={{ marginRight: 8, width:80 }}>{inLang(uiStr.cancel, lang)}</button>
+        <button onClick={handleOk}  style={{ width:80 }}>{inLang(uiStr.ok, lang)}</button>
         <div style={{ flex: 1 }} />
         <button
         onClick={handleSettings}
@@ -1225,7 +1140,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
               alignItems: 'center',
               justifyContent: 'center',
             }}
-            title={inLang({en: "Map View"}, lang)}
+            title={inLang(uiStr.mapView, lang)}
           >
             {/* Marker icon (SVG) */}
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1246,7 +1161,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
               alignItems: 'center',
               justifyContent: 'center',
             }}
-            title={inLang({en: "Table View"}, lang)}
+            title={inLang(uiStr.tableView, lang)}
           >
             {/* Table icon (SVG) */}
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1271,7 +1186,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
               alignItems: 'center',
               justifyContent: 'center',
             }}
-            title={inLang({en: "USFM View"}, lang)}
+            title={inLang(uiStr.usfmView, lang)}
           >
             {/* USFM icon (document with text lines) */}
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1281,8 +1196,8 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
               <line x1="6" y1="13" x2="12" y2="13" stroke="#1976d2" strokeWidth="1.2"/>
             </svg>
           </button>
-          <button onClick={handleCancel} style={{ marginRight: 8, height: 32, minWidth: 80, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{inLang({en: "Cancel"}, lang)}</button>
-          <button onClick={handleOk} style={{ height: 32, minWidth: 80, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{inLang({en: "OK"}, lang)}</button>
+          <button onClick={handleCancel} style={{ marginRight: 8, height: 32, minWidth: 80, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{inLang(uiStr.cancel, lang)}</button>
+          <button onClick={handleOk} style={{ height: 32, minWidth: 80, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{inLang(uiStr.ok, lang)}</button>
           <div style={{ flex: 1 }} />
           <button
             onClick={handleSettings}
@@ -1307,14 +1222,14 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
       <div className="details-group-frame" style={{ border: '1px solid #ccc', borderRadius: 6, marginBottom: 16, padding: 8, background: '#f9f9f9', display: 'flex', alignItems: 'center', gap: '12px' }}>
         <span style={{ fontWeight: 'bold', color: 'black', fontSize: '0.6em' }}>{templateName}</span>
         <button
-          title={inLang({en: "Template info"}, lang)}
+          title={inLang(uiStr.templateInfo, lang)}
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginLeft: 8 }}
           onClick={() => setShowTemplateInfo(true)}
         >
           <span role="img" aria-label="info" style={{ fontSize: '1.2em', color: '#6cf' }}>ℹ️</span>
         </button>
         <button
-          title={inLang({en: "Browse for map template"}, lang)}
+          title={inLang(uiStr.browseTemplate, lang)}
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginLeft: 8 }}
           onClick={onBrowseMapTemplate}
         >
@@ -1333,12 +1248,12 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
             <h4 style={{ marginTop: 0}}>{templateName}</h4>
             {inLang(templateData.title, lang) && <p style={{ margin: '8px 0', fontWeight: 'bold', fontStyle: 'italic'}}>{inLang(templateData.title, lang)}</p>}
             {inLang(templateData.description, lang) && <p style={{ margin: '8px 0' }}>{inLang(templateData.description, lang)}</p>}
-            {templateData.mapTypes && <div style={{ margin: '8px 0' }}><b>{inLang({en: "Base layer types"}, lang)}:</b> {templateData.mapTypes}</div>}
-            {templateData.formats && <div style={{ margin: '8px 0' }}><b>{inLang({en: "File formats"}, lang)}:</b> {templateData.formats}</div>}
-            {templateData.owner && <div style={{ margin: '8px 0' }}><b>{inLang({en: "Owner"}, lang)}:</b> {templateData.owner}</div>}
+            {templateData.mapTypes && <div style={{ margin: '8px 0' }}><b>{inLang(uiStr.baseLayerTypes, lang)}:</b> {templateData.mapTypes}</div>}
+            {templateData.formats && <div style={{ margin: '8px 0' }}><b>{inLang(uiStr.fileFormats, lang)}:</b> {templateData.formats}</div>}
+            {templateData.owner && <div style={{ margin: '8px 0' }}><b>{inLang(uiStr.owner, lang)}:</b> {templateData.owner}</div>}
             {templateData.ownerRules && (
               <div style={{ margin: '8px 0' }}>
-                <b>{inLang({en: "Usage and Attribution Rules"}, lang)}:</b> <a href={templateData.ownerRules} target="_blank" rel="noopener noreferrer">{templateData.ownerRules}</a>
+                <b>{inLang(uiStr.usageRules, lang)}:</b> <a href={templateData.ownerRules} target="_blank" rel="noopener noreferrer">{templateData.ownerRules}</a>
               </div>
             )}
           </div>
@@ -1364,7 +1279,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
                     whiteSpace: 'nowrap'
                     }}
                     >
-                    {inLang(statusValue[status].text, lang)}
+                    {inLang(uiStr.statusValue[status].text, lang)}
                   </span>
                   </td>
               </tr>
@@ -1389,16 +1304,16 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
               onNextLocation(false);
             }
           }}
-          placeholder={inLang({en: "Enter translated label"}, lang)}
+          placeholder={inLang(uiStr.enterLabel, lang)}
           className="form-control mb-2"
           style={{ width: '100%', border: 'none' }}
           spellCheck={false}
         />
         <span style={{color: statusValue[status].textColor}}>
-          <span style={{ fontWeight: 'bold' }}>{inLang(statusValue[status].text, lang) + ": "}</span>
-          {inLang(statusValue[status].help, lang)}
+          <span style={{ fontWeight: 'bold' }}>{inLang(uiStr.statusValue[status].text, lang) + ": "}</span>
+          {inLang(uiStr.statusValue[status].help, lang)}
           {status === 2 && (  // If status is "no renderings", show Add to renderings button
-            <button style={{ marginLeft: 8 }} onClick={handleAddToRenderings}>Add to renderings</button>
+            <button style={{ marginLeft: 8 }} onClick={handleAddToRenderings}>{inLang(uiStr.addToRenderings, lang)}</button>
           )}{status === 5 && (  // If status is "guessed", show Add to renderings button
             <button
             style={{ marginBottom: 8, marginRight: 8 }}
@@ -1440,7 +1355,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
             onRenderingsChange({ target: { value: e.target.value } });
           }}
           style={{ width: '100%', minHeight: '100px' }}
-          placeholder={inLang({en: "Enter renderings here, one per line.\nOptionally, explicitly mark the map form of the rendering by adding it as a comment that begins with '@'.\ne.g. Misra* (@Misradesh)"}, lang)}
+          placeholder={inLang(uiStr.enterRenderings, lang)}
           spellCheck={false}
         />
       </div>
@@ -1459,7 +1374,7 @@ const SettingsModal = ({ open, onClose, labelScale, setLabelScale, lang, setLang
           <label style={{ fontWeight: 'bold', marginRight: 8, textAlign: 'center'  }}>{inLang(uiStr.labelSize, lang)}:</label>
           <input
             type="range"
-            min={0.5}
+                       min={0.5}
             max={2}
             step={0.05}
             value={labelScale}
@@ -1469,7 +1384,7 @@ const SettingsModal = ({ open, onClose, labelScale, setLabelScale, lang, setLang
           <span>{labelScale.toFixed(2)}x</span>
         </div>
         <div style={{ marginBottom: 16, textAlign: 'center'  }}>
-          <label style={{ fontWeight: 'bold', marginRight: 8 }}>{inLang({en: 'Language', es: 'Idioma', fr: 'Langue'}, lang)}:</label>
+          <label style={{ fontWeight: 'bold', marginRight: 8 }}>{inLang(uiStr.language, lang)}:</label>
           <select
             value={lang}
             onChange={e => {
@@ -1484,7 +1399,7 @@ const SettingsModal = ({ open, onClose, labelScale, setLabelScale, lang, setLang
           </select>
         </div>
         <div style={{ textAlign: 'center' }}>
-          <button onClick={onClose} style={{ fontSize: 15, padding: '4px 16px', borderRadius: 4 }}>{inLang({en: 'Close', es: 'Cerrar', fr: 'Fermer'}, lang)}</button>
+          <button onClick={onClose} style={{ fontSize: 15, padding: '4px 16px', borderRadius: 4 }}>{inLang(uiStr.close, lang)}</button>
         </div>
       </div>
     </div>
