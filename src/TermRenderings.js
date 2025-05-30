@@ -77,9 +77,9 @@ class TermRenderings {
 
   getStatus(termId, vernLabel) {
 
-    if (termId === "philipstravels_title") {
-      console.warn("======================");
-    }
+    // if (termId === "philipstravels_title") {
+    //   console.warn("======================");
+    // }
     //console.log(`Checking status for termId: ${termId}, vernLabel: ${vernLabel}`);
     vernLabel = vernLabel ? vernLabel.trim() : '';
     if (!vernLabel) {
