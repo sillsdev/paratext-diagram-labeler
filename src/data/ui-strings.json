@@ -1,98 +1,106 @@
 {
   "statusValue": [
     { 
-      "text": { "en": "Blank", "es": "En blanco", "fr": "Vide" }, 
+      "text": { "en": "Blank", "es": "En blanco", "fr": "Vide", "ne": "खाली" }, 
       "help": { 
         "en": "Provide the text to be used in this label.", 
         "es": "Proporcione el texto que se usará en esta etiqueta.", 
-        "fr": "Fournissez le texte à utiliser pour cette étiquette." 
+        "fr": "Fournissez le texte à utiliser pour cette étiquette.",
+        "ne": "यस लेबलमा प्रयोग हुने पाठ प्रदान गर्नुहोस्।"
       }
     },  
     { 
-      "text": { "en": "Multiple", "es": "Múltiples", "fr": "Multiples" }, 
+      "text": { "en": "Multiple", "es": "Múltiples", "fr": "Multiples", "ne": "धेरै" }, 
       "help": { 
         "en": "Multiple options have been provided for you to select from. Ensure that you don't have any bad renderings, and then edit the label to remove unwanted options.", 
         "es": "Se han proporcionado múltiples opciones para que seleccione. Asegúrese de que no haya renderizaciones incorrectas y luego edite la etiqueta para eliminar las opciones no deseadas.", 
-        "fr": "Plusieurs options vous ont été proposées. Assurez-vous qu'il n'y a pas de mauvaises traductions, puis modifiez l'étiquette pour supprimer les options indésirables." 
+        "fr": "Plusieurs options vous ont été proposées. Assurez-vous qu'il n'y a pas de mauvaises traductions, puis modifiez l'étiquette pour supprimer les options indésirables.",
+        "ne": "तपाईंको छनोटका लागि धेरै विकल्पहरू प्रदान गरिएको छ। गलत अनुवाद छैन भनेर सुनिश्चित गर्नुहोस्, अनि अनावश्यक विकल्पहरू हटाउन लेबल सम्पादन गर्नुहोस्।"
       } 
     },    
     { 
-      "text": { "en": "No renderings", "es": "Sin renderizaciones", "fr": "Aucune traduction" }, 
+      "text": { "en": "No renderings", "es": "Sin renderizaciones", "fr": "Aucune traduction", "ne": "अनुवाद छैन" }, 
       "help": { 
         "en": "Your project does not yet contain any renderings for this term.", 
         "es": "Su proyecto aún no contiene ninguna renderización para este término.", 
-        "fr": "Votre projet ne contient pas encore de traduction pour ce terme." 
+        "fr": "Votre projet ne contient pas encore de traduction pour ce terme.",
+        "ne": "तपाईंको परियोजनामा यो शब्दको लागि कुनै अनुवाद छैन।"
       } 
     }, 
     { 
-      "text": { "en": "Unmatched label", "es": "Etiqueta no coincidente", "fr": "Étiquette non correspondante" }, 
+      "text": { "en": "Unmatched label", "es": "Etiqueta no coincidente", "fr": "Étiquette non correspondante", "ne": "मिल्दो लेबल छैन" }, 
       "help": { 
         "en": "The label is not matched by the rendering(s).", 
         "es": "La etiqueta no coincide con la(s) renderización(es).", 
-        "fr": "L'étiquette n'est pas couverte par la(les) traduction(s)." 
+        "fr": "L'étiquette n'est pas couverte par la(les) traduction(s).",
+        "ne": "यो लेबल कुनै अनुवादसँग मेल खाँदैन।"
       } 
     },  
     { 
-      "text": { "en": "Matched", "es": "Coincidente", "fr": "Correspondant" }, 
+      "text": { "en": "Matched", "es": "Coincidente", "fr": "Correspondant", "ne": "मिल्यो" }, 
       "help": { 
         "en": "The term renderings will be able to supply this label to any other map in the project that needs it.", 
         "es": "Las renderizaciones del término podrán suministrar esta etiqueta a cualquier otro mapa del proyecto que la necesite.", 
-        "fr": "Les traductions du terme pourront fournir cette étiquette à toute autre carte du projet qui en a besoin." 
+        "fr": "Les traductions du terme pourront fournir cette étiquette à toute autre carte du projet qui en a besoin.",
+        "ne": "शब्द अनुवादहरूले यो लेबल आवश्यक पर्ने अन्य नक्सामा पनि उपलब्ध गराउन सक्छन्।"
       } 
     },      
     { 
-      "text": { "en": "Guessed", "es": "Adivinado", "fr": "Deviné" }, 
+      "text": { "en": "Guessed", "es": "Adivinado", "fr": "Deviné", "ne": "अनुमान गरिएको" }, 
       "help": { 
         "en": "This label matches a guessed rendering which must be approved.", 
         "es": "Esta etiqueta coincide con una renderización adivinada que debe ser aprobada.", 
-        "fr": "Cette étiquette correspond à une traduction devinée qui doit être approuvée." 
+        "fr": "Cette étiquette correspond à une traduction devinée qui doit être approuvée.",
+        "ne": "यो लेबल अनुमान गरिएको अनुवादसँग मेल खान्छ, जसलाई स्वीकृत गर्नुपर्छ।"
       } 
     }, 
     { 
-      "text": { "en": "Rendering shorter than label", "es": "Renderización más corta que la etiqueta", "fr": "Traduction plus courte que l'étiquette" }, 
+      "text": { "en": "Rendering shorter than label", "es": "Renderización más corta que la etiqueta", "fr": "Traduction plus courte que l'étiquette", "ne": "लेबलभन्दा छोटो अनुवाद" }, 
       "help": { 
         "en": "First ensure that the rendering contains everything it should. If it does, you may need to specify an explicit map form for this term.", 
         "es": "Primero asegúrese de que la renderización contenga todo lo necesario. Si es así, puede que deba especificar una forma explícita del término para el mapa.", 
-        "fr": "Assurez-vous d'abord que la traduction contient tout ce qu'elle doit. Si c'est le cas, vous devrez peut-être spécifier une forme explicite pour ce terme sur la carte." 
+        "fr": "Assurez-vous d'abord que la traduction contient tout ce qu'elle doit. Si c'est le cas, vous devrez peut-être spécifier une forme explicite pour ce terme sur la carte.",
+        "ne": "पहिले अनुवादमा सबै कुरा समावेश छ कि छैन सुनिश्चित गर्नुहोस्। भएन भने, यो शब्दका लागि स्पष्ट नक्सा रूप निर्दिष्ट गर्न आवश्यक पर्न सक्छ।"
       } 
     }, 
     { 
-      "text": { "en": "Bad explicit form", "es": "Forma explícita incorrecta", "fr": "Forme explicite incorrecte" }, 
+      "text": { "en": "Bad explicit form", "es": "Forma explícita incorrecta", "fr": "Forme explicite incorrecte", "ne": "गलत स्पष्ट रूप" }, 
       "help": { 
         "en": "The renderings specify an explicit map form, but it is not matched by any rendering.", 
         "es": "Las renderizaciones especifican una forma explícita para el mapa, pero no coincide con ninguna renderización.", 
-        "fr": "Les traductions spécifient une forme explicite pour la carte, mais aucune traduction ne la correspond." 
+        "fr": "Les traductions spécifient une forme explicite pour la carte, mais aucune traduction ne la correspond.",
+        "ne": "अनुवादहरूले स्पष्ट नक्सा रूप तोकेको छ, तर कुनै अनुवादसँग मेल खाँदैन।"
       } 
     } 
   ],
-  "addRendering": { "en": "Add rendering", "es": "Agregar rendering", "fr": "Ajouter un rendu" },
-  "addToRenderings": { "en": "Add to renderings", "es": "Agregar a renderings", "fr": "Ajouter aux rendus" },
-  "approveRendering": { "en": "Approve Rendering", "es": "Aprobar Renderización", "fr": "Approuver le Rendu" },
-  "baseLayerTypes": { "en": "Base layer types", "es": "Tipos de capa base", "fr": "Types de couche de base" },
-  "browseTemplate": { "en": "Browse for map template", "es": "Buscar plantilla de mapa", "fr": "Parcourir les modèles de carte" },
-  "cancel": { "en": "Cancel", "es": "Cancelar", "fr": "Annuler" },
-  "close": { "en": "Close", "es": "Cerrar", "fr": "Fermer" },
-  "enterLabel": { "en": "Enter translated label", "es": "Ingrese la etiqueta traducida", "fr": "Entrez l'étiquette traduite" },
-  "enterRenderings": { "en": "Enter renderings here, one per line.\nOptionally, explicitly mark the map form of the rendering by adding it as a comment that begins with '@'.\ne.g. Misra* (@Misradesh)", "es": "Ingrese los renderings aquí, uno por línea.\nOpcionalmente, marque explícitamente la forma del mapa agregándola como un comentario que comience con '@'.\np.ej. Misra* (@Misradesh)", "fr": "Entrez les rendus ici, un par ligne.\nOptionnellement, marquez explicitement la forme de la carte en l'ajoutant comme un commentaire commençant par '@'.\np.ex. Misra* (@Misradesh)" },
-  "fileFormats": { "en": "File formats", "es": "Formatos de archivo", "fr": "Formats de fichier" },
-  "found": { "en": "Found", "es": "Encontrado", "fr": "Trouvé" },
-  "gloss": { "en": "Gloss", "es": "Glosa", "fr": "Glossaire" },
-  "guessed": { "en": "Guessed", "es": "Adivinado", "fr": "Deviné" },
-  "invalidUsfm": { "en": "Invalid USFM format. Changes not applied.", "es": "Formato USFM inválido. Cambios no aplicados.", "fr": "Format USFM invalide. Modifications non appliquées." },
-  "label": { "en": "Label", "es": "Etiqueta", "fr": "Étiquette" },
-  "labelSize": { "en": "Label Size", "es": "Tamaño de etiqueta", "fr": "Taille de l'étiquette" },
-  "language": { "en": "Language", "es": "Idioma", "fr": "Langue" },
-  "mapView": { "en": "Map View", "es": "Vista de mapa", "fr": "Vue de la carte" },
-  "noLocations": { "en": "No locations to display", "es": "No hay ubicaciones para mostrar", "fr": "Aucun emplacement à afficher" },
-  "noReferences": { "en": "No references found for this term.", "es": "No se encontraron referencias para este término.", "fr": "Aucune référence trouvée pour ce terme." },
-  "ok": { "en": "OK", "es": "OK", "fr": "OK" },
-  "owner": { "en": "Owner", "es": "Propietario", "fr": "Propriétaire" },
-  "replaceRenderings": { "en": "Replace renderings", "es": "Reemplazar renderings", "fr": "Remplacer les rendus" },
-  "status": { "en": "Status", "es": "Estado", "fr": "Statut" },
-  "tableView": { "en": "Table View", "es": "Vista de tabla", "fr": "Vue du tableau" },
-  "templateInfo": { "en": "Template info", "es": "Información de la plantilla", "fr": "Infos du modèle" },
-  "termRenderings": { "en": "Term Renderings", "es": "Renderizaciones de Términos", "fr": "Rendus des Termes" },
-  "uiSettings": { "en": "UI Settings", "es": "Configuración de la Interfaz", "fr": "Paramètres de l'interface" },
-  "usageRules": { "en": "Usage and Attribution Rules", "es": "Reglas de uso y atribución", "fr": "Règles d'utilisation et d'attribution" },
-  "usfmView": { "en": "USFM View", "es": "Vista USFM", "fr": "Vue USFM" }
+  "addRendering": { "en": "Add rendering", "es": "Agregar rendering", "fr": "Ajouter un rendu", "ne": "अनुवाद थप्नुहोस्" },
+  "addToRenderings": { "en": "Add to renderings", "es": "Agregar a renderings", "fr": "Ajouter aux rendus", "ne": "अनुवादहरूमा थप्नुहोस्" },
+  "approveRendering": { "en": "Approve Rendering", "es": "Aprobar Renderización", "fr": "Approuver le Rendu", "ne": "अनुमोदन गर्नुहोस्" },
+  "baseLayerTypes": { "en": "Base layer types", "es": "Tipos de capa base", "fr": "Types de couche de base", "ne": "आधार तहका प्रकारहरू" },
+  "browseTemplate": { "en": "Browse for map template", "es": "Buscar plantilla de mapa", "fr": "Parcourir les modèles de carte", "ne": "नक्सा टेम्प्लेट खोज्नुहोस्" },
+  "cancel": { "en": "Cancel", "es": "Cancelar", "fr": "Annuler", "ne": "रद्द गर्नुहोस्" },
+  "close": { "en": "Close", "es": "Cerrar", "fr": "Fermer", "ne": "बन्द गर्नुहोस्" },
+  "enterLabel": { "en": "Enter translated label", "es": "Ingrese la etiqueta traducida", "fr": "Entrez l'étiquette traduite", "ne": "अनुवादित लेबल प्रविष्ट गर्नुहोस्" },
+  "enterRenderings": { "en": "Enter renderings here, one per line.\nOptionally, explicitly mark the map form of the rendering by adding it as a comment that begins with '@'.\ne.g. Misra* (@Misradesh)", "es": "Ingrese los renderings aquí, uno por línea.\nOpcionalmente, marque explícitamente la forma del mapa agregándola como un comentario que comience con '@'.\np.ej. Misra* (@Misradesh)", "fr": "Entrez les rendus ici, un par ligne.\nOptionnellement, marquez explicitement la forme de la carte en l'ajoutant comme un commentaire commençant par '@'.\np.ex. Misra* (@Misradesh)", "ne": "यहाँ अनुवादहरू प्रविष्ट गर्नुहोस्, प्रत्येक लाइनमा एक।\nवैकल्पिक रूपमा, '@' बाट सुरु हुने टिप्पणीको रूपमा अनुवादको नक्सा रूप स्पष्ट रूपमा चिन्ह लगाउनुहोस्।\nजस्तै: Misra* (@Misradesh)" },
+  "fileFormats": { "en": "File formats", "es": "Formatos de archivo", "fr": "Formats de fichier", "ne": "फाइल ढाँचाहरू" },
+  "found": { "en": "Found", "es": "Encontrado", "fr": "Trouvé", "ne": "फेला पर्यो" },
+  "gloss": { "en": "Gloss", "es": "Glosa", "fr": "Glossaire", "ne": "व्याख्या" },
+  "guessed": { "en": "Guessed", "es": "Adivinado", "fr": "Deviné", "ne": "अनुमान गरिएको" },
+  "invalidUsfm": { "en": "Invalid USFM format. Changes not applied.", "es": "Formato USFM inválido. Cambios no aplicados.", "fr": "Format USFM invalide. Modifications non appliquées.", "ne": "अवैध USFM ढाँचा। परिवर्तनहरू लागू गरिएनन्।" },
+  "label": { "en": "Label", "es": "Etiqueta", "fr": "Étiquette", "ne": "लेबल" },
+  "labelSize": { "en": "Label Size", "es": "Tamaño de etiqueta", "fr": "Taille de l'étiquette", "ne": "लेबलको आकार" },
+  "language": { "en": "Language", "es": "Idioma", "fr": "Langue", "ne": "भाषा" },
+  "mapView": { "en": "Map View", "es": "Vista de mapa", "fr": "Vue de la carte", "ne": "नक्सा दृश्य" },
+  "noLocations": { "en": "No locations to display", "es": "No hay ubicaciones para mostrar", "fr": "Aucun emplacement à afficher", "ne": "देखाउन स्थानहरू छैनन्" },
+  "noReferences": { "en": "No references found for this term.", "es": "No se encontraron referencias para este término.", "fr": "Aucune référence trouvée pour ce terme.", "ne": "यो शब्दका लागि कुनै सन्दर्भ फेला परेन।" },
+  "ok": { "en": "OK", "es": "OK", "fr": "OK", "ne": "ठीक छ" },
+  "owner": { "en": "Owner", "es": "Propietario", "fr": "Propriétaire", "ne": "मालिक" },
+  "replaceRenderings": { "en": "Replace renderings", "es": "Reemplazar renderings", "fr": "Remplacer les rendus", "ne": "अनुवादहरू प्रतिस्थापन गर्नुहोस्" },
+  "status": { "en": "Status", "es": "Estado", "fr": "Statut", "ne": "स्थिति" },
+  "tableView": { "en": "Table View", "es": "Vista de tabla", "fr": "Vue du tableau", "ne": "तालिका दृश्य" },
+  "templateInfo": { "en": "Template info", "es": "Información de la plantilla", "fr": "Infos du modèle", "ne": "टेम्प्लेट जानकारी" },
+  "termRenderings": { "en": "Term Renderings", "es": "Renderizaciones de Términos", "fr": "Rendus des Termes", "ne": "शब्द अनुवादहरू" },
+  "uiSettings": { "en": "UI Settings", "es": "Configuración de la Interfaz", "fr": "Paramètres de l'interface", "ne": "सेटिङहरू" },
+  "usageRules": { "en": "Usage and Attribution Rules", "es": "Reglas de uso y atribución", "fr": "Règles d'utilisation et d'attribution", "ne": "प्रयोग र श्रेय नियमहरू" },
+  "usfmView": { "en": "USFM View", "es": "Vista USFM", "fr": "Vue USFM", "ne": "USFM दृश्य" }
 }

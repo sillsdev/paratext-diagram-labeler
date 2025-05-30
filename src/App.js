@@ -1,20 +1,20 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { MapContainer, ImageOverlay, Marker, ZoomControl } from 'react-leaflet';
+import { FaCheckCircle, FaTimesCircle, FaPencilAlt } from 'react-icons/fa';
 import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
-import TermRenderings from './TermRenderings';
+import Leaf from 'leaflet';
 import './App.css';
+import TermRenderings from './TermRenderings';
 import MapBibTerms from './MapBibTerms';
 import { getMapData } from './MapData';
 import extractedVerses from './data/extracted_verses.json';
-import { FaCheckCircle, FaTimesCircle, FaPencilAlt } from 'react-icons/fa';
+import supportedLanguages from './data/ui-languages.json';
 import uiStr from './data/ui-strings.json';
+
 const mapBibTerms = new MapBibTerms();
 
-const supportedLanguages = [ { code: 'en', name: 'English' }, { code: 'es', name: 'Español' }, { code: 'fr', name: 'Français' } ];
-
 const statusValue = [
-  { bkColor: "black",   textColor: "white", sort: 1  }, // 0  - blank
+  { bkColor: "dimgray",   textColor: "white", sort: 1  }, // 0  - blank
   { bkColor: "cyan",    textColor: "black", sort: 5  },    // 1 - multiple
   { bkColor: "#FF8000", textColor: "black", sort: 3  }, // 2 - no renderings
   { bkColor: "yellow",  textColor: "black", sort: 4  },  // 3 - unmatched
@@ -24,15 +24,30 @@ const statusValue = [
   { bkColor: "magenta", textColor: "black", sort: 7  }, // 7 - Bad explicit form
 ];
 
-var usfm = String.raw`\zdiagram-s |template="SMR1_185wbt - Philips Travels [sm]"\* 
+var usfm = String.raw`\zdiagram-s |template="SMR1_185wbt - Philips Travels [sm]"\*
 \fig |src="185wbt - Philips Travels [sm] (fcr) @en.jpg" size="span" loc="paw" copy="WBT" ref="8:5-40"\fig*
 \zlabel |key="philipstravels_title" termid="philipstravels_title" gloss="Philip’s Travels" label=""\*
-\zlabel |key="jerusalem_nt" termid="Ἱεροσόλυμα-1" gloss="Jerusalem" label="Yarusalema"\*
-\zlabel |key="apollonia" termid="Ἀπολλωνία" gloss="Apollonia" label=""\*
-\zlabel |key="jordan_river_nt" termid="Ἰορδάνης" gloss="Jordan River" label="Yardana Khola"\*
-\zlabel |key="azotus" termid="Ἄζωτος" gloss="Azotus" label="Azotus"\*
+\zlabel |key="galilee_nt" termid="Γαλιλαία-1" gloss="Galilee" label="Gaalila"\*
+\zlabel |key="capernaum" termid="Καφαρναούμ" gloss="Capernaum" label="Kapharnahuma"\*
+\zlabel |key="sea_of_galilee_nt" termid="Γαλιλαία-2" gloss="Sea of Galilee" label="Gaalila Taal"\*
+\zlabel |key="nazareth" termid="Ναζαρά" gloss="Nazareth" label="Naasarata"\*
+\zlabel |key="caesarea" termid="Καισάρεια" gloss="Caesarea" label="Kaisariyaa—Kesariyaa"\*
+\zlabel |key="jordan_river_nt" termid="Ἰορδάνης" gloss="Jordan River" label="Yardana Nadi"\*
 \zlabel |key="decapolis" termid="Δεκάπολις" gloss="Decapolis" label="Dasa Sahar"\*
-\zdiagram-e \* `;
+\zlabel |key="samaria_region" termid="Σαμάρεια-1" gloss="Samaria" label="Saamariyaa"\*
+\zlabel |key="samaria_city_nt" termid="Σαμάρεια-2" gloss="Samaria" label="Saamariyaa"\*
+\zlabel |key="apollonia" termid="Ἀπολλωνία" gloss="Apollonia" label="Apol‍loniyaa"\*
+\zlabel |key="joppa_nt" termid="Ἰόππη" gloss="Joppa" label="Yop‍paa"\*
+\zlabel |key="mediterranean_sea" termid="mediterranean_sea" gloss="Mediterranean Sea" label=""\*
+\zlabel |key="jamnia" termid="jamnia" gloss="Jamnia" label=""\*
+\zlabel |key="jericho_nt" termid="Ἰεριχώ" gloss="Jericho" label="Yariho"\*
+\zlabel |key="jerusalem_nt" termid="Ἱεροσόλυμα-1" gloss="Jerusalem" label="Yarusalema"\*
+\zlabel |key="azotus" termid="Ἄζωτος" gloss="Azotus" label=""\*
+\zlabel |key="bethlehem_nt" termid="Βηθλέεμ" gloss="Bethlehem" label="Bethalehema"\*
+\zlabel |key="dead_sea" termid="יָם הַמֶּלַח" gloss="Dead Sea" label=""\*
+\zlabel |key="judea" termid="Ἰουδαία" gloss="Judea" label="Yahudiyaa"\*
+\zlabel |key="gaza_nt" termid="Γάζα" gloss="Gaza" label="Gaajaa"\*
+\zdiagram-e \*`;
 
 function mapFromUsfm(usfm) {
   // Extract template and \fig field
@@ -110,8 +125,8 @@ function inLang(prop, lang = 'en') {
 }
 
 // Fix Leaflet default marker icons (optional, not needed with custom SVG icons)
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
+delete Leaf.Icon.Default.prototype._getIconUrl;
+Leaf.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
   iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
@@ -159,11 +174,11 @@ const createLabel = (labelText, align = 'right', angle = 0, size = 3, status, is
     </div>
   `;
   // TODO: Insert fraction like frac(num, denom) if needed
-  return L.divIcon({
+  return Leaf.divIcon({
     html,
     className: '',
   });
-  // return L.divIcon({
+  // return Leaf.divIcon({
   //   html,
   //   className: '',
   //   iconSize: [10 * (fontSizePx / baseFontSize), 2 * fontSizePx],
@@ -766,7 +781,7 @@ function App() {
     } catch (e) {
       alert(inLang(uiStr.invalidUsfm, lang));
     }
-  }, [termRenderings, setLocations, setSelLocation]);
+  }, [termRenderings, setLocations, setSelLocation, lang]);
 
   // Intercept view switch to update map if leaving USFM view
   const handleSwitchViewWithUsfm = useCallback(() => {
@@ -959,7 +974,7 @@ function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScal
   const imageHeight = mapDef.height;
   const imageWidth = mapDef.width;
   const bounds = useMemo(() => [[0, 0], [imageHeight, imageWidth]], [imageHeight, imageWidth]);
-  const crs = L.CRS.Simple;
+  const crs = Leaf.CRS.Simple;
 
   // Calculate initial zoom to fit the image fully in the pane
   // Use a ref to store the calculated initial zoom
@@ -1316,7 +1331,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
             <button style={{ marginLeft: 8 }} onClick={handleAddToRenderings}>{inLang(uiStr.addToRenderings, lang)}</button>
           )}{status === 5 && (  // If status is "guessed", show Add to renderings button
             <button
-            style={{ marginBottom: 8, marginRight: 8 }}
+            style={{ marginLeft: 8 }}
             onClick={() => {
               setLocalIsApproved(true);
               const updatedData = { ...termRenderings.data };
@@ -1374,7 +1389,7 @@ const SettingsModal = ({ open, onClose, labelScale, setLabelScale, lang, setLang
           <label style={{ fontWeight: 'bold', marginRight: 8, textAlign: 'center'  }}>{inLang(uiStr.labelSize, lang)}:</label>
           <input
             type="range"
-                       min={0.5}
+            min={0.5}
             max={2}
             step={0.05}
             value={labelScale}
@@ -1393,9 +1408,9 @@ const SettingsModal = ({ open, onClose, labelScale, setLabelScale, lang, setLang
             }}
             style={{ fontSize: 15, padding: '2px 8px', borderRadius: 4 }}
           >
-            <option value="en">English</option>
-            <option value="es">Español</option>
-            <option value="fr">Français</option>
+            {supportedLanguages.map(ling => (
+              <option key={ling.code} value={ling.code}>{ling.name}</option>
+            ))}
           </select>
         </div>
         <div style={{ textAlign: 'center' }}>
