@@ -29,6 +29,9 @@ const uiStr = {
   guessed: { en: "Guessed", es: "Adivinado", fr: "Deviné" },
   found: { en: "Found", es: "Encontrado", fr: "Trouvé" },
   approveRendering: { en: "Approve Rendering", es: "Aprobar Renderización", fr: "Approuver le Rendu" },
+  gloss: { en: "Gloss", es: "Glosa", fr: "Glossaire" },
+  label: { en: "Label", es: "Etiqueta", fr: "Étiquette" },
+  status: { en: "Status", es: "Estado", fr: "Statut" },
 }
 
 const statusValue = [
@@ -633,7 +636,7 @@ function App() {
         // Use the stripped filename as the template ID
         const foundTemplate = getMapData(fileName, mapBibTerms);
         if (!foundTemplate) {
-          alert('No map template found for: ' + fileName);
+          alert(inLang({en: 'No map template found for'}, lang) + ": " + fileName);
           return;
         }
         // Set mapDef and locations 
@@ -730,10 +733,10 @@ function App() {
       <table className="table-view" style={{ borderCollapse: 'collapse' }}>
         <thead>
         <tr style={{ background: '#444', color: '#e0e0e0' }}>
-          <th>{inLang(uiStr.gloss, lang) || 'Gloss'}</th>
-          <th>{inLang(uiStr.label, lang) || 'Label'}</th>
-          <th style={{textAlign: 'center'}}>{inLang(uiStr.found, lang) || 'Found'}</th>
-          <th>{inLang(uiStr.status, lang) || 'Status'}</th>
+          <th>{inLang(uiStr.gloss, lang)}</th>
+          <th>{inLang(uiStr.label, lang)}</th>
+          <th style={{textAlign: 'center'}}>{inLang(uiStr.found, lang)}</th>
+          <th>{inLang(uiStr.status, lang)}</th>
         </tr>
         </thead>
         <tbody>
@@ -846,7 +849,7 @@ function App() {
       setUsfmText(text); // keep USFM text in sync after parse
       setMapDef({template: newMap.template, fig: newMap.fig, mapView: newMap.mapView, imgFilename: newMap.imgFilename, width: newMap.width, height: newMap.height});
     } catch (e) {
-      alert('Invalid USFM format. Changes not applied.');
+      alert(inLang({en: 'Invalid USFM format. Changes not applied.'}, lang));
     }
   }, [termRenderings, setLocations, setSelLocation]);
 
@@ -1152,7 +1155,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
 
   // --- Template info/browse group ---
   // Access the template name from the global map object
-  const templateName = mapDef.template || '(no template)';
+  const templateName = mapDef.template || '(' + inLang({en: 'no template'}, lang) + ')';
 
   // Only show the button row if in USFM view
   if (mapPaneView === 2) {
@@ -1222,7 +1225,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
               alignItems: 'center',
               justifyContent: 'center',
             }}
-            title="Map View"
+            title={inLang({en: "Map View"}, lang)}
           >
             {/* Marker icon (SVG) */}
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1243,7 +1246,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
               alignItems: 'center',
               justifyContent: 'center',
             }}
-            title="Table View"
+            title={inLang({en: "Table View"}, lang)}
           >
             {/* Table icon (SVG) */}
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1268,7 +1271,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
               alignItems: 'center',
               justifyContent: 'center',
             }}
-            title="USFM View"
+            title={inLang({en: "USFM View"}, lang)}
           >
             {/* USFM icon (document with text lines) */}
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1278,8 +1281,8 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
               <line x1="6" y1="13" x2="12" y2="13" stroke="#1976d2" strokeWidth="1.2"/>
             </svg>
           </button>
-          <button onClick={handleCancel} style={{ marginRight: 8, height: 32, minWidth: 80, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Cancel</button>
-          <button onClick={handleOk} style={{ height: 32, minWidth: 80, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>OK</button>
+          <button onClick={handleCancel} style={{ marginRight: 8, height: 32, minWidth: 80, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{inLang({en: "Cancel"}, lang)}</button>
+          <button onClick={handleOk} style={{ height: 32, minWidth: 80, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{inLang({en: "OK"}, lang)}</button>
           <div style={{ flex: 1 }} />
           <button
             onClick={handleSettings}
@@ -1291,11 +1294,11 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
               marginLeft: 8,
               color: '#555',
               padding: 4,
-              alignSelf: 'flex-start'
+              alignSelf: 'flex-start',
             }}
-            aria-label="Settings"
+            title={inLang(uiStr.uiSettings, lang)}
           >
-            <span role="img" aria-label="Settings">&#9881;</span>
+            <span role="img">&#9881;</span>
           </button>
         </div>
       )}
@@ -1304,14 +1307,14 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
       <div className="details-group-frame" style={{ border: '1px solid #ccc', borderRadius: 6, marginBottom: 16, padding: 8, background: '#f9f9f9', display: 'flex', alignItems: 'center', gap: '12px' }}>
         <span style={{ fontWeight: 'bold', color: 'black', fontSize: '0.6em' }}>{templateName}</span>
         <button
-          title="Template info"
+          title={inLang({en: "Template info"}, lang)}
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginLeft: 8 }}
           onClick={() => setShowTemplateInfo(true)}
         >
           <span role="img" aria-label="info" style={{ fontSize: '1.2em', color: '#6cf' }}>ℹ️</span>
         </button>
         <button
-          title="Browse for map template"
+          title={inLang({en: "Browse for map template"}, lang)}
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginLeft: 8 }}
           onClick={onBrowseMapTemplate}
         >
@@ -1330,12 +1333,12 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
             <h4 style={{ marginTop: 0}}>{templateName}</h4>
             {inLang(templateData.title, lang) && <p style={{ margin: '8px 0', fontWeight: 'bold', fontStyle: 'italic'}}>{inLang(templateData.title, lang)}</p>}
             {inLang(templateData.description, lang) && <p style={{ margin: '8px 0' }}>{inLang(templateData.description, lang)}</p>}
-            {templateData.mapTypes && <div style={{ margin: '8px 0' }}><b>Base layer types:</b> {templateData.mapTypes}</div>}
-            {templateData.formats && <div style={{ margin: '8px 0' }}><b>File formats:</b> {templateData.formats}</div>}
-            {templateData.owner && <div style={{ margin: '8px 0' }}><b>Owner:</b> {templateData.owner}</div>}
+            {templateData.mapTypes && <div style={{ margin: '8px 0' }}><b>{inLang({en: "Base layer types"}, lang)}:</b> {templateData.mapTypes}</div>}
+            {templateData.formats && <div style={{ margin: '8px 0' }}><b>{inLang({en: "File formats"}, lang)}:</b> {templateData.formats}</div>}
+            {templateData.owner && <div style={{ margin: '8px 0' }}><b>{inLang({en: "Owner"}, lang)}:</b> {templateData.owner}</div>}
             {templateData.ownerRules && (
               <div style={{ margin: '8px 0' }}>
-                <b>Usage and Attribution Rules:</b> <a href={templateData.ownerRules} target="_blank" rel="noopener noreferrer">{templateData.ownerRules}</a>
+                <b>{inLang({en: "Usage and Attribution Rules"}, lang)}:</b> <a href={templateData.ownerRules} target="_blank" rel="noopener noreferrer">{templateData.ownerRules}</a>
               </div>
             )}
           </div>
@@ -1386,7 +1389,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
               onNextLocation(false);
             }
           }}
-          placeholder="Enter translated label"
+          placeholder={inLang({en: "Enter translated label"}, lang)}
           className="form-control mb-2"
           style={{ width: '100%', border: 'none' }}
           spellCheck={false}
@@ -1437,7 +1440,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
             onRenderingsChange({ target: { value: e.target.value } });
           }}
           style={{ width: '100%', minHeight: '100px' }}
-          placeholder={"Enter renderings here, one per line.\nOptionally, explicitly mark the map form of the rendering by adding it as a comment that begins with '@'.\ne.g. Misra* (@Misradesh)"}
+          placeholder={inLang({en: "Enter renderings here, one per line.\nOptionally, explicitly mark the map form of the rendering by adding it as a comment that begins with '@'.\ne.g. Misra* (@Misradesh)"}, lang)}
           spellCheck={false}
         />
       </div>
