@@ -32,14 +32,78 @@ const uiStr = {
 }
 
 const statusValue = [
-  { text: { en: "Blank" }, help: { en: "Provide the text to be used in this label." }, bkColor: colors[0].bk, textColor: colors[0].tx, sort: 1},  // 0
-  { text: { en: "Multiple" }, help: { en: "Multiple options have been provided for you to select from. Ensure that you don't have any bad renderings, and then edit the label to remove unwanted options." }, bkColor: colors[4].bk, textColor: colors[4].tx, sort: 5},    // 1
-  { text: { en: "No renderings" }, help: { en: "Your project does not yet contain any renderings for this term." }, bkColor: colors[1].bk, textColor: colors[1].tx, sort: 3}, // 2
-  { text: { en: "Unmatched label" }, help: { en: "The label is not matched by the rendering(s)." }, bkColor: colors[2].bk, textColor: colors[2].tx, sort: 4},  // 3
-  { text: { en: "Matched" }, help: { en: "The term renderings will be able to supply this label to any other map in the project that needs it." }, bkColor: colors[3].bk, textColor: colors[3].tx, sort: 0},      // 4
-  { text: { en: "Guessed" }, help: { en: "This label matches a guessed rendering which must be approved." }, bkColor: colors[5].bk, textColor: colors[5].tx, sort: 2}, // 5
-  { text: { en: "Rendering shorter than label" }, help: { en: "First ensure that the rendering contains everything it should. If it does, you may need to specify an explicit map form for this term." }, bkColor: colors[6].bk, textColor: colors[6].tx, sort: 6}, // 6
-  { text: { en: "Bad explicit form" }, help: { en: "The renderings specify an explicit map form, but it is not matched by any rendering." }, bkColor: colors[7].bk, textColor: colors[7].tx, sort: 7}, // 7
+  { 
+    text: { en: "Blank", es: "En blanco", fr: "Vide" }, 
+    help: { 
+      en: "Provide the text to be used in this label.", 
+      es: "Proporcione el texto que se usará en esta etiqueta.", 
+      fr: "Fournissez le texte à utiliser pour cette étiquette." 
+    }, 
+    bkColor: colors[0].bk, textColor: colors[0].tx, sort: 1
+  },  // 0
+  { 
+    text: { en: "Multiple", es: "Múltiples", fr: "Multiples" }, 
+    help: { 
+      en: "Multiple options have been provided for you to select from. Ensure that you don't have any bad renderings, and then edit the label to remove unwanted options.", 
+      es: "Se han proporcionado múltiples opciones para que seleccione. Asegúrese de que no haya renderizaciones incorrectas y luego edite la etiqueta para eliminar las opciones no deseadas.", 
+      fr: "Plusieurs options vous ont été proposées. Assurez-vous qu'il n'y a pas de mauvaises traductions, puis modifiez l'étiquette pour supprimer les options indésirables." 
+    }, 
+    bkColor: colors[4].bk, textColor: colors[4].tx, sort: 5
+  },    // 1
+  { 
+    text: { en: "No renderings", es: "Sin renderizaciones", fr: "Aucune traduction" }, 
+    help: { 
+      en: "Your project does not yet contain any renderings for this term.", 
+      es: "Su proyecto aún no contiene ninguna renderización para este término.", 
+      fr: "Votre projet ne contient pas encore de traduction pour ce terme." 
+    }, 
+    bkColor: colors[1].bk, textColor: colors[1].tx, sort: 3
+  }, // 2
+  { 
+    text: { en: "Unmatched label", es: "Etiqueta no coincidente", fr: "Étiquette non correspondante" }, 
+    help: { 
+      en: "The label is not matched by the rendering(s).", 
+      es: "La etiqueta no coincide con la(s) renderización(es).", 
+      fr: "L'étiquette n'est pas couverte par la(les) traduction(s)." 
+    }, 
+    bkColor: colors[2].bk, textColor: colors[2].tx, sort: 4
+  },  // 3
+  { 
+    text: { en: "Matched", es: "Coincidente", fr: "Correspondant" }, 
+    help: { 
+      en: "The term renderings will be able to supply this label to any other map in the project that needs it.", 
+      es: "Las renderizaciones del término podrán suministrar esta etiqueta a cualquier otro mapa del proyecto que la necesite.", 
+      fr: "Les traductions du terme pourront fournir cette étiquette à toute autre carte du projet qui en a besoin." 
+    }, 
+    bkColor: colors[3].bk, textColor: colors[3].tx, sort: 0
+  },      // 4
+  { 
+    text: { en: "Guessed", es: "Adivinado", fr: "Deviné" }, 
+    help: { 
+      en: "This label matches a guessed rendering which must be approved.", 
+      es: "Esta etiqueta coincide con una renderización adivinada que debe ser aprobada.", 
+      fr: "Cette étiquette correspond à une traduction devinée qui doit être approuvée." 
+    }, 
+    bkColor: colors[5].bk, textColor: colors[5].tx, sort: 2
+  }, // 5
+  { 
+    text: { en: "Rendering shorter than label", es: "Renderización más corta que la etiqueta", fr: "Traduction plus courte que l'étiquette" }, 
+    help: { 
+      en: "First ensure that the rendering contains everything it should. If it does, you may need to specify an explicit map form for this term.", 
+      es: "Primero asegúrese de que la renderización contenga todo lo necesario. Si es así, puede que deba especificar una forma explícita del término para el mapa.", 
+      fr: "Assurez-vous d'abord que la traduction contient tout ce qu'elle doit. Si c'est le cas, vous devrez peut-être spécifier une forme explicite pour ce terme sur la carte." 
+    }, 
+    bkColor: colors[6].bk, textColor: colors[6].tx, sort: 6
+  }, // 6
+  { 
+    text: { en: "Bad explicit form", es: "Forma explícita incorrecta", fr: "Forme explicite incorrecte" }, 
+    help: { 
+      en: "The renderings specify an explicit map form, but it is not matched by any rendering.", 
+      es: "Las renderizaciones especifican una forma explícita para el mapa, pero no coincide con ninguna renderización.", 
+      fr: "Les traductions spécifient une forme explicite pour la carte, mais aucune traduction ne la correspond." 
+    }, 
+    bkColor: colors[7].bk, textColor: colors[7].tx, sort: 7
+  }, // 7
 ];
 
 var usfm = String.raw`\zdiagram-s |template="SMR1_185wbt - Philips Travels [sm]"\* 
