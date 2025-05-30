@@ -14,10 +14,10 @@ function wordMatchesRenderings(word, renderings, anchored = true) {
       const pattern = anchored ? "^" + rendering + "$" : rendering
       const regex = new RegExp(pattern, 'iu');
       if (regex.test(word)) {
-        console.log(`Word "${word}" matches rendering "${rendering}"`);
+        // console.log(`Word "${word}" matches rendering "${rendering}"`);
         return true;
       } else {
-        console.log(`Word "${word}" doesn't match rendering "${rendering}" with pattern "${pattern}"`);
+        // console.log(`Word "${word}" doesn't match rendering "${rendering}" with pattern "${pattern}"`);
       }
     } catch (e) {
       // Invalid regex, skip it
@@ -122,6 +122,9 @@ class TermRenderings {
     try {
       const entry = this.data[termId];
       let renderingList = [];
+      if (!entry) {
+        return [0, 0]; // No entry found, return zero tally
+      }
       if (entry.renderings) {
         renderingList = entry.renderings
           .split(/\r?\n/)
@@ -145,8 +148,8 @@ class TermRenderings {
           })
           .filter(Boolean); // Remove nulls (invalid regexes)
       }
-      console.log(`getMatchTally("${termId}")`, entry.renderings);
-      console.log(`num refs: ${refs.length}`, renderingList);
+      // console.log(`getMatchTally("${termId}")`, entry.renderings);
+      // console.log(`num refs: ${refs.length}`, renderingList);
       // Compute match tally
       let matchCount = 0;
       refs.map(refId => {

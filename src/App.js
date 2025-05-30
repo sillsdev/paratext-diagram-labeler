@@ -105,7 +105,7 @@ var map = mapFromUsfm(usfm);
 console.log('Map:', map);
 
 function frac([num, denom], show=true) {
-  console.log('Creating fraction:', num, denom, show);
+  // console.log('Creating fraction:', num, denom, show);
   return (!denom || num===denom || !show) ? '' : ` <sup>${num}</sup>&frasl;<sub>${denom}</sub>`;
 }
 
@@ -876,7 +876,7 @@ useEffect(() => {
   return () => window.removeEventListener('keydown', handleGlobalKeyDown);
 }, [mapPaneView, handleNextLocation]);
 
-  console.log("map: ", map);
+  // console.log("map: ", map);
   return (
     <div className="app-container">
       <div className="top-section" style={{ flex: `0 0 ${topHeight}%` }}>
