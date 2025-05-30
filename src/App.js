@@ -1386,10 +1386,10 @@ const SettingsModal = ({ open, onClose, labelScale, setLabelScale, lang, setLang
   if (!open) return null;
   return (
     <div className="modal-overlay" style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.2)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div className="modal-content" style={{ background: '#fff', borderRadius: 8, padding: 24, minWidth: 320, boxShadow: '0 2px 16px rgba(0,0,0,0.2)' }}>
-        <h2 style={{ marginTop: 0 }}>{inLang(uiStr.uiSettings, lang)}</h2>
-        <div style={{ marginBottom: 16 }}>
-          <label style={{ fontWeight: 'bold', marginRight: 8 }}>{inLang(uiStr.labelSize, lang)}:</label>
+      <div className="modal-content" style={{ background: '#fff', borderRadius: 8, padding: 24, minWidth: 320, maxWidth: 600, boxShadow: '0 2px 16px rgba(0,0,0,0.2)' }}>
+        <h2 style={{ marginTop: 0, textAlign: 'center'  }}>{inLang(uiStr.uiSettings, lang)}</h2>
+        <div style={{ marginBottom: 16, textAlign: 'center'  }}>
+          <label style={{ fontWeight: 'bold', marginRight: 8, textAlign: 'center'  }}>{inLang(uiStr.labelSize, lang)}:</label>
           <input
             type="range"
             min={0.5}
@@ -1401,7 +1401,7 @@ const SettingsModal = ({ open, onClose, labelScale, setLabelScale, lang, setLang
           />
           <span>{labelScale.toFixed(2)}x</span>
         </div>
-        <div style={{ marginBottom: 16 }}>
+        <div style={{ marginBottom: 16, textAlign: 'center'  }}>
           <label style={{ fontWeight: 'bold', marginRight: 8 }}>{inLang({en: 'Language', es: 'Idioma', fr: 'Langue'}, lang)}:</label>
           <select
             value={lang}
@@ -1416,7 +1416,7 @@ const SettingsModal = ({ open, onClose, labelScale, setLabelScale, lang, setLang
             <option value="fr">Français</option>
           </select>
         </div>
-        <div style={{ textAlign: 'right' }}>
+        <div style={{ textAlign: 'center' }}>
           <button onClick={onClose} style={{ fontSize: 15, padding: '4px 16px', borderRadius: 4 }}>{inLang({en: 'Close', es: 'Cerrar', fr: 'Fermer'}, lang)}</button>
         </div>
       </div>
