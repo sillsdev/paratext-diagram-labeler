@@ -874,7 +874,8 @@ function App() {
 useEffect(() => {
   function handleGlobalKeyDown(e) {
     if (mapPaneView === 2) return; // Do not trigger in USFM view
-    if (e.ctrlKey && (e.key === '0' || e.code === 'Digit0')) {
+    // Change to Ctrl+9
+    if (e.ctrlKey && (e.key === '9' || e.code === 'Digit9')) {
       console.log('Resetting zoom');
       setResetZoomFlag(flag => flag + 1);
       e.preventDefault();
