@@ -1002,11 +1002,11 @@ function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScal
   // --- Robust panning logic: ensure selected marker is in view ---
   function MapPanController({ selLocation, locations, mapDef }) {
     const map = useMap();
-    console.log('[MapPanController] render', selLocation, locations.length);
+    // console.log('[MapPanController] render', selLocation, locations.length);
     useEffect(() => {
-      console.log('[MapPanController] useEffect triggered', selLocation, locations.length);
+      // console.log('[MapPanController] useEffect triggered', selLocation, locations.length);
       if (!map || !locations.length || !locations[selLocation]) {
-        console.log('[MapPanController] map or location missing', map, locations.length, selLocation);
+        // console.log('[MapPanController] map or location missing', map, locations.length, selLocation);
         return;
       }
       const loc = locations[selLocation];
@@ -1037,6 +1037,40 @@ function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScal
         }, 500);
       }
     }, [selLocation, locations[selLocation], mapDef, map]);
+
+    // Also re-run pan logic when zoom changes
+    useEffect(() => {
+      if (!map) return;
+      const handleZoom = () => {
+        // Trigger the same pan logic as on selection
+        if (!locations.length || !locations[selLocation]) return;
+        const loc = locations[selLocation];
+        const yLeaflet = mapDef.height - loc.y;
+        const markerLatLng = [yLeaflet, loc.x];
+        const bounds = map.getBounds();
+        const paddingLat = (bounds.getNorth() - bounds.getSouth()) * 0.15;
+        const paddingLng = (bounds.getEast() - bounds.getWest()) * 0.15;
+        let newLat = map.getCenter().lat;
+        let newLng = map.getCenter().lng;
+        if (markerLatLng[0] > bounds.getNorth() - paddingLat) {
+          newLat = markerLatLng[0] - (bounds.getNorth() - newLat) + paddingLat;
+        } else if (markerLatLng[0] < bounds.getSouth() + paddingLat) {
+          newLat = markerLatLng[0] - (bounds.getSouth() - newLat) - paddingLat;
+        }
+        if (markerLatLng[1] > bounds.getEast() - paddingLng) {
+          newLng = markerLatLng[1] - (bounds.getEast() - newLng) + paddingLng;
+        } else if (markerLatLng[1] < bounds.getWest() + paddingLng) {
+          newLng = markerLatLng[1] - (bounds.getWest() - newLng) - paddingLng;
+        }
+        if (newLat !== map.getCenter().lat || newLng !== map.getCenter().lng) {
+          map.panTo([newLat, newLng], { animate: true });
+          setTimeout(() => map.invalidateSize(), 500);
+        }
+      };
+      map.on('zoomend', handleZoom);
+      return () => map.off('zoomend', handleZoom);
+    }, [map, selLocation, locations, mapDef]);
+
     return null;
   }
 
@@ -1472,7 +1506,7 @@ function prettyRef(ref) {
   // ref is a 9 digit string. First 3 digits are the book code, next 3 are chapter, last 3 are verse.
   // Use the top-level bookNames variable
   const bookCode = parseInt(ref.slice(0, 3), 10) - 1;
-  const chapter = parseInt(ref.slice(3, 6), 10);    
+  const chapter = parseInt(ref.slice(3,  6), 10);    
   const verse = parseInt(ref.slice(6, 9), 10);
   const bookName = bookNames.slice(bookCode*4, bookCode*4+3);
   return `${bookName} ${chapter}:${verse}`;
