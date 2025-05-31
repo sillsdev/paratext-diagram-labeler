@@ -700,11 +700,11 @@ function App() {
             onChange={e => onUpdateVernacular(loc.termId, e.target.value)}
             onFocus={() => onSelectLocation(loc)}
             onKeyDown={e => {
-            if (e.key === 'PageDown' || e.key === 'ArrowDown') {
+            if (e.key === 'ArrowDown') {
               onNextLocation(true);
               e.preventDefault();
               e.stopPropagation();
-            } else if (e.key === 'PageUp' || e.key === 'ArrowUp') {
+            } else if (e.key === 'ArrowUp') {
               onNextLocation(false);
               e.preventDefault();
               e.stopPropagation();
@@ -1395,7 +1395,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
           type="text"
           value={vernacular}
           onChange={handleVernChange}
-          onKeyDown={e => {
+          /*onKeyDown={e => {
             if (e.key === 'PageDown' || e.key === 'ArrowDown') {
               onNextLocation(true);
               e.preventDefault();
@@ -1405,7 +1405,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
               e.preventDefault();
               e.stopPropagation();
             }
-          }}
+          }} */ 
           placeholder={inLang(uiStr.enterLabel, lang)}
           className="form-control mb-2"
           style={{ width: '100%', border: 'none' }}
