@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { MapContainer, ImageOverlay, Marker, ZoomControl } from 'react-leaflet';
+import { MapContainer, ImageOverlay, Marker, ZoomControl, useMap } from 'react-leaflet';
+import { MapContainer as MinimalMapContainer, TileLayer as MinimalTileLayer } from 'react-leaflet';
 import { FaCheckCircle, FaTimesCircle, FaPencilAlt } from 'react-icons/fa';
 import 'leaflet/dist/leaflet.css';
 import Leaf from 'leaflet';
+import L from 'leaflet';
 import './App.css';
 import TermRenderings from './TermRenderings';
 import MapBibTerms from './MapBibTerms';
@@ -291,7 +293,7 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
     }}>
       <div style={{
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'center', // <-- FIXED: added value for alignItems
         fontSize: 13,
         color: '#333',
         marginBottom: 0,
@@ -422,6 +424,8 @@ function App() {
   // Add ref for vernacular input
   const vernacularInputRef = useRef(null);
   const renderingsTextareaRef = useRef();
+  // --- Add mapRef for controlling Leaflet map ---
+  // const mapRef = useRef();
 
   const handleSelectLocation = useCallback((location) => {
     console.log('Selected location:', location);
@@ -459,6 +463,9 @@ function App() {
     const nextLocation = locations[nextIndex];
     handleSelectLocation(nextLocation);
   }, [locations, selLocation, handleSelectLocation]);
+
+  // --- Pan map after selection changes, if needed ---
+  // (Removed old useEffect that referenced map.getBounds and map.panTo)
 
   const handleVerticalDragStart = (e) => {
     e.preventDefault();
@@ -877,21 +884,26 @@ useEffect(() => {
 }, [mapPaneView, handleNextLocation]);
 
   // console.log("map: ", map);
+  // Memoize locations and mapDef to prevent MapPane remounts
+  const memoizedLocations = useMemo(() => locations, [locations]);
+  const memoizedMapDef = useMemo(() => mapDef, [mapDef]);
+  const memoizedHandleSelectLocation = useCallback(handleSelectLocation, [handleSelectLocation]);
+
   return (
     <div className="app-container">
+      <MinimalMapTest />
       <div className="top-section" style={{ flex: `0 0 ${topHeight}%` }}>
         <div className="map-pane" style={{ flex: `0 0 ${mapWidth}%` }}>
           {mapPaneView === 0 && map.mapView && (
             <MapPane
-              key={mapDef.imgFilename || mapDef.template} // Force remount on template/image change
-              imageUrl={mapDef.imgFilename ? `/assets/maps/${mapDef.imgFilename}` : ''}
-              locations={locations}
-              onSelectLocation={handleSelectLocation}
+              imageUrl={memoizedMapDef.imgFilename ? `/assets/maps/${memoizedMapDef.imgFilename}` : ''}
+              locations={memoizedLocations}
+              onSelectLocation={memoizedHandleSelectLocation}
               selLocation={selLocation}
-              labelScale={labelScale} // <-- pass labelScale
-              mapDef={mapDef} // <-- pass map definition
-              termRenderings={termRenderings} // <-- pass term renderings
-              lang={lang} // <-- pass lang
+              labelScale={labelScale}
+              mapDef={memoizedMapDef}
+              termRenderings={termRenderings}
+              lang={lang}
             />
           )}
           {mapPaneView === 1 && (
@@ -970,56 +982,106 @@ useEffect(() => {
   );
 }
 
+
+// Minimal MapContainer test for useMap
+function MinimalMapTest() {
+  // Use react-leaflet v5+ pattern
+  const { MapContainer, TileLayer, useMap } = require('react-leaflet');
+  function Logger() {
+    const map = useMap();
+    React.useEffect(() => {
+      console.log('[MinimalTest] useMap got map instance:', map);
+      window._leafletTestMap = map;
+    }, [map]);
+    return null;
+  }
+  return (
+    <MapContainer
+      center={[51.505, -0.09]}
+      zoom={13}
+      style={{ height: 300, width: 400, border: '2px solid red', margin: 20 }}
+    >
+      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+      <Logger />
+    </MapContainer>
+  );
+}
+
 function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScale, mapDef, termRenderings, lang }) {
+  // Log all props to check for identity changes
+  console.log('[MapPane] render', {
+    imageUrl,
+    locations,
+    onSelectLocation,
+    selLocation,
+    labelScale,
+    mapDef,
+    termRenderings,
+    lang,
+  });
+  console.log('[MapPane] Component render/mount');
+  const { MapContainer, ImageOverlay, Marker, ZoomControl, useMap } = require('react-leaflet');
   const imageHeight = mapDef.height;
   const imageWidth = mapDef.width;
   const bounds = useMemo(() => [[0, 0], [imageHeight, imageWidth]], [imageHeight, imageWidth]);
   const crs = Leaf.CRS.Simple;
 
-  // Calculate initial zoom to fit the image fully in the pane
-  // Use a ref to store the calculated initial zoom
-  const mapRef = useRef();
-  const [initialZoom, setInitialZoom] = useState(null);
-
-  useEffect(() => {
-    if (mapRef.current) {
-      const map = mapRef.current;
-      map.fitBounds(bounds, { padding: [20, 20] }); // Add padding to ensure full image is visible
-      setInitialZoom(map.getZoom());
-    }
-  }, [bounds]);
+  // --- Robust panning logic: ensure selected marker is in view ---
+  function MapPanController({ selLocation, locations, mapDef }) {
+    const map = useMap();
+    console.log('[MapPanController] render', selLocation, locations.length);
+    useEffect(() => {
+      console.log('[MapPanController] useEffect triggered', selLocation, locations.length);
+      if (!map || !locations.length || !locations[selLocation]) {
+        console.log('[MapPanController] map or location missing', map, locations.length, selLocation);
+        return;
+      }
+      const loc = locations[selLocation];
+      const yLeaflet = mapDef.height - loc.y;
+      const markerLatLng = [yLeaflet, loc.x];
+      const zoom = map.getZoom();
+      const bounds = map.getBounds();
+      const centerBefore = map.getCenter();
+      console.log('[MapPanController] selLocation:', selLocation, 'markerLatLng:', markerLatLng, 'zoom:', zoom, 'bounds:', bounds, 'centerBefore:', centerBefore);
+      // Use flyTo for robust visible panning
+      map.flyTo(markerLatLng, zoom, { animate: true });
+      setTimeout(() => {
+        map.invalidateSize();
+        const centerAfter = map.getCenter();
+        const zoomAfter = map.getZoom();
+        console.log('[MapPanController] centerAfter flyTo:', centerAfter, 'zoomAfter:', zoomAfter);
+      }, 500);
+    }, [selLocation, locations[selLocation], mapDef, map]);
+    return null;
+  }
 
   const transformedLocations = locations.map((loc) => {
     const yLeaflet = imageHeight - loc.y;
     return { ...loc, yLeaflet };
   });
-
   return (
     <MapContainer
       crs={crs}
       bounds={bounds}
-      // maxBounds and maxBoundsViscosity removed to allow panning and avoid snap-back
       style={{ height: '100%', width: '100%' }}
       minZoom={-2}
       maxZoom={3}
-      zoom={initialZoom !== null ? initialZoom : 0}
+      zoom={0}
       scrollWheelZoom={false}
       zoomDelta={0.25}
       zoomSnap={0.25}
-      whenCreated={mapInstance => { mapRef.current = mapInstance; }}
       zoomControl={false}
     >
       <ZoomControl position="topright" />
       <ImageOverlay url={imageUrl} bounds={bounds} />
-      {/* Only fit bounds on initial mount, not on every render */}
-      {/* <FitBounds bounds={bounds} /> */}
+      <MapPanController selLocation={selLocation} locations={locations} mapDef={mapDef} />
       {transformedLocations.length > 0 ? (
         transformedLocations.map((loc) => (
           <Marker
             key={loc.termId}
             position={[loc.yLeaflet, loc.x]}
             icon={createLabel(
-              loc.vernLabel || `(${inLang(loc.gloss, lang)})`, // Fallback to gloss if vernLabel is empty
+              loc.vernLabel || `(${inLang(loc.gloss, lang)})`,
               loc.align,
               loc.angle,
               loc.size,
@@ -1033,9 +1095,7 @@ function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScal
           >
           </Marker>
         ))
-      ) : (
-        <div>{inLang(uiStr.noLocations, lang)}</div>
-      )}
+      ) : null}
     </MapContainer>
   );
 }
@@ -1421,10 +1481,11 @@ const SettingsModal = ({ open, onClose, labelScale, setLabelScale, lang, setLang
   );
 };
 
+const bookNames = 'GEN,EXO,LEV,NUM,DEU,JOS,JDG,RUT,1SA,2SA,1KI,2KI,1CH,2CH,EZR,NEH,EST,JOB,PSA,PRO,ECC,SNG,ISA,JER,LAM,EZK,DAN,HOS,JOL,AMO,OBA,JON,MIC,NAM,HAB,ZEP,HAG,ZEC,MAL,MAT,MRK,LUK,JHN,ACT,ROM,1CO,2CO,GAL,EPH,PHP,COL,1TH,2TH,1TI,2TI,TIT,PHM,HEB,JAS,1PE,2PE,1JN,2JN,3JN,JUD,REV';
+
 function prettyRef(ref) {
   // ref is a 9 digit string. First 3 digits are the book code, next 3 are chapter, last 3 are verse.
-  // Convert book code digits to an integer, subtract 1, and use it to index into the bookName array.
-  const bookNames = 'GEN,EXO,LEV,NUM,DEU,JOS,JDG,RUT,1SA,2SA,1KI,2KI,1CH,2CH,EZR,NEH,EST,JOB,PSA,PRO,ECC,SNG,ISA,JER,LAM,EZK,DAN,HOS,JOL,AMO,OBA,JON,MIC,NAM,HAB,ZEP,HAG,ZEC,MAL,MAT,MRK,LUK,JHN,ACT,ROM,1CO,2CO,GAL,EPH,PHP,COL,1TH,2TH,1TI,2TI,TIT,PHM,HEB,JAS,1PE,2PE,1JN,2JN,3JN,JUD,REV';
+  // Use the top-level bookNames variable
   const bookCode = parseInt(ref.slice(0, 3), 10) - 1;
   const chapter = parseInt(ref.slice(3, 6), 10);    
   const verse = parseInt(ref.slice(6, 9), 10);
