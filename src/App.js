@@ -568,7 +568,7 @@ function App() {
       });
       if (fileHandle) {
         // Strip .jpg or .jpeg extension
-        const fileName = fileHandle.name.replace(/\.(jpg|jpeg)$/i, '');
+        const fileName = 'SMR1_' + fileHandle.name.replace(/\.(jpg|jpeg)$/i, '').replace(/\s*[@(].*/, '');
         // Use the stripped filename as the template ID
         const foundTemplate = getMapData(fileName, mapBibTerms);
         if (!foundTemplate) {
@@ -1087,6 +1087,7 @@ function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScal
 
     // --- Reset zoom to fit bounds when resetZoomFlag changes ---
     useEffect(() => {
+      console.log('[MapPanController] Resetting zoom to fit bounds', resetZoomFlag);
       if (!map) return;
       map.fitBounds([[0, 0], [mapDef.height, mapDef.width]]);
     }, [resetZoomFlag, map, mapDef.height, mapDef.width]);
@@ -1335,7 +1336,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
 
       {/* Template info/browse group */}
       <div className="details-group-frame" style={{ border: '1px solid #ccc', borderRadius: 6, marginBottom: 16, padding: 8, background: '#f9f9f9', display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <span style={{ fontWeight: 'bold', color: 'black', fontSize: '0.6em' }}>{templateName}</span>
+        <span style={{ fontWeight: 'bold', color: 'black', fontSize: '0.8em' }}>{templateName}</span>
         <button
           title={inLang(uiStr.templateInfo, lang)}
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginLeft: 8 }}
