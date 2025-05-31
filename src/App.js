@@ -415,7 +415,7 @@ function App() {
   });
   const [showSettings, setShowSettings] = useState(false);
   // --- Add resetZoomFlag for controlling Leaflet map ---
-  const [resetZoomFlag, setResetZoomFlag] = useState(0);
+  const [resetZoomFlag, setResetZoomFlag] = useState(false);
   const isDraggingVertical = useRef(false);
   const isDraggingHorizontal = useRef(false);
   const termRenderings = useMemo(() => new TermRenderings('/data/term-renderings.json'), []);
@@ -874,10 +874,10 @@ function App() {
 useEffect(() => {
   function handleGlobalKeyDown(e) {
     if (mapPaneView === 2) return; // Do not trigger in USFM view
-    // Change to Ctrl+9
+    // Ctrl+9 triggers zoom reset
     if (e.ctrlKey && (e.key === '9' || e.code === 'Digit9')) {
       console.log('Resetting zoom');
-      setResetZoomFlag(flag => flag + 1);
+      setResetZoomFlag(true);
       e.preventDefault();
       return;
     }
@@ -914,6 +914,7 @@ useEffect(() => {
               termRenderings={termRenderings}
               lang={lang}
               resetZoomFlag={resetZoomFlag} // Pass to MapPane
+              setResetZoomFlag={setResetZoomFlag} // Pass setter to MapPane
             />
           )}
           {mapPaneView === 1 && (
@@ -992,7 +993,7 @@ useEffect(() => {
   );
 }
 
-function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScale, mapDef, termRenderings, lang, resetZoomFlag }) {
+function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScale, mapDef, termRenderings, lang, resetZoomFlag, setResetZoomFlag }) {
   // Log all props to check for identity changes
   console.log('[MapPane] render', {
     imageUrl,
@@ -1012,7 +1013,7 @@ function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScal
   const crs = Leaf.CRS.Simple;
 
   // --- Robust panning logic: ensure selected marker is in view ---
-  function MapPanController({ selLocation, locations, mapDef, resetZoomFlag }) {
+  function MapPanController({ selLocation, locations, mapDef, resetZoomFlag, setResetZoomFlag }) {
     const map = useMap();
     // console.log('[MapPanController] render', selLocation, locations.length);
     // --- Extract selectedLocation for dependency
@@ -1089,8 +1090,11 @@ function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScal
     useEffect(() => {
       console.log('[MapPanController] Resetting zoom to fit bounds', resetZoomFlag);
       if (!map) return;
-      map.fitBounds([[0, 0], [mapDef.height, mapDef.width]]);
-    }, [resetZoomFlag, map, mapDef.height, mapDef.width]);
+      if (resetZoomFlag) {
+        map.fitBounds([[0, 0], [mapDef.height, mapDef.width]]);
+        setResetZoomFlag(false);
+      }
+    }, [resetZoomFlag, map, mapDef.height, mapDef.width, setResetZoomFlag]);
 
     return null;
   }
@@ -1115,7 +1119,7 @@ function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScal
     >
       <ZoomControl position="topright" />
       <ImageOverlay url={imageUrl} bounds={bounds} />
-      <MapPanController selLocation={selLocation} locations={locations} mapDef={mapDef} resetZoomFlag={resetZoomFlag} />
+      <MapPanController selLocation={selLocation} locations={locations} mapDef={mapDef} resetZoomFlag={resetZoomFlag} setResetZoomFlag={setResetZoomFlag} />
       {transformedLocations.length > 0 ? (
         transformedLocations.map((loc) => (
           <Marker
@@ -1511,7 +1515,7 @@ const SettingsModal = ({ open, onClose, labelScale, setLabelScale, lang, setLang
           <button onClick={onClose} style={{ fontSize: 15, padding: '4px 16px', borderRadius: 4 }}>{inLang(uiStr.close, lang)}</button>
         </div>
       </div>
-    </div>
+       </div>
   );
 };
 
