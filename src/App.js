@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { MapContainer, ImageOverlay, Marker, ZoomControl, useMap } from 'react-leaflet';
-import { MapContainer as MinimalMapContainer, TileLayer as MinimalTileLayer } from 'react-leaflet';
 import { FaCheckCircle, FaTimesCircle, FaPencilAlt } from 'react-icons/fa';
 import 'leaflet/dist/leaflet.css';
 import Leaf from 'leaflet';
@@ -891,7 +890,6 @@ useEffect(() => {
 
   return (
     <div className="app-container">
-      <MinimalMapTest />
       <div className="top-section" style={{ flex: `0 0 ${topHeight}%` }}>
         <div className="map-pane" style={{ flex: `0 0 ${mapWidth}%` }}>
           {mapPaneView === 0 && map.mapView && (
@@ -979,31 +977,6 @@ useEffect(() => {
         setLang={setLang}
       />
     </div>
-  );
-}
-
-
-// Minimal MapContainer test for useMap
-function MinimalMapTest() {
-  // Use react-leaflet v5+ pattern
-  const { MapContainer, TileLayer, useMap } = require('react-leaflet');
-  function Logger() {
-    const map = useMap();
-    React.useEffect(() => {
-      console.log('[MinimalTest] useMap got map instance:', map);
-      window._leafletTestMap = map;
-    }, [map]);
-    return null;
-  }
-  return (
-    <MapContainer
-      center={[51.505, -0.09]}
-      zoom={13}
-      style={{ height: 300, width: 400, border: '2px solid red', margin: 20 }}
-    >
-      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-      <Logger />
-    </MapContainer>
   );
 }
 
