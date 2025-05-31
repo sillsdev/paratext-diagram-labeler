@@ -1012,18 +1012,30 @@ function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScal
       const loc = locations[selLocation];
       const yLeaflet = mapDef.height - loc.y;
       const markerLatLng = [yLeaflet, loc.x];
-      const zoom = map.getZoom();
       const bounds = map.getBounds();
-      const centerBefore = map.getCenter();
-      console.log('[MapPanController] selLocation:', selLocation, 'markerLatLng:', markerLatLng, 'zoom:', zoom, 'bounds:', bounds, 'centerBefore:', centerBefore);
-      // Use flyTo for robust visible panning
-      map.flyTo(markerLatLng, zoom, { animate: true });
-      setTimeout(() => {
-        map.invalidateSize();
-        const centerAfter = map.getCenter();
-        const zoomAfter = map.getZoom();
-        console.log('[MapPanController] centerAfter flyTo:', centerAfter, 'zoomAfter:', zoomAfter);
-      }, 500);
+      const paddingLat = (bounds.getNorth() - bounds.getSouth()) * 0.15; // 15% padding
+      const paddingLng = (bounds.getEast() - bounds.getWest()) * 0.15;
+      let newLat = map.getCenter().lat;
+      let newLng = map.getCenter().lng;
+      // Check latitude (vertical)
+      if (markerLatLng[0] > bounds.getNorth() - paddingLat) {
+        newLat = markerLatLng[0] - (bounds.getNorth() - newLat) + paddingLat;
+      } else if (markerLatLng[0] < bounds.getSouth() + paddingLat) {
+        newLat = markerLatLng[0] - (bounds.getSouth() - newLat) - paddingLat;
+      }
+      // Check longitude (horizontal)
+      if (markerLatLng[1] > bounds.getEast() - paddingLng) {
+        newLng = markerLatLng[1] - (bounds.getEast() - newLng) + paddingLng;
+      } else if (markerLatLng[1] < bounds.getWest() + paddingLng) {
+        newLng = markerLatLng[1] - (bounds.getWest() - newLng) - paddingLng;
+      }
+      // Only pan if needed
+      if (newLat !== map.getCenter().lat || newLng !== map.getCenter().lng) {
+        map.panTo([newLat, newLng], { animate: true });
+        setTimeout(() => {
+          map.invalidateSize();
+        }, 500);
+      }
     }, [selLocation, locations[selLocation], mapDef, map]);
     return null;
   }
