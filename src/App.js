@@ -702,8 +702,12 @@ function App() {
             onKeyDown={e => {
             if (e.key === 'PageDown' || e.key === 'ArrowDown') {
               onNextLocation(true);
+              e.preventDefault();
+              e.stopPropagation();
             } else if (e.key === 'PageUp' || e.key === 'ArrowUp') {
               onNextLocation(false);
+              e.preventDefault();
+              e.stopPropagation();
             }
             }}
             style={{}}
@@ -1394,8 +1398,12 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
           onKeyDown={e => {
             if (e.key === 'PageDown' || e.key === 'ArrowDown') {
               onNextLocation(true);
+              e.preventDefault();
+              e.stopPropagation();
             } else if (e.key === 'PageUp' || e.key === 'ArrowUp') {
               onNextLocation(false);
+              e.preventDefault();
+              e.stopPropagation();
             }
           }}
           placeholder={inLang(uiStr.enterLabel, lang)}
@@ -1504,6 +1512,7 @@ const bookNames = 'GEN,EXO,LEV,NUM,DEU,JOS,JDG,RUT,1SA,2SA,1KI,2KI,1CH,2CH,EZR,N
 
 function prettyRef(ref) {
   // ref is a 9 digit string. First 3 digits are the book code, next 3 are chapter, last 3 are verse.
+ 
   // Use the top-level bookNames variable
   const bookCode = parseInt(ref.slice(0, 3), 10) - 1;
   const chapter = parseInt(ref.slice(3,  6), 10);    
