@@ -649,7 +649,7 @@ function App() {
 
   // Focus vernacular input after selection or locations change
   useEffect(() => {
-    if (vernacularInputRef.current) {
+    if (vernacularInputRef.current && mapPaneView === 0) {
       vernacularInputRef.current.focus();
     }
   }, [selLocation]); // NOT locations, to avoid re-focusing while editing renderings
@@ -1395,17 +1395,6 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
           type="text"
           value={vernacular}
           onChange={handleVernChange}
-          /*onKeyDown={e => {
-            if (e.key === 'PageDown' || e.key === 'ArrowDown') {
-              onNextLocation(true);
-              e.preventDefault();
-              e.stopPropagation();
-            } else if (e.key === 'PageUp' || e.key === 'ArrowUp') {
-              onNextLocation(false);
-              e.preventDefault();
-              e.stopPropagation();
-            }
-          }} */ 
           placeholder={inLang(uiStr.enterLabel, lang)}
           className="form-control mb-2"
           style={{ width: '100%', border: 'none' }}
