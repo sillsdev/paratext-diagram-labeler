@@ -138,7 +138,7 @@ const createLabel = (labelText, align = 'right', angle = 0, size = 3, status, is
   const backgroundColor = statusValue[status].bkColor;
   const textColor = statusValue[status].textColor; 
   // Base font size in px (matches your app's base font size)
-  const baseFontSize = 12 * labelScale;
+  const baseFontSize = 18 * labelScale;
   // Calculate scale factor for font size (matches previous logic)
   const fontSizePx = baseFontSize * (0.7 + 0.1 * (4 - size));
   // Use em units for all scalable properties
