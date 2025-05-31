@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { MapContainer, ImageOverlay, Marker, ZoomControl, useMap } from 'react-leaflet';
 import { FaCheckCircle, FaTimesCircle, FaPencilAlt } from 'react-icons/fa';
 import 'leaflet/dist/leaflet.css';
 import Leaf from 'leaflet';
-import L from 'leaflet';
 import './App.css';
 import TermRenderings from './TermRenderings';
 import MapBibTerms from './MapBibTerms';
@@ -416,6 +414,8 @@ function App() {
     return saved ? parseFloat(saved) : 1;
   });
   const [showSettings, setShowSettings] = useState(false);
+  // --- Add resetZoomFlag for controlling Leaflet map ---
+  const [resetZoomFlag, setResetZoomFlag] = useState(0);
   const isDraggingVertical = useRef(false);
   const isDraggingHorizontal = useRef(false);
   const termRenderings = useMemo(() => new TermRenderings('/data/term-renderings.json'), []);
@@ -424,7 +424,7 @@ function App() {
   const vernacularInputRef = useRef(null);
   const renderingsTextareaRef = useRef();
   // --- Add mapRef for controlling Leaflet map ---
-  // const mapRef = useRef();
+  // const mapRef = useRef(null); // REMOVE this line, no longer needed
 
   const handleSelectLocation = useCallback((location) => {
     console.log('Selected location:', location);
@@ -652,7 +652,7 @@ function App() {
     if (vernacularInputRef.current && mapPaneView === 0) {
       vernacularInputRef.current.focus();
     }
-  }, [selLocation]); // NOT locations, to avoid re-focusing while editing renderings
+  }, [selLocation, mapPaneView]); // Add mapPaneView as dependency
 
   // Table View component
   function TableView({ locations, selLocation, onUpdateVernacular, onNextLocation, termRenderings, onSelectLocation, lang }) {
@@ -874,6 +874,12 @@ function App() {
 useEffect(() => {
   function handleGlobalKeyDown(e) {
     if (mapPaneView === 2) return; // Do not trigger in USFM view
+    if (e.ctrlKey && (e.key === '0' || e.code === 'Digit0')) {
+      console.log('Resetting zoom');
+      setResetZoomFlag(flag => flag + 1);
+      e.preventDefault();
+      return;
+    }
     if (e.key === 'PageDown') {
       handleNextLocation(true);
       e.preventDefault();
@@ -884,7 +890,7 @@ useEffect(() => {
   }
   window.addEventListener('keydown', handleGlobalKeyDown);
   return () => window.removeEventListener('keydown', handleGlobalKeyDown);
-}, [mapPaneView, handleNextLocation]);
+}, [mapPaneView, handleNextLocation]); // Remove mapDef, mapRef from deps
 
   // console.log("map: ", map);
   // Memoize locations and mapDef to prevent MapPane remounts
@@ -906,6 +912,7 @@ useEffect(() => {
               mapDef={memoizedMapDef}
               termRenderings={termRenderings}
               lang={lang}
+              resetZoomFlag={resetZoomFlag} // Pass to MapPane
             />
           )}
           {mapPaneView === 1 && (
@@ -984,7 +991,7 @@ useEffect(() => {
   );
 }
 
-function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScale, mapDef, termRenderings, lang }) {
+function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScale, mapDef, termRenderings, lang, resetZoomFlag }) {
   // Log all props to check for identity changes
   console.log('[MapPane] render', {
     imageUrl,
@@ -1004,16 +1011,18 @@ function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScal
   const crs = Leaf.CRS.Simple;
 
   // --- Robust panning logic: ensure selected marker is in view ---
-  function MapPanController({ selLocation, locations, mapDef }) {
+  function MapPanController({ selLocation, locations, mapDef, resetZoomFlag }) {
     const map = useMap();
     // console.log('[MapPanController] render', selLocation, locations.length);
+    // --- Extract selectedLocation for dependency
+    const selectedLocation = locations[selLocation];
     useEffect(() => {
       // console.log('[MapPanController] useEffect triggered', selLocation, locations.length);
-      if (!map || !locations.length || !locations[selLocation]) {
+      if (!map || !selectedLocation) {
         // console.log('[MapPanController] map or location missing', map, locations.length, selLocation);
         return;
       }
-      const loc = locations[selLocation];
+      const loc = selectedLocation;
       const yLeaflet = mapDef.height - loc.y;
       const markerLatLng = [yLeaflet, loc.x];
       const bounds = map.getBounds();
@@ -1040,7 +1049,7 @@ function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScal
           map.invalidateSize();
         }, 500);
       }
-    }, [selLocation, locations[selLocation], mapDef, map]);
+    }, [selLocation, selectedLocation, mapDef, map, locations]);
 
     // Also re-run pan logic when zoom changes
     useEffect(() => {
@@ -1075,6 +1084,12 @@ function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScal
       return () => map.off('zoomend', handleZoom);
     }, [map, selLocation, locations, mapDef]);
 
+    // --- Reset zoom to fit bounds when resetZoomFlag changes ---
+    useEffect(() => {
+      if (!map) return;
+      map.fitBounds([[0, 0], [mapDef.height, mapDef.width]]);
+    }, [resetZoomFlag, map, mapDef.height, mapDef.width]);
+
     return null;
   }
 
@@ -1094,10 +1109,11 @@ function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScal
       zoomDelta={0.25}
       zoomSnap={0.25}
       zoomControl={false}
+      // REMOVE: whenCreated={mapInstance => { if (mapRef) mapRef.current = mapInstance; }}
     >
       <ZoomControl position="topright" />
       <ImageOverlay url={imageUrl} bounds={bounds} />
-      <MapPanController selLocation={selLocation} locations={locations} mapDef={mapDef} />
+      <MapPanController selLocation={selLocation} locations={locations} mapDef={mapDef} resetZoomFlag={resetZoomFlag} />
       {transformedLocations.length > 0 ? (
         transformedLocations.map((loc) => (
           <Marker
