@@ -1255,6 +1255,24 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
       // User cancelled or not supported
     }
   };
+// Import to data merge file handler
+  const handleImportDataMerge = async () => {
+    try {
+      const fileHandle = await window.showOpenFilePicker({
+        suggestedName: 'term-renderings-export.json',
+        types: [
+          {
+            description: 'IDML data merge files',
+            accept: { 'text': ['.idml.txt'] },
+          },
+        ],
+      });
+      if (fileHandle) {
+      }
+    } catch (e) {
+      // User cancelled or not supported
+    }
+  };
 
   // Only show the button row if in USFM view
   if (mapPaneView === 2) {
@@ -1432,11 +1450,23 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
           <span role="img" aria-label="browse" style={{ fontSize: '1.2em', color: '#fc6' }}>📂</span>
         </button>
           <button
+            onClick={handleImportDataMerge}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginLeft: 1 }}
+            title="Export to data merge file"
+          >
+            {/* Import icon: two stacked files with an up arrow */}
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4" y="4" width="10" height="14" rx="2" fill="#fff" stroke="#1976d2" strokeWidth="1.2"/>
+              <rect x="8" y="2" width="10" height="14" rx="2" fill="#e3f2fd" stroke="#1976d2" strokeWidth="1.2"/>
+              <path d="M13 15v-5m0 0l-2 2m2 -2l2 2" stroke="#1976d2" strokeWidth котор="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+          <button
             onClick={handleExportDataMerge}
             style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginLeft: 1 }}
             title="Export to data merge file"
           >
-            {/* Export icon: two stacked files with an arrow */}
+            {/* Export icon: two stacked files with a down arrow */}
             <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
               <rect x="4" y="4" width="10" height="14" rx="2" fill="#fff" stroke="#1976d2" strokeWidth="1.2"/>
               <rect x="8" y="2" width="10" height="14" rx="2" fill="#e3f2fd" stroke="#1976d2" strokeWidth="1.2"/>
