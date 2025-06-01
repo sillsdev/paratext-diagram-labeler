@@ -10,6 +10,7 @@ import extractedVerses from './data/extracted_verses.json';
 import supportedLanguages from './data/ui-languages.json';
 import uiStr from './data/ui-strings.json';
 import { CheckmarkIcon, DeniedCheckmarkIcon, CrossIcon } from './TermIcons';
+// const { dialog } = window.require('@electron/remote');
 const mapBibTerms = new MapBibTerms();
 
 
@@ -36,8 +37,8 @@ var usfm = String.raw`\zdiagram-s |template="SMR1_185wbt - Philips Travels [sm]"
 \zlabel |key="decapolis" termid="Δεκάπολις" gloss="Decapolis" label="Dasa Sahar"\*
 \zlabel |key="samaria_region" termid="Σαμάρεια-1" gloss="Samaria" label="Saamariyaa"\*
 \zlabel |key="samaria_city_nt" termid="Σαμάρεια-2" gloss="Samaria" label="Saamariyaa"\*
-\zlabel |key="apollonia" termid="Ἀπολλωνία" gloss="Apollonia" label="Apol‍loniyaa"\*
-\zlabel |key="joppa_nt" termid="Ἰόππη" gloss="Joppa" label="Yop‍paa"\*
+\zlabel |key="apollonia" termid="Ἀπολλωνία" gloss="Apollonia" label="Apolloniyaa"\*
+\zlabel |key="joppa_nt" termid="Ἰόππη" gloss="Joppa" label="Yoppaa"\*
 \zlabel |key="mediterranean_sea" termid="mediterranean_sea" gloss="Mediterranean Sea" label=""\*
 \zlabel |key="jamnia" termid="jamnia" gloss="Jamnia" label=""\*
 \zlabel |key="jericho_nt" termid="Ἰεριχώ" gloss="Jericho" label="Yariho"\*
@@ -48,6 +49,37 @@ var usfm = String.raw`\zdiagram-s |template="SMR1_185wbt - Philips Travels [sm]"
 \zlabel |key="judea" termid="Ἰουδαία" gloss="Judea" label="Yahudiyaa"\*
 \zlabel |key="gaza_nt" termid="Γάζα" gloss="Gaza" label="Gaajaa"\*
 \zdiagram-e \*`;
+
+function encodeUTF16LE(str, bom = false) {
+  if (bom) {  
+    str = '\uFEFF' + str; // Add BOM if requested
+  }
+  const buf = new Uint8Array(str.length * 2);
+  for (let i = 0; i < str.length; i++) {
+    const code = str.charCodeAt(i);
+    buf[i * 2] = code & 0xFF;
+    buf[i * 2 + 1] = code >> 8;
+  }
+  return buf;
+}
+
+function decodeFileAsString(arrayBuffer) {
+  const uint8 = new Uint8Array(arrayBuffer);
+  // UTF-8 BOM: EF BB BF
+  if (uint8[0] === 0xEF && uint8[1] === 0xBB && uint8[2] === 0xBF) {
+    return new TextDecoder('utf-8').decode(uint8.subarray(3));
+  }
+  // UTF-16LE BOM: FF FE
+  if (uint8[0] === 0xFF && uint8[1] === 0xFE) {
+    return new TextDecoder('utf-16le').decode(uint8.subarray(2));
+  }
+  // UTF-16BE BOM: FE FF
+  if (uint8[0] === 0xFE && uint8[1] === 0xFF) {
+    return new TextDecoder('utf-16be').decode(uint8.subarray(2));
+  }
+  // Default: utf-8
+  return new TextDecoder('utf-8').decode(uint8);
+}
 
 function mapFromUsfm(usfm) {
   // Extract template and \fig field
@@ -1237,37 +1269,69 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
   // Export to data merge file handler
   const handleExportDataMerge = async () => {
     try {
+      // Prepare IDML data merge content
+      const dataMergeHeader = locations.map(loc => loc.mergeKey).join('\t');
+      const dataMergeContent = locations.map(loc => loc.vernLabel || '').join('\t');
+      const data =  dataMergeHeader + '\n' + dataMergeContent + '\n';
+      
+      // Write to file using the browser file system API
       const fileHandle = await window.showSaveFilePicker({
-        suggestedName: 'term-renderings-export.json',
+        suggestedName: templateName + '.idml.txt',
+        startIn: 'documents',
         types: [
           {
-            description: 'JSON Files',
-            accept: { 'application/json': ['.json'] },
+            description: 'IDML Data Merge Files',
+            accept: { 'text/plain': ['.idml.txt'] },
           },
         ],
       });
       if (fileHandle) {
         const writable = await fileHandle.createWritable();
-        await writable.write(JSON.stringify(termRenderings.data, null, 2));
+        await writable.write(encodeUTF16LE(data, true));
         await writable.close();
       }
     } catch (e) {
       // User cancelled or not supported
     }
   };
-// Import to data merge file handler
+// Import from data merge file handler
   const handleImportDataMerge = async () => {
     try {
-      const fileHandle = await window.showOpenFilePicker({
-        suggestedName: 'term-renderings-export.json',
+      const [fileHandle] = await window.showOpenFilePicker({
         types: [
           {
-            description: 'IDML data merge files',
-            accept: { 'text': ['.idml.txt'] },
+            description: 'IDML Data Merge Files',
+            accept: { 'text/plain': ['.idml.txt'] },
           },
         ],
+        multiple: false,
       });
       if (fileHandle) {
+        const file = await fileHandle.getFile();
+        const fileText = decodeFileAsString(await file.text());
+        // TODO: process fileText as needed
+        console.log('Imported IDML data merge file:', file.name, fileText.slice(0, 200));
+        if (fileHandle.name.endsWith('.idml.txt')) {
+          const lines = fileText.split('\n');
+          if (lines.length > 1) {
+            const mergeKeys = lines[0].split('\t');
+            const verns = lines[1].split('\t');
+            if (verns.length === mergeKeys.length) {
+              const newTemplateBase = fileHandle.name.replace(/\.idml\.txt$/, '').trim().replace(/^\w+_/, '');
+              let newUsfmText = `\\zdiagram-s |template="SMR_${newTemplateBase}"\\*\n\\fig |src="${newTemplateBase} @en.jpg" size="span"\\fig*\n`;
+              for (let i = 0; i < mergeKeys.length; i++) {
+                // [newTermId, newGloss] = lookupByKey(mergeKeys[i], mapBibTerms);
+                // newUsfmText += `\\zlabel |key="${mergeKeys[i]}" termid="${newTermId}" gloss="${newGloss}" label="${verns[i]}"\\*`;
+              }
+              newUsfmText += `\\zdiagram-e\\*`;
+              console.log('New USFM text from data merge:', newUsfmText);
+            } else {
+              alert(inLang(uiStr.invalidDataMerge, lang));
+            }
+          } else {
+            alert(inLang(uiStr.emptyDataMerge, lang));
+          }
+        }
       }
     } catch (e) {
       // User cancelled or not supported
@@ -1452,13 +1516,13 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
           <button
             onClick={handleImportDataMerge}
             style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginLeft: 1 }}
-            title="Export to data merge file"
+            title="Import from data merge file"
           >
             {/* Import icon: two stacked files with an up arrow */}
             <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
               <rect x="4" y="4" width="10" height="14" rx="2" fill="#fff" stroke="#1976d2" strokeWidth="1.2"/>
               <rect x="8" y="2" width="10" height="14" rx="2" fill="#e3f2fd" stroke="#1976d2" strokeWidth="1.2"/>
-              <path d="M13 15v-5m0 0l-2 2m2 -2l2 2" stroke="#1976d2" strokeWidth котор="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M13 15v-5m0 0l-2 2m2 -2l2 2" stroke="#1976d2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
           <button
@@ -1483,7 +1547,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
           background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center'
         }}>
           <div style={{ background: 'white', borderRadius: 10, padding: 24, minWidth: 520, maxWidth: 900, boxShadow: '0 4px 24px #0008', position: 'relative' }}>
-            <button onClick={() => setShowTemplateInfo(false)} style={{ position: 'absolute', top: 8, right: 12, background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#888' }} title="Close">×</button>
+            <button onClick={() => setShowTemplateInfo(false)} style={{ position: 'absolute', top:  8, right: 12, background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#888' }} title="Close">×</button>
             <h4 style={{ marginTop: 0}}>{templateName}</h4>
             {inLang(templateData.title, lang) && <p style={{ margin: '8px 0', fontWeight: 'bold', fontStyle: 'italic'}}>{inLang(templateData.title, lang)}</p>}
             {inLang(templateData.description, lang) && <p style={{ margin: '8px 0' }}>{inLang(templateData.description, lang)}</p>}
