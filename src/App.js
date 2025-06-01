@@ -1234,6 +1234,28 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
   // Access the template name from the global map object
   const templateName = mapDef.template || '(' + inLang({en: 'no template'}, lang) + ')';
 
+  // Export to data merge file handler
+  const handleExportDataMerge = async () => {
+    try {
+      const fileHandle = await window.showSaveFilePicker({
+        suggestedName: 'term-renderings-export.json',
+        types: [
+          {
+            description: 'JSON Files',
+            accept: { 'application/json': ['.json'] },
+          },
+        ],
+      });
+      if (fileHandle) {
+        const writable = await fileHandle.createWritable();
+        await writable.write(JSON.stringify(termRenderings.data, null, 2));
+        await writable.close();
+      }
+    } catch (e) {
+      // User cancelled or not supported
+    }
+  };
+
   // Only show the button row if in USFM view
   if (mapPaneView === 2) {
     return (
@@ -1243,6 +1265,18 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
         <button onClick={onSwitchView} style={{ marginRight: 60 }}>Switch view</button>
         <button onClick={handleCancel} style={{ marginRight: 8, width:80 }}>{inLang(uiStr.cancel, lang)}</button>
         <button onClick={handleOk}  style={{ width:80 }}>{inLang(uiStr.ok, lang)}</button>
+        <button
+          onClick={handleExportDataMerge}
+          style={{ marginLeft: 16, width: 40, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#e3f2fd', border: '1px solid #1976d2', borderRadius: 4, cursor: 'pointer' }}
+          title="Export to data merge file"
+        >
+          {/* Export icon: two stacked files with an arrow */}
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4" y="4" width="10" height="14" rx="2" fill="#fff" stroke="#1976d2" strokeWidth="1.2"/>
+            <rect x="8" y="2" width="10" height="14" rx="2" fill="#e3f2fd" stroke="#1976d2" strokeWidth="1.2"/>
+            <path d="M13 10v5m0 0l-2-2m2 2l2-2" stroke="#1976d2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
         <div style={{ flex: 1 }} />
         <button
         onClick={handleSettings}
@@ -1385,18 +1419,31 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
         <span style={{ fontWeight: 'bold', color: 'black', fontSize: '0.8em' }}>{templateName}</span>
         <button
           title={inLang(uiStr.templateInfo, lang)}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginLeft: 8 }}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginLeft: 1 }}
           onClick={() => setShowTemplateInfo(true)}
         >
           <span role="img" aria-label="info" style={{ fontSize: '1.2em', color: '#6cf' }}>ℹ️</span>
         </button>
         <button
           title={inLang(uiStr.browseTemplate, lang)}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginLeft: 8 }}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginLeft: 1 }}
           onClick={onBrowseMapTemplate}
         >
           <span role="img" aria-label="browse" style={{ fontSize: '1.2em', color: '#fc6' }}>📂</span>
         </button>
+          <button
+            onClick={handleExportDataMerge}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginLeft: 1 }}
+            title="Export to data merge file"
+          >
+            {/* Export icon: two stacked files with an arrow */}
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4" y="4" width="10" height="14" rx="2" fill="#fff" stroke="#1976d2" strokeWidth="1.2"/>
+              <rect x="8" y="2" width="10" height="14" rx="2" fill="#e3f2fd" stroke="#1976d2" strokeWidth="1.2"/>
+              <path d="M13 10v5m0 0l-2-2m2 2l2-2" stroke="#1976d2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+
       </div>
 
       {/* Modal dialog for template info */}
@@ -1423,7 +1470,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
       )}
 
       {/* Status Tally Table */}
-      <div style={{ border: '1px solid #ccc', borderRadius: 6, marginBottom: 16, padding: 8, background: '#f9f9f9' }}>
+      <div style={{ border: '1px solid #ccc', borderRadius: 6, marginBottom: 16, padding: 8, background: '#f9f9f9', fontSize: '0.8em' }}>
         <table >
           <tbody>
             {Object.entries(statusTallies).sort((a, b) => statusValue[a[0]].sort - statusValue[b[0]].sort).map(([status, count ]) => (
@@ -1455,7 +1502,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
         <p><span style={{ fontStyle: 'italic' }}>({locations[selLocation]?.termId})  <span style={{ display: 'inline-block', width: 12 }} />{transliteration}</span><br />
           {inLang(mapBibTerms.getDefinition(locations[selLocation]?.termId), lang)}
         </p>
-        <div className="vernacularGroup" style={{ backgroundColor: statusValue[status].bkColor, margin: '10px', padding: '10px', border: '1px solid black', borderRadius: '0.7em' }}>
+        <div className="vernacularGroup" style={{ backgroundColor: statusValue[status].bkColor, margin: '8px', padding: '8px', border: '1px solid black', borderRadius: '0.7em' }}>
           <input
             ref={vernacularInputRef}
             type="text"
@@ -1466,7 +1513,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
             style={{ width: '100%', border: '1px solid black' }}
             spellCheck={false}
           />
-          <span style={{color: statusValue[status].textColor}}>
+          <span style={{color: statusValue[status].textColor, fontSize: '0.8em'}}>
             <span style={{ fontWeight: 'bold' }}>{inLang(uiStr.statusValue[status].text, lang) + ": "}</span>
             {inLang(uiStr.statusValue[status].help, lang)}
             {status === 2 && (  // If status is "no renderings", show Add to renderings button
@@ -1489,7 +1536,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
           </span>
         </div>
         <h5>{inLang(uiStr.termRenderings, lang)}  {localRenderings && !localIsApproved ? '(' + inLang(uiStr.guessed, lang) +')' : ''}</h5>
-        <div className="term-renderings">
+        <div className="term-renderings" style={{ margin: '8px' }}>
           <textarea
             ref={renderingsTextareaRef}
             value={localRenderings}
@@ -1511,7 +1558,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
               //const status = termRenderings.getStatus(locations[selLocation].termId, locations[selLocation].vernLabel || '');
               onRenderingsChange({ target: { value: e.target.value } });
             }}
-            style={{ width: '100%', minHeight: '100px', border: '1px solid black', borderRadius: '0.5em', padding: '8px', fontSize: '12px', backgroundColor: localIsApproved ? 'white' : '#ffbf8f' }}
+            style={{ width: '100%', minHeight: '100px', border: '1px solid black', borderRadius: '0.5em', padding: '8px', fontSize: '12px', backgroundColor: localRenderings && !localIsApproved ? '#ffbf8f' : 'white' }}
 
             placeholder={inLang(uiStr.enterRenderings, lang)}
             spellCheck={false}
