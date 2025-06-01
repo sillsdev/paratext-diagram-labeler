@@ -188,7 +188,7 @@ const createLabel = (labelText, align = 'right', angle = 0, size = 3, status, is
 };
 
 // Bottom Pane component to display a scrollable list of verses referencing the termId
-function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, renderingsTextareaRef, lang, termRenderings, setRenderings }) {
+function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, renderingsTextareaRef, lang, termRenderings, setRenderings, onDenialsChanged }) {
   const paneRef = React.useRef();
   const [selectedText, setSelectedText] = React.useState('');
   // Add a local state to force re-render on denial toggle
@@ -362,6 +362,7 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
                   termRenderings.data = { ...data };
                   if (typeof setRenderings === 'function') setRenderings(r => r + '');
                   setDenialToggle(t => !t);
+                  if (typeof onDenialsChanged === 'function') onDenialsChanged(); // <-- update locations in App
                 };
                 return (
                   <tr key={refId} style={{ borderBottom: '1px solid #eee', verticalAlign: 'top' }}>
@@ -928,6 +929,14 @@ useEffect(() => {
   const memoizedMapDef = useMemo(() => mapDef, [mapDef]);
   const memoizedHandleSelectLocation = useCallback(handleSelectLocation, [handleSelectLocation]);
 
+  // Add this function to update locations when denials change
+  const handleDenialsChanged = useCallback(() => {
+    setLocations(prevLocations => prevLocations.map(loc => {
+      const status = termRenderings.getStatus(loc.termId, loc.vernLabel || '');
+      return { ...loc, status };
+    }));
+  }, [termRenderings]);
+
   return (
     <div className="app-container">
       <div className="top-section" style={{ flex: `0 0 ${topHeight}%` }}>
@@ -1007,9 +1016,10 @@ useEffect(() => {
           onAddRendering={handleAddRendering}
           onReplaceRendering={handleReplaceRendering}
           renderingsTextareaRef={renderingsTextareaRef}
-          lang={lang} // <-- pass lang
+          lang={lang}
           termRenderings={termRenderings}
           setRenderings={setRenderings}
+          onDenialsChanged={handleDenialsChanged}
         />
       </div>
       <SettingsModal 
