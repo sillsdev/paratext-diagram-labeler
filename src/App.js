@@ -14,14 +14,14 @@ const mapBibTerms = new MapBibTerms();
 
 
 const statusValue = [
-  { bkColor: "dimgray",   textColor: "white", sort: 1  }, // 0  - blank
-  { bkColor: "cyan",    textColor: "black", sort: 5  },    // 1 - multiple
-  { bkColor: "#FF8000", textColor: "black", sort: 3  }, // 2 - no renderings
+  { bkColor: "dimgray", textColor: "white", sort: 1  },  // 0  - blank
+  { bkColor: "cyan",    textColor: "black", sort: 5  },  // 1 - multiple
+  { bkColor: "blue",    textColor: "white", sort: 3  },  // 2 - no renderings
   { bkColor: "yellow",  textColor: "black", sort: 4  },  // 3 - unmatched
-  { bkColor: "#80FF00", textColor: "black", sort: 0  }, // 4 - matched
-  { bkColor: "blue",    textColor: "white", sort: 2  },    // 5 - guessed
-  { bkColor: "crimson", textColor: "white", sort: 6  }, // 6 - Rendering shorter than label
-  { bkColor: "magenta", textColor: "black", sort: 7  }, // 7 - Bad explicit form
+  { bkColor: "white",   textColor: "black", sort: 0  },  // 4 - matched  
+  { bkColor: "#FF8000", textColor: "black", sort: 2  },  // 5 - guessed : #FF8000 : #e56300
+  { bkColor: "crimson", textColor: "white", sort: 6  },  // 6 - Rendering shorter than label
+  { bkColor: "#80FF00", textColor: "black", sort: 7  },  // 7 - Bad explicit form : #80FF00
 ];
 
 var usfm = String.raw`\zdiagram-s |template="SMR1_185wbt - Philips Travels [sm]"\*
@@ -748,6 +748,7 @@ function App() {
             <td>
             <span
             style={{
+            border: '1px solid black',
             background: statusValue[status].bkColor,
             color: statusValue[status].textColor,
             borderRadius: '0.7em',
@@ -1431,6 +1432,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
                 <td style={{  }}>
                   <span
                     style={{
+                    border: '1px solid black',
                     background: statusValue[status].bkColor,
                     color: statusValue[status].textColor,
                     borderRadius: '0.7em',
@@ -1448,71 +1450,73 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
           </tbody>
         </table>
       </div>
-      <h2>{inLang(locations[selLocation]?.gloss, lang)}</h2>
-      <p><span style={{ fontStyle: 'italic' }}>({locations[selLocation]?.termId})  <span style={{ display: 'inline-block', width: 12 }} />{transliteration}</span><br />
-        {inLang(mapBibTerms.getDefinition(locations[selLocation]?.termId), lang)}
-      </p>
-      <div className="vernacularGroup" style={{ backgroundColor: statusValue[status].bkColor, margin: '10px', padding: '10px' }}>
-        <input
-          ref={vernacularInputRef}
-          type="text"
-          value={vernacular}
-          onChange={handleVernChange}
-          placeholder={inLang(uiStr.enterLabel, lang)}
-          className="form-control mb-2"
-          style={{ width: '100%', border: 'none' }}
-          spellCheck={false}
-        />
-        <span style={{color: statusValue[status].textColor}}>
-          <span style={{ fontWeight: 'bold' }}>{inLang(uiStr.statusValue[status].text, lang) + ": "}</span>
-          {inLang(uiStr.statusValue[status].help, lang)}
-          {status === 2 && (  // If status is "no renderings", show Add to renderings button
-            <button style={{ marginLeft: 8 }} onClick={handleAddToRenderings}>{inLang(uiStr.addToRenderings, lang)}</button>
-          )}{status === 5 && (  // If status is "guessed", show Add to renderings button
-            <button
-            style={{ marginLeft: 8 }}
-            onClick={() => {
-              setLocalIsApproved(true);
+      <div style={{ border: '1px solid #ccc', borderRadius: 6, marginBottom: 16, padding: 8, background: '#f9f9f9' }}>
+        <h2>{inLang(locations[selLocation]?.gloss, lang)}</h2>
+        <p><span style={{ fontStyle: 'italic' }}>({locations[selLocation]?.termId})  <span style={{ display: 'inline-block', width: 12 }} />{transliteration}</span><br />
+          {inLang(mapBibTerms.getDefinition(locations[selLocation]?.termId), lang)}
+        </p>
+        <div className="vernacularGroup" style={{ backgroundColor: statusValue[status].bkColor, margin: '10px', padding: '10px', border: '1px solid black', borderRadius: '0.7em' }}>
+          <input
+            ref={vernacularInputRef}
+            type="text"
+            value={vernacular}
+            onChange={handleVernChange}
+            placeholder={inLang(uiStr.enterLabel, lang)}
+            className="form-control mb-2"
+            style={{ width: '100%', border: '1px solid black' }}
+            spellCheck={false}
+          />
+          <span style={{color: statusValue[status].textColor}}>
+            <span style={{ fontWeight: 'bold' }}>{inLang(uiStr.statusValue[status].text, lang) + ": "}</span>
+            {inLang(uiStr.statusValue[status].help, lang)}
+            {status === 2 && (  // If status is "no renderings", show Add to renderings button
+              <button style={{ marginLeft: 8 }} onClick={handleAddToRenderings}>{inLang(uiStr.addToRenderings, lang)}</button>
+            )}{status === 5 && (  // If status is "guessed", show Add to renderings button
+              <button
+              style={{ marginLeft: 8 }}
+              onClick={() => {
+                setLocalIsApproved(true);
+                const updatedData = { ...termRenderings.data };
+                updatedData[locations[selLocation].termId] = {
+                  ...updatedData[locations[selLocation].termId],
+                  isGuessed: false,
+                };
+                termRenderings.data = updatedData;  // TODO: move this to a setter function
+                onApprovedChange({ target: { checked: true } });
+              }}>{inLang(uiStr.approveRendering, lang)}
+            </button>
+            )}
+          </span>
+        </div>
+        <h5>{inLang(uiStr.termRenderings, lang)}  {localRenderings && !localIsApproved ? '(' + inLang(uiStr.guessed, lang) +')' : ''}</h5>
+        <div className="term-renderings">
+          <textarea
+            ref={renderingsTextareaRef}
+            value={localRenderings}
+            onChange={e => {
+              setLocalRenderings(e.target.value);
               const updatedData = { ...termRenderings.data };
               updatedData[locations[selLocation].termId] = {
                 ...updatedData[locations[selLocation].termId],
-                isGuessed: false,
+                renderings: e.target.value,  // TODO: move this to a setter function
               };
+              // If not approved, auto-approve on edit
+              if (!localIsApproved) {
+                setLocalIsApproved(true);
+                updatedData[locations[selLocation].termId].isGuessed = false;  
+                onApprovedChange({ target: { checked: true } });
+              }
               termRenderings.data = updatedData;  // TODO: move this to a setter function
-              onApprovedChange({ target: { checked: true } });
-            }}>{inLang(uiStr.approveRendering, lang)}
-          </button>
-          )}
-        </span>
-      </div>
-      <h4>{inLang(uiStr.termRenderings, lang)}  {localRenderings && !localIsApproved ? '(' + inLang(uiStr.guessed, lang) +')' : ''}</h4>
-      <div className="term-renderings">
-        <textarea
-          ref={renderingsTextareaRef}
-          value={localRenderings}
-          onChange={e => {
-            setLocalRenderings(e.target.value);
-            const updatedData = { ...termRenderings.data };
-            updatedData[locations[selLocation].termId] = {
-              ...updatedData[locations[selLocation].termId],
-              renderings: e.target.value,  // TODO: move this to a setter function
-            };
-            // If not approved, auto-approve on edit
-            if (!localIsApproved) {
-              setLocalIsApproved(true);
-              updatedData[locations[selLocation].termId].isGuessed = false;  
-              onApprovedChange({ target: { checked: true } });
-            }
-            termRenderings.data = updatedData;  // TODO: move this to a setter function
-            // The renderings change might affect the status of the location indexed by selLocation
-            //const status = termRenderings.getStatus(locations[selLocation].termId, locations[selLocation].vernLabel || '');
-            onRenderingsChange({ target: { value: e.target.value } });
-          }}
-          style={{ width: '100%', minHeight: '100px' }}
+              // The renderings change might affect the status of the location indexed by selLocation
+              //const status = termRenderings.getStatus(locations[selLocation].termId, locations[selLocation].vernLabel || '');
+              onRenderingsChange({ target: { value: e.target.value } });
+            }}
+            style={{ width: '100%', minHeight: '100px', border: '1px solid black', borderRadius: '0.5em', padding: '8px', fontSize: '12px', backgroundColor: localIsApproved ? 'white' : '#ffbf8f' }}
 
-          placeholder={inLang(uiStr.enterRenderings, lang)}
-          spellCheck={false}
-        />
+            placeholder={inLang(uiStr.enterRenderings, lang)}
+            spellCheck={false}
+          />
+        </div>
       </div>
     </div>
   );
