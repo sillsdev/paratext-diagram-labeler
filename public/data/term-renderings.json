@@ -333,7 +333,8 @@
   },
   "Σαμάρεια-1": {
     "renderings": "Saamariyaa",
-    "isGuessed": true
+    "isGuessed": true,
+    "denials": ["043004007"]
   },
   "Σαμάρεια-2": {
     "renderings": "Saamariyaa",

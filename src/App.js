@@ -187,7 +187,7 @@ const createLabel = (labelText, align = 'right', angle = 0, size = 3, status, is
 };
 
 // Bottom Pane component to display a scrollable list of verses referencing the termId
-function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, renderingsTextareaRef, lang }) {
+function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, renderingsTextareaRef, lang, termRenderings }) {
   const paneRef = React.useRef();
   const [selectedText, setSelectedText] = React.useState('');
 
@@ -272,11 +272,17 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
   }
 
   // Compute match tally
+  let deniedRefs = termRenderings.data[termId]?.denials || [];
+  if (deniedRefs.length !== 0) {
+    console.log(`Term "${termId}" has denied references:`, deniedRefs);
+  } else {
+    console.log(`compute match tally for ${termId}`, termRenderings);
+  }
   let matchCount = 0;
   const matchResults = refs.map(refId => {
     const verse = extractedVerses[refId] || '';
     const hasMatch = renderingList.some(r => r.test(verse));
-    if (hasMatch) matchCount++;
+    if (hasMatch || deniedRefs.includes(refId)) matchCount++;
     return hasMatch;
   });
 
@@ -336,14 +342,17 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
               refs.map((refId, i) => {
                 const verse = extractedVerses[refId] || '';
                 const hasMatch = matchResults[i];
+                const isDenied = deniedRefs.includes(refId);
                 return (
                   <tr key={refId} style={{ borderBottom: '1px solid #eee', verticalAlign: 'top' }}>
                     <td style={{ width: 38, textAlign: 'center', padding: '2px 0', verticalAlign: 'top', whiteSpace: 'nowrap' }}>
                       {hasMatch ? (
                         <FaCheckCircle color="#2ecc40" title="Match found" />
+                      ) : (isDenied ? (
+                        <FaCheckCircle color="#e70000" title="Denied" />
                       ) : (
                         <FaTimesCircle color="#e74c3c" title="No match" />
-                      )}
+                      ))}
                       <button
                         style={{
                           background: 'none',
@@ -979,6 +988,7 @@ useEffect(() => {
           onReplaceRendering={handleReplaceRendering}
           renderingsTextareaRef={renderingsTextareaRef}
           lang={lang} // <-- pass lang
+          termRenderings={termRenderings}
         />
       </div>
       <SettingsModal 
