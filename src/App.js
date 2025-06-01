@@ -187,7 +187,7 @@ const createLabel = (labelText, align = 'right', angle = 0, size = 3, status, is
 };
 
 // Bottom Pane component to display a scrollable list of verses referencing the termId
-function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, renderingsTextareaRef, lang, termRenderings }) {
+function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, renderingsTextareaRef, lang, termRenderings, setRenderings }) {
   const paneRef = React.useRef();
   const [selectedText, setSelectedText] = React.useState('');
 
@@ -286,6 +286,21 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
     return hasMatch;
   });
 
+  // --- Custom Denied Symbol: Green checkmark with small red X ---
+  function DeniedCheckmarkIcon() {
+    return (
+      <svg width="20" height="20" viewBox="0 0 20 20" style={{ verticalAlign: 'middle' }}>
+        {/* Green checkmark */}
+        <polyline points="4,11 9,16 16,5" fill="none" stroke="#2ecc40" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        {/* Small red X above left stroke */}
+        <g transform="translate(4,7)">
+          <line x1="-2" y1="-2" x2="2" y2="2" stroke="#e70000" strokeWidth="2" />
+          <line x1="2" y1="-2" x2="-2" y2="2" stroke="#e70000" strokeWidth="2" />
+        </g>
+      </svg>
+    );
+  }
+
   return (
     <div className="bottom-pane" ref={paneRef} style={{
       display: 'flex',
@@ -343,16 +358,31 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
                 const verse = extractedVerses[refId] || '';
                 const hasMatch = matchResults[i];
                 const isDenied = deniedRefs.includes(refId);
+                // --- Handler for toggling denial ---
+                const handleToggleDenied = () => {
+                  const data = termRenderings.data;
+                  let denials = Array.isArray(data[termId]?.denials) ? [...data[termId].denials] : [];
+                  if (isDenied) {
+                    denials = denials.filter(r => r !== refId);
+                  } else {
+                    if (!denials.includes(refId)) denials.push(refId);
+                  }
+                  if (!data[termId]) data[termId] = {};
+                  data[termId].denials = denials;
+                  // Force re-render by updating state (shallow copy)
+                  termRenderings.data = { ...data };
+                  if (typeof setRenderings === 'function') setRenderings(r => r + ''); // force update
+                };
                 return (
                   <tr key={refId} style={{ borderBottom: '1px solid #eee', verticalAlign: 'top' }}>
                     <td style={{ width: 38, textAlign: 'center', padding: '2px 0', verticalAlign: 'top', whiteSpace: 'nowrap' }}>
                       {hasMatch ? (
                         <FaCheckCircle color="#2ecc40" title="Match found" />
-                      ) : (isDenied ? (
-                        <FaCheckCircle color="#e70000" title="Denied" />
                       ) : (
-                        <FaTimesCircle color="#e74c3c" title="No match" />
-                      ))}
+                        <span style={{ cursor: 'pointer', display: 'inline-block' }} onClick={handleToggleDenied} title={isDenied ? 'Remove denial' : 'Mark as denied'}>
+                          {isDenied ? <DeniedCheckmarkIcon /> : <FaTimesCircle color="#e74c3c" title="No match (click to deny)" />}
+                        </span>
+                      )}
                       <button
                         style={{
                           background: 'none',
@@ -989,6 +1019,7 @@ useEffect(() => {
           renderingsTextareaRef={renderingsTextareaRef}
           lang={lang} // <-- pass lang
           termRenderings={termRenderings}
+          setRenderings={setRenderings}
         />
       </div>
       <SettingsModal 
