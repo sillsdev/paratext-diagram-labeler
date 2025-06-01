@@ -119,11 +119,12 @@ class TermRenderings {
   }
 
   getMatchTally(termId, refs) {
+    let anyDenials = false;
     try {
       const entry = this.data[termId];
       let renderingList = [];
       if (!entry) {
-        return [0, 0]; // No entry found, return zero tally
+        return [0, 0, false]; // No entry found, return zero tally
       }
       if (entry.renderings) {
         renderingList = entry.renderings
@@ -152,16 +153,25 @@ class TermRenderings {
       // console.log(`num refs: ${refs.length}`, renderingList);
       // Compute match tally
       let matchCount = 0;
+      let deniedRefs = entry?.denials || [];
+  
       refs.map(refId => {
         const verse = extractedVerses[refId] || '';
         const hasMatch = renderingList.some(r => r.test(verse));
-        if (hasMatch) matchCount++;
+        if (hasMatch) {
+          matchCount++;
+        } else {
+          if (deniedRefs.includes(refId)) {
+            anyDenials = true;
+            matchCount++;
+          }
+        }
         return hasMatch;
       });
-      return [matchCount, refs.length];
+      return [matchCount, refs.length, anyDenials];
     } catch (error) {
       console.error(`Error in getMatchTally for termId "${termId}":`, error);
-      return [0,0];
+      return [0,0, false];
     }
   }
   

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { FaCheckCircle, FaTimesCircle, FaPencilAlt } from 'react-icons/fa';
+import { FaPencilAlt } from 'react-icons/fa';
 import 'leaflet/dist/leaflet.css';
 import Leaf from 'leaflet';
 import './App.css';
@@ -9,8 +9,9 @@ import { getMapData } from './MapData';
 import extractedVerses from './data/extracted_verses.json';
 import supportedLanguages from './data/ui-languages.json';
 import uiStr from './data/ui-strings.json';
-
+import { CheckmarkIcon, DeniedCheckmarkIcon, CrossIcon } from './TermIcons';
 const mapBibTerms = new MapBibTerms();
+
 
 const statusValue = [
   { bkColor: "dimgray",   textColor: "white", sort: 1  }, // 0  - blank
@@ -103,16 +104,16 @@ function mapFromUsfm(usfm) {
 var map = mapFromUsfm(usfm);
 console.log('Map:', map);
 
-function frac([num, denom], show=true) {
+function frac([num, denom, anyDenials], show=true) {
   // console.log('Creating fraction:', num, denom, show);
   return (!denom || num===denom || !show) ? '' : ` <sup>${num}</sup>&frasl;<sub>${denom}</sub>`;
 }
 
-function fracJsx([num, denom]) {
+function fracJsx([num, denom, anyDenials]) {
   if (!denom) return '';
   return ( 
     <>
-      {num}/{denom} {num === denom && <FaCheckCircle color="#2ecc40" />}
+      {num}/{denom} {num === denom && ( anyDenials ? <DeniedCheckmarkIcon /> : <CheckmarkIcon />)}
     </>
   );
 }
@@ -275,11 +276,11 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
 
   // Compute match tally
   let deniedRefs = termRenderings.data[termId]?.denials || [];
-  if (deniedRefs.length !== 0) {
-    console.log(`Term "${termId}" has denied references:`, deniedRefs);
-  } else {
-    console.log(`compute match tally for ${termId}`, termRenderings);
-  }
+  // if (deniedRefs.length !== 0) {
+  //   console.log(`Term "${termId}" has denied references:`, deniedRefs);
+  // } else {
+  //   console.log(`compute match tally for ${termId}`, termRenderings);
+  // }
   let matchCount = 0;
   const matchResults = refs.map(refId => {
     const verse = extractedVerses[refId] || '';
@@ -287,21 +288,6 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
     if (hasMatch || deniedRefs.includes(refId)) matchCount++;
     return hasMatch;
   });
-
-  // --- Custom Denied Symbol: Green checkmark with small red X ---
-  function DeniedCheckmarkIcon() {
-    return (
-      <svg width="20" height="20" viewBox="0 0 20 20" style={{ verticalAlign: 'middle' }}>
-        {/* Green checkmark */}
-        <polyline points="4,11 9,16 16,5" fill="none" stroke="#2ecc40" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-        {/* Small red X above left stroke */}
-        <g transform="translate(4,7)">
-          <line x1="-2" y1="-2" x2="2" y2="2" stroke="#e70000" strokeWidth="2" />
-          <line x1="2" y1="-2" x2="-2" y2="2" stroke="#e70000" strokeWidth="2" />
-        </g>
-      </svg>
-    );
-  }
 
   return (
     <div className="bottom-pane" ref={paneRef} style={{
@@ -381,10 +367,10 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
                   <tr key={refId} style={{ borderBottom: '1px solid #eee', verticalAlign: 'top' }}>
                     <td style={{ width: 38, textAlign: 'center', padding: '2px 0', verticalAlign: 'top', whiteSpace: 'nowrap' }}>
                       {hasMatch ? (
-                        <FaCheckCircle color="#2ecc40" title="Match found" />
+                        <CheckmarkIcon title="Match found" />
                       ) : (
                         <span style={{ cursor: 'pointer', display: 'inline-block' }} onClick={handleToggleDenied} title={isDenied ? 'Remove denial' : 'Mark as denied'}>
-                          {isDenied ? <DeniedCheckmarkIcon /> : <FaTimesCircle color="#e74c3c" title="No match (click to deny)" />}
+                          {isDenied ? <DeniedCheckmarkIcon /> : <CrossIcon title="No match (Click to deny)" />}
                         </span>
                       )}
                       <button
