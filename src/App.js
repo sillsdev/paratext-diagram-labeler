@@ -190,6 +190,8 @@ const createLabel = (labelText, align = 'right', angle = 0, size = 3, status, is
 function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, renderingsTextareaRef, lang, termRenderings, setRenderings }) {
   const paneRef = React.useRef();
   const [selectedText, setSelectedText] = React.useState('');
+  // Add a local state to force re-render on denial toggle
+  const [denialToggle, setDenialToggle] = React.useState(false);
 
   React.useEffect(() => {
     function handleSelectionChange() {
@@ -355,10 +357,12 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
               <tr><td colSpan={2} style={{ color: '#888', textAlign: 'center', padding: 4 }}>{inLang(uiStr.noReferences, lang)}</td></tr>
             ) : (
               refs.map((refId, i) => {
+                // Reference denialToggle to force re-render
+                void denialToggle;
                 const verse = extractedVerses[refId] || '';
                 const hasMatch = matchResults[i];
                 const isDenied = deniedRefs.includes(refId);
-                // --- Handler for toggling denial ---
+                // Handler must be in this scope
                 const handleToggleDenied = () => {
                   const data = termRenderings.data;
                   let denials = Array.isArray(data[termId]?.denials) ? [...data[termId].denials] : [];
@@ -369,9 +373,9 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
                   }
                   if (!data[termId]) data[termId] = {};
                   data[termId].denials = denials;
-                  // Force re-render by updating state (shallow copy)
                   termRenderings.data = { ...data };
-                  if (typeof setRenderings === 'function') setRenderings(r => r + ''); // force update
+                  if (typeof setRenderings === 'function') setRenderings(r => r + '');
+                  setDenialToggle(t => !t);
                 };
                 return (
                   <tr key={refId} style={{ borderBottom: '1px solid #eee', verticalAlign: 'top' }}>
@@ -1509,6 +1513,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
             onRenderingsChange({ target: { value: e.target.value } });
           }}
           style={{ width: '100%', minHeight: '100px' }}
+
           placeholder={inLang(uiStr.enterRenderings, lang)}
           spellCheck={false}
         />
