@@ -1,5 +1,3 @@
-import extractedVerses from './data/extracted_verses.json';
-
 function wordMatchesRenderings(word, renderings, anchored = true) {
   let renderingList = [];
   renderingList = renderings
@@ -107,61 +105,8 @@ class TermRenderings {
     return wordMatchesRenderings(vernLabel, entry.renderings, false) ?  6 : 3; // "insufficient"
   }
 
-  getMatchTally(termId, refs) {
-    let anyDenials = false;
-    try {
-      const entry = this.data[termId];
-      let renderingList = [];
-      if (!entry) {
-        return [0, 0, false]; // No entry found, return zero tally
-      }
-      if (entry.renderings) {
-        renderingList = entry.renderings
-          .split(/\r?\n/)
-          .map(r => r.replace(/\(.*/g, '').replace(/.*\)/g, '')) // Remove content in parentheses (comments), even if only partially enclosed. (The user may be typing a comment.)
-          .map(r => r.trim())
-          .filter(r => r.length > 0)
-          .map(r => {
-            let pattern = r;
-            // Insert word boundary at start if not starting with *
-            if (!pattern.startsWith('*')) pattern = '\\b' + pattern;
-            // Insert word boundary at end if not ending with *
-            if (!pattern.endsWith('*')) pattern = pattern + '\\b';
-            // Replace * [with [\w-]* (word chars + dash)
-            pattern = pattern.replace(/\*/g, '[\\w-]*');
-            try {
-              return new RegExp(pattern, 'iu');
-            } catch (e) {
-              // Invalid regex, skip it
-              return null;
-            }
-          })
-          .filter(Boolean); // Remove nulls (invalid regexes)
-      }
-      // console.log(`getMatchTally("${termId}")`, entry.renderings);
-      // console.log(`num refs: ${refs.length}`, renderingList);
-      // Compute match tally
-      let matchCount = 0;
-      let deniedRefs = entry?.denials || [];
-  
-      refs.map(refId => {
-        const verse = extractedVerses[refId] || '';
-        const hasMatch = renderingList.some(r => r.test(verse));
-        if (hasMatch) {
-          matchCount++;
-        } else {
-          if (deniedRefs.includes(refId)) {
-            anyDenials = true;
-            matchCount++;
-          }
-        }
-        return hasMatch;
-      });
-      return [matchCount, refs.length, anyDenials];
-    } catch (error) {
-      console.error(`Error in getMatchTally for termId "${termId}":`, error);
-      return [0,0, false];
-    }
+  getEntry(termId) {
+    return this.data[termId];
   }
   
 

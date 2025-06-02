@@ -6,7 +6,6 @@ import './App.css';
 import TermRenderings from './TermRenderings';
 import MapBibTerms from './MapBibTerms';
 import { getMapData } from './MapData';
-import extractedVerses from './data/extracted_verses.json';
 import supportedLanguages from './data/ui-languages.json';
 import uiStr from './data/ui-strings.json';
 import { CheckmarkIcon, DeniedCheckmarkIcon, CrossIcon, WarningIcon } from './TermIcons';
@@ -50,6 +49,85 @@ var usfm = String.raw`\zdiagram-s |template="SMR1_185wbt - Philips Travels [sm]"
 \zlabel |key="judea" termid="Ἰουδαία" gloss="Judea" label="Yahudiyaa"\*
 \zlabel |key="gaza_nt" termid="Γάζα" gloss="Gaza" label="Gaajaa"\*
 \zdiagram-e \*`;
+
+function getMatchTally(entry, refs, extractedVerses) {
+  let anyDenials = false;
+  try {
+    let renderingList = [];
+    if (!entry) {
+      return [0, 0, false]; // No entry found, return zero tally
+    }
+    if (entry.renderings) {
+      renderingList = entry.renderings
+        .split(/\r?\n/)
+        .map(r => r.replace(/\(.*/g, '').replace(/.*\)/g, '')) // Remove content in parentheses (comments), even if only partially enclosed. (The user may be typing a comment.)
+        .map(r => r.trim())
+        .filter(r => r.length > 0)
+        .map(r => {
+          let pattern = r;
+          // Insert word boundary at start if not starting with *
+          if (!pattern.startsWith('*')) pattern = '\\b' + pattern;
+          // Insert word boundary at end if not ending with *
+          if (!pattern.endsWith('*')) pattern = pattern + '\\b';
+          // Replace * [with [\w-]* (word chars + dash)
+          pattern = pattern.replace(/\*/g, '[\\w-]*');
+          try {
+            return new RegExp(pattern, 'iu');
+          } catch (e) {
+            // Invalid regex, skip it
+            return null;
+          }
+        })
+        .filter(Boolean); // Remove nulls (invalid regexes)
+    }
+    // console.log(`getMatchTally("${termId}")`, entry.renderings);
+    // console.log(`num refs: ${refs.length}`, renderingList);
+    // Compute match tally
+    let matchCount = 0;
+    let deniedRefs = entry?.denials || [];
+
+    refs.map(refId => {
+      const verse = extractedVerses[refId] || '';
+      const hasMatch = renderingList.some(r => r.test(verse));
+      if (hasMatch) {
+        matchCount++;
+      } else {
+        if (deniedRefs.includes(refId)) {
+          anyDenials = true;
+          matchCount++;
+        }
+      }
+      return hasMatch;
+    });
+    return [matchCount, refs.length, anyDenials];
+  } catch (error) {
+    console.error(`Error in getMatchTally":`, error);
+    return [0,0, false];
+  }
+}
+
+function getFilteredVerses(folderPath, curRefs) {
+  const allVerses = require('./data/all_verses.json');
+  const fv = Object.fromEntries(
+  curRefs
+    .filter(ref => allVerses.hasOwnProperty(ref))
+    .map(ref => [ref, allVerses[ref]])
+  );
+  console.log('Project folder:', folderPath, 'Filtered verses:', Object.keys(fv).length, 'out of', curRefs.length, fv);
+  return fv;
+}
+  // Return the set of unique references needed for the labels in the current map.
+function getRefList(labels, mapBibTerms) {
+  const rl = Array.from(
+    new Set(
+      labels
+        .map(label => mapBibTerms.getRefs(label.termId)) 
+        .flat()
+    )
+  ).sort();
+  console.log('getRefList:', rl.length, 'refs for', labels.length, 'labels from mapBibTerms:', mapBibTerms);
+  return rl;
+}
 
 function encodeUTF16LE(str, bom = false) {
   if (bom) {  
@@ -235,7 +313,7 @@ const createLabel = (labelText, align = 'right', angle = 0, size = 3, status, is
 };
 
 // Bottom Pane component to display a scrollable list of verses referencing the termId
-function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, renderingsTextareaRef, lang, termRenderings, setRenderings, onDenialsChanged }) {
+function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, renderingsTextareaRef, lang, termRenderings, setRenderings, onDenialsChanged, extractedVerses }) {
   const paneRef = React.useRef();
   const [selectedText, setSelectedText] = React.useState('');
   // Add a local state to force re-render on denial toggle
@@ -502,10 +580,10 @@ function App() {
   // Add ref for vernacular input
   const vernacularInputRef = useRef(null);
   const renderingsTextareaRef = useRef();
-
+  const [extractedVerses, setExtractedVerses] = useState({});
   // Load term-renderings.json from selected project folder
   const loadTermRenderingsFromFolder = useCallback(async (folderPath) => {
-    if (!electronAPI) return;
+    if (!electronAPI || !folderPath) return;
     try {
       const data = await electronAPI.loadTermRenderings(folderPath);
       console.log('Loaded term renderings:', data);
@@ -520,6 +598,7 @@ function App() {
           const status = termRenderings.getStatus(loc.termId, loc.vernLabel);
           return { ...loc, status };
         });
+        setExtractedVerses(getFilteredVerses(folderPath, getRefList(initialLocations, mapBibTerms)));
         setLocations(initialLocations);
         if (initialLocations.length > 0) {
           setSelLocation(0); // Select first location directly
@@ -528,7 +607,7 @@ function App() {
         alert('Failed to load term-renderings.json: ' + (data && data.error));
       }
     } catch (e) {
-      alert('Failed to load term-renderings.json from project folder.');
+      alert(`Failed to load term-renderings.json from project folder <${folderPath}>.`, e);
     }
   }, [termRenderings, setLocations, setSelLocation]);
 
@@ -883,7 +962,7 @@ useEffect(() => {
             spellCheck={false}
             />
             </td>
-            <Frac value={termRenderings.getMatchTally(loc.termId, mapBibTerms.getRefs(loc.termId))} />
+            <Frac value={getMatchTally(termRenderings.getEntry(loc.termId), mapBibTerms.getRefs(loc.termId), extractedVerses)} />
             <td>
 
             <span
@@ -1094,6 +1173,7 @@ useEffect(() => {
               lang={lang}
               resetZoomFlag={resetZoomFlag} // Pass to MapPane
               setResetZoomFlag={setResetZoomFlag} // Pass setter to MapPane
+              extractedVerses={extractedVerses} // Pass extracted verses
             />
           )}
           {mapPaneView === 1 && (
@@ -1161,6 +1241,7 @@ useEffect(() => {
           termRenderings={termRenderings}
           setRenderings={setRenderings}
           onDenialsChanged={handleDenialsChanged}
+          extractedVerses={extractedVerses}
         />
       </div>
       <SettingsModal 
@@ -1177,7 +1258,7 @@ useEffect(() => {
   );
 }
 
-function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScale, mapDef, termRenderings, lang, resetZoomFlag, setResetZoomFlag }) {
+function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScale, mapDef, termRenderings, lang, resetZoomFlag, setResetZoomFlag, extractedVerses }) {
   // Log all props to check for identity changes
   console.log('[MapPane] render', {
     imageUrl,
@@ -1317,7 +1398,7 @@ function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScal
               loc.status,
               selLocation === loc.idx,
               labelScale,
-              frac(termRenderings.getMatchTally(loc.termId, mapBibTerms.getRefs(loc.termId)), true)
+              frac(getMatchTally(termRenderings.getEntry(loc.termId), mapBibTerms.getRefs(loc.termId), extractedVerses), true)
             )}
             eventHandlers={{ click: () => onSelectLocation(loc) }}
             tabIndex={0}
