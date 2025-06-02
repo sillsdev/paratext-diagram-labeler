@@ -1279,17 +1279,17 @@ useEffect(() => {
 
 function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScale, mapDef, termRenderings, lang, resetZoomFlag, setResetZoomFlag, extractedVerses }) {
   // Log all props to check for identity changes
-  console.log('[MapPane] render', {
-    imageUrl,
-    locations,
-    onSelectLocation,
-    selLocation,
-    labelScale,
-    mapDef,
-    termRenderings,
-    lang,
-  });
-  console.log('[MapPane] Component render/mount');
+  // console.log('[MapPane] render', {
+  //   imageUrl,
+  //   locations,
+  //   onSelectLocation,
+  //   selLocation,
+  //   labelScale,
+  //   mapDef,
+  //   termRenderings,
+  //   lang,
+  // });
+  // console.log('[MapPane] Component render/mount');
   const { MapContainer, ImageOverlay, Marker, ZoomControl, useMap } = require('react-leaflet');
   const imageHeight = mapDef.height;
   const imageWidth = mapDef.width;
@@ -1372,7 +1372,7 @@ function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScal
 
     // --- Reset zoom to fit bounds when resetZoomFlag changes ---
     useEffect(() => {
-      console.log('[MapPanController] Resetting zoom to fit bounds', resetZoomFlag);
+      // console.log('[MapPanController] Resetting zoom to fit bounds', resetZoomFlag);
       if (!map) return;
       if (resetZoomFlag) {
         map.fitBounds([[0, 0], [mapDef.height, mapDef.width]]);

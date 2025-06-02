@@ -90,11 +90,11 @@ class TermRenderings {
     
     if (vernLabel === mapForm ) {
       if (entry.isGuessed) return 5;  // "Guessed rendering not yet approved"
-      console.log(`Non-guessed Vernacular label matches map form: ${vernLabel}`);
+      // console.log(`Non-guessed Vernacular label matches map form: ${vernLabel}`);
       if (/\(@.+\)/.test(entry.renderings)) {   // If mapForm came from an explicit rendering (e.g., (@misradesh))
-        console.log(`Explicit map form: ${vernLabel}`);
+        // console.log(`Explicit map form: ${vernLabel}`);
         if (!wordMatchesRenderings(mapForm, entry.renderings, false)) {
-          console.log(`Explicit map form '${vernLabel}' does not match renderings.`);
+          // console.log(`Explicit map form '${vernLabel}' does not match renderings.`);
           return 7 ; // Explicit map form does not match rendering
         }
       }
