@@ -545,7 +545,7 @@ function App() {
   // Project folder state
   const [projectFolder, setProjectFolder] = useState('c:/My Paratext 9 Projects/Zezi');
   const [lang, setLang] = useState('en');
-  const [mapDef, setMapDef] = useState({template: map.template, fig: map.fig, mapView: map.mapView, imgFilename: map.imgFilename, width: map.width, height: map.height});
+  const [mapDef, setMapDef] = useState(map);
   const [locations, setLocations] = useState([]);
   const [selLocation, setSelLocation] = useState(0);
   const [mapWidth, setMapWidth] = useState(70);
@@ -575,7 +575,7 @@ function App() {
     if (!electronAPI || !folderPath) return;
     try {
       const data = await electronAPI.loadTermRenderings(folderPath);
-      console.log('Loaded term renderings:', data, 'from folder:', folderPath);
+      console.log('[IPC] Loaded term renderings:', data, 'from folder:', folderPath);
       if (data && !data.error) {
         termRenderings.setData(data);
         setProjectFolder(folderPath);
@@ -600,8 +600,8 @@ function App() {
   }, [termRenderings, setLocations, setSelLocation]);
 
   useEffect(() => {
-    if (!projectFolder || !locations.length) return;
-    const refs = getRefList(locations, mapBibTerms);
+    if (!projectFolder || !mapDef.labels?.length) return;
+    const refs = getRefList(mapDef.labels, mapBibTerms);
     if (!refs.length) {
       setExtractedVerses({});
       return;
@@ -609,12 +609,13 @@ function App() {
     electronAPI.getFilteredVerses(projectFolder, refs).then(verses => {
       if (verses && !verses.error) {
         setExtractedVerses(verses);
+        console.log('[IPC] getFilteredVerses:', Object.keys(verses).length, 'for refs:', refs.length);
       } else {
         setExtractedVerses({});
         alert('Failed to load all_verses.json: ' + (verses && verses.error));
       }
     });
-  }, [projectFolder, locations]);
+  }, [projectFolder, mapDef.template.labels]);
 
   // UI handler to select project folder
   const handleSelectProjectFolder = useCallback(async () => {
@@ -623,6 +624,7 @@ function App() {
       const folderPath = await electronAPI.selectProjectFolder();
       if (folderPath) {
         await loadTermRenderingsFromFolder(folderPath);
+        console.log('[IPC] loaded term renderings');
       }
     } catch (e) {
       alert('Failed to select project folder.');
@@ -825,7 +827,8 @@ function App() {
           mapView: true,
           imgFilename: foundTemplate.imgFilename,
           width: foundTemplate.width,
-          height: foundTemplate.height
+          height: foundTemplate.height,
+          labels: foundTemplate.labels
         });
         const newLocations = foundTemplate.labels.map(loc => {
           const status = termRenderings.getStatus(loc.termId, loc.vernLabel || '');
@@ -887,7 +890,7 @@ useEffect(() => {
             const status = termRenderings.getStatus(loc.termId, loc.vernLabel);
             return { ...loc, status };
             });
-          console.log('Initial locations with colors:', initialLocations);
+          console.log('Initial locations:', initialLocations);
           setLocations(initialLocations);
           if (initialLocations.length > 0) {
             handleSelectLocation(initialLocations[0]); // Auto-select first location
@@ -1169,6 +1172,7 @@ useEffect(() => {
 
   const handler = setTimeout(() => {
     electronAPI.saveTermRenderings(projectFolder, termRenderings.data);
+    console.log('[IPC] Auto-saved termRenderings to disk:', projectFolder);
     // Optionally: show a "saved" indicator here
     // console.log('Auto-saved termRenderings to disk');
   }, 2000); // 2 seconds after last change
