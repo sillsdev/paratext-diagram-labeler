@@ -67,17 +67,21 @@ function decodeFileAsString(arrayBuffer) {
   const uint8 = new Uint8Array(arrayBuffer);
   // UTF-8 BOM: EF BB BF
   if (uint8[0] === 0xEF && uint8[1] === 0xBB && uint8[2] === 0xBF) {
+    // console.log('Detected UTF-8 BOM');
     return new TextDecoder('utf-8').decode(uint8.subarray(3));
   }
   // UTF-16LE BOM: FF FE
   if (uint8[0] === 0xFF && uint8[1] === 0xFE) {
+    // console.log('Detected UTF-16LE BOM');
     return new TextDecoder('utf-16le').decode(uint8.subarray(2));
   }
   // UTF-16BE BOM: FE FF
   if (uint8[0] === 0xFE && uint8[1] === 0xFF) {
+    // console.log('Detected UTF-16BE BOM');
     return new TextDecoder('utf-16be').decode(uint8.subarray(2));
   }
   // Default: utf-8
+  // console.log('Assuming UTF-8 encoding');
   return new TextDecoder('utf-8').decode(uint8);
 }
 
@@ -622,24 +626,54 @@ function App() {
       const [fileHandle] = await window.showOpenFilePicker({
         types: [
           {
-            description: 'JPEG Images',
-            accept: { 'image/jpeg': ['.jpg', '.jpeg'] },
+            description: 'Sample Map Images',
+            accept: { 'image/jpeg': ['.jpg'] },
+          },
+          {
+            description: 'Data Merge Files',
+            accept: { 'text/plain': ['.txt'] },
           },
         ],
         multiple: false,
       });
       if (fileHandle) {
-        // Strip .jpg or .jpeg extension
-        const fileName = 'SMR1_' + fileHandle.name.replace(/\.(jpg|jpeg)$/i, '').replace(/\s*[@(].*/, '');
-        // Use the stripped filename as the template ID
-        const foundTemplate = getMapData(fileName, mapBibTerms);
+        let newTemplateBase = fileHandle.name.replace(/\..*$/, '').trim().replace(/^\w+_/, '').replace(/\s*[@(].*/, '');
+        const labels = {};
+        if (fileHandle.name.endsWith('.txt')) {
+          // Handle data merge file
+          const file = await fileHandle.getFile();
+          console.log('Reading data merge file:', file.name);
+          // const text = await file.text();
+          // console.log('Data merge file content:', text);
+          const fileText = decodeFileAsString(await file.arrayBuffer());
+          console.log('Imported data merge file:', file.name, ">" + fileText + "<");
+          // For now, assume it's an IDML data merge file
+          const lines = fileText.split('\n');
+          const mergeKeys = lines[0].split('\t');
+          const verns = lines[1].split('\t');
+          if (verns.length === mergeKeys.length) {
+            // Create labels from merge keys and vernaculars
+            for (let i = 0; i < mergeKeys.length; i++) {
+              labels[mergeKeys[i]] = verns[i];
+            }
+            console.log('Labels from data merge:', labels);
+          } else {
+            alert(inLang(uiStr.invalidDataMerge, lang));
+            return;
+          }
+        } else if (fileHandle.name.endsWith('.jpg') || fileHandle.name.endsWith('.jpeg')) {
+          // Handle map image file
+        } else {
+          return;
+        }
+        const foundTemplate = getMapData('SMR1_' + newTemplateBase, mapBibTerms);
         if (!foundTemplate) {
-          alert(inLang(uiStr.noTemplate, lang) + ": " + fileName);
+          alert(inLang(uiStr.noTemplate, lang) + ": " + newTemplateBase);
           return;
         }
         // Set mapDef and locations 
         setMapDef({
-          template: fileName,
+          template: 'SMR1_' + newTemplateBase,
           fig: foundTemplate.fig || '',
           mapView: true,
           imgFilename: foundTemplate.imgFilename,
@@ -651,16 +685,17 @@ function App() {
           return { ...loc, vernLabel: loc.vernLabel || '', status };
         });
 
-          const initialLocations = newLocations.map(loc => {
-          // If vernLabel is empty, use getMapForm
-          if (!loc.vernLabel) {
+        const initialLocations = newLocations.map(loc => {
+          if (labels[loc.mergeKey]) {
+            loc.vernLabel = labels[loc.mergeKey]; // Use label from data merge if available
+          } else if (!loc.vernLabel) {
             loc.vernLabel = termRenderings.getMapForm(loc.termId);
           }
 
           const status = termRenderings.getStatus(loc.termId, loc.vernLabel);
           return { ...loc, status };
-          });
-        console.log('Initial locations with colors:', initialLocations);
+        });
+        console.log('Initial locations:', initialLocations);
         setLocations(initialLocations);
         if (initialLocations.length > 0) {
           handleSelectLocation(initialLocations[0]); // Auto-select first location
@@ -672,6 +707,7 @@ function App() {
       }
     } catch (e) {
       // User cancelled or not supported
+      console.log('Map template browse cancelled or not supported:', e);
     }
   };
 
@@ -776,7 +812,7 @@ function App() {
             spellCheck={false}
             />
             </td>
-            <td style={{ textAlign: 'center', ...(isSelected ? { paddingTop: 4, paddingBottom: 4 } : {}) }} >{fracJsx(termRenderings.getMatchTally(loc.termId, mapBibTerms.getRefs(loc.termId)))}</td>
+            <td style={{ textAlign: 'center' }} >{fracJsx(termRenderings.getMatchTally(loc.termId, mapBibTerms.getRefs(loc.termId)))}</td>
             <td>
             <span
             style={{
@@ -877,7 +913,7 @@ function App() {
       updateMapFromUsfm();
     }
     // Optionally: do other OK logic here
-    alert('OK clicked');
+    alert("At this point, the USFM text would be saved to Paratext.");  // TODO: 
   }, [mapPaneView, updateMapFromUsfm]);
 
   // Add rendering from bottom pane selection
@@ -1253,10 +1289,10 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
 
   // --- Button Row Handlers (implement as needed) ---
   const handleCancel = () => {
-    alert('Cancel clicked');
+    alert('At this point, the USFM text would be discarded and not saved.'); // TODO:
   };
   const handleOk = () => {
-    alert('OK clicked');
+    alert("At this point, the USFM text would be saved to Paratext.");  // TODO: 
   };
   const handleSettings = () => {
     if (onShowSettings) onShowSettings();
@@ -1289,49 +1325,6 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
         const writable = await fileHandle.createWritable();
         await writable.write(encodeUTF16LE(data, true));
         await writable.close();
-      }
-    } catch (e) {
-      // User cancelled or not supported
-    }
-  };
-// Import from data merge file handler
-  const handleImportDataMerge = async () => {
-    try {
-      const [fileHandle] = await window.showOpenFilePicker({
-        types: [
-          {
-            description: 'IDML Data Merge Files',
-            accept: { 'text/plain': ['.idml.txt'] },
-          },
-        ],
-        multiple: false,
-      });
-      if (fileHandle) {
-        const file = await fileHandle.getFile();
-        const fileText = decodeFileAsString(await file.text());
-        // TODO: process fileText as needed
-        console.log('Imported IDML data merge file:', file.name, fileText.slice(0, 200));
-        if (fileHandle.name.endsWith('.idml.txt')) {
-          const lines = fileText.split('\n');
-          if (lines.length > 1) {
-            const mergeKeys = lines[0].split('\t');
-            const verns = lines[1].split('\t');
-            if (verns.length === mergeKeys.length) {
-              const newTemplateBase = fileHandle.name.replace(/\.idml\.txt$/, '').trim().replace(/^\w+_/, '');
-              let newUsfmText = `\\zdiagram-s |template="SMR_${newTemplateBase}"\\*\n\\fig |src="${newTemplateBase} @en.jpg" size="span"\\fig*\n`;
-              for (let i = 0; i < mergeKeys.length; i++) {
-                // [newTermId, newGloss] = lookupByKey(mergeKeys[i], mapBibTerms);
-                // newUsfmText += `\\zlabel |key="${mergeKeys[i]}" termid="${newTermId}" gloss="${newGloss}" label="${verns[i]}"\\*`;
-              }
-              newUsfmText += `\\zdiagram-e\\*`;
-              console.log('New USFM text from data merge:', newUsfmText);
-            } else {
-              alert(inLang(uiStr.invalidDataMerge, lang));
-            }
-          } else {
-            alert(inLang(uiStr.emptyDataMerge, lang));
-          }
-        }
       }
     } catch (e) {
       // User cancelled or not supported
@@ -1513,18 +1506,6 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
         >
           <span role="img" aria-label="browse" style={{ fontSize: '1.2em', color: '#fc6' }}>📂</span>
         </button>
-          <button
-            onClick={handleImportDataMerge}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginLeft: 1 }}
-            title="Import from data merge file"
-          >
-            {/* Import icon: two stacked files with an up arrow */}
-            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="4" y="4" width="10" height="14" rx="2" fill="#fff" stroke="#1976d2" strokeWidth="1.2"/>
-              <rect x="8" y="2" width="10" height="14" rx="2" fill="#e3f2fd" stroke="#1976d2" strokeWidth="1.2"/>
-              <path d="M13 15v-5m0 0l-2 2m2 -2l2 2" stroke="#1976d2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
           <button
             onClick={handleExportDataMerge}
             style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginLeft: 1 }}

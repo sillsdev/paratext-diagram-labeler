@@ -85,7 +85,7 @@
   "fileFormats": { "en": "File formats", "es": "Formatos de archivo", "fr": "Formats de fichier", "ne": "फाइल ढाँचाहरू" },
   "found": { "en": "Found", "es": "Encontrado", "fr": "Trouvé", "ne": "फेला पर्यो" },
   "gloss": { "en": "Gloss", "es": "Glosa", "fr": "Glossaire", "ne": "व्याख्या" },
-  "guessed": { "en": "Guessed", "es": "Adivinado", "fr": "Deviné", "ne": "अनुमान गरिएको" },
+  "guessed": { "en": "Guessed", "es": "Adivinadas", "fr": "Devinés", "ne": "अनुमान गरिएको" },
   "invalidUsfm": { "en": "Invalid USFM format. Changes not applied.", "es": "Formato USFM inválido. Cambios no aplicados.", "fr": "Format USFM invalide. Modifications non appliquées.", "ne": "अवैध USFM ढाँचा। परिवर्तनहरू लागू गरिएनन्।" },
   "label": { "en": "Label", "es": "Etiqueta", "fr": "Étiquette", "ne": "लेबल" },
   "labelSize": { "en": "Label Size", "es": "Tamaño de etiqueta", "fr": "Taille de l'étiquette", "ne": "लेबलको आकार" },
