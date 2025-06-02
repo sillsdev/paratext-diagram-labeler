@@ -589,17 +589,6 @@ function App() {
           const status = termRenderings.getStatus(loc.termId, loc.vernLabel);
           return { ...loc, status };
         });
-        // Get the list of refs needed for the current map
-        const curRefs = getRefList(initialLocations, mapBibTerms);
-        // Fetch filtered verses from main process
-        const verses = await electronAPI.getFilteredVerses(folderPath, curRefs);
-        if (verses && !verses.error) {
-          setExtractedVerses(verses);
-          console.log('Extracted verses:', Object.keys(verses).length, 'verses loaded');
-        } else {
-          setExtractedVerses({});
-          alert('Failed to load all_verses.json: ' + (verses && verses.error));
-        }
         setLocations(initialLocations);
         if (initialLocations.length > 0) {
           setSelLocation(0); // Select first location directly
@@ -611,6 +600,23 @@ function App() {
       console.log(`Failed to load term-renderings.json from project folder <${folderPath}>.`, e);
     }
   }, [termRenderings, setLocations, setSelLocation]);
+
+  useEffect(() => {
+    if (!projectFolder || !locations.length) return;
+    const refs = getRefList(locations, mapBibTerms);
+    if (!refs.length) {
+      setExtractedVerses({});
+      return;
+    }
+    electronAPI.getFilteredVerses(projectFolder, refs).then(verses => {
+      if (verses && !verses.error) {
+        setExtractedVerses(verses);
+      } else {
+        setExtractedVerses({});
+        alert('Failed to load all_verses.json: ' + (verses && verses.error));
+      }
+    });
+  }, [projectFolder, locations]);
 
   // UI handler to select project folder
   const handleSelectProjectFolder = useCallback(async () => {
