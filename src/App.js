@@ -106,8 +106,6 @@ function getMatchTally(entry, refs, extractedVerses) {
   }
 }
 
-// Remove getFilteredVerses, since it is now handled in the main process via IPC.
-
 function getRefList(labels, mapBibTerms) {
   const rl = Array.from(
     new Set(
@@ -1163,6 +1161,20 @@ useEffect(() => {
       return { ...loc, status };
     }));
   }, [termRenderings]);
+
+  // Debounced save of termRenderings.data to disk via IPC
+useEffect(() => {
+  if (!projectFolder || !electronAPI) return;
+  if (!termRenderings.data || Object.keys(termRenderings.data).length === 0) return;
+
+  const handler = setTimeout(() => {
+    electronAPI.saveTermRenderings(projectFolder, termRenderings.data);
+    // Optionally: show a "saved" indicator here
+    // console.log('Auto-saved termRenderings to disk');
+  }, 2000); // 2 seconds after last change
+
+  return () => clearTimeout(handler);
+}, [termRenderings.data, projectFolder]);
 
   return (
     <div className="app-container">

@@ -34,6 +34,16 @@ ipcMain.handle('load-term-renderings', async (event, projectFolder) => {
   }
 });
 
+ipcMain.handle('save-term-renderings', async (event, projectFolder, data) => {
+  try {
+    const filePath = path.join(projectFolder, 'term-renderings.json');
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
+    return { success: true };
+  } catch (e) {
+    return { error: e.message };
+  }
+});
+
 ipcMain.handle('select-project-folder', async (event) => {
   const result = await dialog.showOpenDialog({
     properties: ['openDirectory'],
