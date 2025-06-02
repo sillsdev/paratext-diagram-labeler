@@ -106,17 +106,8 @@ function getMatchTally(entry, refs, extractedVerses) {
   }
 }
 
-function getFilteredVerses(folderPath, curRefs) {
-  const allVerses = require('./data/all_verses.json');
-  const fv = Object.fromEntries(
-  curRefs
-    .filter(ref => allVerses.hasOwnProperty(ref))
-    .map(ref => [ref, allVerses[ref]])
-  );
-  console.log('Project folder:', folderPath, 'Filtered verses:', Object.keys(fv).length, 'out of', curRefs.length, fv);
-  return fv;
-}
-  // Return the set of unique references needed for the labels in the current map.
+// Remove getFilteredVerses, since it is now handled in the main process via IPC.
+
 function getRefList(labels, mapBibTerms) {
   const rl = Array.from(
     new Set(
@@ -586,7 +577,7 @@ function App() {
     if (!electronAPI || !folderPath) return;
     try {
       const data = await electronAPI.loadTermRenderings(folderPath);
-      console.log('Loaded term renderings:', data);
+      console.log('Loaded term renderings:', data, 'from folder:', folderPath);
       if (data && !data.error) {
         termRenderings.setData(data);
         setProjectFolder(folderPath);
@@ -598,7 +589,17 @@ function App() {
           const status = termRenderings.getStatus(loc.termId, loc.vernLabel);
           return { ...loc, status };
         });
-        setExtractedVerses(getFilteredVerses(folderPath, getRefList(initialLocations, mapBibTerms)));
+        // Get the list of refs needed for the current map
+        const curRefs = getRefList(initialLocations, mapBibTerms);
+        // Fetch filtered verses from main process
+        const verses = await electronAPI.getFilteredVerses(folderPath, curRefs);
+        if (verses && !verses.error) {
+          setExtractedVerses(verses);
+          console.log('Extracted verses:', Object.keys(verses).length, 'verses loaded');
+        } else {
+          setExtractedVerses({});
+          alert('Failed to load all_verses.json: ' + (verses && verses.error));
+        }
         setLocations(initialLocations);
         if (initialLocations.length > 0) {
           setSelLocation(0); // Select first location directly
@@ -607,7 +608,7 @@ function App() {
         alert('Failed to load term-renderings.json: ' + (data && data.error));
       }
     } catch (e) {
-      alert(`Failed to load term-renderings.json from project folder <${folderPath}>.`, e);
+      console.log(`Failed to load term-renderings.json from project folder <${folderPath}>.`, e);
     }
   }, [termRenderings, setLocations, setSelLocation]);
 

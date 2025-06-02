@@ -44,6 +44,19 @@ ipcMain.handle('select-project-folder', async (event) => {
   return result.filePaths[0];
 });
 
+ipcMain.handle('get-filtered-verses', async (event, projectFolder, curRefs) => {
+  try {
+    const filePath = path.join(projectFolder, 'all_verses.json');
+    const allVerses = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    const filtered = Object.fromEntries(
+      curRefs.filter(ref => allVerses.hasOwnProperty(ref)).map(ref => [ref, allVerses[ref]])
+    );
+    return filtered;
+  } catch (e) {
+    return { error: e.message };
+  }
+});
+
 app.whenReady().then(createWindow);
 
 app.on('window-all-closed', () => {
