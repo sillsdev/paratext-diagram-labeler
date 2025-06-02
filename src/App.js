@@ -12,6 +12,7 @@ import uiStr from './data/ui-strings.json';
 import { CheckmarkIcon, DeniedCheckmarkIcon, CrossIcon, WarningIcon } from './TermIcons';
 // const { dialog } = window.require('@electron/remote');
 const mapBibTerms = new MapBibTerms();
+const electronAPI = window.electronAPI;
 
 
 const statusValue = [
@@ -474,7 +475,8 @@ function usfmFromMap(map, lang) {
 }
 
 function App() {
-  // --- Language state ---
+  // Project folder state
+  const [projectFolder, setProjectFolder] = useState('c:/My Paratext 9 Projects/Zezi');
   const [lang, setLang] = useState('en');
   const [mapDef, setMapDef] = useState({template: map.template, fig: map.fig, mapView: map.mapView, imgFilename: map.imgFilename, width: map.width, height: map.height});
   const [locations, setLocations] = useState([]);
@@ -494,13 +496,64 @@ function App() {
   const [resetZoomFlag, setResetZoomFlag] = useState(false);
   const isDraggingVertical = useRef(false);
   const isDraggingHorizontal = useRef(false);
-  const termRenderings = useMemo(() => new TermRenderings('/data/term-renderings.json'), []);
+  // Initialize TermRenderings without a file path
+  const termRenderings = useMemo(() => new TermRenderings(), []);
 
   // Add ref for vernacular input
   const vernacularInputRef = useRef(null);
   const renderingsTextareaRef = useRef();
-  // --- Add mapRef for controlling Leaflet map ---
-  // const mapRef = useRef(null); // REMOVE this line, no longer needed
+
+  // Load term-renderings.json from selected project folder
+  const loadTermRenderingsFromFolder = useCallback(async (folderPath) => {
+    if (!electronAPI) return;
+    try {
+      const data = await electronAPI.loadTermRenderings(folderPath);
+      console.log('Loaded term renderings:', data);
+      if (data && !data.error) {
+        termRenderings.setData(data);
+        setProjectFolder(folderPath);
+        // Re-init locations from map and new termRenderings
+        const initialLocations = map.labels.map(loc => {
+          if (!loc.vernLabel) {
+            loc.vernLabel = termRenderings.getMapForm(loc.termId);
+          }
+          const status = termRenderings.getStatus(loc.termId, loc.vernLabel);
+          return { ...loc, status };
+        });
+        setLocations(initialLocations);
+        if (initialLocations.length > 0) {
+          setSelLocation(0); // Select first location directly
+        }
+      } else {
+        alert('Failed to load term-renderings.json: ' + (data && data.error));
+      }
+    } catch (e) {
+      alert('Failed to load term-renderings.json from project folder.');
+    }
+  }, [termRenderings, setLocations, setSelLocation]);
+
+  // UI handler to select project folder
+  const handleSelectProjectFolder = useCallback(async () => {
+    if (!electronAPI) return;
+    try {
+      const folderPath = await electronAPI.selectProjectFolder();
+      if (folderPath) {
+        await loadTermRenderingsFromFolder(folderPath);
+      }
+    } catch (e) {
+      alert('Failed to select project folder.');
+    }
+  }, [loadTermRenderingsFromFolder]);
+
+  // On first load, prompt for project folder if not set
+  useEffect(() => {
+    if (!projectFolder && electronAPI) {
+      handleSelectProjectFolder();
+    }
+    // eslint-disable-next-line
+  }, [projectFolder]);
+
+  // ...existing code...
 
   const handleSelectLocation = useCallback((location) => {
     console.log('Selected location:', location);
@@ -721,7 +774,14 @@ function App() {
     }
   };
 
-  useEffect(() => {
+useEffect(() => {
+  if (projectFolder) {
+    loadTermRenderingsFromFolder(projectFolder);
+  }
+  // eslint-disable-next-line
+}, [projectFolder]);
+
+useEffect(() => {
     // Initialize locations only when termRenderings.data is loaded
     const checkData = () => {
       if (Object.keys(termRenderings.data).length === 0) {
@@ -1020,6 +1080,12 @@ useEffect(() => {
 
   return (
     <div className="app-container">
+      {/* Project folder selector UI */}
+      <div style={{ padding: '6px 12px', background: '#f0f0f0', borderBottom: '1px solid #ccc', display: 'flex', alignItems: 'center', gap: 12 }}>
+        <span style={{ fontWeight: 'bold' }}>Project Folder:</span>
+        <span style={{ color: projectFolder ? '#333' : '#888', fontFamily: 'monospace', fontSize: 13, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{projectFolder || '(none selected)'}</span>
+        <button onClick={handleSelectProjectFolder} style={{ padding: '2px 10px', borderRadius: 4, border: '1px solid #888', background: '#e3f2fd', cursor: 'pointer' }}>Change…</button>
+      </div>
       <div className="top-section" style={{ flex: `0 0 ${topHeight}%` }}>
         <div className="map-pane" style={{ flex: `0 0 ${mapWidth}%` }}>
           {mapPaneView === 0 && map.mapView && (
@@ -1481,7 +1547,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
           </button>
           <button onClick={handleCancel} style={{ marginRight: 8, height: 32, minWidth: 80, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{inLang(uiStr.cancel, lang)}</button>
           <button onClick={handleOk} style={{ height: 32, minWidth: 80, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{inLang(uiStr.ok, lang)}</button>
-          <div style={{ flex: 1 }} />
+          <div style={{ flex:  1 }} />
           <button
             onClick={handleSettings}
             style={{
@@ -1495,14 +1561,15 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
               alignSelf: 'flex-start',
             }}
             title={inLang(uiStr.uiSettings, lang)}
+         
           >
-            <span role="img">&#9881;</span>
+            <span role="img" aria-label="Settings">&#9881;</span>
           </button>
         </div>
       )}
 
       {/* Template info/browse group */}
-      <div className="details-group-frame" style={{ border: '1px solid #ccc', borderRadius: 6, marginBottom: 16, padding: 8, background: '#f9f9f9', display: 'flex', alignItems: 'center', gap: '12px' }}>
+           <div className="details-group-frame" style={{ border: '1px solid #ccc', borderRadius: 6, marginBottom: 16, padding: 8, background: '#f9f9f9', display: 'flex', alignItems: 'center', gap: '12px' }}>
         <span style={{ fontWeight: 'bold', color: 'black', fontSize: '0.8em' }}>{templateName}</span>
         <button
           title={inLang(uiStr.templateInfo, lang)}

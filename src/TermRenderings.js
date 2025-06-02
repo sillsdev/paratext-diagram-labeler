@@ -28,23 +28,12 @@ function wordMatchesRenderings(word, renderings, anchored = true) {
 }
 
 class TermRenderings {
-  constructor(jsonFile) {
+  constructor() {
     this.data = {};
-    this.loadData(jsonFile);
   }
 
-  loadData(jsonFile) {
-    fetch(jsonFile)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(data => {
-        this.data = data;
-      })
-      .catch(error => console.error('Failed to load term renderings:', error));
+  setData(data) {
+    this.data = data;
   }
 
   getMapForm(termId) {
