@@ -37,4 +37,15 @@ function DeniedCheckmarkIcon() {
   );
 }
 
-export { CheckmarkIcon, CrossIcon, DeniedCheckmarkIcon };
+function WarningIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+      <g transform="scale(0.8)">
+        <polygon points="10,2 18,18 2,18" fill="#FF4500"/>
+        <text x="50%" y="60%" text-anchor="middle" fill="#FFFFFF" font-size="12" font-weight="bold" dy=".3em">!</text>
+        <circle cx="50%" cy="80%" r="1.5" fill="#FFFFFF"/>
+      </g>
+    </svg>
+  )
+}
+export { CheckmarkIcon, CrossIcon, DeniedCheckmarkIcon, WarningIcon };

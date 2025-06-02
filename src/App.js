@@ -9,7 +9,7 @@ import { getMapData } from './MapData';
 import extractedVerses from './data/extracted_verses.json';
 import supportedLanguages from './data/ui-languages.json';
 import uiStr from './data/ui-strings.json';
-import { CheckmarkIcon, DeniedCheckmarkIcon, CrossIcon } from './TermIcons';
+import { CheckmarkIcon, DeniedCheckmarkIcon, CrossIcon, WarningIcon } from './TermIcons';
 // const { dialog } = window.require('@electron/remote');
 const mapBibTerms = new MapBibTerms();
 
@@ -145,14 +145,24 @@ function frac([num, denom, anyDenials], show=true) {
   return (!denom || num===denom || !show) ? '' : ` <sup>${num}</sup>&frasl;<sub>${denom}</sub>`;
 }
 
-function fracJsx([num, denom, anyDenials]) {
-  if (!denom) return '';
-  return ( 
+function Frac({ value }) {
+  if (!value || !Array.isArray(value)) return (<><td></td><td></td></>);
+  const [num, denom, anyDenials] = value;
+  if (!denom) return (<><td></td><td></td></>);
+  let icon;
+  if (num === denom) {
+    icon = anyDenials ? <DeniedCheckmarkIcon /> : <CheckmarkIcon />;
+  } else {
+    icon = <WarningIcon />;
+  }
+  return (
     <>
-      {num}/{denom} {num === denom && ( anyDenials ? <DeniedCheckmarkIcon /> : <CheckmarkIcon />)}
+      <td style={{ textAlign: 'center' }}>{num}/{denom}</td>
+      <td style={{ textAlign: 'left' }}>{icon}</td>
     </>
   );
 }
+
 
 function inLang(prop, lang = 'en') {
   if (!prop) return '';
@@ -769,7 +779,8 @@ function App() {
         <tr style={{ background: '#444', color: '#e0e0e0' }}>
           <th>{inLang(uiStr.gloss, lang)}</th>
           <th>{inLang(uiStr.label, lang)}</th>
-          <th style={{textAlign: 'center'}}>{inLang(uiStr.found, lang)}</th>
+          <th style={{textAlign: 'center'}}>{inLang(uiStr.tally, lang)}</th>
+          <th style={{textAlign: 'left'}}>{inLang(uiStr.found, lang)}</th>
           <th>{inLang(uiStr.status, lang)}</th>
         </tr>
         </thead>
@@ -812,8 +823,9 @@ function App() {
             spellCheck={false}
             />
             </td>
-            <td style={{ textAlign: 'center' }} >{fracJsx(termRenderings.getMatchTally(loc.termId, mapBibTerms.getRefs(loc.termId)))}</td>
+            <Frac value={termRenderings.getMatchTally(loc.termId, mapBibTerms.getRefs(loc.termId))} />
             <td>
+
             <span
             style={{
             border: '1px solid black',
@@ -1343,7 +1355,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
         <button
           onClick={handleExportDataMerge}
           style={{ marginLeft: 16, width: 40, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#e3f2fd', border: '1px solid #1976d2', borderRadius: 4, cursor: 'pointer' }}
-          title="Export to data merge file"
+          title={inLang(uiStr.export, lang)}
         >
           {/* Export icon: two stacked files with an arrow */}
           <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1509,7 +1521,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
           <button
             onClick={handleExportDataMerge}
             style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginLeft: 1 }}
-            title="Export to data merge file"
+            title={inLang(uiStr.export, lang)}
           >
             {/* Export icon: two stacked files with a down arrow */}
             <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
