@@ -23,11 +23,32 @@ const statusValue = [
   { bkColor: "crimson", textColor: "white", sort: 6  },  // 6 - Rendering shorter than label
   { bkColor: "#80FF00", textColor: "black", sort: 7  },  // 7 - Bad explicit form : #80FF00
 ];
+const bookNames = 'GEN,EXO,LEV,NUM,DEU,JOS,JDG,RUT,1SA,2SA,1KI,2KI,1CH,2CH,EZR,NEH,EST,JOB,PSA,PRO,ECC,SNG,ISA,JER,LAM,EZK,DAN,HOS,JOL,AMO,OBA,JON,MIC,NAM,HAB,ZEP,HAG,ZEC,MAL,MAT,MRK,LUK,JHN,ACT,ROM,1CO,2CO,GAL,EPH,PHP,COL,1TH,2TH,1TI,2TI,TIT,PHM,HEB,JAS,1PE,2PE,1JN,2JN,3JN,JUD,REV,TOB,JDT,ESG,WIS,SIR,BAR,LJE,S3Y,SUS,BEL,1MA,2MA,3MA,4MA,1ES,2ES,MAN,PS2,ODA,PSS';
 
 const electronAPI = window.electronAPI;
 const mapBibTerms = new MapBibTerms();
 
 var usfm = INITIAL_USFM;
+var map = mapFromUsfm(usfm);
+console.log('Map:', map);
+
+// Fix Leaflet default marker icons (optional, not needed with custom SVG icons)
+delete Leaf.Icon.Default.prototype._getIconUrl;
+Leaf.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+});
+
+
+function prettyRef(ref) {
+  // ref is a 9 digit string. First 3 digits are the book code, next 3 are chapter, last 3 are verse.
+  const bookCode = parseInt(ref.slice(0, 3), 10) - 1;
+  const chapter = parseInt(ref.slice(3,  6), 10);    
+  const verse = parseInt(ref.slice(6, 9), 10);
+  const bookName = bookNames.slice(bookCode*4, bookCode*4+3); // Use the top-level bookNames constant, 4 chars per code.
+  return `${bookName} ${chapter}:${verse}`;
+}
 
 function getMatchTally(entry, refs, extractedVerses) {
   let anyDenials = false;
@@ -138,7 +159,6 @@ function mapFromUsfm(usfm) {
   const figMatch = usfm.match(/\\fig[\s\S]*?\\fig\*/);
   const templateMatch = usfm.match(/\\zdiagram-s\s+\|template="([^"]*)"/);
   
-  // 
   let mapDefData;
   try {
     mapDefData = getMapData(templateMatch[1], mapBibTerms);
@@ -185,9 +205,6 @@ function mapFromUsfm(usfm) {
   return mapDefData;
 }
 
-var map = mapFromUsfm(usfm);
-console.log('Map:', map);
-
 function frac([num, denom, anyDenials], show=true) {
   // console.log('Creating fraction:', num, denom, show);
   return (!denom || num===denom || !show) ? '' : ` <sup>${num}</sup>&frasl;<sub>${denom}</sub>`;
@@ -217,14 +234,6 @@ function inLang(prop, lang = 'en') {
   if (typeof prop === 'string') return prop;
   return prop[lang] || prop['en'] || Object.values(prop)[0] || '';
 }
-
-// Fix Leaflet default marker icons (optional, not needed with custom SVG icons)
-delete Leaf.Icon.Default.prototype._getIconUrl;
-Leaf.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-});
 
 // Function to create a map label
 const createLabel = (labelText, align = 'right', angle = 0, size = 3, status, isSelected = false, labelScale = 1, extra) => {
@@ -264,7 +273,7 @@ const createLabel = (labelText, align = 'right', angle = 0, size = 3, status, is
   const spanStyle = baseStyle.join(' ');
   const html = `
     <div style="display: flex; align-items: center;${isCenter ? ' justify-content: center;' : ''} width: 2em; height: 2em; position: relative;">
-      <span class="${isSelected ? 'selected-label' : ''}" style="${spanStyle}">${labelText}${extra}</span>
+      <span class="${isSelected ? 'selected-label' : 'unselected-label'}" style="${spanStyle}">${labelText}${extra}</span>
     </div>
   `;
   // TODO: Insert fraction like frac(num, denom) if needed
@@ -1855,18 +1864,5 @@ const SettingsModal = ({ open, onClose, labelScale, setLabelScale, lang, setLang
        </div>
   );
 };
-
-const bookNames = 'GEN,EXO,LEV,NUM,DEU,JOS,JDG,RUT,1SA,2SA,1KI,2KI,1CH,2CH,EZR,NEH,EST,JOB,PSA,PRO,ECC,SNG,ISA,JER,LAM,EZK,DAN,HOS,JOL,AMO,OBA,JON,MIC,NAM,HAB,ZEP,HAG,ZEC,MAL,MAT,MRK,LUK,JHN,ACT,ROM,1CO,2CO,GAL,EPH,PHP,COL,1TH,2TH,1TI,2TI,TIT,PHM,HEB,JAS,1PE,2PE,1JN,2JN,3JN,JUD,REV,TOB,JDT,ESG,WIS,SIR,BAR,LJE,S3Y,SUS,BEL,1MA,2MA,3MA,4MA,1ES,2ES,MAN,PS2,ODA,PSS';
-
-function prettyRef(ref) {
-  // ref is a 9 digit string. First 3 digits are the book code, next 3 are chapter, last 3 are verse.
- 
-  // Use the top-level bookNames variable
-  const bookCode = parseInt(ref.slice(0, 3), 10) - 1;
-  const chapter = parseInt(ref.slice(3,  6), 10);    
-  const verse = parseInt(ref.slice(6, 9), 10);
-  const bookName = bookNames.slice(bookCode*4, bookCode*4+3);
-  return `${bookName} ${chapter}:${verse}`;
-}
 
 export default App;
