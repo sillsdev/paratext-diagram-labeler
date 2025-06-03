@@ -1,0 +1,411 @@
+import React, { useState, useEffect, useMemo } from 'react';
+import './App.css';
+import uiStr from './data/ui-strings.json';
+import { MAP_VIEW, TABLE_VIEW, USFM_VIEW, STATUS_NO_RENDERINGS, STATUS_GUESSED } from './constants.js';
+import { collectionTerms } from './CollectionTerms.js';
+import { getMapData } from './MapData';
+import { inLang, statusValue, getStatus } from './Utils.js';
+
+export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings, mapDef, onBrowseMapTemplate, vernacularInputRef, renderingsTextareaRef, lang, setTermRenderings }) {
+  const [vernacular, setVernacular] = useState(locations[selLocation]?.vernLabel || '');
+  const [localIsApproved, setLocalIsApproved] = useState(isApproved);
+  const [localRenderings, setLocalRenderings] = useState(renderings);
+  const [showTemplateInfo, setShowTemplateInfo] = useState(false);
+  const templateData = getMapData(mapDef.template, collectionTerms) || {};
+
+  useEffect(() => {
+    setVernacular(locations[selLocation]?.vernLabel || '');
+    setLocalIsApproved(isApproved);
+    setLocalRenderings(renderings);
+  }, [selLocation, isApproved, renderings, locations]);
+
+  const handleVernChange = (e) => {
+    const newVernacular = e.target.value;
+    setVernacular(newVernacular); // Update state immediately
+    onUpdateVernacular(locations[selLocation].termId, newVernacular);
+  };
+
+  // Tally status counts for all locations
+  const statusTallies = useMemo(() => {
+    const tally = {};
+    if (locations && locations.length > 0) {
+      locations.forEach(loc => {
+        const status = getStatus(termRenderings,  loc.termId, loc.vernLabel);
+        if (!tally[status]) tally[status] = 0;
+        tally[status]++;
+      });
+    }
+    return tally;
+  }, [locations, termRenderings]);
+
+  // --- Button Row Handlers (implement as needed) ---
+  const handleCancel = () => {
+    alert('At this point, the USFM text would be discarded and not saved.'); // TODO:
+  };
+  const handleOk = () => {
+    alert("At this point, the USFM text would be saved to Paratext.");  // TODO: 
+  };
+  const handleSettings = () => {
+    if (onShowSettings) onShowSettings();
+  };
+
+  // --- Template info/browse group ---
+  // Access the template name from the global map object
+  const templateName = mapDef.template || '(' + inLang({en: 'no template'}, lang) + ')';
+
+  // Export to data merge file handler
+  const handleExportDataMerge = async () => {
+    try {
+      // Prepare IDML data merge content
+      const dataMergeHeader = locations.map(loc => loc.mergeKey).join('\t');
+      const dataMergeContent = locations.map(loc => loc.vernLabel || '').join('\t');
+      const data =  dataMergeHeader + '\n' + dataMergeContent + '\n';
+      
+      // Write to file using the browser file system API
+      const fileHandle = await window.showSaveFilePicker({
+        suggestedName: templateName + '.idml.txt',
+        startIn: 'documents',
+        types: [
+          {
+            description: 'IDML Data Merge Files',
+            accept: { 'text/plain': ['.idml.txt'] },
+          },
+        ],
+      });
+      if (fileHandle) {
+        const writable = await fileHandle.createWritable();
+        await writable.write(encodeUTF16LE(data, true));
+        await writable.close();
+      }
+    } catch (e) {
+      // User cancelled or not supported
+    }
+  };
+
+  // Only show the button row if in USFM view
+  if (mapPaneView === USFM_VIEW) {
+    return (
+      <div>
+      {/* Button Row */}
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
+        <button onClick={onSwitchView} style={{ marginRight: 60 }}>Switch view</button>
+        <button onClick={handleCancel} style={{ marginRight: 8, width:80 }}>{inLang(uiStr.cancel, lang)}</button>
+        <button onClick={handleOk}  style={{ width:80 }}>{inLang(uiStr.ok, lang)}</button>
+        <button
+          onClick={handleExportDataMerge}
+          style={{ marginLeft: 16, width: 40, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#e3f2fd', border: '1px solid #1976d2', borderRadius: 4, cursor: 'pointer' }}
+          title={inLang(uiStr.export, lang)}
+        >
+          {/* Export icon: two stacked files with an arrow */}
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4" y="4" width="10" height="14" rx="2" fill="#fff" stroke="#1976d2" strokeWidth="1.2"/>
+            <rect x="8" y="2" width="10" height="14" rx="2" fill="#e3f2fd" stroke="#1976d2" strokeWidth="1.2"/>
+            <path d="M13 10v5m0 0l-2-2m2 2l2-2" stroke="#1976d2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
+        <div style={{ flex: 1 }} />
+        <button
+        onClick={handleSettings}
+        style={{
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          fontSize: 22,
+          marginLeft: 8,
+          color: '#555',
+          padding: 4,
+          alignSelf: 'flex-start'
+        }}
+        aria-label="Settings"
+        >
+        <span role="img" aria-label="Settings">&#9881;</span>
+        </button>
+      </div>
+      </div>
+    );
+  }
+
+  // Always compute status and color from latest data
+  const status = getStatus(termRenderings,  locations[selLocation]?.termId, vernacular);
+
+  // Handler for Add to renderings button
+  const handleAddToRenderings = () => {
+    onRenderingsChange({ target: { value: vernacular } });
+    if (termRenderings[locations[selLocation].termId]) {
+      termRenderings[locations[selLocation].termId].isGuessed = false;
+    }
+    onApprovedChange({ target: { checked: true } });
+  };
+
+  let transliteration = collectionTerms.getTransliteration(locations[selLocation]?.termId);
+  if (transliteration) { transliteration = ` /${transliteration}/`; }
+
+  return (
+    <div>
+      {/* Button Row */}
+      {mapPaneView !== USFM_VIEW && (
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
+          {/* Icon view buttons */}
+          <button
+            onClick={() => onSetView(0)}
+            disabled={!mapDef.mapView}
+            style={{
+              marginRight: 4,
+              background: mapPaneView === MAP_VIEW ? '#d0eaff' : undefined,
+              border: mapPaneView === MAP_VIEW ? '2px inset #2196f3' : undefined,
+              opacity: mapDef.mapView ? 1 : 0.5,
+              padding: '4px 8px',
+              borderRadius: 4,
+              height: 32,
+              minWidth: 32,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            title={inLang(uiStr.mapView, lang)}
+          >
+            {/* Marker icon (SVG) */}
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 2C6.686 2 4 4.686 4 8c0 3.314 4.09 8.36 5.29 9.79a1 1 0 0 0 1.42 0C11.91 16.36 16 11.314 16 8c0-3.314-2.686-6-6-6zm0 8.5A2.5 2.5 0 1 1 10 5a2.5 2.5 0 0 1 0 5.5z" fill="#2196f3" stroke="#1976d2" strokeWidth="1.2"/>
+            </svg>
+          </button>
+          <button
+            onClick={() => onSetView(1)}
+            style={{
+              marginRight: 4,
+              background: mapPaneView === TABLE_VIEW ? '#d0eaff' : undefined,
+              border: mapPaneView === TABLE_VIEW ? '2px inset #2196f3' : undefined,
+              padding: '4px 8px',
+              borderRadius: 4,
+              height: 32,
+              minWidth: 32,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            title={inLang(uiStr.tableView, lang)}
+          >
+            {/* Table icon (SVG) */}
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="4" width="16" height="12" fill="#90caf9" stroke="#1976d2" strokeWidth="1.5"/>
+              <line x1="2" y1="8" x2="18" y2="8" stroke="#1976d2" strokeWidth="1.5"/>
+              <line x1="2" y1="12" x2="18" y2="12" stroke="#1976d2" strokeWidth="1.5"/>
+              <line x1="7" y1="4" x2="7" y2="16" stroke="#1976d2" strokeWidth="1.5"/>
+              <line x1="13" y1="4" x2="13" y2="16" stroke="#1976d2" strokeWidth="1.5"/>
+            </svg>
+          </button>
+          <button
+            onClick={() => onSetView(2)}
+            style={{
+              marginRight: 32,
+              background: mapPaneView === USFM_VIEW ? '#d0eaff' : undefined,
+              border: mapPaneView === USFM_VIEW ? '2px inset #2196f3' : undefined,
+              padding: '4px 8px',
+              borderRadius: 4,
+              height: 32,
+              minWidth: 32,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            title={inLang(uiStr.usfmView, lang)}
+          >
+            {/* USFM icon (document with text lines) */}
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4" y="3" width="12" height="14" rx="2" fill="#fffde7" stroke="#1976d2" strokeWidth="1.5"/>
+              <line x1="6" y1="7" x2="14" y2="7" stroke="#1976d2" strokeWidth="1.2"/>
+              <line x1="6" y1="10" x2="14" y2="10" stroke="#1976d2" strokeWidth="1.2"/>
+              <line x1="6" y1="13" x2="12" y2="13" stroke="#1976d2" strokeWidth="1.2"/>
+            </svg>
+          </button>
+          <button onClick={handleCancel} style={{ marginRight: 8, height: 32, minWidth: 80, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{inLang(uiStr.cancel, lang)}</button>
+          <button onClick={handleOk} style={{ height: 32, minWidth: 80, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{inLang(uiStr.ok, lang)}</button>
+          <div style={{ flex:  1 }} />
+          <button
+            onClick={handleSettings}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: 22,
+              marginLeft: 8,
+              color: '#555',
+              padding: 4,
+              alignSelf: 'flex-start',
+            }}
+            title={inLang(uiStr.settings, lang)}
+         
+          >
+            <span role="img" aria-label="Settings">&#9881;</span>
+          </button>
+        </div>
+      )}
+
+      {/* Template info/browse group */}
+           <div className="details-group-frame" style={{ border: '1px solid #ccc', borderRadius: 6, marginBottom: 16, padding: 8, background: '#f9f9f9', display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <span style={{ fontWeight: 'bold', color: 'black', fontSize: '0.8em' }}>{templateName}</span>
+        <button
+          title={inLang(uiStr.templateInfo, lang)}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginLeft: 1 }}
+          onClick={() => setShowTemplateInfo(true)}
+        >
+          <span role="img" aria-label="info" style={{ fontSize: '1.2em', color: '#6cf' }}>ℹ️</span>
+        </button>
+        <button
+          title={inLang(uiStr.browseTemplate, lang)}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginLeft: 1 }}
+          onClick={onBrowseMapTemplate}
+        >
+          <span role="img" aria-label="browse" style={{ fontSize: '1.2em', color: '#fc6' }}>📂</span>
+        </button>
+          <button
+            onClick={handleExportDataMerge}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginLeft: 1 }}
+            title={inLang(uiStr.export, lang)}
+          >
+            {/* Export icon: two stacked files with a down arrow */}
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4" y="4" width="10" height="14" rx="2" fill="#fff" stroke="#1976d2" strokeWidth="1.2"/>
+              <rect x="8" y="2" width="10" height="14" rx="2" fill="#e3f2fd" stroke="#1976d2" strokeWidth="1.2"/>
+              <path d="M13 10v5m0 0l-2-2m2 2l2-2" stroke="#1976d2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+
+      </div>
+
+      {/* Modal dialog for template info */}
+      {showTemplateInfo && (
+        <div style={{
+          position: 'fixed', left: 0, top: 0, width: '100vw', height: '100vh', zIndex: 1000,
+          background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center'
+        }}>
+          <div style={{ background: 'white', borderRadius: 10, padding: 24, minWidth: 520, maxWidth: 900, boxShadow: '0 4px 24px #0008', position: 'relative' }}>
+            <button onClick={() => setShowTemplateInfo(false)} style={{ position: 'absolute', top:  8, right: 12, background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#888' }} title="Close">×</button>
+            <h4 style={{ marginTop: 0}}>{templateName}</h4>
+            {inLang(templateData.title, lang) && <p style={{ margin: '8px 0', fontWeight: 'bold', fontStyle: 'italic'}}>{inLang(templateData.title, lang)}</p>}
+            {inLang(templateData.description, lang) && <p style={{ margin: '8px 0' }}>{inLang(templateData.description, lang)}</p>}
+            {templateData.mapTypes && <div style={{ margin: '8px 0' }}><b>{inLang(uiStr.baseLayerTypes, lang)}:</b> {templateData.mapTypes}</div>}
+            {templateData.formats && <div style={{ margin: '8px 0' }}><b>{inLang(uiStr.fileFormats, lang)}:</b> {templateData.formats}</div>}
+            {templateData.owner && <div style={{ margin: '8px 0' }}><b>{inLang(uiStr.owner, lang)}:</b> {templateData.owner}</div>}
+            {templateData.ownerRules && (
+              <div style={{ margin: '8px 0' }}>
+                <b>{inLang(uiStr.usageRules, lang)}:</b> <a href={templateData.ownerRules} target="_blank" rel="noopener noreferrer">{templateData.ownerRules}</a>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Status Tally Table */}
+      <div style={{ border: '1px solid #ccc', borderRadius: 6, marginBottom: 16, padding: 8, background: '#f9f9f9', fontSize: '0.8em' }}>
+        <table >
+          <tbody>
+            {Object.entries(statusTallies).sort((a, b) => statusValue[a[0]].sort - statusValue[b[0]].sort).map(([status, count ]) => (
+              <tr key={status}>
+                <td style={{ fontWeight: 'bold', padding: '2px 8px', textAlign: 'right' }}>{count}</td>
+                <td style={{  }}>
+                  <span
+                    style={{
+                    border: '1px solid black',
+                    background: statusValue[status].bkColor,
+                    color: statusValue[status].textColor,
+                    borderRadius: '0.7em',
+                    padding: '0 10px',
+                    display: 'inline-block',
+                    fontWeight: 'bold',
+                    whiteSpace: 'nowrap'
+                    }}
+                    >
+                    {inLang(uiStr.statusValue[status].text, lang)}
+                  </span>
+                  </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div style={{ border: '1px solid #ccc', borderRadius: 6, marginBottom: 16, padding: 8, background: '#f9f9f9' }}>
+        <h2>{inLang(locations[selLocation]?.gloss, lang)}</h2>
+        <p><span style={{ fontStyle: 'italic' }}>({locations[selLocation]?.termId})  <span style={{ display: 'inline-block', width: 12 }} />{transliteration}</span><br />
+          {inLang(collectionTerms.getDefinition(locations[selLocation]?.termId), lang)}
+        </p>
+        <div className="vernacularGroup" style={{ backgroundColor: statusValue[status].bkColor, margin: '8px', padding: '8px', border: '1px solid black', borderRadius: '0.7em' }}>
+          <input
+            ref={vernacularInputRef}
+            type="text"
+            value={vernacular}
+            onChange={handleVernChange}
+            placeholder={inLang(uiStr.enterLabel, lang)}
+            className="form-control mb-2"
+            style={{ width: '100%', border: '1px solid black' }}
+            spellCheck={false}
+          />
+          <span style={{color: statusValue[status].textColor, fontSize: '0.8em'}}>
+            <span style={{ fontWeight: 'bold' }}>{inLang(uiStr.statusValue[status].text, lang) + ": "}</span>
+            {inLang(uiStr.statusValue[status].help, lang)}
+            {status === STATUS_NO_RENDERINGS && (  // If status is "no renderings", show Add to renderings button
+              <button style={{ marginLeft: 8 }} onClick={handleAddToRenderings}>{inLang(uiStr.addToRenderings, lang)}</button>
+            )}{status === STATUS_GUESSED && (  // If status is "guessed", show Add to renderings button
+              <button
+              style={{ marginLeft: 8 }}
+              onClick={() => {
+                setLocalIsApproved(true);
+                const updatedData = { ...termRenderings };
+                updatedData[locations[selLocation].termId] = {
+                  ...updatedData[locations[selLocation].termId],
+                  isGuessed: false,
+                };
+                setTermRenderings(updatedData);  
+                onApprovedChange({ target: { checked: true } });
+              }}>{inLang(uiStr.approveRendering, lang)}
+            </button>
+            )}
+          </span>
+        </div>
+        <h5>{inLang(uiStr.termRenderings, lang)}  {localRenderings && !localIsApproved ? '(' + inLang(uiStr.guessed, lang) +')' : ''}</h5>
+        <div className="term-renderings" style={{ margin: '8px' }}>
+          <textarea
+            ref={renderingsTextareaRef}
+            value={localRenderings}
+            onChange={e => {
+              setLocalRenderings(e.target.value);
+              const updatedData = { ...termRenderings };
+              updatedData[locations[selLocation].termId] = {
+                ...updatedData[locations[selLocation].termId],
+                renderings: e.target.value,  // TODO: move this to a setter function
+              };
+              // If not approved, auto-approve on edit
+              if (!localIsApproved) {
+                setLocalIsApproved(true);
+                updatedData[locations[selLocation].termId].isGuessed = false;  
+                onApprovedChange({ target: { checked: true } });
+              }
+              setTermRenderings(updatedData);  // TODO: move this to a setter function
+              // The renderings change might affect the status of the location indexed by selLocation
+              //const status = getStatus(termRenderings,  locations[selLocation].termId, locations[selLocation].vernLabel || '');
+              onRenderingsChange({ target: { value: e.target.value } });
+            }}
+            style={{ width: '100%', minHeight: '100px', border: '1px solid black', borderRadius: '0.5em', padding: '8px', fontSize: '12px', backgroundColor: localRenderings && !localIsApproved ? '#ffbf8f' : 'white' }}
+
+            placeholder={inLang(uiStr.enterRenderings, lang)}
+            spellCheck={false}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function encodeUTF16LE(str, bom = false) {
+  if (bom) {  
+    str = '\uFEFF' + str; // Add BOM if requested
+  }
+  const buf = new Uint8Array(str.length * 2);
+  for (let i = 0; i < str.length; i++) {
+    const code = str.charCodeAt(i);
+    buf[i * 2] = code & 0xFF;
+    buf[i * 2 + 1] = code >> 8;
+  }
+  return buf;
+}
+
