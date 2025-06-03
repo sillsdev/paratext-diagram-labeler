@@ -10,7 +10,7 @@ import { MATCH_PRE_B, MATCH_POST_B, MATCH_W, DEMO_PROJECT_FOLDER, INITIAL_USFM }
 import { MAP_VIEW, TABLE_VIEW, USFM_VIEW, STATUS_NO_RENDERINGS, STATUS_GUESSED } from './constants.js';
 // Status values not yet used: STATUS_BLANK, STATUS_MULTIPLE,  STATUS_UNMATCHED, STATUS_MATCHED, STATUS_RENDERING_SHORT, STATUS_BAD_EXPLICIT_FORM 
 import TermRenderings from './TermRenderings';
-import MapBibTerms from './MapBibTerms';
+import { collectionTerms } from './CollectionTerms.js';
 import { getMapData } from './MapData';
 
 const statusValue = [
@@ -26,11 +26,8 @@ const statusValue = [
 const bookNames = 'GEN,EXO,LEV,NUM,DEU,JOS,JDG,RUT,1SA,2SA,1KI,2KI,1CH,2CH,EZR,NEH,EST,JOB,PSA,PRO,ECC,SNG,ISA,JER,LAM,EZK,DAN,HOS,JOL,AMO,OBA,JON,MIC,NAM,HAB,ZEP,HAG,ZEC,MAL,MAT,MRK,LUK,JHN,ACT,ROM,1CO,2CO,GAL,EPH,PHP,COL,1TH,2TH,1TI,2TI,TIT,PHM,HEB,JAS,1PE,2PE,1JN,2JN,3JN,JUD,REV,TOB,JDT,ESG,WIS,SIR,BAR,LJE,S3Y,SUS,BEL,1MA,2MA,3MA,4MA,1ES,2ES,MAN,PS2,ODA,PSS';
 
 const electronAPI = window.electronAPI;
-const mapBibTerms = new MapBibTerms();
-
-var usfm = INITIAL_USFM;
-var map = mapFromUsfm(usfm);
-console.log('Map:', map);
+const iniMap = mapFromUsfm(INITIAL_USFM);
+console.log('Initial Map:', iniMap);
 
 function prettyRef(ref) {
   // ref is a 9 digit string. First 3 digits are the book code, next 3 are chapter, last 3 are verse.
@@ -152,7 +149,7 @@ function mapFromUsfm(usfm) {
   
   let mapDefData;
   try {
-    mapDefData = getMapData(templateMatch[1], mapBibTerms);
+    mapDefData = getMapData(templateMatch[1], collectionTerms);
     mapDefData.mapView = true;
     mapDefData.template = templateMatch[1];
   } catch (e) {
@@ -227,7 +224,7 @@ function inLang(prop, lang = 'en') {
 }
 
 // Function to create a map label
-const createLabel = (labelText, align = 'right', angle = 0, size = 3, status, isSelected = false, labelScale = 1, extra) => {
+function createLabel(labelText, align = 'right', angle = 0, size = 3, status, isSelected = false, labelScale = 1, extra) {
   const isLeft = align === 'left';
   const isCenter = align === 'center';
   const backgroundColor = statusValue[status].bkColor;
@@ -315,7 +312,7 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
   }, []);
 
   if (!termId) return <div className="bottom-pane" ref={paneRef} />;
-  const refs = mapBibTerms.getRefs(termId);
+  const refs = collectionTerms.getRefs(termId);
 
   // Prepare renderings: remove comments, split, trim, and convert to regex patterns
   let renderingList = [];
@@ -523,34 +520,29 @@ function usfmFromMap(map, lang) {
 }
 
 function App() {
-  // Project folder state
   const [projectFolder, setProjectFolder] = useState(DEMO_PROJECT_FOLDER);
-  const [lang, setLang] = useState('en');
-  const [mapDef, setMapDef] = useState(map);
+  const [lang, setLang] = useState('en');  //TODO: Persist in localStorage
+  const [mapDef, setMapDef] = useState(iniMap);
   const [locations, setLocations] = useState([]);
   const [selLocation, setSelLocation] = useState(0);
   const [mapWidth, setMapWidth] = useState(70);
   const [topHeight, setTopHeight] = useState(80);
   const [renderings, setRenderings] = useState('');
   const [isApproved, setIsApproved] = useState(false);
-  const [mapPaneView, setMapPaneView] = useState(map.mapView ? MAP_VIEW : TABLE_VIEW); // 0: Map, 1: Table, 2: USFM
+  const [mapPaneView, setMapPaneView] = useState(iniMap.mapView ? MAP_VIEW : TABLE_VIEW); // 0: Map, 1: Table, 2: USFM
   const [labelScale, setLabelScale] = useState(() => {
-    // Persist labelScale in localStorage
-    const saved = localStorage.getItem('labelScale');
+    const saved = localStorage.getItem('labelScale'); // Persist labelScale in localStorage
     return saved ? parseFloat(saved) : 1;
   });
   const [showSettings, setShowSettings] = useState(false);
-  // --- Add resetZoomFlag for controlling Leaflet map ---
-  const [resetZoomFlag, setResetZoomFlag] = useState(false);
+  const [resetZoomFlag, setResetZoomFlag] = useState(false);  // For controlling Leaflet map
   const isDraggingVertical = useRef(false);
   const isDraggingHorizontal = useRef(false);
-  // Initialize TermRenderings without a file path
-  const termRenderings = useMemo(() => new TermRenderings(), []);
-
-  // Add ref for vernacular input
   const vernacularInputRef = useRef(null);
   const renderingsTextareaRef = useRef();
   const [extractedVerses, setExtractedVerses] = useState({});
+  const termRenderings = useMemo(() => new TermRenderings(), []);
+
   // Load term-renderings.json from selected project folder
   const loadTermRenderingsFromFolder = useCallback(async (folderPath) => {
     if (!electronAPI || !folderPath) return;
@@ -561,7 +553,7 @@ function App() {
         termRenderings.setData(data);
         setProjectFolder(folderPath);
         // Re-init locations from map and new termRenderings
-        const initialLocations = map.labels.map(loc => {
+        const initialLocations = iniMap.labels.map(loc => {
           if (!loc.vernLabel) {
             loc.vernLabel = termRenderings.getMapForm(loc.termId);
           }
@@ -580,9 +572,10 @@ function App() {
     }
   }, [termRenderings, setLocations, setSelLocation]);
 
+  // setExtractedVerses when projectFolder or mapDef.labels change
   useEffect(() => {
     if (!projectFolder || !mapDef.labels?.length) return;
-    const refs = getRefList(mapDef.labels, mapBibTerms);
+    const refs = getRefList(mapDef.labels, collectionTerms);
     if (!refs.length) {
       setExtractedVerses({});
       return;
@@ -797,7 +790,7 @@ function App() {
         } else {
           return;
         }
-        const foundTemplate = getMapData('SMR1_' + newTemplateBase, mapBibTerms);
+        const foundTemplate = getMapData('SMR1_' + newTemplateBase, collectionTerms);
         if (!foundTemplate) {
           alert(inLang(uiStr.noTemplate, lang) + ": " + newTemplateBase);
           return;
@@ -863,7 +856,7 @@ useEffect(() => {
     if (!checkData()) {
       const interval = setInterval(() => {
         if (checkData()) {
-            const initialLocations = map.labels.map(loc => {
+            const initialLocations = iniMap.labels.map(loc => {
             // If vernLabel is empty, use getMapForm
             if (!loc.vernLabel) {
               loc.vernLabel = termRenderings.getMapForm(loc.termId);
@@ -952,7 +945,7 @@ useEffect(() => {
             spellCheck={false}
             />
             </td>
-            <Frac value={getMatchTally(termRenderings.getEntry(loc.termId), mapBibTerms.getRefs(loc.termId), extractedVerses)} />
+            <Frac value={getMatchTally(termRenderings.getEntry(loc.termId), collectionTerms.getRefs(loc.termId), extractedVerses)} />
             <td>
 
             <span
@@ -1022,10 +1015,10 @@ useEffect(() => {
       setSelLocation(0);
       setLocations(initialLocations);
       //  update map object
-      map.labels = newMap.labels;
-      map.template = newMap.template;
-      map.fig = newMap.fig;
-      map.mapView = newMap.mapView;
+      iniMap.labels = newMap.labels;
+      iniMap.template = newMap.template;
+      iniMap.fig = newMap.fig;
+      iniMap.mapView = newMap.mapView;
       setUsfmText(text); // keep USFM text in sync after parse
       setMapDef({template: newMap.template, fig: newMap.fig, mapView: newMap.mapView, imgFilename: newMap.imgFilename, width: newMap.width, height: newMap.height});
     } catch (e) {
@@ -1039,7 +1032,7 @@ useEffect(() => {
       updateMapFromUsfm();
     }
     setMapPaneView(prev => {
-      if (!map.mapView) {
+      if (!iniMap.mapView) {
         // Only cycle between Table (1) and USFM (2)
         return prev === TABLE_VIEW ? USFM_VIEW : TABLE_VIEW;
       }
@@ -1171,7 +1164,7 @@ useEffect(() => {
     <div className="app-container">
       <div className="top-section" style={{ flex: `0 0 ${topHeight}%` }}>
         <div className="map-pane" style={{ flex: `0 0 ${mapWidth}%` }}>
-          {mapPaneView === MAP_VIEW && map.mapView && (
+          {mapPaneView === MAP_VIEW && iniMap.mapView && (
             <MapPane
               imageUrl={memoizedMapDef.imgFilename ? `/assets/maps/${memoizedMapDef.imgFilename}` : ''}
               locations={memoizedLocations}
@@ -1221,7 +1214,7 @@ useEffect(() => {
             onOk={handleOkWithUsfm}
             mapPaneView={mapPaneView}
             onSetView={viewIdx => {
-              if (viewIdx === MAP_VIEW && !map.mapView) return;
+              if (viewIdx === MAP_VIEW && !iniMap.mapView) return;
               if (mapPaneView === USFM_VIEW) updateMapFromUsfm();
               setMapPaneView(viewIdx);
             }}
@@ -1408,7 +1401,7 @@ function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScal
               loc.status,
               selLocation === loc.idx,
               labelScale,
-              frac(getMatchTally(termRenderings.getEntry(loc.termId), mapBibTerms.getRefs(loc.termId), extractedVerses), true)
+              frac(getMatchTally(termRenderings.getEntry(loc.termId), collectionTerms.getRefs(loc.termId), extractedVerses), true)
             )}
             eventHandlers={{ click: () => onSelectLocation(loc) }}
             tabIndex={0}
@@ -1425,7 +1418,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
   const [localIsApproved, setLocalIsApproved] = useState(isApproved);
   const [localRenderings, setLocalRenderings] = useState(renderings);
   const [showTemplateInfo, setShowTemplateInfo] = useState(false);
-  const templateData = getMapData(mapDef.template, mapBibTerms) || {};
+  const templateData = getMapData(mapDef.template, collectionTerms) || {};
 
   useEffect(() => {
     setVernacular(locations[selLocation]?.vernLabel || '');
@@ -1551,7 +1544,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
     onApprovedChange({ target: { checked: true } });
   };
 
-  let transliteration = mapBibTerms.getTransliteration(locations[selLocation]?.termId);
+  let transliteration = collectionTerms.getTransliteration(locations[selLocation]?.termId);
   if (transliteration) { transliteration = ` /${transliteration}/`; }
 
   return (
@@ -1741,7 +1734,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
       <div style={{ border: '1px solid #ccc', borderRadius: 6, marginBottom: 16, padding: 8, background: '#f9f9f9' }}>
         <h2>{inLang(locations[selLocation]?.gloss, lang)}</h2>
         <p><span style={{ fontStyle: 'italic' }}>({locations[selLocation]?.termId})  <span style={{ display: 'inline-block', width: 12 }} />{transliteration}</span><br />
-          {inLang(mapBibTerms.getDefinition(locations[selLocation]?.termId), lang)}
+          {inLang(collectionTerms.getDefinition(locations[selLocation]?.termId), lang)}
         </p>
         <div className="vernacularGroup" style={{ backgroundColor: statusValue[status].bkColor, margin: '8px', padding: '8px', border: '1px solid black', borderRadius: '0.7em' }}>
           <input

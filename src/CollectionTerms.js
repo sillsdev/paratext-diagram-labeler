@@ -1,8 +1,8 @@
-import mapBibTerms from './data/smr-term-list.json';
+import mapBibTermsData from './data/smr-term-list.json';
 
-class MapBibTerms {
+class CollectionTerms {
     constructor() {
-        this.data = mapBibTerms;
+        this.data = mapBibTermsData;
     }
     
     getGloss(termId) {
@@ -42,4 +42,6 @@ class MapBibTerms {
     }
 }
 
-export default MapBibTerms;
+const collectionTerms = new CollectionTerms();
+export { collectionTerms };
+export default CollectionTerms;
