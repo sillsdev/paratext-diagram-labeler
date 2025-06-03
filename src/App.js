@@ -32,15 +32,6 @@ var usfm = INITIAL_USFM;
 var map = mapFromUsfm(usfm);
 console.log('Map:', map);
 
-// Fix Leaflet default marker icons (optional, not needed with custom SVG icons)
-delete Leaf.Icon.Default.prototype._getIconUrl;
-Leaf.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-});
-
-
 function prettyRef(ref) {
   // ref is a 9 digit string. First 3 digits are the book code, next 3 are chapter, last 3 are verse.
   const bookCode = parseInt(ref.slice(0, 3), 10) - 1;
@@ -1230,7 +1221,7 @@ useEffect(() => {
             onOk={handleOkWithUsfm}
             mapPaneView={mapPaneView}
             onSetView={viewIdx => {
-              if (viewIdx === 0 && !map.mapView) return;
+              if (viewIdx === MAP_VIEW && !map.mapView) return;
               if (mapPaneView === USFM_VIEW) updateMapFromUsfm();
               setMapPaneView(viewIdx);
             }}
