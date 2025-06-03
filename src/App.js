@@ -143,37 +143,38 @@ function App() {
   const [extractedVerses, setExtractedVerses] = useState({});
   const [termRenderings, setTermRenderings] = useState();
 
+
   // Load term renderings from new project folder
   useEffect(() => {
-      if (!electronAPI || !projectFolder) return;
-      const loadData = async () => {
-        try {
-          const newTermRenderings = await electronAPI.loadTermRenderings(projectFolder);
-          console.log('[IPC] Loaded term renderings:', newTermRenderings, 'from folder:', projectFolder);
-          if (newTermRenderings && !newTermRenderings.error) {
-            setTermRenderings(newTermRenderings);
-            // setProjectFolder(folderPath);
-            // Re-init locations from map and new termRenderings
-            const initialLocations = iniMap.labels.map(loc => {
-              if (!loc.vernLabel) {
-                loc.vernLabel = getMapForm(newTermRenderings, loc.termId);
-              }
-              const status = getStatus(newTermRenderings,  loc.termId, loc.vernLabel);
-              return { ...loc, status };
-            });
-            setLocations(initialLocations);
-            if (initialLocations.length > 0) {
-              setSelLocation(0); // Select first location directly
+    if (!electronAPI || !projectFolder) return;
+    const loadData = async () => {
+      try {
+        const newTermRenderings = await electronAPI.loadTermRenderings(projectFolder);
+        console.log('[IPC] Loaded term renderings:', newTermRenderings, 'from folder:', projectFolder);
+        if (newTermRenderings && !newTermRenderings.error) {
+          setTermRenderings(newTermRenderings);
+          // Re-init locations from map and new termRenderings
+          const initialLocations = iniMap.labels.map(loc => {
+            if (!loc.vernLabel) {
+              loc.vernLabel = getMapForm(newTermRenderings, loc.termId);
             }
-          } else {
-            alert('Failed to load term-renderings.json: ' + (newTermRenderings && newTermRenderings.error));
+            const status = getStatus(newTermRenderings,  loc.termId, loc.vernLabel);
+            return { ...loc, status };
+          });
+          setLocations(initialLocations);
+          if (initialLocations.length > 0) {
+            setSelLocation(0); // Select first location directly
           }
-        } catch (e) {
-          console.log(`Failed to load term-renderings.json from project folder <${projectFolder}>.`, e);
+        } else {
+          alert('Failed to load term-renderings.json: ' + (newTermRenderings && newTermRenderings.error));
         }
-      };
-      loadData();
-    }, [projectFolder]);
+      } catch (e) {
+        console.log(`Failed to load term-renderings.json from project folder <${projectFolder}>.`, e);
+      }
+    };
+    loadData();
+  }, [projectFolder]);
+
 
   // setExtractedVerses when projectFolder or mapDef.labels change
   useEffect(() => {
@@ -195,6 +196,7 @@ function App() {
     });
   }, [projectFolder, mapDef.labels]);
 
+
   // UI handler to select project folder
   const handleSelectProjectFolder = useCallback(async () => {
     if (!electronAPI) return;
@@ -207,7 +209,7 @@ function App() {
       alert('Failed to select project folder.');
     }
   }, []);
-
+  
   // On first load, prompt for project folder if not set
   useEffect(() => {
     if (!projectFolder && electronAPI) {
@@ -216,8 +218,8 @@ function App() {
     // eslint-disable-next-line
   }, [projectFolder]);
 
-  // ...existing code...
-
+  
+  // Handler to set the selected location (e.g. Label clicked)
   const handleSelectLocation = useCallback((location) => {
     console.log('Selected location:', location);
     if (!location) return;
@@ -233,6 +235,8 @@ function App() {
     }
   }, [termRenderings, setRenderings, setIsApproved, setSelLocation]);
 
+
+  // Handler to update label of selected location with new vernacular and status
   const handleUpdateVernacular = useCallback((termId, newVernacular) => {
     setLocations(prevLocations => prevLocations.map(loc => {
       if (loc.termId === termId) {
@@ -241,8 +245,10 @@ function App() {
       }
       return loc;
     }));
-  }, [termRenderings]);
+  }, [termRenderings]); // is just renderings enough here?
 
+
+  // Handler to cycle forward or backward through locations
   const handleNextLocation = useCallback((fwd) => {
     const currentIndex = selLocation;
     let nextIndex;
@@ -255,9 +261,8 @@ function App() {
     handleSelectLocation(nextLocation);
   }, [locations, selLocation, handleSelectLocation]);
 
-  // --- Pan map after selection changes, if needed ---
-  // (Removed old useEffect that referenced map.getBounds and map.panTo)
 
+  // Handlers for resizing panes
   const handleVerticalDragStart = (e) => {
     e.preventDefault();
     console.log('Vertical drag start');
@@ -265,7 +270,6 @@ function App() {
     document.addEventListener('mousemove', handleVerticalDrag);
     document.addEventListener('mouseup', handleDragEnd);
   };
-
   const handleHorizontalDragStart = (e) => {
     e.preventDefault();
     console.log('Horizontal drag start');
@@ -273,7 +277,6 @@ function App() {
     document.addEventListener('mousemove', handleHorizontalDrag);
     document.addEventListener('mouseup', handleDragEnd);
   };
-
   const handleVerticalDrag = (e) => {
     if (!isDraggingVertical.current) return;
     console.log('Vertical dragging:', e.clientX);
@@ -286,7 +289,6 @@ function App() {
     const newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
     setMapWidth(Math.max(20, Math.min(80, newWidth)));
   };
-
   const handleHorizontalDrag = (e) => {
     if (!isDraggingHorizontal.current) return;
     console.log('Horizontal dragging:', e.clientY);
@@ -299,7 +301,6 @@ function App() {
     const newHeight = ((e.clientY - containerRect.top) / containerRect.height) * 100;
     setTopHeight(Math.max(50, Math.min(90, newHeight)));
   };
-
   const handleDragEnd = () => {
     console.log('Drag ended');
     isDraggingVertical.current = false;
@@ -309,6 +310,8 @@ function App() {
     document.removeEventListener('mouseup', handleDragEnd);
   };
 
+
+  // Handler for change in renderings textarea
   const handleRenderingsChange = (e) => {
     setRenderings(e.target.value);
     const updatedData = { ...termRenderings };
@@ -327,6 +330,8 @@ function App() {
     }));
   };
 
+
+  // Handler for change in approved status.
   const handleApprovedChange = (e) => {
     const approved = e.target.checked;
     setIsApproved(approved);
@@ -345,6 +350,7 @@ function App() {
       return loc;
     }));
   };
+
 
   // Handler for map image browse
   const handleBrowseMapTemplate = async () => {
@@ -425,9 +431,6 @@ function App() {
         if (initialLocations.length > 0) {
           handleSelectLocation(initialLocations[0]); // Auto-select first location
         }
-
-
-        //setLocations(newLocations);
         setMapPaneView(MAP_VIEW); // Map View
       }
     } catch (e) {
@@ -436,47 +439,7 @@ function App() {
     }
   };
 
-useEffect(() => {
-    // Initialize locations only when termRenderings is loaded
-    const checkData = () => {
-      if (!termRenderings) {
-        console.log('Waiting for term renderings data to load...');
-        return false;
-      }
-      return true;
-    };
-
-    if (!checkData()) {
-      const interval = setInterval(() => {
-        if (checkData()) {
-            const initialLocations = iniMap.labels.map(loc => {
-            // If vernLabel is empty, use getMapForm
-            if (!loc.vernLabel) {
-              loc.vernLabel = getMapForm(termRenderings,  loc.termId);
-            }
-
-            const status = getStatus(termRenderings,  loc.termId, loc.vernLabel);
-            return { ...loc, status };
-            });
-          console.log('Initial locations:', initialLocations);
-          setLocations(initialLocations);
-          if (initialLocations.length > 0) {
-            handleSelectLocation(initialLocations[0]); // Auto-select first location
-          }
-          clearInterval(interval);
-        }
-      }, 100); // Check every 100ms
-      return () => clearInterval(interval);
-    }
-  }, [termRenderings, handleSelectLocation]);
-
-  // Focus vernacular input after selection or locations change
-  useEffect(() => {
-    if (vernacularInputRef.current && mapPaneView === MAP_VIEW) {
-      vernacularInputRef.current.focus();
-    }
-  }, [selLocation, mapPaneView]); 
-
+  
   // USFM View component (editable, uncontrolled)
   const usfmTextareaRef = useRef();
   const USFMView = React.memo(function USFMView({ usfmText }) {
@@ -555,6 +518,7 @@ useEffect(() => {
     alert("At this point, the USFM text would be saved to Paratext.");  // TODO: 
   }, [mapPaneView, updateMapFromUsfm]);
 
+
   // Add rendering from bottom pane selection
   const handleAddRendering = useCallback((text) => {
     if (!locations[selLocation]) return;
@@ -581,6 +545,7 @@ useEffect(() => {
       if (renderingsTextareaRef.current) renderingsTextareaRef.current.focus();
     }, 0);
   }, [renderings, selLocation, locations, termRenderings]);
+
 
   // Replace all renderings with selected text
   const handleReplaceRendering = useCallback((text) => {
@@ -609,36 +574,36 @@ useEffect(() => {
     }, 0);
   }, [selLocation, locations, termRenderings]);
 
-  // Add global PageUp/PageDown navigation for Map and Table views
-useEffect(() => {
-  function handleGlobalKeyDown(e) {
-    if (mapPaneView === USFM_VIEW) return; // Do not trigger in USFM view
-    // Ctrl+9 triggers zoom reset
-    if (e.ctrlKey && (e.key === '9' || e.code === 'Digit9')) {
-      console.log('Resetting zoom');
-      setResetZoomFlag(true);
-      e.preventDefault();
-      return;
-    }
-    if (e.key === 'PageDown') {
-      handleNextLocation(true);
-      e.preventDefault();
-    } else if (e.key === 'PageUp') {
-      handleNextLocation(false);
-      e.preventDefault();
-    }
-  }
-  window.addEventListener('keydown', handleGlobalKeyDown);
-  return () => window.removeEventListener('keydown', handleGlobalKeyDown);
-}, [mapPaneView, handleNextLocation]); // Remove mapDef, mapRef from deps
 
-  // console.log("map: ", map);
+  // Add global PageUp/PageDown navigation for Map and Table views
+  useEffect(() => {
+    function handleGlobalKeyDown(e) {
+      if (mapPaneView === USFM_VIEW) return; // Do not trigger in USFM view
+      // Ctrl+9 triggers zoom reset
+      if (e.ctrlKey && (e.key === '9' || e.code === 'Digit9')) {
+        console.log('Resetting zoom');
+        setResetZoomFlag(true);
+        e.preventDefault();
+        return;
+      }
+      if (e.key === 'PageDown') {
+        handleNextLocation(true);
+        e.preventDefault();
+      } else if (e.key === 'PageUp') {
+        handleNextLocation(false);
+        e.preventDefault();
+      }
+    }
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+  }, [mapPaneView, handleNextLocation]); // Remove mapDef, mapRef from deps
+
   // Memoize locations and mapDef to prevent MapPane remounts
   const memoizedLocations = useMemo(() => locations, [locations]);
   const memoizedMapDef = useMemo(() => mapDef, [mapDef]);
   const memoizedHandleSelectLocation = useCallback(handleSelectLocation, [handleSelectLocation]);
 
-  // Add this function to update locations when denials change
+  // Function to update locations when denials change
   const handleDenialsChanged = useCallback(() => {
     setLocations(prevLocations => prevLocations.map(loc => {
       const status = getStatus(termRenderings,  loc.termId, loc.vernLabel || '');
@@ -646,20 +611,22 @@ useEffect(() => {
     }));
   }, [termRenderings]);
 
+
   // Debounced save of termRenderings to disk via IPC
-useEffect(() => {
-  if (!projectFolder || !electronAPI) return;
-  if (!termRenderings) return;
+  useEffect(() => {
+    if (!projectFolder || !electronAPI) return;
+    if (!termRenderings) return;
 
-  const handler = setTimeout(() => {
-    electronAPI.saveTermRenderings(projectFolder, termRenderings);
-    console.log('[IPC] Auto-saved termRenderings to disk:', projectFolder);
-    // Optionally: show a "saved" indicator here
-    // console.log('Auto-saved termRenderings to disk');
-  }, 2000); // 2 seconds after last change
+    const handler = setTimeout(() => {
+      electronAPI.saveTermRenderings(projectFolder, termRenderings);
+      console.log('[IPC] Auto-saved termRenderings to disk:', projectFolder);
+      // Optionally: show a "saved" indicator here
+      // console.log('Auto-saved termRenderings to disk');
+    }, 2000); // 2 seconds after last change
 
-  return () => clearTimeout(handler);
-}, [termRenderings, projectFolder]);
+    return () => clearTimeout(handler);
+  }, [termRenderings, projectFolder]);
+
 
   return (
     <div className="app-container">
@@ -764,7 +731,5 @@ useEffect(() => {
     </div>
   );
 }
-
-
 
 export default App;
