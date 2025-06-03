@@ -543,34 +543,37 @@ function App() {
   const [extractedVerses, setExtractedVerses] = useState({});
   const termRenderings = useMemo(() => new TermRenderings(), []);
 
-  // Load term-renderings.json from selected project folder
-  const loadTermRenderingsFromFolder = useCallback(async (folderPath) => {
-    if (!electronAPI || !folderPath) return;
-    try {
-      const data = await electronAPI.loadTermRenderings(folderPath);
-      console.log('[IPC] Loaded term renderings:', data, 'from folder:', folderPath);
-      if (data && !data.error) {
-        termRenderings.setData(data);
-        setProjectFolder(folderPath);
-        // Re-init locations from map and new termRenderings
-        const initialLocations = iniMap.labels.map(loc => {
-          if (!loc.vernLabel) {
-            loc.vernLabel = termRenderings.getMapForm(loc.termId);
+  // Load term renderings from new project folder
+  useEffect(() => {
+      if (!electronAPI || !projectFolder) return;
+      const loadData = async () => {
+        try {
+          const data = await electronAPI.loadTermRenderings(projectFolder);
+          console.log('[IPC] Loaded term renderings:', data, 'from folder:', projectFolder);
+          if (data && !data.error) {
+            termRenderings.setData(data);
+            // setProjectFolder(folderPath);
+            // Re-init locations from map and new termRenderings
+            const initialLocations = iniMap.labels.map(loc => {
+              if (!loc.vernLabel) {
+                loc.vernLabel = termRenderings.getMapForm(loc.termId);
+              }
+              const status = termRenderings.getStatus(loc.termId, loc.vernLabel);
+              return { ...loc, status };
+            });
+            setLocations(initialLocations);
+            if (initialLocations.length > 0) {
+              setSelLocation(0); // Select first location directly
+            }
+          } else {
+            alert('Failed to load term-renderings.json: ' + (data && data.error));
           }
-          const status = termRenderings.getStatus(loc.termId, loc.vernLabel);
-          return { ...loc, status };
-        });
-        setLocations(initialLocations);
-        if (initialLocations.length > 0) {
-          setSelLocation(0); // Select first location directly
+        } catch (e) {
+          console.log(`Failed to load term-renderings.json from project folder <${projectFolder}>.`, e);
         }
-      } else {
-        alert('Failed to load term-renderings.json: ' + (data && data.error));
-      }
-    } catch (e) {
-      console.log(`Failed to load term-renderings.json from project folder <${folderPath}>.`, e);
-    }
-  }, [termRenderings, setLocations, setSelLocation]);
+      };
+      loadData();
+    }, [projectFolder]);
 
   // setExtractedVerses when projectFolder or mapDef.labels change
   useEffect(() => {
@@ -598,13 +601,12 @@ function App() {
     try {
       const folderPath = await electronAPI.selectProjectFolder();
       if (folderPath) {
-        await loadTermRenderingsFromFolder(folderPath);
-        console.log('[IPC] loaded term renderings');
+        setProjectFolder(folderPath);
       }
     } catch (e) {
       alert('Failed to select project folder.');
     }
-  }, [loadTermRenderingsFromFolder]);
+  }, []);
 
   // On first load, prompt for project folder if not set
   useEffect(() => {
@@ -835,13 +837,6 @@ function App() {
       console.log('Map template browse cancelled or not supported:', e);
     }
   };
-
-useEffect(() => {
-  if (projectFolder) {
-    loadTermRenderingsFromFolder(projectFolder);
-  }
-  // eslint-disable-next-line
-}, [projectFolder]);
 
 useEffect(() => {
     // Initialize locations only when termRenderings.data is loaded
