@@ -15,6 +15,7 @@
     "react-icons": "^5.5.0",
     "react-leaflet": "^5.0.0",
     "react-scripts": "5.0.1",
+    "usfm-js": "^3.4.3",
     "web-vitals": "^2.1.4",
     "xml2js": "^0.6.2"
   },
@@ -24,7 +25,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "electron": "electron ."
+    "electron": "electron .",
+    "electron-debug": "electron --inspect-brk=9229 ."
   },
   "eslintConfig": {
     "extends": [

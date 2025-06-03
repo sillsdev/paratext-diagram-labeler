@@ -1,18 +1,17 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { FaPencilAlt } from 'react-icons/fa';
-import 'leaflet/dist/leaflet.css';
 import Leaf from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import { FaPencilAlt } from 'react-icons/fa';
 import './App.css';
+import uiStr from './data/ui-strings.json';
+import supportedLanguages from './data/ui-languages.json';
+import { CheckmarkIcon, DeniedCheckmarkIcon, CrossIcon, WarningIcon } from './TermIcons';
+import { MATCH_PRE_B, MATCH_POST_B, MATCH_W, DEMO_PROJECT_FOLDER, INITIAL_USFM } from './demo.js';
+import { MAP_VIEW, TABLE_VIEW, USFM_VIEW, STATUS_NO_RENDERINGS, STATUS_GUESSED } from './constants.js';
+// Status values not yet used: STATUS_BLANK, STATUS_MULTIPLE,  STATUS_UNMATCHED, STATUS_MATCHED, STATUS_RENDERING_SHORT, STATUS_BAD_EXPLICIT_FORM 
 import TermRenderings from './TermRenderings';
 import MapBibTerms from './MapBibTerms';
 import { getMapData } from './MapData';
-import supportedLanguages from './data/ui-languages.json';
-import uiStr from './data/ui-strings.json';
-import { CheckmarkIcon, DeniedCheckmarkIcon, CrossIcon, WarningIcon } from './TermIcons';
-// const { dialog } = window.require('@electron/remote');
-const mapBibTerms = new MapBibTerms();
-const electronAPI = window.electronAPI;
-
 
 const statusValue = [
   { bkColor: "dimgray", textColor: "white", sort: 1  },  // 0  - blank
@@ -25,30 +24,10 @@ const statusValue = [
   { bkColor: "#80FF00", textColor: "black", sort: 7  },  // 7 - Bad explicit form : #80FF00
 ];
 
-var usfm = String.raw`\zdiagram-s |template="SMR1_185wbt - Philips Travels [sm]"\*
-\fig |src="185wbt - Philips Travels [sm] (fcr) @en.jpg" size="span" loc="paw" copy="WBT" ref="8:5-40"\fig*
-\zlabel |key="philipstravels_title" termid="philipstravels_title" gloss="Philip’s Travels" label=""\*
-\zlabel |key="galilee_nt" termid="Γαλιλαία-1" gloss="Galilee" label="Gaalila"\*
-\zlabel |key="capernaum" termid="Καφαρναούμ" gloss="Capernaum" label="Kapharnahuma"\*
-\zlabel |key="sea_of_galilee_nt" termid="Γαλιλαία-2" gloss="Sea of Galilee" label="Gaalila Taal"\*
-\zlabel |key="nazareth" termid="Ναζαρά" gloss="Nazareth" label="Naasarata"\*
-\zlabel |key="caesarea" termid="Καισάρεια" gloss="Caesarea" label="Kaisariyaa—Kesariyaa"\*
-\zlabel |key="jordan_river_nt" termid="Ἰορδάνης" gloss="Jordan River" label="Yardana Nadi"\*
-\zlabel |key="decapolis" termid="Δεκάπολις" gloss="Decapolis" label="Dasa Sahar"\*
-\zlabel |key="samaria_region" termid="Σαμάρεια-1" gloss="Samaria" label="Saamariyaa"\*
-\zlabel |key="samaria_city_nt" termid="Σαμάρεια-2" gloss="Samaria" label="Saamariyaa"\*
-\zlabel |key="apollonia" termid="Ἀπολλωνία" gloss="Apollonia" label="Apolloniyaa"\*
-\zlabel |key="joppa_nt" termid="Ἰόππη" gloss="Joppa" label="Yoppaa"\*
-\zlabel |key="mediterranean_sea" termid="mediterranean_sea" gloss="Mediterranean Sea" label=""\*
-\zlabel |key="jamnia" termid="jamnia" gloss="Jamnia" label=""\*
-\zlabel |key="jericho_nt" termid="Ἰεριχώ" gloss="Jericho" label="Yariho"\*
-\zlabel |key="jerusalem_nt" termid="Ἱεροσόλυμα-1" gloss="Jerusalem" label="Yarusalema"\*
-\zlabel |key="azotus" termid="Ἄζωτος" gloss="Azotus" label=""\*
-\zlabel |key="bethlehem_nt" termid="Βηθλέεμ" gloss="Bethlehem" label="Bethalehema"\*
-\zlabel |key="dead_sea" termid="יָם הַמֶּלַח" gloss="Dead Sea" label=""\*
-\zlabel |key="judea" termid="Ἰουδαία" gloss="Judea" label="Yahudiyaa"\*
-\zlabel |key="gaza_nt" termid="Γάζα" gloss="Gaza" label="Gaajaa"\*
-\zdiagram-e \*`;
+const electronAPI = window.electronAPI;
+const mapBibTerms = new MapBibTerms();
+
+var usfm = INITIAL_USFM;
 
 function getMatchTally(entry, refs, extractedVerses) {
   let anyDenials = false;
@@ -59,18 +38,19 @@ function getMatchTally(entry, refs, extractedVerses) {
     }
     if (entry.renderings) {
       renderingList = entry.renderings
-        .split(/\r?\n/)
+        .replace(/\|\|/g, '\n').split(/(\r?\n)/)
         .map(r => r.replace(/\(.*/g, '').replace(/.*\)/g, '')) // Remove content in parentheses (comments), even if only partially enclosed. (The user may be typing a comment.)
         .map(r => r.trim())
         .filter(r => r.length > 0)
         .map(r => {
           let pattern = r;
           // Insert word boundary at start if not starting with *
-          if (!pattern.startsWith('*')) pattern = '\\b' + pattern;
+          if (!pattern.startsWith('*')) pattern = MATCH_PRE_B + pattern;
           // Insert word boundary at end if not ending with *
-          if (!pattern.endsWith('*')) pattern = pattern + '\\b';
+          if (!pattern.endsWith('*')) pattern = pattern + MATCH_POST_B;
           // Replace * [with [\w-]* (word chars + dash)
-          pattern = pattern.replace(/\*/g, '[\\w-]*');
+          pattern = pattern.replace(/\*/g, MATCH_W + '*');
+          // console.log(`Creating regex for rendering "${r}" with pattern "${pattern}"`);
           try {
             return new RegExp(pattern, 'iu');
           } catch (e) {
@@ -341,18 +321,19 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
   let renderingList = [];
   if (renderings) {
     renderingList = renderings
-      .split(/\r?\n/)
+      .replace(/\|\|/g, '\n').split(/(\r?\n)/)
       .map(r => r.replace(/\(.*/g, '').replace(/.*\)/g, '')) // Remove content in parentheses (comments), even if only partially enclosed. (The user may be typing a comment.)
       .map(r => r.trim())
       .filter(r => r.length > 0)
       .map(r => {
         let pattern = r;
         // Insert word boundary at start if not starting with *
-        if (!pattern.startsWith('*')) pattern = '\\b' + pattern;
+        if (!pattern.startsWith('*')) pattern = MATCH_PRE_B + pattern;
         // Insert word boundary at end if not ending with *
-        if (!pattern.endsWith('*')) pattern = pattern + '\\b';
+        if (!pattern.endsWith('*')) pattern = pattern + MATCH_POST_B;
         // Replace * [with [\w-]* (word chars + dash)
-        pattern = pattern.replace(/\*/g, '[\\w-]*');
+        pattern = pattern.replace(/\*/g, MATCH_W + '*');
+        console.log(`Creating regex for rendering "${r}" with pattern "${pattern}"`);
         try {
           return new RegExp(pattern, 'iu');
         } catch (e) {
@@ -543,7 +524,7 @@ function usfmFromMap(map, lang) {
 
 function App() {
   // Project folder state
-  const [projectFolder, setProjectFolder] = useState('c:/My Paratext 9 Projects/Zezi');
+  const [projectFolder, setProjectFolder] = useState(DEMO_PROJECT_FOLDER);
   const [lang, setLang] = useState('en');
   const [mapDef, setMapDef] = useState(map);
   const [locations, setLocations] = useState([]);
@@ -552,7 +533,7 @@ function App() {
   const [topHeight, setTopHeight] = useState(80);
   const [renderings, setRenderings] = useState('');
   const [isApproved, setIsApproved] = useState(false);
-  const [mapPaneView, setMapPaneView] = useState(map.mapView ? 0 : 1); // 0: Map, 1: Table, 2: USFM
+  const [mapPaneView, setMapPaneView] = useState(map.mapView ? MAP_VIEW : TABLE_VIEW); // 0: Map, 1: Table, 2: USFM
   const [labelScale, setLabelScale] = useState(() => {
     // Persist labelScale in localStorage
     const saved = localStorage.getItem('labelScale');
@@ -607,15 +588,16 @@ function App() {
       return;
     }
     electronAPI.getFilteredVerses(projectFolder, refs).then(verses => {
+      console.log('[IPC] getFilteredVerses:', projectFolder, 'for refs:', refs.length);
       if (verses && !verses.error) {
         setExtractedVerses(verses);
-        console.log('[IPC] getFilteredVerses:', Object.keys(verses).length, 'for refs:', refs.length);
+        // console.log('[IPC] getFilteredVerses:', Object.keys(verses).length, 'for refs:', refs.length);
       } else {
         setExtractedVerses({});
-        alert('Failed to load all_verses.json: ' + (verses && verses.error));
+        alert('Failed to requested filtered verses ' + (verses && verses.error));
       }
     });
-  }, [projectFolder, mapDef.template.labels]);
+  }, [projectFolder, mapDef.labels]);
 
   // UI handler to select project folder
   const handleSelectProjectFolder = useCallback(async () => {
@@ -853,7 +835,7 @@ function App() {
 
 
         //setLocations(newLocations);
-        setMapPaneView(0); // Map View
+        setMapPaneView(MAP_VIEW); // Map View
       }
     } catch (e) {
       // User cancelled or not supported
@@ -904,10 +886,10 @@ useEffect(() => {
 
   // Focus vernacular input after selection or locations change
   useEffect(() => {
-    if (vernacularInputRef.current && mapPaneView === 0) {
+    if (vernacularInputRef.current && mapPaneView === MAP_VIEW) {
       vernacularInputRef.current.focus();
     }
-  }, [selLocation, mapPaneView]); // Add mapPaneView as dependency
+  }, [selLocation, mapPaneView]); 
 
   // Table View component
   function TableView({ locations, selLocation, onUpdateVernacular, onNextLocation, termRenderings, onSelectLocation, lang }) {
@@ -1016,7 +998,7 @@ useEffect(() => {
   // Only update USFM text when switching TO USFM view (not on every locations change)
   const prevMapPaneView = useRef();
   useEffect(() => {
-    if (prevMapPaneView.current !== 2 && mapPaneView === 2) {
+    if (prevMapPaneView.current !== USFM_VIEW && mapPaneView === USFM_VIEW) {
       setUsfmText(usfmFromMap({ ...mapDef, labels: locations }, lang));
     }
     prevMapPaneView.current = mapPaneView;
@@ -1053,22 +1035,22 @@ useEffect(() => {
 
   // Intercept view switch to update map if leaving USFM view
   const handleSwitchViewWithUsfm = useCallback(() => {
-    if (mapPaneView === 2) {
+    if (mapPaneView === USFM_VIEW) {
       updateMapFromUsfm();
     }
     setMapPaneView(prev => {
       if (!map.mapView) {
         // Only cycle between Table (1) and USFM (2)
-        return prev === 1 ? 2 : 1;
+        return prev === TABLE_VIEW ? USFM_VIEW : TABLE_VIEW;
       }
       // Cycle through Map (0), Table (1), USFM (2)
-      return (prev + 1) % 3;
+      return (prev + 1) % 3;  // Maybe this can be simplified now that Switch View is only from USFM
     });
   }, [mapPaneView, updateMapFromUsfm]);
 
   // Intercept OK button in DetailsPane
   const handleOkWithUsfm = useCallback(() => {
-    if (mapPaneView === 2) {
+    if (mapPaneView === USFM_VIEW) {
       updateMapFromUsfm();
     }
     // Optionally: do other OK logic here
@@ -1131,7 +1113,7 @@ useEffect(() => {
   // Add global PageUp/PageDown navigation for Map and Table views
 useEffect(() => {
   function handleGlobalKeyDown(e) {
-    if (mapPaneView === 2) return; // Do not trigger in USFM view
+    if (mapPaneView === USFM_VIEW) return; // Do not trigger in USFM view
     // Ctrl+9 triggers zoom reset
     if (e.ctrlKey && (e.key === '9' || e.code === 'Digit9')) {
       console.log('Resetting zoom');
@@ -1184,7 +1166,7 @@ useEffect(() => {
     <div className="app-container">
       <div className="top-section" style={{ flex: `0 0 ${topHeight}%` }}>
         <div className="map-pane" style={{ flex: `0 0 ${mapWidth}%` }}>
-          {mapPaneView === 0 && map.mapView && (
+          {mapPaneView === MAP_VIEW && map.mapView && (
             <MapPane
               imageUrl={memoizedMapDef.imgFilename ? `/assets/maps/${memoizedMapDef.imgFilename}` : ''}
               locations={memoizedLocations}
@@ -1199,7 +1181,7 @@ useEffect(() => {
               extractedVerses={extractedVerses} // Pass extracted verses
             />
           )}
-          {mapPaneView === 1 && (
+          {mapPaneView === TABLE_VIEW && (
             <TableView
               locations={locations}
               selLocation={selLocation}
@@ -1210,7 +1192,7 @@ useEffect(() => {
               lang={lang} // <-- pass lang
             />
           )}
-          {mapPaneView === 2 && (
+          {mapPaneView === USFM_VIEW && (
             <USFMView usfmText={usfmText} />
           )}
         </div>
@@ -1235,7 +1217,7 @@ useEffect(() => {
             mapPaneView={mapPaneView}
             onSetView={viewIdx => {
               if (viewIdx === 0 && !map.mapView) return;
-              if (mapPaneView === 2) updateMapFromUsfm();
+              if (mapPaneView === USFM_VIEW) updateMapFromUsfm();
               setMapPaneView(viewIdx);
             }}
             onShowSettings={() => setShowSettings(true)} // <-- add onShowSettings
@@ -1510,7 +1492,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
   };
 
   // Only show the button row if in USFM view
-  if (mapPaneView === 2) {
+  if (mapPaneView === USFM_VIEW) {
     return (
       <div>
       {/* Button Row */}
@@ -1570,7 +1552,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
   return (
     <div>
       {/* Button Row */}
-      {mapPaneView !== 2 && (
+      {mapPaneView !== USFM_VIEW && (
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
           {/* Icon view buttons */}
           <button
@@ -1578,8 +1560,8 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
             disabled={!mapDef.mapView}
             style={{
               marginRight: 4,
-              background: mapPaneView === 0 ? '#d0eaff' : undefined,
-              border: mapPaneView === 0 ? '2px inset #2196f3' : undefined,
+              background: mapPaneView === MAP_VIEW ? '#d0eaff' : undefined,
+              border: mapPaneView === MAP_VIEW ? '2px inset #2196f3' : undefined,
               opacity: mapDef.mapView ? 1 : 0.5,
               padding: '4px 8px',
               borderRadius: 4,
@@ -1600,8 +1582,8 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
             onClick={() => onSetView(1)}
             style={{
               marginRight: 4,
-              background: mapPaneView === 1 ? '#d0eaff' : undefined,
-              border: mapPaneView === 1 ? '2px inset #2196f3' : undefined,
+              background: mapPaneView === TABLE_VIEW ? '#d0eaff' : undefined,
+              border: mapPaneView === TABLE_VIEW ? '2px inset #2196f3' : undefined,
               padding: '4px 8px',
               borderRadius: 4,
               height: 32,
@@ -1625,8 +1607,8 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
             onClick={() => onSetView(2)}
             style={{
               marginRight: 32,
-              background: mapPaneView === 2 ? '#d0eaff' : undefined,
-              border: mapPaneView === 2 ? '2px inset #2196f3' : undefined,
+              background: mapPaneView === USFM_VIEW ? '#d0eaff' : undefined,
+              border: mapPaneView === USFM_VIEW ? '2px inset #2196f3' : undefined,
               padding: '4px 8px',
               borderRadius: 4,
               height: 32,
@@ -1770,9 +1752,9 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
           <span style={{color: statusValue[status].textColor, fontSize: '0.8em'}}>
             <span style={{ fontWeight: 'bold' }}>{inLang(uiStr.statusValue[status].text, lang) + ": "}</span>
             {inLang(uiStr.statusValue[status].help, lang)}
-            {status === 2 && (  // If status is "no renderings", show Add to renderings button
+            {status === STATUS_NO_RENDERINGS && (  // If status is "no renderings", show Add to renderings button
               <button style={{ marginLeft: 8 }} onClick={handleAddToRenderings}>{inLang(uiStr.addToRenderings, lang)}</button>
-            )}{status === 5 && (  // If status is "guessed", show Add to renderings button
+            )}{status === STATUS_GUESSED && (  // If status is "guessed", show Add to renderings button
               <button
               style={{ marginLeft: 8 }}
               onClick={() => {
@@ -1831,11 +1813,13 @@ const SettingsModal = ({ open, onClose, labelScale, setLabelScale, lang, setLang
       <div className="modal-content" style={{ background: '#fff', borderRadius: 8, padding: 24, minWidth: 320, maxWidth: 600, boxShadow: '0 2px 16px rgba(0,0,0,0.2)' }}>
         <h2 style={{ marginTop: 0, textAlign: 'center'  }}>{inLang(uiStr.settings, lang)}</h2>
         {/* Project folder selector UI */}
+        {/*}
         <div style={{ padding: '6px 12px', background: '#f0f0f0', borderBottom: '1px solid #ccc', display: 'flex', alignItems: 'center', gap: 12 }}>
           <span style={{ fontWeight: 'bold' }}>Project Folder:</span>
           <span style={{ color: projectFolder ? '#333' : '#888', fontFamily: 'monospace', fontSize: 13, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{projectFolder || '(none selected)'}</span>
           <button onClick={handleSelectProjectFolder} style={{ padding: '2px 10px', borderRadius: 4, border: '1px solid #888', background: '#e3f2fd', cursor: 'pointer' }}>Change…</button>
         </div>
+        */}
         <div style={{ marginBottom: 16, textAlign: 'center'  }}>
           <label style={{ fontWeight: 'bold', marginRight: 8, textAlign: 'center'  }}>{inLang(uiStr.labelSize, lang)}:</label>
           <input
@@ -1872,7 +1856,7 @@ const SettingsModal = ({ open, onClose, labelScale, setLabelScale, lang, setLang
   );
 };
 
-const bookNames = 'GEN,EXO,LEV,NUM,DEU,JOS,JDG,RUT,1SA,2SA,1KI,2KI,1CH,2CH,EZR,NEH,EST,JOB,PSA,PRO,ECC,SNG,ISA,JER,LAM,EZK,DAN,HOS,JOL,AMO,OBA,JON,MIC,NAM,HAB,ZEP,HAG,ZEC,MAL,MAT,MRK,LUK,JHN,ACT,ROM,1CO,2CO,GAL,EPH,PHP,COL,1TH,2TH,1TI,2TI,TIT,PHM,HEB,JAS,1PE,2PE,1JN,2JN,3JN,JUD,REV';
+const bookNames = 'GEN,EXO,LEV,NUM,DEU,JOS,JDG,RUT,1SA,2SA,1KI,2KI,1CH,2CH,EZR,NEH,EST,JOB,PSA,PRO,ECC,SNG,ISA,JER,LAM,EZK,DAN,HOS,JOL,AMO,OBA,JON,MIC,NAM,HAB,ZEP,HAG,ZEC,MAL,MAT,MRK,LUK,JHN,ACT,ROM,1CO,2CO,GAL,EPH,PHP,COL,1TH,2TH,1TI,2TI,TIT,PHM,HEB,JAS,1PE,2PE,1JN,2JN,3JN,JUD,REV,TOB,JDT,ESG,WIS,SIR,BAR,LJE,S3Y,SUS,BEL,1MA,2MA,3MA,4MA,1ES,2ES,MAN,PS2,ODA,PSS';
 
 function prettyRef(ref) {
   // ref is a 9 digit string. First 3 digits are the book code, next 3 are chapter, last 3 are verse.

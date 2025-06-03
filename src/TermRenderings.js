@@ -1,15 +1,20 @@
+import { STATUS_BLANK, STATUS_MULTIPLE, STATUS_NO_RENDERINGS, STATUS_UNMATCHED, STATUS_MATCHED, STATUS_GUESSED, STATUS_RENDERING_SHORT, STATUS_BAD_EXPLICIT_FORM } from './constants.js';
+import { MATCH_W } from './demo.js';
+
+
 function wordMatchesRenderings(word, renderings, anchored = true) {
   let renderingList = [];
   renderingList = renderings
-    .split(/\r?\n/)
+    .replace(/\|\|/g, '\n').split(/(\r?\n)/)
     .map(r => r.replace(/\(.*/g, '').replace(/.*\)/g, '')) // Remove content in parentheses (comments), even if only partially enclosed. (The user may be typing a comment.)
     .map(r => r.trim())
     .filter(r => r.length > 0)
-    .map(r => r.replace(/\*/g, '[\\w-]*'));  // TODO: 1. implement better \w.   2. Handle isoolated * better.
+    .map(r => r.replace(/\*/g, MATCH_W + '*'));  // TODO: 1. implement better \w.   2. Handle isoolated * better.
       
   for (let rendering of renderingList) {
     try {
       const pattern = anchored ? "^" + rendering + "$" : rendering
+      console.log(`Checking word "${word}" against rendering "${rendering}" with pattern "${pattern}"`);
       const regex = new RegExp(pattern, 'iu');
       if (regex.test(word)) {
         // console.log(`Word "${word}" matches rendering "${rendering}"`);
@@ -51,8 +56,8 @@ class TermRenderings {
     }
     
     // Split into separate rendering items
-    const items = renderingsStr.split('\n');
-    
+    const items = renderingsStr.replace(/\|\|/g, '\n').split(/(\r?\n)/);
+    // console.log(`Split renderings for termId "${termId}":`, items);
     // Process each item: remove parentheses and their contents, trim space
     const processedItems = items.map(item => {
       return item.replace(/\([^)]*\)/g, '').trim();
@@ -70,39 +75,39 @@ class TermRenderings {
     //console.log(`Checking status for termId: ${termId}, vernLabel: ${vernLabel}`);
     vernLabel = vernLabel ? vernLabel.trim() : '';
     if (!vernLabel) {
-      return 0; //{ status: "Blank", color: "crimson" };
+      return STATUS_BLANK; //{ status: "Blank", color: "crimson" };
     }
     
     if (vernLabel.includes('—')) {
-      return 1; //{ status: "Must select one", color: "darkorange" };
+      return STATUS_MULTIPLE; //{ status: "Must select one", color: "darkorange" };
     }
     
     const entry = this.data[termId];
     if (!entry) {
       //console.warn(`TermId "${termId}" not found in term renderings`);
-      return 2; // { status: "No renderings", color: "indianred" };
+      return STATUS_NO_RENDERINGS; // { status: "No renderings", color: "indianred" };
     }
     
     const mapForm = this.getMapForm(termId);
     if (!mapForm) {
-      return 2; // { status: "No renderings", color: "indianred" };
+      return STATUS_NO_RENDERINGS; // { status: "No renderings", color: "indianred" };
     }
     
     if (vernLabel === mapForm ) {
-      if (entry.isGuessed) return 5;  // "Guessed rendering not yet approved"
+      if (entry.isGuessed) return STATUS_GUESSED;  // "Guessed rendering not yet approved"
       // console.log(`Non-guessed Vernacular label matches map form: ${vernLabel}`);
       if (/\(@.+\)/.test(entry.renderings)) {   // If mapForm came from an explicit rendering (e.g., (@misradesh))
         // console.log(`Explicit map form: ${vernLabel}`);
         if (!wordMatchesRenderings(mapForm, entry.renderings, false)) {
           // console.log(`Explicit map form '${vernLabel}' does not match renderings.`);
-          return 7 ; // Explicit map form does not match rendering
+          return STATUS_BAD_EXPLICIT_FORM; // Explicit map form does not match rendering
         }
       }
-      return 4; // : "Approved"
+      return STATUS_MATCHED; // : "Approved"
     }
     
     // vernLabel !== mapForm
-    return wordMatchesRenderings(vernLabel, entry.renderings, false) ?  6 : 3; // "insufficient"
+    return wordMatchesRenderings(vernLabel, entry.renderings, false) ?  STATUS_RENDERING_SHORT : STATUS_UNMATCHED; // "insufficient"
   }
 
   getEntry(termId) {
