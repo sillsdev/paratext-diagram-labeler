@@ -96,7 +96,7 @@
   "noReferences": { "en": "No references found for this term.", "es": "No se encontraron referencias para este término.", "fr": "Aucune référence trouvée pour ce terme.", "ne": "यो शब्दका लागि कुनै सन्दर्भ फेला परेन।" },
   "ok": { "en": "OK", "es": "OK", "fr": "OK", "ne": "ठीक छ" },
   "owner": { "en": "Owner", "es": "Propietario", "fr": "Propriétaire", "ne": "मालिक" },
-  "replaceRenderings": { "en": "Replace renderings", "es": "Reemplazar renderings", "fr": "Remplacer les rendus", "ne": "अनुवादहरू प्रतिस्थापन गर्नुहोस्" },
+  "replaceRenderings": { "en": "Replace renderings and label", "es": "Reemplazar", "fr": "Remplacer", "ne": "प्रतिस्थापन गर्नुहोस्" },
   "settings": { "en": "Settings", "es": "Configuración", "fr": "Paramètres", "ne": "सेटिङहरू" },
   "status": { "en": "Status", "es": "Estado", "fr": "Statut", "ne": "स्थिति" },
   "tableView": { "en": "Table View", "es": "Vista de tabla", "fr": "Vue du tableau", "ne": "तालिका दृश्य" },

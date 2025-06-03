@@ -1107,10 +1107,15 @@ useEffect(() => {
     };
     termRenderings.data = updatedData;
     setIsApproved(true);
+    // Also set vernacular label to the new rendering
+    
+    
+
     setLocations(prevLocations => prevLocations.map(loc => {
       if (loc.termId === termId) {
-        const status = termRenderings.getStatus(loc.termId, loc.vernLabel);
-        return { ...loc, status };
+        const vernLabel = newRenderings;
+        const status = termRenderings.getStatus(loc.termId, vernLabel);
+        return { ...loc, status, vernLabel };
       }
       return loc;
     }));
