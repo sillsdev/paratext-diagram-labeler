@@ -7,9 +7,10 @@ import uiStr from './data/ui-strings.json';
 import supportedLanguages from './data/ui-languages.json';
 import { CheckmarkIcon, DeniedCheckmarkIcon, CrossIcon, WarningIcon } from './TermIcons';
 import { MATCH_PRE_B, MATCH_POST_B, MATCH_W, DEMO_PROJECT_FOLDER, INITIAL_USFM } from './demo.js';
-import { MAP_VIEW, TABLE_VIEW, USFM_VIEW, STATUS_NO_RENDERINGS, STATUS_GUESSED } from './constants.js';
+import { MAP_VIEW, TABLE_VIEW, USFM_VIEW, STATUS_BLANK, STATUS_MULTIPLE, STATUS_NO_RENDERINGS, STATUS_UNMATCHED, STATUS_MATCHED, STATUS_GUESSED, STATUS_RENDERING_SHORT, STATUS_BAD_EXPLICIT_FORM } from './constants.js';
+// import { MAP_VIEW, TABLE_VIEW, USFM_VIEW, STATUS_NO_RENDERINGS, STATUS_GUESSED } from './constants.js';
 // Status values not yet used: STATUS_BLANK, STATUS_MULTIPLE,  STATUS_UNMATCHED, STATUS_MATCHED, STATUS_RENDERING_SHORT, STATUS_BAD_EXPLICIT_FORM 
-import TermRenderings from './TermRenderings';
+// import TermRenderings from './TermRenderings';
 import { collectionTerms } from './CollectionTerms.js';
 import { getMapData } from './MapData';
 
@@ -28,6 +29,110 @@ const bookNames = 'GEN,EXO,LEV,NUM,DEU,JOS,JDG,RUT,1SA,2SA,1KI,2KI,1CH,2CH,EZR,N
 const electronAPI = window.electronAPI;
 const iniMap = mapFromUsfm(INITIAL_USFM);
 console.log('Initial Map:', iniMap);
+
+function wordMatchesRenderings(word, renderings, anchored = true) {
+  let renderingList = [];
+  renderingList = renderings
+    .replace(/\|\|/g, '\n').split(/(\r?\n)/)
+    .map(r => r.replace(/\(.*/g, '').replace(/.*\)/g, '')) // Remove content in parentheses (comments), even if only partially enclosed. (The user may be typing a comment.)
+    .map(r => r.trim())
+    .filter(r => r.length > 0)
+    .map(r => r.replace(/\*/g, MATCH_W + '*'));  // TODO: 1. implement better \w.   2. Handle isoolated * better.
+      
+  for (let rendering of renderingList) {
+    try {
+      const pattern = anchored ? "^" + rendering + "$" : rendering
+      console.log(`Checking word "${word}" against rendering "${rendering}" with pattern "${pattern}"`);
+      const regex = new RegExp(pattern, 'iu');
+      if (regex.test(word)) {
+        // console.log(`Word "${word}" matches rendering "${rendering}"`);
+        return true;
+      } else {
+        // console.log(`Word "${word}" doesn't match rendering "${rendering}" with pattern "${pattern}"`);
+      }
+    } catch (e) {
+      // Invalid regex, skip it
+      continue;
+    } 
+  }
+  return false;
+}
+
+function getMapForm(termRenderings, termId) {
+  const entry = termRenderings[termId];
+  if (!entry) {
+    //console.warn(`TermId "${termId}" not found in term renderings`);
+    return '';
+  }
+  let renderingsStr = entry.renderings || '';
+  // Eliminate all asterisks
+  renderingsStr = renderingsStr.replace(/\*/g, '');
+  
+  // Check for explicit map form (e.g., (@misradesh) or (map: misradesh))
+  const match = renderingsStr.match(/\((?:@|map:\s*)([^)]+)\)/);
+  if (match) {
+    return match[1];
+  }
+  
+  // Split into separate rendering items
+  const items = renderingsStr.replace(/\|\|/g, '\n').split(/(\r?\n)/);
+  // console.log(`Split renderings for termId "${termId}":`, items);
+  // Process each item: remove parentheses and their contents, trim space
+  const processedItems = items.map(item => {
+    return item.replace(/\([^)]*\)/g, '').trim();
+  }).filter(item => item.length > 0);
+  
+  // Join with em-dash and return
+  return processedItems.join('—');
+}
+
+function getStatus(termRenderings, termId, vernLabel) {
+
+  // if (termId === "philipstravels_title") {
+  //   console.warn("======================");
+  // }
+  //console.log(`Checking status for termId: ${termId}, vernLabel: ${vernLabel}`);
+  vernLabel = vernLabel ? vernLabel.trim() : '';
+  if (!vernLabel) {
+    return STATUS_BLANK; //{ status: "Blank", color: "crimson" };
+  }
+  
+  if (vernLabel.includes('—')) {
+    return STATUS_MULTIPLE; //{ status: "Must select one", color: "darkorange" };
+  }
+  
+  const entry = termRenderings[termId];
+  if (!entry) {
+    //console.warn(`TermId "${termId}" not found in term renderings`);
+    return STATUS_NO_RENDERINGS; // { status: "No renderings", color: "indianred" };
+  }
+  
+  const mapForm = getMapForm(termRenderings, termId);
+  if (!mapForm) {
+    return STATUS_NO_RENDERINGS; // { status: "No renderings", color: "indianred" };
+  }
+  
+  if (vernLabel === mapForm ) {
+    if (entry.isGuessed) return STATUS_GUESSED;  // "Guessed rendering not yet approved"
+    // console.log(`Non-guessed Vernacular label matches map form: ${vernLabel}`);
+    if (/\(@.+\)/.test(entry.renderings)) {   // If mapForm came from an explicit rendering (e.g., (@misradesh))
+      // console.log(`Explicit map form: ${vernLabel}`);
+      if (!wordMatchesRenderings(mapForm, entry.renderings, false)) {
+        // console.log(`Explicit map form '${vernLabel}' does not match renderings.`);
+        return STATUS_BAD_EXPLICIT_FORM; // Explicit map form does not match rendering
+      }
+    }
+    return STATUS_MATCHED; // : "Approved"
+  }
+  
+  // vernLabel !== mapForm
+  return wordMatchesRenderings(vernLabel, entry.renderings, false) ?  STATUS_RENDERING_SHORT : STATUS_UNMATCHED; // "insufficient"
+}
+
+function getEntry(termRenderings, termId) {
+  return termRenderings[termId];
+}
+
 
 function prettyRef(ref) {
   // ref is a 9 digit string. First 3 digits are the book code, next 3 are chapter, last 3 are verse.
@@ -279,7 +384,7 @@ function createLabel(labelText, align = 'right', angle = 0, size = 3, status, is
 };
 
 // Bottom Pane component to display a scrollable list of verses referencing the termId
-function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, renderingsTextareaRef, lang, termRenderings, setRenderings, onDenialsChanged, extractedVerses }) {
+function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, renderingsTextareaRef, lang, termRenderings, setRenderings, onDenialsChanged, extractedVerses, setTermRenderings }) {
   const paneRef = React.useRef();
   const [selectedText, setSelectedText] = React.useState('');
   // Add a local state to force re-render on denial toggle
@@ -367,7 +472,7 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
   }
 
   // Compute match tally
-  let deniedRefs = termRenderings.data[termId]?.denials || [];
+  let deniedRefs = termRenderings[termId]?.denials || [];
   // if (deniedRefs.length !== 0) {
   //   console.log(`Term "${termId}" has denied references:`, deniedRefs);
   // } else {
@@ -442,7 +547,7 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
                 const isDenied = deniedRefs.includes(refId);
                 // Handler must be in this scope
                 const handleToggleDenied = () => {
-                  const data = termRenderings.data;
+                  const data = termRenderings;
                   let denials = Array.isArray(data[termId]?.denials) ? [...data[termId].denials] : [];
                   if (isDenied) {
                     denials = denials.filter(r => r !== refId);
@@ -451,7 +556,8 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
                   }
                   if (!data[termId]) data[termId] = {};
                   data[termId].denials = denials;
-                  termRenderings.data = { ...data };
+                  const updatedData = { ...data };
+                  setTermRenderings(updatedData);
                   if (typeof setRenderings === 'function') setRenderings(r => r + '');
                   setDenialToggle(t => !t);
                   if (typeof onDenialsChanged === 'function') onDenialsChanged(); // <-- update locations in App
@@ -541,24 +647,24 @@ function App() {
   const vernacularInputRef = useRef(null);
   const renderingsTextareaRef = useRef();
   const [extractedVerses, setExtractedVerses] = useState({});
-  const termRenderings = useMemo(() => new TermRenderings(), []);
+  const [termRenderings, setTermRenderings] = useState();
 
   // Load term renderings from new project folder
   useEffect(() => {
       if (!electronAPI || !projectFolder) return;
       const loadData = async () => {
         try {
-          const data = await electronAPI.loadTermRenderings(projectFolder);
-          console.log('[IPC] Loaded term renderings:', data, 'from folder:', projectFolder);
-          if (data && !data.error) {
-            termRenderings.setData(data);
+          const newTermRenderings = await electronAPI.loadTermRenderings(projectFolder);
+          console.log('[IPC] Loaded term renderings:', newTermRenderings, 'from folder:', projectFolder);
+          if (newTermRenderings && !newTermRenderings.error) {
+            setTermRenderings(newTermRenderings);
             // setProjectFolder(folderPath);
             // Re-init locations from map and new termRenderings
             const initialLocations = iniMap.labels.map(loc => {
               if (!loc.vernLabel) {
-                loc.vernLabel = termRenderings.getMapForm(loc.termId);
+                loc.vernLabel = getMapForm(newTermRenderings, loc.termId);
               }
-              const status = termRenderings.getStatus(loc.termId, loc.vernLabel);
+              const status = getStatus(newTermRenderings,  loc.termId, loc.vernLabel);
               return { ...loc, status };
             });
             setLocations(initialLocations);
@@ -566,7 +672,7 @@ function App() {
               setSelLocation(0); // Select first location directly
             }
           } else {
-            alert('Failed to load term-renderings.json: ' + (data && data.error));
+            alert('Failed to load term-renderings.json: ' + (newTermRenderings && newTermRenderings.error));
           }
         } catch (e) {
           console.log(`Failed to load term-renderings.json from project folder <${projectFolder}>.`, e);
@@ -622,7 +728,7 @@ function App() {
     console.log('Selected location:', location);
     if (!location) return;
     setSelLocation(location.idx);
-    const entry = termRenderings.data[location.termId];
+    const entry = termRenderings[location.termId];
     if (entry) {
       setRenderings(entry.renderings);
       setIsApproved(!entry.isGuessed);
@@ -636,7 +742,7 @@ function App() {
   const handleUpdateVernacular = useCallback((termId, newVernacular) => {
     setLocations(prevLocations => prevLocations.map(loc => {
       if (loc.termId === termId) {
-        const status = termRenderings.getStatus(loc.termId, newVernacular);
+        const status = getStatus(termRenderings,  loc.termId, newVernacular);
         return { ...loc, vernLabel: newVernacular, status };
       }
       return loc;
@@ -711,14 +817,14 @@ function App() {
 
   const handleRenderingsChange = (e) => {
     setRenderings(e.target.value);
-    const updatedData = { ...termRenderings.data };
+    const updatedData = { ...termRenderings };
     updatedData[locations[selLocation].termId] = {
       ...updatedData[locations[selLocation].termId],
       renderings: e.target.value
     };
-    termRenderings.data = updatedData;
+    setTermRenderings(updatedData);
     // The renderings change might affect the status of the location indexed by selLocation
-    const status = termRenderings.getStatus(locations[selLocation].termId, locations[selLocation].vernLabel || '');
+    const status = getStatus(termRenderings,  locations[selLocation].termId, locations[selLocation].vernLabel || '');
     setLocations(prevLocations => prevLocations.map(loc => {
       if (loc.termId === locations[selLocation].termId) {
         return { ...loc, status };
@@ -730,14 +836,14 @@ function App() {
   const handleApprovedChange = (e) => {
     const approved = e.target.checked;
     setIsApproved(approved);
-    const updatedData = { ...termRenderings.data };
+    const updatedData = { ...termRenderings };
     updatedData[locations[selLocation].termId] = {
       ...updatedData[locations[selLocation].termId],
       isGuessed: !approved,
     };
-    termRenderings.data = updatedData;
+    setTermRenderings(updatedData);
     // The renderings change might affect the status of the location indexed by selLocation
-    const status = termRenderings.getStatus(locations[selLocation].termId, locations[selLocation].vernLabel || '');
+    const status = getStatus(termRenderings,  locations[selLocation].termId, locations[selLocation].vernLabel || '');
     setLocations(prevLocations => prevLocations.map(loc => {
       if (loc.termId === locations[selLocation].termId) {
         return { ...loc, status };
@@ -808,7 +914,7 @@ function App() {
           labels: foundTemplate.labels
         });
         const newLocations = foundTemplate.labels.map(loc => {
-          const status = termRenderings.getStatus(loc.termId, loc.vernLabel || '');
+          const status = getStatus(termRenderings,  loc.termId, loc.vernLabel || '');
           return { ...loc, vernLabel: loc.vernLabel || '', status };
         });
 
@@ -816,10 +922,10 @@ function App() {
           if (labels[loc.mergeKey]) {
             loc.vernLabel = labels[loc.mergeKey]; // Use label from data merge if available
           } else if (!loc.vernLabel) {
-            loc.vernLabel = termRenderings.getMapForm(loc.termId);
+            loc.vernLabel = getMapForm(termRenderings,  loc.termId);
           }
 
-          const status = termRenderings.getStatus(loc.termId, loc.vernLabel);
+          const status = getStatus(termRenderings,  loc.termId, loc.vernLabel);
           return { ...loc, status };
         });
         console.log('Initial locations:', initialLocations);
@@ -839,9 +945,9 @@ function App() {
   };
 
 useEffect(() => {
-    // Initialize locations only when termRenderings.data is loaded
+    // Initialize locations only when termRenderings is loaded
     const checkData = () => {
-      if (Object.keys(termRenderings.data).length === 0) {
+      if (!termRenderings) {
         console.log('Waiting for term renderings data to load...');
         return false;
       }
@@ -854,10 +960,10 @@ useEffect(() => {
             const initialLocations = iniMap.labels.map(loc => {
             // If vernLabel is empty, use getMapForm
             if (!loc.vernLabel) {
-              loc.vernLabel = termRenderings.getMapForm(loc.termId);
+              loc.vernLabel = getMapForm(termRenderings,  loc.termId);
             }
 
-            const status = termRenderings.getStatus(loc.termId, loc.vernLabel);
+            const status = getStatus(termRenderings,  loc.termId, loc.vernLabel);
             return { ...loc, status };
             });
           console.log('Initial locations:', initialLocations);
@@ -903,7 +1009,7 @@ useEffect(() => {
         </thead>
         <tbody>
         {locations.map((loc, i) => {
-          const status = termRenderings.getStatus(loc.termId, loc.vernLabel);
+          const status = getStatus(termRenderings,  loc.termId, loc.vernLabel);
           const isSelected = selLocation === loc.idx;
           return (
           <tr
@@ -940,7 +1046,7 @@ useEffect(() => {
             spellCheck={false}
             />
             </td>
-            <Frac value={getMatchTally(termRenderings.getEntry(loc.termId), collectionTerms.getRefs(loc.termId), extractedVerses)} />
+            <Frac value={getMatchTally(getEntry(termRenderings,  loc.termId), collectionTerms.getRefs(loc.termId), extractedVerses)} />
             <td>
 
             <span
@@ -1002,9 +1108,9 @@ useEffect(() => {
       // Re-init locations and selection
       const initialLocations = newMap.labels.map(loc => {
         if (!loc.vernLabel) {
-          loc.vernLabel = termRenderings.getMapForm(loc.termId);
+          loc.vernLabel = getMapForm(termRenderings,  loc.termId);
         }
-        const status = termRenderings.getStatus(loc.termId, loc.vernLabel);
+        const status = getStatus(termRenderings,  loc.termId, loc.vernLabel);
         return { ...loc, status };
       });
       setSelLocation(0);
@@ -1052,17 +1158,17 @@ useEffect(() => {
     let currentRenderings = renderings || '';
     let newRenderings = currentRenderings.trim() ? `${currentRenderings.trim()}\n${text.trim()}` : text.trim();
     setRenderings(newRenderings);
-    const updatedData = { ...termRenderings.data };
+    const updatedData = { ...termRenderings };
     updatedData[termId] = {
       ...updatedData[termId],
       renderings: newRenderings,
       isGuessed: false
     };
-    termRenderings.data = updatedData;
+    setTermRenderings(updatedData);
     setIsApproved(true);
     setLocations(prevLocations => prevLocations.map(loc => {
       if (loc.termId === termId) {
-        const status = termRenderings.getStatus(loc.termId, loc.vernLabel);
+        const status = getStatus(termRenderings,  loc.termId, loc.vernLabel);
         return { ...loc, status };
       }
       return loc;
@@ -1078,13 +1184,13 @@ useEffect(() => {
     const termId = locations[selLocation].termId;
     const newRenderings = text.trim();
     setRenderings(newRenderings);
-    const updatedData = { ...termRenderings.data };
+    const updatedData = { ...termRenderings };
     updatedData[termId] = {
       ...updatedData[termId],
       renderings: newRenderings,
       isGuessed: false
     };
-    termRenderings.data = updatedData;
+    setTermRenderings(updatedData);
     setIsApproved(true);
     // Also set vernacular label to the new rendering
     
@@ -1093,7 +1199,7 @@ useEffect(() => {
     setLocations(prevLocations => prevLocations.map(loc => {
       if (loc.termId === termId) {
         const vernLabel = newRenderings;
-        const status = termRenderings.getStatus(loc.termId, vernLabel);
+        const status = getStatus(termRenderings,  loc.termId, vernLabel);
         return { ...loc, status, vernLabel };
       }
       return loc;
@@ -1135,25 +1241,25 @@ useEffect(() => {
   // Add this function to update locations when denials change
   const handleDenialsChanged = useCallback(() => {
     setLocations(prevLocations => prevLocations.map(loc => {
-      const status = termRenderings.getStatus(loc.termId, loc.vernLabel || '');
+      const status = getStatus(termRenderings,  loc.termId, loc.vernLabel || '');
       return { ...loc, status };
     }));
   }, [termRenderings]);
 
-  // Debounced save of termRenderings.data to disk via IPC
+  // Debounced save of termRenderings to disk via IPC
 useEffect(() => {
   if (!projectFolder || !electronAPI) return;
-  if (!termRenderings.data || Object.keys(termRenderings.data).length === 0) return;
+  if (!termRenderings) return;
 
   const handler = setTimeout(() => {
-    electronAPI.saveTermRenderings(projectFolder, termRenderings.data);
+    electronAPI.saveTermRenderings(projectFolder, termRenderings);
     console.log('[IPC] Auto-saved termRenderings to disk:', projectFolder);
     // Optionally: show a "saved" indicator here
     // console.log('Auto-saved termRenderings to disk');
   }, 2000); // 2 seconds after last change
 
   return () => clearTimeout(handler);
-}, [termRenderings.data, projectFolder]);
+}, [termRenderings, projectFolder]);
 
   return (
     <div className="app-container">
@@ -1219,6 +1325,7 @@ useEffect(() => {
             vernacularInputRef={vernacularInputRef} // <-- pass ref
             renderingsTextareaRef={renderingsTextareaRef}
             lang={lang} // <-- pass lang
+            setTermRenderings={setTermRenderings} // <-- pass setter
           />
         </div>
       </div>
@@ -1240,6 +1347,7 @@ useEffect(() => {
           setRenderings={setRenderings}
           onDenialsChanged={handleDenialsChanged}
           extractedVerses={extractedVerses}
+          setTermRenderings={setTermRenderings}
         />
       </div>
       <SettingsModal 
@@ -1396,7 +1504,7 @@ function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScal
               loc.status,
               selLocation === loc.idx,
               labelScale,
-              frac(getMatchTally(termRenderings.getEntry(loc.termId), collectionTerms.getRefs(loc.termId), extractedVerses), true)
+              frac(getMatchTally(getEntry(termRenderings,  loc.termId), collectionTerms.getRefs(loc.termId), extractedVerses), true)
             )}
             eventHandlers={{ click: () => onSelectLocation(loc) }}
             tabIndex={0}
@@ -1408,7 +1516,7 @@ function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScal
   );
 }
 
-function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings, mapDef, onBrowseMapTemplate, vernacularInputRef, renderingsTextareaRef, lang }) {
+function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings, mapDef, onBrowseMapTemplate, vernacularInputRef, renderingsTextareaRef, lang, setTermRenderings }) {
   const [vernacular, setVernacular] = useState(locations[selLocation]?.vernLabel || '');
   const [localIsApproved, setLocalIsApproved] = useState(isApproved);
   const [localRenderings, setLocalRenderings] = useState(renderings);
@@ -1432,7 +1540,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
     const tally = {};
     if (locations && locations.length > 0) {
       locations.forEach(loc => {
-        const status = termRenderings.getStatus(loc.termId, loc.vernLabel);
+        const status = getStatus(termRenderings,  loc.termId, loc.vernLabel);
         if (!tally[status]) tally[status] = 0;
         tally[status]++;
       });
@@ -1528,13 +1636,13 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
   }
 
   // Always compute status and color from latest data
-  const status = termRenderings.getStatus(locations[selLocation]?.termId, vernacular);
+  const status = getStatus(termRenderings,  locations[selLocation]?.termId, vernacular);
 
   // Handler for Add to renderings button
   const handleAddToRenderings = () => {
     onRenderingsChange({ target: { value: vernacular } });
-    if (termRenderings.data[locations[selLocation].termId]) {
-      termRenderings.data[locations[selLocation].termId].isGuessed = false;
+    if (termRenderings[locations[selLocation].termId]) {
+      termRenderings[locations[selLocation].termId].isGuessed = false;
     }
     onApprovedChange({ target: { checked: true } });
   };
@@ -1752,12 +1860,12 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
               style={{ marginLeft: 8 }}
               onClick={() => {
                 setLocalIsApproved(true);
-                const updatedData = { ...termRenderings.data };
+                const updatedData = { ...termRenderings };
                 updatedData[locations[selLocation].termId] = {
                   ...updatedData[locations[selLocation].termId],
                   isGuessed: false,
                 };
-                termRenderings.data = updatedData;  // TODO: move this to a setter function
+                setTermRenderings(updatedData);  
                 onApprovedChange({ target: { checked: true } });
               }}>{inLang(uiStr.approveRendering, lang)}
             </button>
@@ -1771,7 +1879,7 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
             value={localRenderings}
             onChange={e => {
               setLocalRenderings(e.target.value);
-              const updatedData = { ...termRenderings.data };
+              const updatedData = { ...termRenderings };
               updatedData[locations[selLocation].termId] = {
                 ...updatedData[locations[selLocation].termId],
                 renderings: e.target.value,  // TODO: move this to a setter function
@@ -1782,9 +1890,9 @@ function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderin
                 updatedData[locations[selLocation].termId].isGuessed = false;  
                 onApprovedChange({ target: { checked: true } });
               }
-              termRenderings.data = updatedData;  // TODO: move this to a setter function
+              setTermRenderings(updatedData);  // TODO: move this to a setter function
               // The renderings change might affect the status of the location indexed by selLocation
-              //const status = termRenderings.getStatus(locations[selLocation].termId, locations[selLocation].vernLabel || '');
+              //const status = getStatus(termRenderings,  locations[selLocation].termId, locations[selLocation].vernLabel || '');
               onRenderingsChange({ target: { value: e.target.value } });
             }}
             style={{ width: '100%', minHeight: '100px', border: '1px solid black', borderRadius: '0.5em', padding: '8px', fontSize: '12px', backgroundColor: localRenderings && !localIsApproved ? '#ffbf8f' : 'white' }}
