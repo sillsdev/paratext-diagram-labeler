@@ -14,6 +14,8 @@ export const statusValue = [
 ];
 
 
+// NOTE: Renderings strings are stored with '||' as separator. When displaying/editing in a textarea, convert '||' to line breaks and vice versa.
+
 export function inLang(prop, lang = 'en') {
   if (!prop) return '';
   if (typeof prop === 'string') return prop;
@@ -123,8 +125,7 @@ export function getStatus(termRenderings, termId, vernLabel) {
 export function getMapForm(termRenderings, termId) {
   const entry = termRenderings[termId];
   if (!entry) {
-    //console.warn(`TermId "${termId}" not found in term renderings`);
-    return '';
+    //console.warn(`TermId "${termId}" not
   }
   let renderingsStr = entry.renderings || '';
   // Eliminate all asterisks
