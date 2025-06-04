@@ -146,9 +146,6 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
   let transliteration = collectionTerms.getTransliteration(locations[selLocation]?.termId);
   if (transliteration) { transliteration = ` /${transliteration}/`; }
 
-  // --- Renderings textarea value: convert '||' to line breaks for display ---
-  const displayRenderings = (localRenderings || '').replace(/\|\|/g, '\n');
-
   return (
     <div>
       {/* Button Row */}
@@ -375,31 +372,27 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
         <div className="term-renderings" style={{ margin: '8px' }}>
           <textarea
             ref={renderingsTextareaRef}
-            value={displayRenderings}
+            value={localRenderings}
             onChange={e => {
               setLocalRenderings(e.target.value);
-              // When saving, trim, remove blank lines, and convert line breaks to '||'
-              const cleaned = e.target.value
-                .split(/\r?\n/)
-                .map(line => line.trim())
-                .filter(line => line.length > 0)
-                .join('||');
               const updatedData = { ...termRenderings };
               updatedData[locations[selLocation].termId] = {
                 ...updatedData[locations[selLocation].termId],
-                renderings: cleaned,
+                renderings: e.target.value,  // TODO: move this to a setter function
               };
               // If not approved, auto-approve on edit
               if (!localIsApproved) {
                 setLocalIsApproved(true);
-                updatedData[locations[selLocation].termId].isGuessed = false;
+                updatedData[locations[selLocation].termId].isGuessed = false;  
                 onApprovedChange({ target: { checked: true } });
               }
-              setTermRenderings(updatedData);
+              setTermRenderings(updatedData);  // TODO: move this to a setter function
               // The renderings change might affect the status of the location indexed by selLocation
-              onRenderingsChange({ target: { value: cleaned } });
+              //const status = getStatus(termRenderings,  locations[selLocation].termId, locations[selLocation].vernLabel || '');
+              onRenderingsChange({ target: { value: e.target.value } });
             }}
             style={{ width: '100%', minHeight: '100px', border: '1px solid black', borderRadius: '0.5em', padding: '8px', fontSize: '12px', backgroundColor: localRenderings && !localIsApproved ? '#ffbf8f' : 'white' }}
+
             placeholder={inLang(uiStr.enterRenderings, lang)}
             spellCheck={false}
           />

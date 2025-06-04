@@ -245,4 +245,3 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
 }
 
 export default BottomPane;
-

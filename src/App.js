@@ -155,12 +155,11 @@ function App() {
           setTermRenderings(newTermRenderings);
           // Re-init locations from map and new termRenderings
           const initialLocations = iniMap.labels.map(loc => {
-            let vernLabel = loc.vernLabel;
-            if (!vernLabel && newTermRenderings[loc.termId] && typeof newTermRenderings[loc.termId].renderings === 'string') {
-              vernLabel = getMapForm(newTermRenderings, loc.termId);
+            if (!loc.vernLabel) {
+              loc.vernLabel = getMapForm(newTermRenderings, loc.termId);
             }
-            const status = getStatus(newTermRenderings,  loc.termId, vernLabel);
-            return { ...loc, vernLabel, status };
+            const status = getStatus(newTermRenderings,  loc.termId, loc.vernLabel);
+            return { ...loc, status };
           });
           setLocations(initialLocations);
           if (initialLocations.length > 0) {
@@ -315,16 +314,10 @@ function App() {
   // Handler for change in renderings textarea
   const handleRenderingsChange = (e) => {
     setRenderings(e.target.value);
-    // Clean and convert line breaks to '||' for storage
-    const cleaned = e.target.value
-      .split(/\r?\n/)
-      .map(line => line.trim())
-      .filter(line => line.length > 0)
-      .join('||');
     const updatedData = { ...termRenderings };
     updatedData[locations[selLocation].termId] = {
       ...updatedData[locations[selLocation].termId],
-      renderings: cleaned
+      renderings: e.target.value
     };
     setTermRenderings(updatedData);
     // The renderings change might affect the status of the location indexed by selLocation
@@ -610,18 +603,6 @@ function App() {
   const memoizedMapDef = useMemo(() => mapDef, [mapDef]);
   const memoizedHandleSelectLocation = useCallback(handleSelectLocation, [handleSelectLocation]);
 
-  // When passing renderings to DetailsPane, convert '||' to line breaks for textarea display
-  let renderingsForDetails = '';
-  if (
-    Array.isArray(locations) &&
-    typeof selLocation === 'number' &&
-    locations[selLocation] &&
-    termRenderings &&
-    termRenderings[locations[selLocation].termId]
-  ) {
-    renderingsForDetails = (termRenderings[locations[selLocation].termId].renderings || '').replace(/\|\|/g, '\n');
-  }
-
   // Function to update locations when denials change
   const handleDenialsChanged = useCallback(() => {
     setLocations(prevLocations => prevLocations.map(loc => {
@@ -692,7 +673,7 @@ function App() {
             selLocation={selLocation}
             onUpdateVernacular={handleUpdateVernacular}
             onNextLocation={handleNextLocation}
-            renderings={renderingsForDetails}
+            renderings={renderings}
             isApproved={isApproved}
             onRenderingsChange={handleRenderingsChange}
             onApprovedChange={handleApprovedChange}

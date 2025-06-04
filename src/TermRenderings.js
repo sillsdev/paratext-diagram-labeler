@@ -117,7 +117,5 @@ class TermRenderings {
 
 }
 
-// NOTE: Renderings strings are stored with '||' as separator. When displaying/editing in a textarea, convert '||' to line breaks and vice versa.
-
 export default TermRenderings;
 
