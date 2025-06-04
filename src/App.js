@@ -317,7 +317,8 @@ function App() {
     const updatedData = { ...termRenderings };
     updatedData[locations[selLocation].termId] = {
       ...updatedData[locations[selLocation].termId],
-      renderings: e.target.value
+      renderings: e.target.value,
+      isGuessed: false 
     };
     setTermRenderings(updatedData);
     // The renderings change might affect the status of the location indexed by selLocation
