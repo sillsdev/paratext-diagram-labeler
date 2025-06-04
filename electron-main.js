@@ -58,7 +58,7 @@ async function xmlToObject(xmlString) {
     termArray.forEach((term) => {
       const id = term.Id;
       output[id] = {
-        renderings: term.Renderings,
+        renderings: term.Renderings.replace(/\|\|/g, '\n'),
         isGuessed: term.Guess === 'true', // Convert string 'true'/'false' to boolean
         denials: term.Denials?.Denial
           ? Array.isArray(term.Denials.Denial)
@@ -91,7 +91,7 @@ async function objectToXml(obj) {
       TermRenderingsList: {
         TermRendering: Object.entries(obj).map(([id, data]) => ({
           $: { Id: id, Guess: data.isGuessed.toString() }, // Attributes
-          Renderings: data.renderings,
+          Renderings: data.renderings.replace(/\n/g, '||'), // Convert newlines to ||
           Glossary: data._glossary || {}, // Preserve empty or existing
           Changes: data._changes || {}, // Preserve empty or existing
           Notes: data._notes || {}, // Preserve empty or existing
@@ -100,7 +100,8 @@ async function objectToXml(obj) {
       },
     };
 
-    return builder.buildObject(xmlObj);
+    return builder.buildObject(xmlObj)
+    .replace(/<Change>\s*\n\s*<UserName>([^<]*)<\/UserName>\s*\n\s*<Date>([^<]*)<\/Date>/g, '<Change UserName="$1" Date="$2">'); // Convert Change elements to attributes
   } catch (error) {
     console.error('Error building XML:', error);
     throw error;
