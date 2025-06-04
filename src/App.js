@@ -321,7 +321,7 @@ function App() {
     };
     setTermRenderings(updatedData);
     // The renderings change might affect the status of the location indexed by selLocation
-    const status = getStatus(termRenderings,  locations[selLocation].termId, locations[selLocation].vernLabel || '');
+    const status = getStatus(updatedData,  locations[selLocation].termId, locations[selLocation].vernLabel || '');
     setLocations(prevLocations => prevLocations.map(loc => {
       if (loc.termId === locations[selLocation].termId) {
         return { ...loc, status };
@@ -342,7 +342,7 @@ function App() {
     };
     setTermRenderings(updatedData);
     // The renderings change might affect the status of the location indexed by selLocation
-    const status = getStatus(termRenderings,  locations[selLocation].termId, locations[selLocation].vernLabel || '');
+    const status = getStatus(updatedData,  locations[selLocation].termId, locations[selLocation].vernLabel || '');
     setLocations(prevLocations => prevLocations.map(loc => {
       if (loc.termId === locations[selLocation].termId) {
         return { ...loc, status };

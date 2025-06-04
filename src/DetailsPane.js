@@ -19,6 +19,12 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
     setLocalRenderings(renderings);
   }, [selLocation, isApproved, renderings, locations]);
 
+  useEffect(() => {
+    if (vernacularInputRef && vernacularInputRef.current && mapPaneView === 0) {
+      vernacularInputRef.current.focus();
+    }
+  }, [selLocation, mapPaneView, vernacularInputRef]);
+
   const handleVernChange = (e) => {
     const newVernacular = e.target.value;
     setVernacular(newVernacular); // Update state immediately
