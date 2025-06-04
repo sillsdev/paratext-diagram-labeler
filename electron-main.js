@@ -43,7 +43,7 @@ function bookName(bookNum, projectFolder) {
 async function xmlToObject(xmlString) {
   try {
     // Parse XML string
-    const result = await xml2js.parseStringPromise(xmlString, {
+    const result = await xml2js.parseStringPromise(xmlString.replace(/\r/g, ''), {
       explicitArray: false, // Avoid arrays for single elements
       mergeAttrs: true, // Merge attributes (like Id, Guess) into the object
     });
@@ -120,7 +120,7 @@ ipcMain.handle('load-term-renderings', async (event, projectFolder) => {
     console.log('Loading term renderings from:', xmlFilePathToUse);
     // Read the XML file into a javascript object
     if (fs.existsSync(xmlFilePathToUse)) {
-      const data = fs.readFileSync(xmlFilePath, 'utf8');
+      const data = fs.readFileSync(xmlFilePathToUse, 'utf8');
       const obj = await xmlToObject(data);
       return obj;
     } else {
