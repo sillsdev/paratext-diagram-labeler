@@ -5,7 +5,7 @@ import { CheckmarkIcon, DeniedCheckmarkIcon, WarningIcon } from './TermIcons';
 // import { MAP_VIEW, TABLE_VIEW, USFM_VIEW, STATUS_NO_RENDERINGS, STATUS_GUESSED } from './constants.js';
 // Status values not yet used: STATUS_BLANK, STATUS_MULTIPLE,  STATUS_UNMATCHED, STATUS_MATCHED, STATUS_RENDERING_SHORT, STATUS_BAD_EXPLICIT_FORM 
 // import TermRenderings from './TermRenderings';
-import { collectionTerms } from './CollectionTerms.js';
+import { collPlacenames } from './CollPlacenamesAndRefs.js';
 import { inLang, statusValue, getMatchTally, getStatus } from './Utils.js';
 
 // Table View component
@@ -69,7 +69,7 @@ export default function TableView({ locations, selLocation, onUpdateVernacular, 
             spellCheck={false}
             />
             </td>
-            <Frac value={getMatchTally(termRenderings[loc.termId], collectionTerms.getRefs(loc.termId), extractedVerses)} />
+            <Frac value={getMatchTally(termRenderings[loc.termId], collPlacenames.getRefs(loc.termId), extractedVerses)} />
             <td>
 
             <span

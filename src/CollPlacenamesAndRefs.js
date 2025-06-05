@@ -42,6 +42,6 @@ class CollPlacenamesAndRefs {
     }
 }
 
-const collectionTerms = new CollPlacenamesAndRefs();
-export { collectionTerms };
+const collPlacenames = new CollPlacenamesAndRefs();
+export { collPlacenames };
 export default CollPlacenamesAndRefs;
