@@ -6,7 +6,7 @@ import { CheckmarkIcon, DeniedCheckmarkIcon, WarningIcon } from './TermIcons';
 // Status values not yet used: STATUS_BLANK, STATUS_MULTIPLE,  STATUS_UNMATCHED, STATUS_MATCHED, STATUS_RENDERING_SHORT, STATUS_BAD_EXPLICIT_FORM 
 // import TermRenderings from './TermRenderings';
 import { collPlacenames } from './CollPlacenamesAndRefs.js';
-import { inLang, statusValue, getMatchTally, getStatus } from './Utils.js';
+import { inLang, statusValue, getMatchTally } from './Utils.js';
 
 // Table View component
 export default function TableView({ locations, selLocation, onUpdateVernacular, onNextLocation, termRenderings, onSelectLocation, lang, extractedVerses }) {
@@ -30,9 +30,10 @@ export default function TableView({ locations, selLocation, onUpdateVernacular, 
           <th>{inLang(uiStr.status, lang)}</th>
         </tr>
         </thead>
-        <tbody>
-        {locations.map((loc, i) => {
-          const status = getStatus(termRenderings,  loc.termId, loc.vernLabel);
+        <tbody>        {locations.map((loc, i) => {
+          // Use loc.status which is already calculated in App.js 
+          // This avoids inconsistencies with status calculations
+          const status = loc.status;
           const isSelected = selLocation === loc.idx;
           return (
           <tr
