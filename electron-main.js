@@ -57,7 +57,10 @@ async function xmlToObject(xmlString) {
 
     termArray.forEach((term) => {
       const id = term.Id;
-      output[id] = {
+      // Unicode normalization for Id
+      const key = id.normalize('NFC');
+      output[key] = {
+        originalId: id,
         renderings: term.Renderings.replace(/\|\|/g, '\n'),
         isGuessed: term.Guess === 'true', // Convert string 'true'/'false' to boolean
         denials: term.Denials?.Denial
@@ -90,7 +93,7 @@ async function objectToXml(obj) {
     const xmlObj = {
       TermRenderingsList: {
         TermRendering: Object.entries(obj).map(([id, data]) => ({
-          $: { Id: id, Guess: data.isGuessed.toString() }, // Attributes
+          $: { Id: data.originalId, Guess: data.isGuessed.toString() }, // Attributes
           Renderings: data.renderings.replace(/\n/g, '||'), // Convert newlines to ||
           Glossary: data._glossary || {}, // Preserve empty or existing
           Changes: data._changes || {}, // Preserve empty or existing
