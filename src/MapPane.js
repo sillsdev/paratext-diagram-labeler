@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import Leaf from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { inLang, statusValue, getMatchTally } from './Utils.js';
-import { collectionTerms } from './CollectionTerms.js';
+import { collPlacenames } from './CollPlacenamesAndRefs.js';
 
 
 export default function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScale, mapDef, termRenderings, lang, resetZoomFlag, setResetZoomFlag, extractedVerses }) {
@@ -145,7 +145,7 @@ export default function MapPane({ imageUrl, locations, onSelectLocation, selLoca
               loc.status,
               selLocation === loc.idx,
               labelScale,
-              frac(getMatchTally(termRenderings[loc.termId], collectionTerms.getRefs(loc.termId), extractedVerses), true)
+              frac(getMatchTally(termRenderings[loc.termId], collPlacenames.getRefs(loc.termId), extractedVerses), true)
             )}
             eventHandlers={{ click: () => onSelectLocation(loc) }}
             tabIndex={0}

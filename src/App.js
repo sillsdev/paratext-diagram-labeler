@@ -4,8 +4,8 @@ import BottomPane from './BottomPane.js';
 import uiStr from './data/ui-strings.json';
 import { DEMO_PROJECT_FOLDER, INITIAL_USFM } from './demo.js';
 import { MAP_VIEW, TABLE_VIEW, USFM_VIEW,  } from './constants.js';
-import { collectionTerms as collPlacenames } from './CollectionTerms.js';
-import { getMapData as getMapDef } from './MapData';
+import { collPlacenames } from './CollPlacenamesAndRefs.js';
+import { getMapDef } from './MapData';
 import { inLang, getStatus, getMapForm } from './Utils.js';
 import MapPane from './MapPane.js';
 import TableView from './TableView.js';
@@ -16,15 +16,15 @@ const electronAPI = window.electronAPI;
 const iniMap = mapFromUsfm(INITIAL_USFM);
 console.log('Initial Map:', iniMap);
 
-function getRefList(labels, mapBibTerms) {
+function getRefList(labels, collPlacenames) {
   const rl = Array.from(
     new Set(
       labels
-        .map(label => mapBibTerms.getRefs(label.termId)) 
+        .map(label => collPlacenames.getRefs(label.termId)) 
         .flat()
     )
   ).sort();
-  console.log('getRefList:', rl.length, 'refs for', labels.length, 'labels from mapBibTerms:', mapBibTerms);
+  console.log('getRefList:', rl.length, 'refs for', labels.length, 'labels from collPlacenames:', collPlacenames);
   return rl;
 }
 

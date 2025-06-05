@@ -2,8 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import './App.css';
 import uiStr from './data/ui-strings.json';
 import { MAP_VIEW, TABLE_VIEW, USFM_VIEW, STATUS_NO_RENDERINGS, STATUS_GUESSED } from './constants.js';
-import { collectionTerms } from './CollectionTerms.js';
-import { getMapData } from './MapData';
+import { collPlacenames } from './CollPlacenamesAndRefs.js';
+import { getMapDef } from './MapData';
 import { inLang, statusValue, getStatus } from './Utils.js';
 
 export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings, mapDef, onBrowseMapTemplate, vernacularInputRef, renderingsTextareaRef, lang, setTermRenderings }) {
@@ -11,7 +11,7 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
   const [localIsApproved, setLocalIsApproved] = useState(isApproved);
   const [localRenderings, setLocalRenderings] = useState(renderings);
   const [showTemplateInfo, setShowTemplateInfo] = useState(false);
-  const templateData = getMapData(mapDef.template, collectionTerms) || {};
+  const templateData = getMapDef(mapDef.template, collPlacenames) || {};
 
   useEffect(() => {
     setVernacular(locations[selLocation]?.vernLabel || '');
@@ -143,7 +143,7 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
     onApprovedChange({ target: { checked: true } });
   };
 
-  let transliteration = collectionTerms.getTransliteration(locations[selLocation]?.termId);
+  let transliteration = collPlacenames.getTransliteration(locations[selLocation]?.termId);
   if (transliteration) { transliteration = ` /${transliteration}/`; }
 
   return (
@@ -333,7 +333,7 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
       <div style={{ border: '1px solid #ccc', borderRadius: 6, marginBottom: 16, padding: 8, background: '#f9f9f9' }}>
         <h2>{inLang(locations[selLocation]?.gloss, lang)}</h2>
         <p><span style={{ fontStyle: 'italic' }}>({locations[selLocation]?.termId})  <span style={{ display: 'inline-block', width: 12 }} />{transliteration}</span><br />
-          {inLang(collectionTerms.getDefinition(locations[selLocation]?.termId), lang)}
+          {inLang(collPlacenames.getDefinition(locations[selLocation]?.termId), lang)}
         </p>
         <div className="vernacularGroup" style={{ backgroundColor: statusValue[status].bkColor, margin: '8px', padding: '8px', border: '1px solid black', borderRadius: '0.7em' }}>
           <input
