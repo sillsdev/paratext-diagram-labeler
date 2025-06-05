@@ -4,8 +4,8 @@ import BottomPane from './BottomPane.js';
 import uiStr from './data/ui-strings.json';
 import { DEMO_PROJECT_FOLDER, INITIAL_USFM } from './demo.js';
 import { MAP_VIEW, TABLE_VIEW, USFM_VIEW,  } from './constants.js';
-import { collectionTerms } from './CollectionTerms.js';
-import { getMapData } from './MapData';
+import { collectionTerms as collPlacenames } from './CollectionTerms.js';
+import { getMapData as getMapDef } from './MapData';
 import { inLang, getStatus, getMapForm } from './Utils.js';
 import MapPane from './MapPane.js';
 import TableView from './TableView.js';
@@ -57,7 +57,7 @@ function mapFromUsfm(usfm) {
   
   let mapDefData;
   try {
-    mapDefData = getMapData(templateMatch[1], collectionTerms);
+    mapDefData = getMapDef(templateMatch[1], collPlacenames);
     mapDefData.mapView = true;
     mapDefData.template = templateMatch[1];
   } catch (e) {
@@ -179,7 +179,7 @@ function App() {
   // setExtractedVerses when projectFolder or mapDef.labels change
   useEffect(() => {
     if (!projectFolder || !mapDef.labels?.length) return;
-    const refs = getRefList(mapDef.labels, collectionTerms);
+    const refs = getRefList(mapDef.labels, collPlacenames);
     if (!refs.length) {
       setExtractedVerses({});
       return;
@@ -397,7 +397,7 @@ function App() {
         } else {
           return;
         }
-        const foundTemplate = getMapData('SMR1_' + newTemplateBase, collectionTerms);
+        const foundTemplate = getMapDef('SMR1_' + newTemplateBase, collPlacenames);
         if (!foundTemplate) {
           alert(inLang(uiStr.noTemplate, lang) + ": " + newTemplateBase);
           return;

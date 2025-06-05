@@ -1,4 +1,4 @@
-const allMapData = require('./data/all-map-data.json');
+const allMapData = require('./data/smr-map-defs.json');
 
 function getMapData(mapId, mapBibTerms) {
     // Dynamically import the JSON file and return the requested map data
