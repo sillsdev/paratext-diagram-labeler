@@ -580,7 +580,7 @@ function App() {
   }, [renderings, selLocation, locations, termRenderings]);
 
 
-  // Replace all renderings with selected text
+  // Replace all renderings with selected text (from bottom pane) or create new rendering (from details pane)
   const handleReplaceRendering = useCallback((text) => {
     if (!locations[selLocation]) return;
     const termId = locations[selLocation].termId;
@@ -607,7 +607,7 @@ function App() {
   }, [selLocation, locations, termRenderings]);
 
 
-  // Add global PageUp/PageDown navigation for Map and Table views
+    // Add global PageUp/PageDown navigation for Map and Table views
   useEffect(() => {
     function handleGlobalKeyDown(e) {
       if (mapPaneView === USFM_VIEW) return; // Do not trigger in USFM view
@@ -728,6 +728,7 @@ function App() {
             renderingsTextareaRef={renderingsTextareaRef}
             lang={lang} // <-- pass lang
             setTermRenderings={setTermRenderings} // <-- pass setter
+            onCreateRendering ={handleReplaceRendering} // <-- pass handler
           />
         </div>
       </div>

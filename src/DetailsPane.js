@@ -6,7 +6,7 @@ import { collPlacenames } from './CollPlacenamesAndRefs.js';
 import { getMapDef } from './MapData';
 import { inLang, statusValue } from './Utils.js';
 
-export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings, mapDef, onBrowseMapTemplate, vernacularInputRef, renderingsTextareaRef, lang, setTermRenderings }) {
+export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings, mapDef, onBrowseMapTemplate, vernacularInputRef, renderingsTextareaRef, lang, setTermRenderings, onCreateRendering }) {
   const [vernacular, setVernacular] = useState(locations[selLocation]?.vernLabel || '');
   const [localIsApproved, setLocalIsApproved] = useState(isApproved);
   const [localRenderings, setLocalRenderings] = useState(renderings);
@@ -134,41 +134,6 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
   // Use the status from the location object which is already calculated in App.js
   // This is more reliable than recalculating it here
   const status = locations[selLocation]?.status || 0;
-    // Handler for Add to renderings button
-  const handleAddToRenderings = () => {
-    const termId = locations[selLocation].termId;
-    
-    // First update local state
-    const newRenderings = vernacular.trim();
-    setLocalRenderings(newRenderings);
-    setLocalIsApproved(true);
-    
-    // Create updated termRenderings data
-    const updatedData = { ...termRenderings };
-    
-    // Create or update entry in termRenderings
-    if (!updatedData[termId]) {
-      updatedData[termId] = { 
-        renderings: newRenderings, 
-        isGuessed: false 
-      };
-    } else {
-      updatedData[termId] = {
-        ...updatedData[termId],
-        renderings: newRenderings,
-        isGuessed: false
-      };
-    }
-    
-    // Update the shared termRenderings state first
-    setTermRenderings(updatedData);
-    
-    // Then call parent handlers to update status in the locations array
-    // These are critical for the status to be properly recomputed
-    onRenderingsChange({ target: { value: newRenderings } });
-    onApprovedChange({ target: { checked: true } });
-  };
-
   let transliteration = collPlacenames.getTransliteration(locations[selLocation]?.termId);
   if (transliteration) { transliteration = ` /${transliteration}/`; }
 
@@ -376,7 +341,7 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
             <span style={{ fontWeight: 'bold' }}>{inLang(uiStr.statusValue[status].text, lang) + ": "}</span>
             {inLang(uiStr.statusValue[status].help, lang)}
             {status === STATUS_NO_RENDERINGS && (  // If status is "no renderings", show Add to renderings button
-              <button style={{ marginLeft: 8 }} onClick={handleAddToRenderings}>{inLang(uiStr.addToRenderings, lang)}</button>
+              <button style={{ marginLeft: 8 }} onClick={() => onCreateRendering(vernacular)}>{inLang(uiStr.addToRenderings, lang)}</button>
             )}{status === STATUS_GUESSED && (  // If status is "guessed", show Approve rendering button
               <button
               style={{ marginLeft: 8 }}
