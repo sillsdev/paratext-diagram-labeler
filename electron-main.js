@@ -40,7 +40,7 @@ function bookName(bookNum, projectFolder) {
   return path.join(projectFolder, bookPrefix + folderName + '.sfm');
 }
 
-async function xmlToObject(xmlString) {
+async function termsXmlToObject(xmlString) {
   try {
     // Parse XML string
     const result = await xml2js.parseStringPromise(xmlString.replace(/\r/g, ''), {
@@ -82,7 +82,7 @@ async function xmlToObject(xmlString) {
   }
 }
 
-async function objectToXml(obj) {
+async function termsObjectToXml(obj) {
   try {
     const builder = new xml2js.Builder({
       xmldec: { version: '1.0', encoding: 'utf-8' },
@@ -93,17 +93,19 @@ async function objectToXml(obj) {
     const xmlObj = {
       TermRenderingsList: {
         TermRendering: Object.entries(obj).map(([id, data]) => ({
-          $: { Id: data.originalId, Guess: data.isGuessed.toString() }, // Attributes
+          $: { Id: data.originalId ?? id, Guess: data.isGuessed.toString() }, // Attributes
           Renderings: data.renderings.replace(/\n/g, '||'), // Convert newlines to ||
           Glossary: data._glossary || {}, // Preserve empty or existing
           Changes: data._changes || {}, // Preserve empty or existing
           Notes: data._notes || {}, // Preserve empty or existing
-          Denials: data.denials.length ? { Denial: data.denials } : {}, // Handle denials array
+          Denials: data.denials?.length ? { Denial: data.denials } : {}, // Handle denials array
         })),
       },
     };
 
     return builder.buildObject(xmlObj)
+    .replace(/\/>/g, ' />') // Add original space to self-closing tags
+    .replace(/\n/g, '\r\n') // Revert newlines to CRLF 
     .replace(/<Change>\s*\n\s*<UserName>([^<]*)<\/UserName>\s*\n\s*<Date>([^<]*)<\/Date>/g, '<Change UserName="$1" Date="$2">'); // Convert Change elements to attributes
   } catch (error) {
     console.error('Error building XML:', error);
@@ -124,7 +126,7 @@ ipcMain.handle('load-term-renderings', async (event, projectFolder) => {
     // Read the XML file into a javascript object
     if (fs.existsSync(xmlFilePathToUse)) {
       const data = fs.readFileSync(xmlFilePathToUse, 'utf8');
-      const obj = await xmlToObject(data);
+      const obj = await termsXmlToObject(data);
       return obj;
     } else {
       console.log('no xml renderings.')
@@ -138,7 +140,7 @@ ipcMain.handle('load-term-renderings', async (event, projectFolder) => {
 ipcMain.handle('save-term-renderings', async (event, projectFolder, data) => {
   try {
     const filePath = path.join(projectFolder, 'TermRenderings-Demo.xml');
-    const xmlOutput = await objectToXml(data);
+    const xmlOutput = await termsObjectToXml(data);
     fs.writeFileSync(filePath, xmlOutput, 'utf8');
     console.log('Term renderings saved successfully.');
     return { success: true };
