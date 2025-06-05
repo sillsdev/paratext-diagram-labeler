@@ -1,14 +1,14 @@
-import mapBibTermsData from './data/smr-term-list.json';
+import collPlacenamesAndRefs from './data/smr-placenames-and-refs.json';
 
-class CollectionTerms {
+class CollPlacenamesAndRefs {
     constructor() {
-        this.data = mapBibTermsData;
+        this.data = collPlacenamesAndRefs;
     }
     
     getGloss(termId) {
         const entry = this.data[termId];
         if (!entry) {
-            console.warn(`TermId "${termId}" not found in mapBibTerms`);
+            console.warn(`TermId "${termId}" not found in collPlacenamesAndRefs`);
             return '';
         }
         return entry.gloss;   
@@ -17,7 +17,7 @@ class CollectionTerms {
     getDefinition(termId) {
         const entry = this.data[termId];
         if (!entry) {
-  //          console.warn(`TermId "${termId}" not found in mapBibTerms`);
+  //          console.warn(`TermId "${termId}" not found in collPlacenamesAndRefs`);
             return '';
         }
         return entry.context;   
@@ -26,7 +26,7 @@ class CollectionTerms {
     getTransliteration(termId) {
         const entry = this.data[termId];
         if (!entry) {
-//            console.warn(`TermId "${termId}" not found in mapBibTerms`);
+//            console.warn(`TermId "${termId}" not found in collPlacenamesAndRefs`);
             return '';
         }
         return entry.transliteration;   
@@ -35,13 +35,13 @@ class CollectionTerms {
     getRefs(termId) {
         const entry = this.data[termId];
         if (!entry) {
-            console.warn(`TermId "${termId}" not found in mapBibTerms`);
+            console.warn(`TermId "${termId}" not found in collPlacenamesAndRefs`);
             return [];
         }
         return entry.refs || [];   
     }
 }
 
-const collectionTerms = new CollectionTerms();
+const collectionTerms = new CollPlacenamesAndRefs();
 export { collectionTerms };
-export default CollectionTerms;
+export default CollPlacenamesAndRefs;
