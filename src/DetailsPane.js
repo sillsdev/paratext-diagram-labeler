@@ -4,9 +4,9 @@ import uiStr from './data/ui-strings.json';
 import { MAP_VIEW, TABLE_VIEW, USFM_VIEW, STATUS_NO_RENDERINGS, STATUS_GUESSED } from './constants.js';
 import { collPlacenames } from './CollPlacenamesAndRefs.js';
 import { getMapDef } from './MapData';
-import { inLang, statusValue, getStatus } from './Utils.js';
+import { inLang, statusValue } from './Utils.js';
 
-export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings, mapDef, onBrowseMapTemplate, vernacularInputRef, renderingsTextareaRef, lang, setTermRenderings }) {
+export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings, mapDef, onBrowseMapTemplate, vernacularInputRef, renderingsTextareaRef, lang, setTermRenderings, onCreateRendering }) {
   const [vernacular, setVernacular] = useState(locations[selLocation]?.vernLabel || '');
   const [localIsApproved, setLocalIsApproved] = useState(isApproved);
   const [localRenderings, setLocalRenderings] = useState(renderings);
@@ -36,7 +36,8 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
     const tally = {};
     if (locations && locations.length > 0) {
       locations.forEach(loc => {
-        const status = getStatus(termRenderings,  loc.termId, loc.vernLabel);
+        // Use the status already stored in the location object
+        const status = loc.status || 0;
         if (!tally[status]) tally[status] = 0;
         tally[status]++;
       });
@@ -128,21 +129,11 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
         </button>
       </div>
       </div>
-    );
-  }
+    );  }
 
-  // Always compute status and color from latest data
-  const status = getStatus(termRenderings,  locations[selLocation]?.termId, vernacular);
-
-  // Handler for Add to renderings button
-  const handleAddToRenderings = () => {
-    onRenderingsChange({ target: { value: vernacular } });
-    if (termRenderings[locations[selLocation].termId]) {
-      termRenderings[locations[selLocation].termId].isGuessed = false;
-    }
-    onApprovedChange({ target: { checked: true } });
-  };
-
+  // Use the status from the location object which is already calculated in App.js
+  // This is more reliable than recalculating it here
+  const status = locations[selLocation]?.status || 0;
   let transliteration = collPlacenames.getTransliteration(locations[selLocation]?.termId);
   if (transliteration) { transliteration = ` /${transliteration}/`; }
 
@@ -350,17 +341,24 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
             <span style={{ fontWeight: 'bold' }}>{inLang(uiStr.statusValue[status].text, lang) + ": "}</span>
             {inLang(uiStr.statusValue[status].help, lang)}
             {status === STATUS_NO_RENDERINGS && (  // If status is "no renderings", show Add to renderings button
-              <button style={{ marginLeft: 8 }} onClick={handleAddToRenderings}>{inLang(uiStr.addToRenderings, lang)}</button>
-            )}{status === STATUS_GUESSED && (  // If status is "guessed", show Add to renderings button
+              <button style={{ marginLeft: 8 }} onClick={() => onCreateRendering(vernacular)}>{inLang(uiStr.addToRenderings, lang)}</button>
+            )}{status === STATUS_GUESSED && (  // If status is "guessed", show Approve rendering button
               <button
               style={{ marginLeft: 8 }}
               onClick={() => {
+                const termId = locations[selLocation].termId;
+                
+                // Update local state
                 setLocalIsApproved(true);
+                
+                // Create a proper updated termRenderings object
                 const updatedData = { ...termRenderings };
-                updatedData[locations[selLocation].termId] = {
-                  ...updatedData[locations[selLocation].termId],
+                updatedData[termId] = {
+                  ...updatedData[termId],
                   isGuessed: false,
                 };
+                
+                // Update state via parent component handlers
                 setTermRenderings(updatedData);  
                 onApprovedChange({ target: { checked: true } });
               }}>{inLang(uiStr.approveRendering, lang)}
@@ -369,27 +367,39 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
           </span>
         </div>
         <h5>{inLang(uiStr.termRenderings, lang)}  {localRenderings && !localIsApproved ? '(' + inLang(uiStr.guessed, lang) +')' : ''}</h5>
-        <div className="term-renderings" style={{ margin: '8px' }}>
-          <textarea
+        <div className="term-renderings" style={{ margin: '8px' }}>          <textarea
             ref={renderingsTextareaRef}
             value={localRenderings}
             onChange={e => {
-              setLocalRenderings(e.target.value);
+              const termId = locations[selLocation].termId;
+              const newValue = e.target.value;
+              
+              // Update local state
+              setLocalRenderings(newValue);
+              
+              // Create updated renderings data
               const updatedData = { ...termRenderings };
-              updatedData[locations[selLocation].termId] = {
-                ...updatedData[locations[selLocation].termId],
-                renderings: e.target.value,  // TODO: move this to a setter function
-              };
+              
+              // Create entry if it doesn't exist
+              if (!updatedData[termId]) {
+                updatedData[termId] = { renderings: newValue };
+              } else {
+                updatedData[termId] = {
+                  ...updatedData[termId],
+                  renderings: newValue,
+                };
+              }
+              
               // If not approved, auto-approve on edit
               if (!localIsApproved) {
                 setLocalIsApproved(true);
-                updatedData[locations[selLocation].termId].isGuessed = false;  
+                updatedData[termId].isGuessed = false;  
                 onApprovedChange({ target: { checked: true } });
               }
-              setTermRenderings(updatedData);  // TODO: move this to a setter function
-              // The renderings change might affect the status of the location indexed by selLocation
-              //const status = getStatus(termRenderings,  locations[selLocation].termId, locations[selLocation].vernLabel || '');
-              onRenderingsChange({ target: { value: e.target.value } });
+              
+              // Update parent state
+              setTermRenderings(updatedData);
+              onRenderingsChange({ target: { value: newValue } });
             }}
             style={{ width: '100%', minHeight: '100px', border: '1px solid black', borderRadius: '0.5em', padding: '8px', fontSize: '12px', backgroundColor: localRenderings && !localIsApproved ? '#ffbf8f' : 'white' }}
 

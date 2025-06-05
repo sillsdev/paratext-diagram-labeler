@@ -235,12 +235,14 @@ function App() {
     }
   }, [termRenderings, setRenderings, setIsApproved, setSelLocation]);
 
-
   // Handler to update label of selected location with new vernacular and status
   const handleUpdateVernacular = useCallback((termId, newVernacular) => {
+    // Create a copy of the current state to ensure we're using the latest data
+    const currentTermRenderings = { ...termRenderings };
+    
     setLocations(prevLocations => prevLocations.map(loc => {
       if (loc.termId === termId) {
-        const status = getStatus(termRenderings,  loc.termId, newVernacular);
+        const status = getStatus(currentTermRenderings, loc.termId, newVernacular);
         return { ...loc, vernLabel: newVernacular, status };
       }
       return loc;
@@ -310,42 +312,71 @@ function App() {
     document.removeEventListener('mouseup', handleDragEnd);
   };
 
-
   // Handler for change in renderings textarea
   const handleRenderingsChange = (e) => {
-    setRenderings(e.target.value);
+    const newRenderings = e.target.value;
+    const termId = locations[selLocation].termId;
+    
+    // Update local state
+    setRenderings(newRenderings);
+    
+    // Create a proper updated termRenderings object
     const updatedData = { ...termRenderings };
-    updatedData[locations[selLocation].termId] = {
-      ...updatedData[locations[selLocation].termId],
-      renderings: e.target.value,
-      isGuessed: false 
-    };
+    
+    // Create the entry if it doesn't exist
+    if (!updatedData[termId]) {
+      updatedData[termId] = { renderings: newRenderings, isGuessed: false };
+    } else {
+      updatedData[termId] = {
+        ...updatedData[termId],
+        renderings: newRenderings,
+        isGuessed: false 
+      };
+    }
+    
+    // Update termRenderings state
     setTermRenderings(updatedData);
+    
     // The renderings change might affect the status of the location indexed by selLocation
-    const status = getStatus(updatedData,  locations[selLocation].termId, locations[selLocation].vernLabel || '');
+    const status = getStatus(updatedData, termId, locations[selLocation].vernLabel || '');
+    
+    // Update the status of the affected location
     setLocations(prevLocations => prevLocations.map(loc => {
-      if (loc.termId === locations[selLocation].termId) {
+      if (loc.termId === termId) {
         return { ...loc, status };
       }
       return loc;
     }));
   };
 
-
   // Handler for change in approved status.
   const handleApprovedChange = (e) => {
     const approved = e.target.checked;
+    const termId = locations[selLocation].termId;
+    
+    // Update local state
     setIsApproved(approved);
+    
+    // Create a proper updated termRenderings object
     const updatedData = { ...termRenderings };
-    updatedData[locations[selLocation].termId] = {
-      ...updatedData[locations[selLocation].termId],
-      isGuessed: !approved,
-    };
+    
+    // Create entry if it doesn't exist
+    if (!updatedData[termId]) {
+      updatedData[termId] = { renderings: '', isGuessed: !approved };
+    } else {
+      updatedData[termId] = {
+        ...updatedData[termId],
+        isGuessed: !approved,
+      };
+    }
+    
+    // Update termRenderings state
     setTermRenderings(updatedData);
-    // The renderings change might affect the status of the location indexed by selLocation
-    const status = getStatus(updatedData,  locations[selLocation].termId, locations[selLocation].vernLabel || '');
+    
+    // Update the status of the affected location
+    const status = getStatus(updatedData, termId, locations[selLocation].vernLabel || '');
     setLocations(prevLocations => prevLocations.map(loc => {
-      if (loc.termId === locations[selLocation].termId) {
+      if (loc.termId === termId) {
         return { ...loc, status };
       }
       return loc;
@@ -411,20 +442,20 @@ function App() {
           width: foundTemplate.width,
           height: foundTemplate.height,
           labels: foundTemplate.labels
-        });
+        });        // Make a local copy to ensure we're using the latest state
+        const currentTermRenderings = { ...termRenderings };
+        
         const newLocations = foundTemplate.labels.map(loc => {
-          const status = getStatus(termRenderings,  loc.termId, loc.vernLabel || '');
+          const status = getStatus(currentTermRenderings, loc.termId, loc.vernLabel || '');
           return { ...loc, vernLabel: loc.vernLabel || '', status };
-        });
-
-        const initialLocations = newLocations.map(loc => {
+        });        const initialLocations = newLocations.map(loc => {
           if (labels[loc.mergeKey]) {
             loc.vernLabel = labels[loc.mergeKey]; // Use label from data merge if available
           } else if (!loc.vernLabel) {
-            loc.vernLabel = getMapForm(termRenderings,  loc.termId);
+            loc.vernLabel = getMapForm(currentTermRenderings, loc.termId);
           }
 
-          const status = getStatus(termRenderings,  loc.termId, loc.vernLabel);
+          const status = getStatus(currentTermRenderings, loc.termId, loc.vernLabel);
           return { ...loc, status };
         });
         console.log('Initial locations:', initialLocations);
@@ -473,12 +504,14 @@ function App() {
     const text = usfmTextareaRef.current.value;
     try {
       const newMap = mapFromUsfm(text);
-      // Re-init locations and selection
+      // Re-init locations and selection      // Create a local copy of termRenderings to ensure we're using the latest state
+      const currentTermRenderings = { ...termRenderings };
+      
       const initialLocations = newMap.labels.map(loc => {
         if (!loc.vernLabel) {
-          loc.vernLabel = getMapForm(termRenderings,  loc.termId);
+          loc.vernLabel = getMapForm(currentTermRenderings, loc.termId);
         }
-        const status = getStatus(termRenderings,  loc.termId, loc.vernLabel);
+        const status = getStatus(currentTermRenderings, loc.termId, loc.vernLabel);
         return { ...loc, status };
       });
       setSelLocation(0);
@@ -534,10 +567,9 @@ function App() {
       isGuessed: false
     };
     setTermRenderings(updatedData);
-    setIsApproved(true);
-    setLocations(prevLocations => prevLocations.map(loc => {
+    setIsApproved(true);    setLocations(prevLocations => prevLocations.map(loc => {
       if (loc.termId === termId) {
-        const status = getStatus(termRenderings,  loc.termId, loc.vernLabel);
+        const status = getStatus(updatedData, loc.termId, loc.vernLabel);
         return { ...loc, status };
       }
       return loc;
@@ -548,7 +580,7 @@ function App() {
   }, [renderings, selLocation, locations, termRenderings]);
 
 
-  // Replace all renderings with selected text
+  // Replace all renderings with selected text (from bottom pane) or create new rendering (from details pane)
   const handleReplaceRendering = useCallback((text) => {
     if (!locations[selLocation]) return;
     const termId = locations[selLocation].termId;
@@ -561,11 +593,10 @@ function App() {
       isGuessed: false
     };
     setTermRenderings(updatedData);
-    setIsApproved(true);
-    setLocations(prevLocations => prevLocations.map(loc => {
+    setIsApproved(true);    setLocations(prevLocations => prevLocations.map(loc => {
       if (loc.termId === termId) {
         const vernLabel = newRenderings;
-        const status = getStatus(termRenderings,  loc.termId, vernLabel);
+        const status = getStatus(updatedData, loc.termId, vernLabel);
         return { ...loc, status, vernLabel };
       }
       return loc;
@@ -576,7 +607,7 @@ function App() {
   }, [selLocation, locations, termRenderings]);
 
 
-  // Add global PageUp/PageDown navigation for Map and Table views
+    // Add global PageUp/PageDown navigation for Map and Table views
   useEffect(() => {
     function handleGlobalKeyDown(e) {
       if (mapPaneView === USFM_VIEW) return; // Do not trigger in USFM view
@@ -603,11 +634,13 @@ function App() {
   const memoizedLocations = useMemo(() => locations, [locations]);
   const memoizedMapDef = useMemo(() => mapDef, [mapDef]);
   const memoizedHandleSelectLocation = useCallback(handleSelectLocation, [handleSelectLocation]);
-
   // Function to update locations when denials change
   const handleDenialsChanged = useCallback(() => {
+    // Make sure we're using the latest term renderings state
+    const currentTermRenderings = { ...termRenderings };
+    
     setLocations(prevLocations => prevLocations.map(loc => {
-      const status = getStatus(termRenderings,  loc.termId, loc.vernLabel || '');
+      const status = getStatus(currentTermRenderings, loc.termId, loc.vernLabel || '');
       return { ...loc, status };
     }));
   }, [termRenderings]);
@@ -695,6 +728,7 @@ function App() {
             renderingsTextareaRef={renderingsTextareaRef}
             lang={lang} // <-- pass lang
             setTermRenderings={setTermRenderings} // <-- pass setter
+            onCreateRendering ={handleReplaceRendering} // <-- pass handler
           />
         </div>
       </div>
