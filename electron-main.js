@@ -12,7 +12,8 @@ function createWindow() {
   const win = new BrowserWindow({
     width: 1200,
     height: 900,
-    webPreferences: {
+    icon: path.join(__dirname, 'build/icon.ico'), // This sets the window icon
+  webPreferences: {
       nodeIntegration: false, // more secure
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.js'),

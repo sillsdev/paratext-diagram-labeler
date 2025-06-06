@@ -78,11 +78,11 @@
     ],    "asar": false,
     "npmRebuild": false,
     "win": {
+      "icon": "build/icon.ico",
       "target": [
         "nsis",
         "portable"
-      ],
-      "icon": "public/favicon.ico"
+      ]
     },
     "nsis": {
       "oneClick": false,
