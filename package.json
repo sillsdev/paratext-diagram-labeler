@@ -2,6 +2,8 @@
   "name": "biblical-map-app",
   "version": "0.1.0",
   "private": true,
+  "author": "Map Labeler Team",
+  "description": "Biblical Map Labeling Application",
   "dependencies": {
     "@electron/remote": "^2.1.2",
     "@testing-library/dom": "^10.4.0",
@@ -9,6 +11,7 @@
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^13.5.0",
     "bootstrap": "^5.3.6",
+    "electron-squirrel-startup": "^1.0.1",
     "leaflet": "^1.9.4",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -19,14 +22,20 @@
     "web-vitals": "^2.1.4",
     "xml2js": "^0.6.2"
   },
-  "main": "electron-main.js",
+  "main": "build/electron-main.js",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "electron": "electron .",
-    "electron-debug": "electron --inspect-brk=9229 ."
+    "electron-debug": "electron --inspect-brk=9229 .",
+    "electron-dev": "set NODE_ENV=development && electron .",
+    "electron-prod": "set NODE_ENV=production && electron .",
+    "copy-resources": "node copy-resources.js",
+    "package": "react-scripts build && node copy-resources.js && electron-builder build --win --publish never",
+    "package-mac": "react-scripts build && node copy-resources.js && electron-builder build --mac --publish never",
+    "package-linux": "react-scripts build && node copy-resources.js && electron-builder build --linux --publish never"
   },
   "eslintConfig": {
     "extends": [
@@ -47,6 +56,53 @@
     ]
   },
   "devDependencies": {
-    "electron": "^36.3.1"
+    "electron": "^36.3.1",
+    "electron-builder": "^26.0.12",
+    "fs-extra": "^11.3.0"
+  },
+  "build": {
+    "appId": "com.mapLabeler.biblical-map-app",
+    "productName": "Biblical Map Labeler",
+    "files": [
+      "build/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    },    "extraResources": [
+      {
+        "from": "public/assets",
+        "to": "assets"
+      }
+    ],    "asar": false,
+    "npmRebuild": false,
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "public/favicon.ico",
+      "uninstallerIcon": "public/favicon.ico",
+      "installerHeaderIcon": "public/favicon.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "public/logo512.png"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Education"
+    }
   }
 }

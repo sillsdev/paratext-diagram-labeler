@@ -12,51 +12,24 @@ function createWindow() {
   const win = new BrowserWindow({
     width: 1200,
     height: 900,
-    icon: path.join(__dirname, 'build/icon.ico'), // This sets the window icon
-  webPreferences: {
+    webPreferences: {
       nodeIntegration: false, // more secure
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.js'),
     },
-  });  enable(win.webContents);
+  });
+  enable(win.webContents);
     // Check if we're in development or production
   const isDev = process.env.NODE_ENV === 'development';
   
   if (isDev) {
     // For development: load React dev server
     win.loadURL('http://localhost:3000');
-    // Open DevTools in development mode
-    win.webContents.openDevTools();  } else {
+  } else {
     // For production: load built files
     const indexPath = path.join(__dirname, 'index.html');
     console.log('Loading index from:', indexPath);
-    
-    // Enable more verbose logging for debugging
-    win.webContents.on('did-start-loading', () => {
-      console.log('Started loading the page');
-    });
-    
-    win.webContents.on('did-finish-load', () => {
-      console.log('Page loaded successfully');
-    });
-    
-    win.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
-      console.error('Failed to load:', errorCode, errorDescription);
-    });
-    
-    win.webContents.on('console-message', (event, level, message, line, sourceId) => {
-      console.log(`Console ${level}: ${message}`);
-    });
-      // Load the index.html file
     win.loadFile(indexPath);
-    
-    // Uncomment this line during development if you need to debug production builds
-    // win.webContents.openDevTools();
-  }
-  
-  // Handle squirrel events for Windows installer
-  if (require('electron-squirrel-startup')) {
-    app.quit();
   }
 }
 
