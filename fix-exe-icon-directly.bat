@@ -1,5 +1,5 @@
 @echo off
-echo Building Biblical Map Labeler with icon fix - no symbolic links...
+echo Building Scripture Map Labeler with icon fix - no symbolic links...
 
 :: Ensure icon files are in all the right places
 echo Copying icon files to all required locations...
@@ -24,10 +24,10 @@ call npx electron-builder --win portable --publish never --config.npmRebuild=fal
 
 :: Run resource-hacker directly to update the icon
 echo Attempting to apply icon directly to the EXE...
-if exist "dist\win-unpacked\Biblical Map Labeler.exe" (
+if exist "dist\win-unpacked\Scripture Map Labeler.exe" (
     if exist "%ProgramFiles%\Resource Hacker\ResourceHacker.exe" (
         echo Using Resource Hacker to update the executable icon...
-        "%ProgramFiles%\Resource Hacker\ResourceHacker.exe" -open "dist\win-unpacked\Biblical Map Labeler.exe" -save "dist\win-unpacked\Biblical Map Labeler.exe" -action addoverwrite -res "public\icon.ico" -mask ICONGROUP,1,1033
+        "%ProgramFiles%\Resource Hacker\ResourceHacker.exe" -open "dist\win-unpacked\Scripture Map Labeler.exe" -save "dist\win-unpacked\Scripture Map Labeler.exe" -action addoverwrite -res "public\icon.ico" -mask ICONGROUP,1,1033
         echo Icon update with Resource Hacker complete.
     ) else (
         echo Resource Hacker not found. Consider installing it to manually update the icon.

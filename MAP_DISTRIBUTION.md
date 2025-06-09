@@ -1,8 +1,8 @@
-# Biblical Map Labeler - Distribution Guide
+# Scripture Map Labeler - Distribution Guide
 
 ## Overview
 
-Biblical Map Labeler is an Electron application for labeling biblical maps. This guide explains how to distribute the application with its required map images.
+Scripture Map Labeler is an Electron application for labeling biblical maps. This guide explains how to distribute the application with its required map images.
 
 ## Common Issues and Solutions
 
@@ -27,8 +27,8 @@ If the application shows a blank window or missing UI:
 When built and packaged, the application has the following structure:
 
 ```
-Biblical Map Labeler/
-├── Biblical Map Labeler.exe  (main executable)
+Scripture Map Labeler/
+├── Scripture Map Labeler.exe  (main executable)
 ├── base-maps/               (folder containing all map images)
 │   ├── SMR1_015wbt - Ancient World.jpg
 │   ├── SMR1_055wbt - Exodus.jpg

@@ -17,11 +17,11 @@ mkdir temp-portable
 xcopy /s /e /y dist\win-unpacked\* temp-portable\
 
 echo Running electron-builder with portable configuration only...
-npx electron-builder build --dir --win portable --config.win.target=portable --config.win.artifactName="Biblical Map Labeler Portable ${version}.${ext}" --config.asar=false --projectDir=. --prepackaged=temp-portable
+npx electron-builder build --dir --win portable --config.win.target=portable --config.win.artifactName="Scripture Map Labeler Portable ${version}.${ext}" --config.asar=false --projectDir=. --prepackaged=temp-portable
 
 echo Copying resulting portable app to dist folder...
-if exist "temp-portable\win-portable\Biblical Map Labeler 0.1.0.exe" (
-    copy "temp-portable\win-portable\Biblical Map Labeler 0.1.0.exe" dist\
+if exist "temp-portable\win-portable\Scripture Map Labeler 0.1.0.exe" (
+    copy "temp-portable\win-portable\Scripture Map Labeler 0.1.0.exe" dist\
     echo Portable app created successfully!
 ) else (
     echo Failed to create portable app.

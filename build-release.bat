@@ -1,5 +1,5 @@
 @echo off
-echo Building Biblical Map Labeler Release...
+echo Building Scripture Map Labeler Release...
 
 :: Clean previous builds
 echo Cleaning up old builds...
@@ -35,19 +35,19 @@ call npx electron-builder --win --publish never --config.npmRebuild=false
 
 :: Verify the build
 echo Verifying build files...
-if exist "dist\win-unpacked\Biblical Map Labeler.exe" (
+if exist "dist\win-unpacked\Scripture Map Labeler.exe" (
     echo [SUCCESS] Unpacked application created successfully.
 ) else (
     echo [WARNING] Unpacked application missing!
 )
 
-if exist "dist\Biblical Map Labeler Setup*.exe" (
+if exist "dist\Scripture Map Labeler Setup*.exe" (
     echo [SUCCESS] Installer created successfully.
 ) else (
     echo [WARNING] Installer not found!
 )
 
-if exist "dist\Biblical Map Labeler*.exe" (
+if exist "dist\Scripture Map Labeler*.exe" (
     echo [SUCCESS] Portable version created successfully.
 ) else (
     echo [WARNING] Portable version not found!

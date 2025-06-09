@@ -1,5 +1,5 @@
 @echo off
-echo Building Biblical Map Labeler with icon focus...
+echo Building Scripture Map Labeler with icon focus...
 
 :: Copy icons to all required locations
 echo Ensuring icons are in all required locations...
@@ -20,7 +20,7 @@ echo Creating app.manifest in buildResources directory...
 echo ^<?xml version="1.0" encoding="UTF-8" standalone="yes"?^> > "buildResources\app.manifest"
 echo ^<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0"^> >> "buildResources\app.manifest"
 echo   ^<assemblyIdentity version="1.0.0.0" processorArchitecture="*" name="Biblical.Map.Labeler" type="win32"/^> >> "buildResources\app.manifest"
-echo   ^<description^>Biblical Map Labeler^</description^> >> "buildResources\app.manifest"
+echo   ^<description^>Scripture Map Labeler^</description^> >> "buildResources\app.manifest"
 echo   ^<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1"^> >> "buildResources\app.manifest"
 echo     ^<application^> >> "buildResources\app.manifest"
 echo       ^<!-- Windows 10 --^> >> "buildResources\app.manifest"

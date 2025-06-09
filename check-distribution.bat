@@ -1,5 +1,5 @@
 @echo off
-echo Performing diagnostic checks on the Biblical Map Labeler distribution...
+echo Performing diagnostic checks on the Scripture Map Labeler distribution...
 echo -----------------------------------------------------------------------
 
 :: Check for build directory
@@ -44,14 +44,14 @@ if exist "dist\win-unpacked" (
     )
     
     :: Check for executable
-    if exist "dist\win-unpacked\Biblical Map Labeler.exe" (
+    if exist "dist\win-unpacked\Scripture Map Labeler.exe" (
         echo [OK] Application executable found
     ) else (
         echo [WARNING] Application executable not found or has different name
     )
     
     :: Check for installer
-    if exist "dist\Biblical Map Labeler Setup*.exe" (
+    if exist "dist\Scripture Map Labeler Setup*.exe" (
         echo [OK] Installer found
     ) else (
         echo [WARNING] Installer not found

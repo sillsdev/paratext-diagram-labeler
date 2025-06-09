@@ -62,7 +62,7 @@
   },
   "build": {
     "appId": "com.mapLabeler.biblical-map-app",
-    "productName": "Biblical Map Labeler",
+    "productName": "Scripture Map Labeler",
     "files": [
       "build/**/*",
       "node_modules/**/*"

@@ -63,13 +63,13 @@ if (fs.existsSync(distDir)) {
   // Create a README file explaining how to use these map files
   const readmePath = path.join(mapsCopyDir, 'README.txt');
   const readmeContent = 
-`Biblical Map Labeler - Map Resources
+`Scripture Map Labeler - Map Resources
 
 These map files should be copied to a folder named 'base-maps' located in the same 
-directory as the Biblical Map Labeler executable.
+directory as the Scripture Map Labeler executable.
 
 Directory structure should be:
-- Biblical Map Labeler.exe
+- Scripture Map Labeler.exe
 - base-maps/
   - (all map files)
 

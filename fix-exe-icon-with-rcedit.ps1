@@ -12,7 +12,7 @@ if (-not $isAdmin) {
 }
 
 # Define paths
-$exePath = Join-Path $PSScriptRoot "dist\win-unpacked\Biblical Map Labeler.exe"
+$exePath = Join-Path $PSScriptRoot "dist\win-unpacked\Scripture Map Labeler.exe"
 $iconPath = Join-Path $PSScriptRoot "public\icon.ico"
 $rceditPath = Get-ChildItem -Path "$PSScriptRoot\node_modules" -Recurse -Filter "rcedit*.exe" | Select-Object -First 1 -ExpandProperty FullName
 
