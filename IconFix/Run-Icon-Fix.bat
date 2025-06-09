@@ -1,0 +1,3 @@
+@echo off
+echo Running Icon Fix Tool as administrator...
+powershell -Command "Start-Process PowerShell -ArgumentList '-ExecutionPolicy Bypass -File "%~dp0FixIcon.ps1"' -Verb RunAs"

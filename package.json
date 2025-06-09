@@ -68,17 +68,19 @@
       "node_modules/**/*"
     ],
     "directories": {
-      "buildResources": "build",
+      "buildResources": "buildResources",
       "output": "dist"
-    },    "extraResources": [
+    },
+    "extraResources": [
       {
         "from": "public/assets",
         "to": "assets"
       }
-    ],    "asar": false,
+    ],
+    "asar": false,
     "npmRebuild": false,
     "win": {
-      "icon": "build/icon.ico",
+      "icon": "icon.ico",
       "target": [
         "nsis",
         "portable"
@@ -87,9 +89,9 @@
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "installerIcon": "public/favicon.ico",
-      "uninstallerIcon": "public/favicon.ico",
-      "installerHeaderIcon": "public/favicon.ico",
+      "installerIcon": "icon.ico",
+      "uninstallerIcon": "icon.ico",
+      "installerHeaderIcon": "icon.ico",
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true
     },
@@ -103,6 +105,9 @@
         "deb"
       ],
       "category": "Education"
-    }
+    },
+    "asarUnpack": [
+      "icon.ico"
+    ]
   }
 }

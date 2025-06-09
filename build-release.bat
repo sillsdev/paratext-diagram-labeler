@@ -21,6 +21,15 @@ node fix-fsevents.js
 echo Re-running path fixes to ensure proper file paths...
 node copy-resources.js
 
+:: Verify and fix app icon
+echo Verifying and fixing app icon...
+node verify-icon.js
+
+:: Process icon files
+echo Processing icon files for application and installer...
+powershell -ExecutionPolicy Bypass -File process-icon.ps1
+node setup-build-resources.js
+
 echo Running electron-builder...
 call npx electron-builder --win --publish never --config.npmRebuild=false
 
