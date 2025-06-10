@@ -14,17 +14,17 @@ import SettingsModal from './SettingsModal.js';
 
 const electronAPI = window.electronAPI;
 const iniMap = mapFromUsfm(INITIAL_USFM);
-console.log('Initial Map:', iniMap);
+console.log('Initial Map++:', iniMap);
 
 function getRefList(labels, collPlacenames) {
   const rl = Array.from(
     new Set(
       labels
-        .map(label => collPlacenames.getRefs(label.termId)) 
+        .map(label => collPlacenames.getRefs(label.mergeKey)) 
         .flat()
     )
   ).sort();
-  console.log('getRefList:', rl.length, 'refs for', labels.length, 'labels from collPlacenames:', collPlacenames);
+  console.log('getRefList():', rl.length, 'refs for', labels.length, 'labels from collPlacenames:', collPlacenames, 'specifically:', rl);
   return rl;
 }
 

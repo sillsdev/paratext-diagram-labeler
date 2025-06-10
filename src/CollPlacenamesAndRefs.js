@@ -1,41 +1,50 @@
-import collPlacenamesAndRefs from './data/smr-placenames-and-refs.json';
+import collPlacenamesAndRefs from './data/SMR_PlaceNames&Refs.json';
 
 class CollPlacenamesAndRefs {
     constructor() {
         this.data = collPlacenamesAndRefs;
     }
     
-    getGloss(termId) {
-        const entry = this.data[termId];
+    getGloss(mergeKey) {
+        const entry = this.data[mergeKey];
         if (!entry) {
-            console.warn(`TermId "${termId}" not found in collPlacenamesAndRefs`);
+            console.warn(`mergeKey "${mergeKey}" not found in collPlacenamesAndRefs`);
             return '';
         }
         return entry.gloss;   
     }
 
-    getDefinition(termId) {
-        const entry = this.data[termId];
+    getTermId(mergeKey) {
+        const entry = this.data[mergeKey];
         if (!entry) {
-  //          console.warn(`TermId "${termId}" not found in collPlacenamesAndRefs`);
+            console.warn(`mergeKey "${mergeKey}" not found in collPlacenamesAndRefs`);
+            return '';
+        }
+        return entry.termId;   
+    }
+
+    getDefinition(mergeKey) {
+        const entry = this.data[mergeKey];
+        if (!entry) {
+  //          console.warn(`mergeKey "${mergeKey}" not found in collPlacenamesAndRefs`);
             return '';
         }
         return entry.context;   
     }
 
-    getTransliteration(termId) {
-        const entry = this.data[termId];
+    getTransliteration(mergeKey) {
+        const entry = this.data[mergeKey];
         if (!entry) {
-//            console.warn(`TermId "${termId}" not found in collPlacenamesAndRefs`);
+//            console.warn(`mergeKey "${mergeKey}" not found in collPlacenamesAndRefs`);
             return '';
         }
         return entry.transliteration;   
     }
 
-    getRefs(termId) {
-        const entry = this.data[termId];
+    getRefs(mergeKey) {
+        const entry = this.data[mergeKey];
         if (!entry) {
-            console.warn(`TermId "${termId}" not found in collPlacenamesAndRefs`);
+            console.warn(`mergeKey "${mergeKey}" not found in collPlacenamesAndRefs`);
             return [];
         }
         return entry.refs || [];   

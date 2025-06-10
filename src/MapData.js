@@ -6,7 +6,7 @@ function getMapDef(mapId, collPlacenames) {
         const mapData = allMapData[mapId];
         if (!mapData) return null;
         if (Array.isArray(mapData.labels)) {
-            mapData.labels = mapData.labels.map((label, idx) => ({ ...label, idx, gloss: collPlacenames.getGloss(label.termId) }));
+            mapData.labels = mapData.labels.map((label, idx) => ({ ...label, idx, gloss: collPlacenames.getGloss(label.mergeKey) }));
         }
         mapData.template = mapId;
         return { ...mapData };

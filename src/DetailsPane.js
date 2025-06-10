@@ -134,7 +134,7 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
   // Use the status from the location object which is already calculated in App.js
   // This is more reliable than recalculating it here
   const status = locations[selLocation]?.status || 0;
-  let transliteration = collPlacenames.getTransliteration(locations[selLocation]?.termId);
+  let transliteration = collPlacenames.getTransliteration(locations[selLocation]?.mergeKey);
   if (transliteration) { transliteration = ` /${transliteration}/`; }
 
   return (
@@ -324,7 +324,7 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
       <div style={{ border: '1px solid #ccc', borderRadius: 6, marginBottom: 16, padding: 8, background: '#f9f9f9' }}>
         <h2>{inLang(locations[selLocation]?.gloss, lang)}</h2>
         <p><span style={{ fontStyle: 'italic' }}>({locations[selLocation]?.termId})  <span style={{ display: 'inline-block', width: 12 }} />{transliteration}</span><br />
-          {inLang(collPlacenames.getDefinition(locations[selLocation]?.termId), lang)}
+          {inLang(collPlacenames.getDefinition(locations[selLocation]?.mergeKey), lang)}
         </p>
         <div className="vernacularGroup" style={{ backgroundColor: statusValue[status].bkColor, margin: '8px', padding: '8px', border: '1px solid black', borderRadius: '0.7em' }}>
           <input
