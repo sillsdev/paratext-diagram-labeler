@@ -14,7 +14,7 @@ import SettingsModal from './SettingsModal.js';
 
 const electronAPI = window.electronAPI;
 const iniMap = mapFromUsfm(INITIAL_USFM);
-console.log('Initial Map++:', iniMap);
+console.log('Initial Map:', iniMap);
 
 function getRefList(labels, collPlacenames) {
   const rl = Array.from(
@@ -24,7 +24,7 @@ function getRefList(labels, collPlacenames) {
         .flat()
     )
   ).sort();
-  console.log('getRefList():', rl.length, 'refs for', labels.length, 'labels from collPlacenames:', collPlacenames, 'specifically:', rl);
+  console.log('getRefList():', rl.length, 'refs for', labels.length, 'labels from collPlacenames:', collPlacenames);
   return rl;
 }
 
@@ -741,10 +741,10 @@ function App() {
       <div className="bottom-pane" style={{ flex: `0 0 ${100 - topHeight}%` }}>
         <BottomPane
           termId={locations[selLocation]?.termId}
+          mergeKey={locations[selLocation]?.mergeKey}
           renderings={renderings}
           onAddRendering={handleAddRendering}
           onReplaceRendering={handleReplaceRendering}
-          renderingsTextareaRef={renderingsTextareaRef}
           lang={lang}
           termRenderings={termRenderings}
           setRenderings={setRenderings}

@@ -145,7 +145,7 @@ export default function MapPane({ imageUrl, locations, onSelectLocation, selLoca
               loc.status,
               selLocation === loc.idx,
               labelScale,
-              frac(getMatchTally(termRenderings[loc.termId], collPlacenames.getRefs(loc.termId), extractedVerses), true)
+              frac(getMatchTally(termRenderings[loc.termId], collPlacenames.getRefs(loc.mergeKey), extractedVerses), true)
             )}
             eventHandlers={{ click: () => onSelectLocation(loc) }}
             tabIndex={0}

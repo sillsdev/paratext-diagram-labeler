@@ -44,7 +44,7 @@ class CollPlacenamesAndRefs {
     getRefs(mergeKey) {
         const entry = this.data[mergeKey];
         if (!entry) {
-            console.warn(`mergeKey "${mergeKey}" not found in collPlacenamesAndRefs`);
+            console.warn(`mergeKey "${mergeKey}" not found in collPlacenamesAndRefs!!`);
             return [];
         }
         return entry.refs || [];   
