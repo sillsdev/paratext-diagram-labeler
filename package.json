@@ -63,7 +63,7 @@
   },
   "build": {
     "appId": "com.mapLabeler.biblical-map-app",
-    "productName": "Biblical Map Labeler",
+    "productName": "Scripture Map Labeler",
     "files": [
       "build/**/*",
       "node_modules/**/*"
@@ -76,21 +76,22 @@
         "from": "public/assets",
         "to": "assets"
       }
-    ],    "asar": false,
+    ],
+    "asar": false,
     "npmRebuild": false,
     "win": {
+      "icon": "icon.ico",
       "target": [
         "nsis",
         "portable"
-      ],
-      "icon": "public/icon.ico"
+      ]
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "installerIcon": "public/icon.ico",
-      "uninstallerIcon": "public/icon.ico",
-      "installerHeaderIcon": "public/icon.ico",
+      "installerIcon": "icon.ico",
+      "uninstallerIcon": "icon.ico",
+      "installerHeaderIcon": "icon.ico",
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true
     },
@@ -104,6 +105,9 @@
         "deb"
       ],
       "category": "Education"
-    }
+    },
+    "asarUnpack": [
+      "icon.ico"
+    ]
   }
 }
