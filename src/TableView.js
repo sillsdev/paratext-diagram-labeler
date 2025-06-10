@@ -70,7 +70,7 @@ export default function TableView({ locations, selLocation, onUpdateVernacular, 
             spellCheck={false}
             />
             </td>
-            <Frac value={getMatchTally(termRenderings[loc.termId], collPlacenames.getRefs(loc.termId), extractedVerses)} />
+            <Frac value={getMatchTally(termRenderings[loc.termId], collPlacenames.getRefs(loc.mergeKey), extractedVerses)} />
             <td>
 
             <span

@@ -15,17 +15,6 @@ const destDataDir = path.join(__dirname, 'build', 'data');
 console.log(`Copying data from ${sourceDataDir} to ${destDataDir}`);
 fs.copySync(sourceDataDir, destDataDir, { overwrite: true });
 
-// Copy icon files
-console.log('Copying icon files to build directory...');
-const sourceIconPath = path.join(__dirname, 'public', 'icon.ico');
-const destIconPath = path.join(__dirname, 'build', 'icon.ico');
-if (fs.existsSync(sourceIconPath)) {
-  fs.copySync(sourceIconPath, destIconPath, { overwrite: true });
-  console.log(`Copied icon.ico to build directory`);
-} else {
-  console.log(`Warning: icon.ico not found in public directory`);
-}
-
 // 3. Fix HTML file paths for Electron
 console.log('Fixing HTML paths for Electron...');
 const indexPath = path.join(__dirname, 'build', 'index.html');

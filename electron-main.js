@@ -317,31 +317,18 @@ function createWindow() {
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.js'),
     },
-    show: false, // Don't show until ready
-  });
-  
-  // Show window when ready to avoid white flashing
-  win.once('ready-to-show', () => {
-    win.show();
-    win.focus(); // Ensure the window has focus for dialogs
-    console.log('Window is now visible');
-  });
-  
-  enable(win.webContents);
-  
-  // Check if we're in development or production
+  });  enable(win.webContents);
+    // Check if we're in development or production
   const isDev = process.env.NODE_ENV === 'development';
   
   if (isDev) {
     // For development: load React dev server
-    console.log('Running in development mode...');
     win.loadURL('http://localhost:3000');
     // Open DevTools in development mode
-    win.webContents.openDevTools();
-  } else {
+    win.webContents.openDevTools();  } else {
     // For production: load built files
     const indexPath = path.join(__dirname, 'index.html');
-    console.log('Running in production mode, loading index from:', indexPath);
+    console.log('Loading index from:', indexPath);
     
     // Enable more verbose logging for debugging
     win.webContents.on('did-start-loading', () => {
@@ -359,9 +346,11 @@ function createWindow() {
     win.webContents.on('console-message', (event, level, message, line, sourceId) => {
       console.log(`Console ${level}: ${message}`);
     });
-    
-    // Load the index.html file
+      // Load the index.html file
     win.loadFile(indexPath);
+    
+    // Uncomment this line during development if you need to debug production builds
+    // win.webContents.openDevTools();
   }
   
   // Handle squirrel events for Windows installer

@@ -20,11 +20,11 @@ function getRefList(labels, collPlacenames) {
   const rl = Array.from(
     new Set(
       labels
-        .map(label => collPlacenames.getRefs(label.termId)) 
+        .map(label => collPlacenames.getRefs(label.mergeKey)) 
         .flat()
     )
   ).sort();
-  console.log('getRefList:', rl.length, 'refs for', labels.length, 'labels from collPlacenames:', collPlacenames);
+  console.log('getRefList():', rl.length, 'refs for', labels.length, 'labels from collPlacenames:', collPlacenames);
   return rl;
 }
 
@@ -741,10 +741,10 @@ function App() {
       <div className="bottom-pane" style={{ flex: `0 0 ${100 - topHeight}%` }}>
         <BottomPane
           termId={locations[selLocation]?.termId}
+          mergeKey={locations[selLocation]?.mergeKey}
           renderings={renderings}
           onAddRendering={handleAddRendering}
           onReplaceRendering={handleReplaceRendering}
-          renderingsTextareaRef={renderingsTextareaRef}
           lang={lang}
           termRenderings={termRenderings}
           setRenderings={setRenderings}
