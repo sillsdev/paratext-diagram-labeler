@@ -196,101 +196,62 @@ app.whenReady().then(async () => {
   console.log('Creating main window...');
   const mainWindow = createWindow();
   
-  // Ensure Electron Remote is initialized
-  initialize();
-  
-  // Wait for the window to be fully rendered before proceeding
+  // Wait a moment to ensure the window is fully initialized and visible
+  console.log('Waiting for window to be ready...');
   await new Promise((resolve) => {
+    // If already visible, resolve immediately
     if (mainWindow.isVisible()) {
       console.log('Window is already visible');
       resolve();
     } else {
-      console.log('Waiting for window to be ready...');
+      // Otherwise wait for ready-to-show event
+      console.log('Waiting for ready-to-show event...');
       mainWindow.once('ready-to-show', () => {
-        mainWindow.show();
-        mainWindow.focus();
-        console.log('Window is now visible');
+        console.log('Window ready-to-show event received');
         resolve();
       });
     }
   });
   
-  // Additional small delay to ensure UI is fully rendered
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  console.log('Window should be fully ready now');
+  // Additional small delay to ensure window is fully rendered
+  await new Promise(resolve => setTimeout(resolve, 500));
+  console.log('Window should be ready now');
   
   try {
-    // Check if the Paratext projects path is valid or if we need to prompt the user
-    console.log('Checking Paratext projects path...');
+    // Try to initialize Paratext projects path
+    console.log('Starting Paratext projects path initialization...');
+    const initSuccess = await initParatextProjectsPath();
+    console.log(`Paratext projects path initialization result: ${initSuccess ? 'Success' : 'Failed'}`);
+    console.log(`Current Paratext projects path: ${PARATEXT_PROJECTS_PATH || 'Not set'}`);
     
-    let pathValid = false;
-    
-    // First check stored path
-    const storedPath = getStoredProjectsPath();
-    if (storedPath && fs.existsSync(storedPath)) {
-      const templatesPath = path.join(storedPath, '_MapLabelerTemplates');
-      if (fs.existsSync(templatesPath)) {
-        console.log(`Using stored Paratext projects path: "${storedPath}"`);
-        PARATEXT_PROJECTS_PATH = storedPath;
-        pathValid = true;
-      } else {
-        console.log(`Stored path exists but missing _MapLabelerTemplates folder: "${storedPath}"`);
-      }
-    } else if (storedPath) {
-      console.log(`Stored path does not exist: "${storedPath}"`);
-    } else {
-      console.log('No stored Paratext projects path found');
-    }
-    
-    // If stored path is not valid, check default path
-    if (!pathValid) {
-      const defaultPath = 'C:\\My Paratext 9 Projects';
-      if (fs.existsSync(defaultPath)) {
-        const templatesPath = path.join(defaultPath, '_MapLabelerTemplates');
-        if (fs.existsSync(templatesPath)) {
-          console.log(`Using default Paratext projects path: "${defaultPath}"`);
-          PARATEXT_PROJECTS_PATH = defaultPath;
-          saveProjectsPath(defaultPath);
-          pathValid = true;
-        } else {
-          console.log(`Default path exists but missing _MapLabelerTemplates folder: "${defaultPath}"`);
-        }
-      } else {
-        console.log(`Default Paratext folder not found: "${defaultPath}"`);
-      }
-    }
-    
-    // If no valid path found, show warning dialog and prompt user
-    if (!pathValid) {
-      console.log('No valid Paratext projects path found - showing dialog');
+    // If initialization failed, show dialog
+    if (!initSuccess) {
+      console.log('WARNING: Failed to initialize Paratext projects path - showing dialog');
       
       try {
         console.log('Showing Paratext path configuration dialog...');
         const { response } = await dialog.showMessageBox(mainWindow, {
           type: 'warning',
-          title: 'Paratext Path Configuration Required',
+          title: 'Paratext Path Configuration Issue',
           message: 'Biblical Map App could not locate a valid Paratext projects folder with the _MapLabelerTemplates subfolder.',
-          detail: 'You must select your Paratext Projects directory containing the _MapLabelerTemplates folder for this application to work properly.',
-          buttons: ['Select Folder', 'Continue Without Selecting']
+          detail: 'You must have the _MapLabelerTemplates folder installed in your Paratext Projects directory for this application to work properly.',
+          buttons: ['Browse for Folder', 'Continue Anyway']
         });
         
         console.log(`Dialog response: ${response}`);
         
         // If user chooses to browse for folder
         if (response === 0) {
-          console.log('User chose to select a folder');
+          console.log('User chose to browse for folder');
           const selectedPath = await promptUserForParatextPath();
-          
-          if (selectedPath) {
-            console.log(`User selected valid path: "${selectedPath}"`);
-            // Path is already saved in promptUserForParatextPath if valid
-          } else {
-            console.log('User did not select a valid path');
+          console.log(`User selected path: ${selectedPath || 'No path selected'}`);
+          if (!selectedPath) {
+            console.log('User canceled folder selection or selected an invalid folder');
             await dialog.showMessageBox(mainWindow, {
               type: 'warning',
               title: 'No Valid Path Selected',
-              message: 'No valid Paratext projects folder was selected.',
-              detail: 'The application will continue, but mapping features will be limited.',
+              message: 'You chose to continue without selecting a valid Paratext projects folder.',
+              detail: 'Some features of the application may not work correctly.',
               buttons: ['OK']
             });
           }
@@ -302,9 +263,22 @@ app.whenReady().then(async () => {
       }
     }
   } catch (err) {
-    console.error('Error during Paratext path initialization:', err);
+    console.error('Error during initialization:', err);
+    try {
+      await dialog.showMessageBox(mainWindow, {
+        type: 'error',
+        title: 'Initialization Error',
+        message: 'An error occurred during application initialization.',
+        detail: `Error details: ${err.message}`,
+        buttons: ['OK']
+      });
+    } catch (dialogErr) {
+      console.error('Error showing error dialog:', dialogErr);
+    }
   }
 });
+
+initialize();
 
 function createWindow() {
   console.log('Creating BrowserWindow...');
