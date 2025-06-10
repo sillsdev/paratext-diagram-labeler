@@ -21,7 +21,7 @@ function prettyRef(ref) {
 }
 
 // Bottom Pane component to display a scrollable list of verses referencing the termId
-function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, renderingsTextareaRef, lang, termRenderings, setRenderings, onDenialsChanged, extractedVerses, setTermRenderings }) {
+function BottomPane({ termId, mergeKey, renderings, onAddRendering, onReplaceRendering, lang, termRenderings, setRenderings, onDenialsChanged, extractedVerses, setTermRenderings }) {
   const paneRef = React.useRef();
   const [selectedText, setSelectedText] = React.useState('');
   // Add a local state to force re-render on denial toggle
@@ -54,7 +54,7 @@ function BottomPane({ termId, renderings, onAddRendering, onReplaceRendering, re
   }, []);
 
   if (!termId) return <div className="bottom-pane" ref={paneRef} />;
-  const refs = collPlacenames.getRefs(termId);
+  const refs = collPlacenames.getRefs(mergeKey);
 
   // Prepare renderings: remove comments, split, trim, and convert to regex patterns
   let renderingList = [];

@@ -6,342 +6,29 @@ const path = require('path');
 const xml2js = require('xml2js');
 // const usfm = require('usfm-js');
 
-// Paratext project path initialization
-let PARATEXT_PROJECTS_PATH = '';
-
-// Function to initialize and validate Paratext projects path
-async function initParatextProjectsPath() {
-  try {
-    // Check for existing path in localStorage
-    const storedPath = getStoredProjectsPath();
-    if (storedPath && validateParatextPath(storedPath)) {
-      PARATEXT_PROJECTS_PATH = storedPath;
-      console.log(`Using stored Paratext projects path: ${PARATEXT_PROJECTS_PATH}`);
-      return true;
-    }      
-    
-    // Check default path
-    const defaultPath = 'C:\\My Paratext 9 Projects';
-    if (fs.existsSync(defaultPath)) {
-      // Validate that the path has the required _MapLabelerTemplates folder
-      if (validateParatextPath(defaultPath)) {
-        PARATEXT_PROJECTS_PATH = defaultPath;
-        console.log(`Using default Paratext projects path: ${PARATEXT_PROJECTS_PATH}`);
-        saveProjectsPath(defaultPath);
-        return true;
-      }
-    } else {
-      console.log(`Default Paratext folder not found: ${defaultPath}`);
-    }
-    
-    // Don't attempt to prompt the user here - we'll handle this in the app.whenReady() section
-    // to ensure the window is created first
-    console.log('Valid Paratext projects path not found. Dialog will be shown after window creation.');
-    return false; // Return false to indicate we need to show a dialog
-  } catch (err) {
-    console.error('Error initializing Paratext projects path:', err);
-    return false;
-  }
-}
-
-// Function to validate the Paratext projects path
-function validateParatextPath(folderPath) {
-  try {
-    console.log(`Validating Paratext path: "${folderPath}"`);
-    
-    // Check that the folder exists
-    if (!fs.existsSync(folderPath)) {
-      console.log(`VALIDATION FAILED: Path does not exist: "${folderPath}"`);
-      return false;
-    }
-      
-    // Check for the _MapLabelerTemplates folder
-    const mapLabelerTemplatesPath = path.join(folderPath, '_MapLabelerTemplates');
-    if (!fs.existsSync(mapLabelerTemplatesPath)) {
-      console.log(`VALIDATION FAILED: Required _MapLabelerTemplates folder not found in: "${folderPath}"`);
-      console.log('This folder must be installed separately before using this application');
-      return false;
-    }
-    
-    // Validation passed
-    console.log(`VALIDATION PASSED: "${folderPath}" is a valid Paratext projects path`);
-    return true;
-  } catch (err) {
-    console.error('Error validating Paratext path:', err);
-    return false;
-  }
-}
-
-// Function to get the stored Paratext projects path
-function getStoredProjectsPath() {
-  try {
-    const userDataPath = app.getPath('userData');
-    const configPath = path.join(userDataPath, 'paratext-config.json');
-    
-    if (fs.existsSync(configPath)) {
-      const configData = fs.readFileSync(configPath, 'utf8');
-      const config = JSON.parse(configData);
-      return config.projectsPath;
-    }
-  } catch (err) {
-    console.error('Error reading stored Paratext projects path:', err);
-  }
-  return null;
-}
-
-// Function to save the Paratext projects path
-function saveProjectsPath(projectsPath) {
-  try {
-    const userDataPath = app.getPath('userData');
-    const configPath = path.join(userDataPath, 'paratext-config.json');
-    
-    const configData = JSON.stringify({ projectsPath });
-    fs.writeFileSync(configPath, configData, 'utf8');
-    console.log(`Saved Paratext projects path: ${projectsPath}`);
-  } catch (err) {
-    console.error('Error saving Paratext projects path:', err);
-  }
-}
-
-// Function to prompt the user for the Paratext projects path
-async function promptUserForParatextPath() {
-  console.log('Prompting user to select Paratext projects folder...');
-  try {
-    // Make sure we have a window to parent the dialog
-    let parentWindow = BrowserWindow.getFocusedWindow();
-    
-    // If no window is focused, get the first one
-    if (!parentWindow) {
-      const windows = BrowserWindow.getAllWindows();
-      if (windows.length > 0) {
-        parentWindow = windows[0];
-        console.log('Using first available window for dialog parent');
-      }
-    }
-    
-    if (parentWindow) {
-      console.log(`Using window with id ${parentWindow.id} as dialog parent`);
-      parentWindow.focus(); // Make sure the window has focus
-    } else {
-      console.log('Warning: No window available for dialog parent');
-    }
-    
-    // Show folder selection dialog
-    console.log('Opening folder selection dialog...');
-    const result = await dialog.showOpenDialog(parentWindow || undefined, {
-      properties: ['openDirectory'],
-      title: 'Select Paratext Projects Folder',
-      buttonLabel: 'Select Folder',
-      message: 'Please select your Paratext Projects folder (usually "My Paratext 9 Projects")'
-    });
-    
-    console.log('Folder selection dialog result:', result);
-    if (result.canceled || !result.filePaths.length) {
-      console.log('User canceled folder selection');
-      return null;
-    }
-    
-    const selectedPath = result.filePaths[0];
-    console.log(`User selected path: "${selectedPath}"`);
-    
-    // Validate the selected path
-    if (validateParatextPath(selectedPath)) {
-      console.log(`Selected path is valid, setting as Paratext projects path: "${selectedPath}"`);
-      PARATEXT_PROJECTS_PATH = selectedPath;
-      saveProjectsPath(selectedPath);
-      return selectedPath;
-    } else {
-      console.log(`Selected path is NOT valid: "${selectedPath}"`);
-      
-      // Show error dialog about missing _MapLabelerTemplates folder
-      console.log('Showing missing _MapLabelerTemplates folder dialog...');
-      const { response } = await dialog.showMessageBox(parentWindow || undefined, {
-        type: 'error',
-        title: 'Missing _MapLabelerTemplates Folder',
-        message: 'The selected folder does not contain the required _MapLabelerTemplates folder.',
-        detail: 'You must first install the _MapLabelerTemplates folder in your Paratext Projects directory before using this application. Please contact your administrator or refer to the installation guide.',
-        buttons: ['Try Another Folder', 'Cancel']
-      });
-      
-      console.log(`Missing folder dialog response: ${response}`);
-      if (response === 0) { // Try Again
-        console.log('User chose to try another folder');
-        return promptUserForParatextPath();
-      } else {
-        console.log('User chose to cancel');
-      }
-    }
-  } catch (err) {
-    console.error('Error prompting for Paratext projects path:', err);
-  }
-  
-  console.log('No valid Paratext projects path selected');
-  return null;
-}
-
-// Function to get the current Paratext projects path, prompting if necessary
-async function getParatextProjectsPath() {
-  if (PARATEXT_PROJECTS_PATH && fs.existsSync(PARATEXT_PROJECTS_PATH)) {
-    return PARATEXT_PROJECTS_PATH;
-  }
-  
-  return promptUserForParatextPath();
-}
-
-// Initialize the Paratext projects path when the app is ready
-app.whenReady().then(async () => {
-  console.log('Application starting...');
-  
-  // First create the window so we have it for dialog parent
-  console.log('Creating main window...');
-  const mainWindow = createWindow();
-  
-  // Ensure Electron Remote is initialized
-  initialize();
-  
-  // Wait for the window to be fully rendered before proceeding
-  await new Promise((resolve) => {
-    if (mainWindow.isVisible()) {
-      console.log('Window is already visible');
-      resolve();
-    } else {
-      console.log('Waiting for window to be ready...');
-      mainWindow.once('ready-to-show', () => {
-        mainWindow.show();
-        mainWindow.focus();
-        console.log('Window is now visible');
-        resolve();
-      });
-    }
-  });
-  
-  // Additional small delay to ensure UI is fully rendered
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  console.log('Window should be fully ready now');
-  
-  try {
-    // Check if the Paratext projects path is valid or if we need to prompt the user
-    console.log('Checking Paratext projects path...');
-    
-    let pathValid = false;
-    
-    // First check stored path
-    const storedPath = getStoredProjectsPath();
-    if (storedPath && fs.existsSync(storedPath)) {
-      const templatesPath = path.join(storedPath, '_MapLabelerTemplates');
-      if (fs.existsSync(templatesPath)) {
-        console.log(`Using stored Paratext projects path: "${storedPath}"`);
-        PARATEXT_PROJECTS_PATH = storedPath;
-        pathValid = true;
-      } else {
-        console.log(`Stored path exists but missing _MapLabelerTemplates folder: "${storedPath}"`);
-      }
-    } else if (storedPath) {
-      console.log(`Stored path does not exist: "${storedPath}"`);
-    } else {
-      console.log('No stored Paratext projects path found');
-    }
-    
-    // If stored path is not valid, check default path
-    if (!pathValid) {
-      const defaultPath = 'C:\\My Paratext 9 Projects';
-      if (fs.existsSync(defaultPath)) {
-        const templatesPath = path.join(defaultPath, '_MapLabelerTemplates');
-        if (fs.existsSync(templatesPath)) {
-          console.log(`Using default Paratext projects path: "${defaultPath}"`);
-          PARATEXT_PROJECTS_PATH = defaultPath;
-          saveProjectsPath(defaultPath);
-          pathValid = true;
-        } else {
-          console.log(`Default path exists but missing _MapLabelerTemplates folder: "${defaultPath}"`);
-        }
-      } else {
-        console.log(`Default Paratext folder not found: "${defaultPath}"`);
-      }
-    }
-    
-    // If no valid path found, show warning dialog and prompt user
-    if (!pathValid) {
-      console.log('No valid Paratext projects path found - showing dialog');
-      
-      try {
-        console.log('Showing Paratext path configuration dialog...');
-        const { response } = await dialog.showMessageBox(mainWindow, {
-          type: 'warning',
-          title: 'Paratext Path Configuration Required',
-          message: 'Biblical Map App could not locate a valid Paratext projects folder with the _MapLabelerTemplates subfolder.',
-          detail: 'You must select your Paratext Projects directory containing the _MapLabelerTemplates folder for this application to work properly.',
-          buttons: ['Select Folder', 'Continue Without Selecting']
-        });
-        
-        console.log(`Dialog response: ${response}`);
-        
-        // If user chooses to browse for folder
-        if (response === 0) {
-          console.log('User chose to select a folder');
-          const selectedPath = await promptUserForParatextPath();
-          
-          if (selectedPath) {
-            console.log(`User selected valid path: "${selectedPath}"`);
-            // Path is already saved in promptUserForParatextPath if valid
-          } else {
-            console.log('User did not select a valid path');
-            await dialog.showMessageBox(mainWindow, {
-              type: 'warning',
-              title: 'No Valid Path Selected',
-              message: 'No valid Paratext projects folder was selected.',
-              detail: 'The application will continue, but mapping features will be limited.',
-              buttons: ['OK']
-            });
-          }
-        } else {
-          console.log('User chose to continue without selecting a path');
-        }
-      } catch (dialogErr) {
-        console.error('Error showing dialog:', dialogErr);
-      }
-    }
-  } catch (err) {
-    console.error('Error during Paratext path initialization:', err);
-  }
-});
+initialize();
 
 function createWindow() {
-  console.log('Creating BrowserWindow...');
   const win = new BrowserWindow({
     width: 1200,
     height: 900,
-    icon: path.join(__dirname, 'icon.ico'), // This sets the window icon
     webPreferences: {
       nodeIntegration: false, // more secure
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.js'),
     },
-    show: false, // Don't show until ready
-  });
-  
-  // Show window when ready to avoid white flashing
-  win.once('ready-to-show', () => {
-    win.show();
-    win.focus(); // Ensure the window has focus for dialogs
-    console.log('Window is now visible');
-  });
-  
-  enable(win.webContents);
-  
-  // Check if we're in development or production
+  });  enable(win.webContents);
+    // Check if we're in development or production
   const isDev = process.env.NODE_ENV === 'development';
   
   if (isDev) {
     // For development: load React dev server
-    console.log('Running in development mode...');
     win.loadURL('http://localhost:3000');
     // Open DevTools in development mode
-    win.webContents.openDevTools();
-  } else {
+    win.webContents.openDevTools();  } else {
     // For production: load built files
     const indexPath = path.join(__dirname, 'index.html');
-    console.log('Running in production mode, loading index from:', indexPath);
+    console.log('Loading index from:', indexPath);
     
     // Enable more verbose logging for debugging
     win.webContents.on('did-start-loading', () => {
@@ -359,16 +46,17 @@ function createWindow() {
     win.webContents.on('console-message', (event, level, message, line, sourceId) => {
       console.log(`Console ${level}: ${message}`);
     });
-    
-    // Load the index.html file
+      // Load the index.html file
     win.loadFile(indexPath);
+    
+    // Uncomment this line during development if you need to debug production builds
+    // win.webContents.openDevTools();
   }
   
   // Handle squirrel events for Windows installer
   if (require('electron-squirrel-startup')) {
     app.quit();
   }
-    return win; // Return the window object
 }
 
 function BCV(ref) {
@@ -495,23 +183,9 @@ ipcMain.handle('save-term-renderings', async (event, projectFolder, data) => {
 });
 
 ipcMain.handle('select-project-folder', async (event) => {
-  // Get the current Paratext projects path as the default starting directory
-  let defaultPath;
-  try {
-    defaultPath = PARATEXT_PROJECTS_PATH;
-    if (!defaultPath || !fs.existsSync(defaultPath)) {
-      defaultPath = undefined; // Let the dialog use its default
-    }
-  } catch (err) {
-    console.error('Error getting default path for folder dialog:', err);
-  }
-  
   const result = await dialog.showOpenDialog({
     properties: ['openDirectory'],
-    title: 'Select a Project Folder',
-    defaultPath: defaultPath,
   });
-  
   if (result.canceled || !result.filePaths.length) {
     return null;
   }
@@ -634,46 +308,7 @@ ipcMain.handle('get-filtered-verses', async (event, projectFolder, curRefs) => {
   }
 });
 
-// Add an IPC handler to check the _MapLabelerTemplates folder
-ipcMain.handle('check-map-templates-folder', async (event) => {
-  try {
-    console.log('Renderer asked to check for _MapLabelerTemplates folder');
-    let projectsPath = await getParatextProjectsPath();
-    
-    if (!projectsPath) {
-      console.log('No Paratext projects path configured - will show dialog from renderer');
-      return { 
-        exists: false, 
-        message: 'Paratext projects path not found. Please select it first.' 
-      };
-    }
-    
-    console.log(`Checking for _MapLabelerTemplates in: "${projectsPath}"`);
-    const templatesPath = path.join(projectsPath, '_MapLabelerTemplates');
-    const exists = fs.existsSync(templatesPath);
-      
-    if (exists) {
-      console.log(`_MapLabelerTemplates found at: "${templatesPath}"`);
-      return { 
-        exists: true, 
-        path: templatesPath 
-      };
-    } else {
-      console.log(`_MapLabelerTemplates NOT found at: "${templatesPath}"`);
-      return { 
-        exists: false, 
-        error: 'Missing _MapLabelerTemplates folder',
-        message: 'The _MapLabelerTemplates folder is not installed in your Paratext Projects directory. Please install it before using this application.'
-      };
-    }
-  } catch (e) {
-    console.error('Error checking _MapLabelerTemplates folder:', e);
-    return { 
-      exists: false, 
-      error: e.message 
-    };
-  }
-});
+app.whenReady().then(createWindow);
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();

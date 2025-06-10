@@ -6,4 +6,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
   selectProjectFolder: () => ipcRenderer.invoke('select-project-folder'),
   getFilteredVerses: (folder, curRefs) => ipcRenderer.invoke('get-filtered-verses', folder, curRefs),
   saveTermRenderings: (folder, data) => ipcRenderer.invoke('save-term-renderings', folder, data),
+
 });

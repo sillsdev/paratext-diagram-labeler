@@ -30,6 +30,7 @@
     "eject": "react-scripts eject",
     "electron": "electron .",
     "electron-debug": "electron --inspect-brk=9229 .",
+    "electron-source": "set NODE_ENV=development && electron electron-main.js",
     "electron-dev": "set NODE_ENV=development && electron .",
     "electron-prod": "set NODE_ENV=production && electron .",
     "copy-resources": "node copy-resources.js",
@@ -62,36 +63,34 @@
   },
   "build": {
     "appId": "com.mapLabeler.biblical-map-app",
-    "productName": "Scripture Map Labeler",
+    "productName": "Biblical Map Labeler",
     "files": [
       "build/**/*",
       "node_modules/**/*"
     ],
     "directories": {
-      "buildResources": "buildResources",
+      "buildResources": "build",
       "output": "dist"
-    },
-    "extraResources": [
+    },    "extraResources": [
       {
         "from": "public/assets",
         "to": "assets"
       }
-    ],
-    "asar": false,
+    ],    "asar": false,
     "npmRebuild": false,
     "win": {
-      "icon": "icon.ico",
       "target": [
         "nsis",
         "portable"
-      ]
+      ],
+      "icon": "public/icon.ico"
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "installerIcon": "icon.ico",
-      "uninstallerIcon": "icon.ico",
-      "installerHeaderIcon": "icon.ico",
+      "installerIcon": "public/icon.ico",
+      "uninstallerIcon": "public/icon.ico",
+      "installerHeaderIcon": "public/icon.ico",
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true
     },
@@ -105,9 +104,6 @@
         "deb"
       ],
       "category": "Education"
-    },
-    "asarUnpack": [
-      "icon.ico"
-    ]
+    }
   }
 }
