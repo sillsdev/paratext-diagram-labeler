@@ -4,6 +4,7 @@ const { ipcMain, dialog } = require('electron');
 const fs = require('fs');
 const path = require('path');
 const xml2js = require('xml2js');
+const { json } = require('stream/consumers');
 // const usfm = require('usfm-js');
 
 initialize();
@@ -308,16 +309,16 @@ ipcMain.handle('get-filtered-verses', async (event, projectFolder, curRefs) => {
   }
 });
 
-// Get the user data directory
-const userDataPath = app.getPath('userData');
-const settingsPath = path.join(userDataPath, 'settings.json');
-
 // Function to load settings
-function loadSettings() {
-  console.log('Loading settings from:', settingsPath);
+function loadFromJson(jsonPath, jsonFilename) {
+  if (!jsonPath) {
+    jsonPath = app.getPath('userData');
+  }
+  const jsonFilePath = path.join(jsonPath, jsonFilename);
+  console.log('Loading from:', jsonFilePath);
   try {
-    if (fs.existsSync(settingsPath)) {
-      const data = fs.readFileSync(settingsPath, 'utf8');
+    if (fs.existsSync(jsonFilePath)) {
+      const data = fs.readFileSync(jsonFilePath, 'utf8');
       return JSON.parse(data);
     }
   } catch (error) {
@@ -327,10 +328,14 @@ function loadSettings() {
 }
 
 // Function to save settings
-function saveSettings(settings) {
-  console.log('Saving settings to:', settingsPath);
+function saveToJson(jsonPath, jsonFilename, settings) {
+  if (!jsonPath) {
+    jsonPath = app.getPath('userData');
+  }
+  const jsonFilePath = path.join(jsonPath, jsonFilename);
+  console.log('Saving settings to:', jsonFilePath);
   try {
-    fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2), 'utf8');
+    fs.writeFileSync(jsonFilePath, JSON.stringify(settings, null, 2), 'utf8');
     return true;
   } catch (error) {
     console.error('Failed to save settings:', error);
@@ -339,12 +344,12 @@ function saveSettings(settings) {
 }
 
 // Expose these functions via IPC
-ipcMain.handle('load-settings', async () => {
-  return loadSettings();
+ipcMain.handle('load-from-json', async () => {
+  return loadFromJson();
 });
 
-ipcMain.handle('save-settings', async (event, settings) => {
-  return saveSettings(settings);
+ipcMain.handle('save-to-json', async (event, settings) => {
+  return saveToJson(settings);
 });
 
 app.whenReady().then(createWindow);

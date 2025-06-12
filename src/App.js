@@ -14,14 +14,16 @@ import SettingsModal from './SettingsModal.js';
 // import { app } from 'electron';
 
 const electronAPI = window.electronAPI;
-let appSettings = electronAPI.loadSettings();
-console.log('App settings loaded:', appSettings);
-if (!appSettings.projectsFolder) {  
-  appSettings.projectsFolder = DEFAULT_PROJECTS_FOLDER;
-  electronAPI.saveSettings(appSettings);
-  console.log('App settings updated with default projectsFolder:', appSettings.projectsFolder);
-}
-console.log('App settings after default:', appSettings);
+
+// let appSettings = electronAPI.loadSettings();
+// console.log('App settings loaded:', appSettings);
+// if (!appSettings.projectsFolder) {  
+//   appSettings.projectsFolder = DEFAULT_PROJECTS_FOLDER;
+//   electronAPI.saveSettings(appSettings);
+//   console.log('App settings updated with default projectsFolder:', appSettings.projectsFolder);
+// }
+// console.log('App settings after default:', appSettings);
+const appSettings = { projectsFolder: DEFAULT_PROJECTS_FOLDER };
 
 const iniMap = mapFromUsfm(INITIAL_USFM);
 console.log('Initial Map:', iniMap);

@@ -1,8 +1,23 @@
-import collPlacenamesAndRefs from './data/SMR_PlaceNames&Refs.json';
+//import collPlacenamesAndRefs from './data/smr-PlaceNames&Refs.json';
 
 class CollPlacenamesAndRefs {
     constructor() {
-        this.data = collPlacenamesAndRefs;
+        this.data = {}; // Initialize with empty object
+        this.isLoading = true; // Track loading state
+        this.loadData(); // Start loading asynchronously
+    }
+    
+    async loadData() {
+        try {
+            // Load data asynchronously 
+            this.data = await window.electronAPI.loadFromJson('C:/My Paratext 9 Projects/_MapLabelerTemplates', 'smr-PlaceNames&Refs.json');
+            this.isLoading = false;
+            console.log('Place names data loaded successfully');
+        } catch (error) {
+            console.error('Failed to load place names data:', error);
+            this.isLoading = false;
+            this.data = {}; // Ensure data is an object even if loading fails
+        }
     }
     
     getGloss(mergeKey) {
