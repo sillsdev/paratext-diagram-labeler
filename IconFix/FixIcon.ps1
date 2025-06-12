@@ -1,8 +1,8 @@
 
-# Standalone Icon Fix Tool for Biblical Map App
+# Standalone Icon Fix Tool for Scripture Map App
 # Run as administrator for best results
 
-Write-Host "=== Biblical Map App Icon Fix Tool ===" -ForegroundColor Cyan
+Write-Host "=== Scripture Map App Icon Fix Tool ===" -ForegroundColor Cyan
 
 # Check if we're running as administrator
 $isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)

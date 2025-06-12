@@ -308,6 +308,45 @@ ipcMain.handle('get-filtered-verses', async (event, projectFolder, curRefs) => {
   }
 });
 
+// Get the user data directory
+const userDataPath = app.getPath('userData');
+const settingsPath = path.join(userDataPath, 'settings.json');
+
+// Function to load settings
+function loadSettings() {
+  console.log('Loading settings from:', settingsPath);
+  try {
+    if (fs.existsSync(settingsPath)) {
+      const data = fs.readFileSync(settingsPath, 'utf8');
+      return JSON.parse(data);
+    }
+  } catch (error) {
+    console.error('Failed to load settings:', error);
+  }
+  return {}; // Return empty settings if file doesn't exist or has an error
+}
+
+// Function to save settings
+function saveSettings(settings) {
+  console.log('Saving settings to:', settingsPath);
+  try {
+    fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2), 'utf8');
+    return true;
+  } catch (error) {
+    console.error('Failed to save settings:', error);
+    return false;
+  }
+}
+
+// Expose these functions via IPC
+ipcMain.handle('load-settings', async () => {
+  return loadSettings();
+});
+
+ipcMain.handle('save-settings', async (event, settings) => {
+  return saveSettings(settings);
+});
+
 app.whenReady().then(createWindow);
 
 app.on('window-all-closed', () => {

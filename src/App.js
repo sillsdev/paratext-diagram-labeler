@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import './App.css';
 import BottomPane from './BottomPane.js';
 import uiStr from './data/ui-strings.json';
-import { DEMO_PROJECT_FOLDER, INITIAL_USFM } from './demo.js';
+import { DEFAULT_PROJECTS_FOLDER,  DEMO_PROJECT, INITIAL_USFM } from './demo.js';
 import { MAP_VIEW, TABLE_VIEW, USFM_VIEW,  } from './constants.js';
 import { collPlacenames } from './CollPlacenamesAndRefs.js';
 import { getMapDef } from './MapData';
@@ -11,8 +11,18 @@ import MapPane from './MapPane.js';
 import TableView from './TableView.js';
 import DetailsPane from './DetailsPane.js';
 import SettingsModal from './SettingsModal.js';
+// import { app } from 'electron';
 
 const electronAPI = window.electronAPI;
+let appSettings = electronAPI.loadSettings();
+console.log('App settings loaded:', appSettings);
+if (!appSettings.projectsFolder) {  
+  appSettings.projectsFolder = DEFAULT_PROJECTS_FOLDER;
+  electronAPI.saveSettings(appSettings);
+  console.log('App settings updated with default projectsFolder:', appSettings.projectsFolder);
+}
+console.log('App settings after default:', appSettings);
+
 const iniMap = mapFromUsfm(INITIAL_USFM);
 console.log('Initial Map:', iniMap);
 
@@ -120,7 +130,7 @@ function usfmFromMap(map, lang) {
 }
 
 function App() {
-  const [projectFolder, setProjectFolder] = useState(DEMO_PROJECT_FOLDER);
+  const [projectFolder, setProjectFolder] = useState(appSettings.projectsFolder + "/" + DEMO_PROJECT); // Default to demo project
   const [lang, setLang] = useState('en');  //TODO: Persist in localStorage
   const [mapDef, setMapDef] = useState(iniMap);
   const [locations, setLocations] = useState([]);

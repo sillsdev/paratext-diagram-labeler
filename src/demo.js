@@ -10,7 +10,9 @@ export const MATCH_W = '\\w';
 // export const MATCH_POST_B = '(?=[\\p{L}|\\p{M}|\\p{Cf}-])';
 // export const MATCH_W = '[\\p{L}|\\p{M}|\\p{Cf}-]'; 
 
-export const DEMO_PROJECT_FOLDER = 'c:/My Paratext 9 Projects/Zezi';
+// export const DEMO_PROJECT_FOLDER = 'c:/My Paratext 9 Projects/Zezi';
+export const DEFAULT_PROJECTS_FOLDER = 'c:/My Paratext 9 Projects';
+export const DEMO_PROJECT = 'Zezi';
 
 export const INITIAL_USFM = String.raw`\zdiagram-s |template="SMR1_185wbt - Philips Travels [sm]"\*
 \fig |src="185wbt - Philips Travels [sm] (fcr) @en.jpg" size="span" loc="paw" copy="WBT" ref="8:5-40"\fig*

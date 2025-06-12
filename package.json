@@ -1,9 +1,9 @@
 {
-  "name": "biblical-map-app",
+  "name": "scripture-map-labeler",
   "version": "0.1.0",
   "private": true,
   "author": "Map Labeler Team",
-  "description": "Biblical Map Labeling Application",
+  "description": "Scripture Map Labeler",
   "dependencies": {
     "@electron/remote": "^2.1.2",
     "@testing-library/dom": "^10.4.0",
@@ -62,8 +62,8 @@
     "fs-extra": "^11.3.0"
   },
   "build": {
-    "appId": "com.mapLabeler.biblical-map-app",
-    "productName": "Biblical Map Labeler",
+    "appId": "org.sil.scripture-map-labeler",
+    "productName": "Scripture Map Labeler",
     "files": [
       "build/**/*",
       "node_modules/**/*"
