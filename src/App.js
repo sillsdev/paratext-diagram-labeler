@@ -440,14 +440,14 @@ function App() {
         } else {
           return;
         }
-        const foundTemplate = getMapDef('SMR1_' + newTemplateBase, collPlacenames);
+        const foundTemplate = getMapDef('SMR_' + newTemplateBase, collPlacenames);
         if (!foundTemplate) {
           alert(inLang(uiStr.noTemplate, lang) + ": " + newTemplateBase);
           return;
         }
         // Set mapDef and locations 
         setMapDef({
-          template: 'SMR1_' + newTemplateBase,
+          template: 'SMR_' + newTemplateBase,
           fig: foundTemplate.fig || '',
           mapView: true,
           imgFilename: foundTemplate.imgFilename,

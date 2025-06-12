@@ -14,12 +14,12 @@ export const MATCH_W = '\\w';
 export const DEFAULT_PROJECTS_FOLDER = 'c:/My Paratext 9 Projects';
 export const DEMO_PROJECT = 'Zezi';
 
-export const INITIAL_USFM = String.raw`\zdiagram-s |template="SMR1_185wbt - Philips Travels [sm]"\*
+export const INITIAL_USFM = String.raw`\zdiagram-s |template="SMR_185wbt - Philips Travels [sm]"\*
 \fig |src="185wbt - Philips Travels [sm] (fcr) @en.jpg" size="span" loc="paw" copy="WBT" ref="8:5-40"\fig*
 \zdiagram-e \*`;
 
  
-// export const INITIAL_USFM = String.raw`\zdiagram-s |template="SMR1_185wbt - Philips Travels [sm]"\*
+// export const INITIAL_USFM = String.raw`\zdiagram-s |template="SMR_185wbt - Philips Travels [sm]"\*
 // \fig |src="185wbt - Philips Travels [sm] (fcr) @en.jpg" size="span" loc="paw" copy="WBT" ref="8:5-40"\fig*
 // \zlabel |key="philipstravels_title" termid="philipstravels_title" gloss="Philip’s Travels" label=""\*
 // \zlabel |key="galilee_nt" termid="Γαλιλαία-1" gloss="Galilee" label="Gaalila"\*

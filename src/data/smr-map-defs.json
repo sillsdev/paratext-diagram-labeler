@@ -1,10 +1,10 @@
 {
-    "SMR1_005wbt - Gen10 Descendants Of Noah": {
+    "SMR_005wbt - Gen10 Descendants Of Noah": {
         "title": { "en": "The Descendants of Noah" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_005wbt - Gen10 Descendants Of Noah.jpg",
+        "imgFilename": "SMR_005wbt - Gen10 Descendants Of Noah.jpg",
         "width": 1000,
         "height": 600,
         "mapTypes": "fcr bbr bbf bwr bwf",
@@ -287,12 +287,12 @@
             }
         ]
     },
-    "SMR1_015wbt - Ancient World [bwf]": {
+    "SMR_015wbt - Ancient World [bwf]": {
         "title": { "en": "The Ancient World (Abraham’s World)" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_015wbt - Ancient World [bwf].jpg",
+        "imgFilename": "SMR_015wbt - Ancient World [bwf].jpg",
         "width": 1000,
         "height": 628,
         "mapTypes": "",
@@ -960,12 +960,12 @@
             }
         ]
     },
-    "SMR1_015wbt - Ancient World": {
+    "SMR_015wbt - Ancient World": {
         "title": { "en": "The Ancient World (Abraham’s World)" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_015wbt - Ancient World.jpg",
+        "imgFilename": "SMR_015wbt - Ancient World.jpg",
         "width": 1000,
         "height": 600,
         "mapTypes": "fcr bbr bbf bwr bwf",
@@ -1699,12 +1699,12 @@
             }
         ]
     },
-    "SMR1_025wbt - Abraham To Canaan": {
+    "SMR_025wbt - Abraham To Canaan": {
         "title": { "en": "Abraham’s Journey to Canaan" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_025wbt - Abraham To Canaan.jpg",
+        "imgFilename": "SMR_025wbt - Abraham To Canaan.jpg",
         "width": 1000,
         "height": 675,
         "mapTypes": "fcr mcr bbr bbf bwr bwf",
@@ -1921,12 +1921,12 @@
             }
         ]
     },
-    "SMR1_028wbt - Abraham To Egypt": {
+    "SMR_028wbt - Abraham To Egypt": {
         "title": { "en": "Abraham Goes to Egypt" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_028wbt - Abraham To Egypt.jpg",
+        "imgFilename": "SMR_028wbt - Abraham To Egypt.jpg",
         "width": 1000,
         "height": 673,
         "mapTypes": "fcr mcr bbr bbf bwr bwf",
@@ -2066,12 +2066,12 @@
             }
         ]
     },
-    "SMR1_035wbt - Gen28 Jacob To Haran": {
+    "SMR_035wbt - Gen28 Jacob To Haran": {
         "title": { "en": "Jacob’s Trip to Haran" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_035wbt - Gen28 Jacob To Haran.jpg",
+        "imgFilename": "SMR_035wbt - Gen28 Jacob To Haran.jpg",
         "width": 942,
         "height": 1000,
         "mapTypes": "",
@@ -2178,12 +2178,12 @@
             }
         ]
     },
-    "SMR1_038wbt - Gen32-33 Jacob Returns": {
+    "SMR_038wbt - Gen32-33 Jacob Returns": {
         "title": { "en": "Return of Jacob" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_038wbt - Gen32-33 Jacob Returns.jpg",
+        "imgFilename": "SMR_038wbt - Gen32-33 Jacob Returns.jpg",
         "width": 845,
         "height": 1000,
         "mapTypes": "fcr bbr bbf bwr bwf",
@@ -2378,12 +2378,12 @@
             }
         ]
     },
-    "SMR1_055wbt - Exodus": {
+    "SMR_055wbt - Exodus": {
         "title": { "en": "The Exodus from Egypt" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_055wbt - Exodus.jpg",
+        "imgFilename": "SMR_055wbt - Exodus.jpg",
         "width": 1000,
         "height": 760,
         "mapTypes": "fcr bbr bbf bwr bwf",
@@ -2809,12 +2809,12 @@
             }
         ]
     },
-    "SMR1_065wbt - Ruth": {
+    "SMR_065wbt - Ruth": {
         "title": { "en": "Israel and Moab at the time of Naomi and Ruth" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_065wbt - Ruth.jpg",
+        "imgFilename": "SMR_065wbt - Ruth.jpg",
         "width": 1000,
         "height": 810,
         "mapTypes": "mcr bwr",
@@ -2976,12 +2976,12 @@
             }
         ]
     },
-    "SMR1_075wbt - Conquest Canaan": {
+    "SMR_075wbt - Conquest Canaan": {
         "title": { "en": "The Conquest of Canaan" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_075wbt - Conquest Canaan.jpg",
+        "imgFilename": "SMR_075wbt - Conquest Canaan.jpg",
         "width": 600,
         "height": 1000,
         "mapTypes": "fcr bbr bbf bwr bwf",
@@ -4078,12 +4078,12 @@
             }
         ]
     },
-    "SMR1_085wbt - Canaan": {
+    "SMR_085wbt - Canaan": {
         "title": { "en": "Land of Canaan" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_085wbt - Canaan.jpg",
+        "imgFilename": "SMR_085wbt - Canaan.jpg",
         "width": 633,
         "height": 1000,
         "mapTypes": "bwf",
@@ -4740,12 +4740,12 @@
             }
         ]
     },
-    "SMR1_095wbt - Kingdoms Israel Judah [bwf]": {
+    "SMR_095wbt - Kingdoms Israel Judah [bwf]": {
         "title": { "en": "Kingdoms of Israel and Judah" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_095wbt - Kingdoms Israel Judah [bwf].jpg",
+        "imgFilename": "SMR_095wbt - Kingdoms Israel Judah [bwf].jpg",
         "width": 632,
         "height": 1000,
         "mapTypes": "",
@@ -5292,12 +5292,12 @@
             }
         ]
     },
-    "SMR1_095wbt - Kingdoms Israel Judah": {
+    "SMR_095wbt - Kingdoms Israel Judah": {
         "title": { "en": "Kingdoms of Israel and Judah" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_095wbt - Kingdoms Israel Judah.jpg",
+        "imgFilename": "SMR_095wbt - Kingdoms Israel Judah.jpg",
         "width": 600,
         "height": 1000,
         "mapTypes": "fcr bbr bbf bwr bwf",
@@ -6207,12 +6207,12 @@
             }
         ]
     },
-    "SMR1_105gt - Persian Empire": {
+    "SMR_105gt - Persian Empire": {
         "title": { "en": "The Persian Empire during the time of Esther" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_105gt - Persian Empire.jpg",
+        "imgFilename": "SMR_105gt - Persian Empire.jpg",
         "width": 1000,
         "height": 650,
         "mapTypes": "",
@@ -6671,12 +6671,12 @@
             }
         ]
     },
-    "SMR1_108gt - Jewish Calendar": {
+    "SMR_108gt - Jewish Calendar": {
         "title": { "en": "Jewish Calendar" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_108gt - Jewish Calendar.jpg",
+        "imgFilename": "SMR_108gt - Jewish Calendar.jpg",
         "width": 1000,
         "height": 932,
         "mapTypes": "",
@@ -6816,12 +6816,12 @@
             }
         ]
     },
-    "SMR1_110hk - Jerusalem Illustration": {
+    "SMR_110hk - Jerusalem Illustration": {
         "title": { "en": "Jerusalem in the Time of Christ" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_110hk - Jerusalem Illustration.jpg",
+        "imgFilename": "SMR_110hk - Jerusalem Illustration.jpg",
         "width": 634,
         "height": 1000,
         "mapTypes": "",
@@ -7027,12 +7027,12 @@
             }
         ]
     },
-    "SMR1_115wbt - Jerusalem": {
+    "SMR_115wbt - Jerusalem": {
         "title": { "en": "Jerusalem in New Testament Times" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_115wbt - Jerusalem.jpg",
+        "imgFilename": "SMR_115wbt - Jerusalem.jpg",
         "width": 667,
         "height": 1000,
         "mapTypes": "bbr bbf bwr",
@@ -7634,12 +7634,12 @@
             }
         ]
     },
-    "SMR1_120gt - Tabernacle": {
+    "SMR_120gt - Tabernacle": {
         "title": { "en": "The Tabernacle" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_120gt - Tabernacle.jpg",
+        "imgFilename": "SMR_120gt - Tabernacle.jpg",
         "width": 1000,
         "height": 636,
         "mapTypes": "",
@@ -7768,12 +7768,12 @@
             }
         ]
     },
-    "SMR1_125hk - Temple": {
+    "SMR_125hk - Temple": {
         "title": { "en": "The Temple in the Time of Jesus Christ" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_125hk - Temple.jpg",
+        "imgFilename": "SMR_125hk - Temple.jpg",
         "width": 636,
         "height": 1000,
         "mapTypes": "",
@@ -7847,12 +7847,12 @@
             }
         ]
     },
-    "SMR1_135hk - Temple Layout": {
+    "SMR_135hk - Temple Layout": {
         "title": { "en": "The Temple Buildings" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_135hk - Temple Layout.jpg",
+        "imgFilename": "SMR_135hk - Temple Layout.jpg",
         "width": 563,
         "height": 1000,
         "mapTypes": "",
@@ -7970,12 +7970,12 @@
             }
         ]
     },
-    "SMR1_135mh - Temple Layout": {
+    "SMR_135mh - Temple Layout": {
         "title": { "en": "The Temple Buildings" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_135mh - Temple Layout.jpg",
+        "imgFilename": "SMR_135mh - Temple Layout.jpg",
         "width": 1000,
         "height": 869,
         "mapTypes": "",
@@ -8093,12 +8093,12 @@
             }
         ]
     },
-    "SMR1_138gt - Ezekiels Temple": {
+    "SMR_138gt - Ezekiels Temple": {
         "title": { "en": "Ezekiel’s Temple" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_138gt - Ezekiels Temple.jpg",
+        "imgFilename": "SMR_138gt - Ezekiels Temple.jpg",
         "width": 1000,
         "height": 575,
         "mapTypes": "",
@@ -8260,12 +8260,12 @@
             }
         ]
     },
-    "SMR1_140gt - High Priest": {
+    "SMR_140gt - High Priest": {
         "title": { "en": "High Priest" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_140gt - High Priest.jpg",
+        "imgFilename": "SMR_140gt - High Priest.jpg",
         "width": 694,
         "height": 1000,
         "mapTypes": "",
@@ -8416,12 +8416,12 @@
             }
         ]
     },
-    "SMR1_143gt - Roman Soldier": {
+    "SMR_143gt - Roman Soldier": {
         "title": { "en": " The Armor of God" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_143gt - Roman Soldier.jpg",
+        "imgFilename": "SMR_143gt - Roman Soldier.jpg",
         "width": 747,
         "height": 1000,
         "mapTypes": "",
@@ -8517,12 +8517,12 @@
             }
         ]
     },
-    "SMR1_155wbt - Holy Land [bwf]": {
+    "SMR_155wbt - Holy Land [bwf]": {
         "title": { "en": "The Holy Land in the Time of Jesus Christ" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_155wbt - Holy Land [bwf].jpg",
+        "imgFilename": "SMR_155wbt - Holy Land [bwf].jpg",
         "width": 627,
         "height": 1000,
         "mapTypes": "",
@@ -9102,12 +9102,12 @@
             }
         ]
     },
-    "SMR1_155wbt - Holy Land": {
+    "SMR_155wbt - Holy Land": {
         "title": { "en": "The Holy Land in the Time of Jesus Christ" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_155wbt - Holy Land.jpg",
+        "imgFilename": "SMR_155wbt - Holy Land.jpg",
         "width": 600,
         "height": 1000,
         "mapTypes": "fcr bbr bbf bwr bwf",
@@ -9544,12 +9544,12 @@
             }
         ]
     },
-    "SMR1_165wbt - Christs Ministry": {
+    "SMR_165wbt - Christs Ministry": {
         "title": { "en": "Events in Christ’s Ministry" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_165wbt - Christs Ministry.jpg",
+        "imgFilename": "SMR_165wbt - Christs Ministry.jpg",
         "width": 600,
         "height": 1000,
         "mapTypes": "fcr bbr bbf bwr bwf",
@@ -10041,12 +10041,12 @@
             }
         ]
     },
-    "SMR1_175wbt - Pentecost [bwf-dark]": {
+    "SMR_175wbt - Pentecost [bwf-dark]": {
         "title": { "en": "Nations Whose Languages Were Heard at Pentecost" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_175wbt - Pentecost [bwf-dark].jpg",
+        "imgFilename": "SMR_175wbt - Pentecost [bwf-dark].jpg",
         "width": 1000,
         "height": 671,
         "mapTypes": "",
@@ -10384,12 +10384,12 @@
             }
         ]
     },
-    "SMR1_175wbt - Pentecost [bwf-light]": {
+    "SMR_175wbt - Pentecost [bwf-light]": {
         "title": { "en": "Nations Whose Languages Were Heard at Pentecost" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_175wbt - Pentecost [bwf-light].jpg",
+        "imgFilename": "SMR_175wbt - Pentecost [bwf-light].jpg",
         "width": 1000,
         "height": 627,
         "mapTypes": "",
@@ -10661,7 +10661,7 @@
             }
         ]
     },
-    "SMR1_185wbt - Philips Travels [sm-bwf]": {
+    "SMR_185wbt - Philips Travels [sm-bwf]": {
         "title": { "en": "Philip’s Travels", "es": "Los viajes de Felipe"  },
         "description": { 
             "en": "A shorter map showing the route of Philip the Evangelist, as he preached, baptized, and apparated. (Acts 8:5-40)",
@@ -10669,7 +10669,7 @@
         },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_185wbt - Philips Travels [sm-bwf].jpg",
+        "imgFilename": "SMR_185wbt - Philips Travels [sm-bwf].jpg",
         "width": 999,
         "height": 1000,
         "mapTypes": "",
@@ -10908,7 +10908,7 @@
             }
         ]
     },
-    "SMR1_185wbt - Philips Travels [sm]": {
+    "SMR_185wbt - Philips Travels [sm]": {
         "title": { "en": "Philip’s Travels", "es": "Los viajes de Felipe"  },
         "description": { 
             "en": "A shorter map showing the route of Philip the Evangelist, as he preached, baptized, and apparated. (Acts 8:5-40)",
@@ -10916,7 +10916,7 @@
         },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_185wbt - Philips Travels [sm].jpg",
+        "imgFilename": "SMR_185wbt - Philips Travels [sm].jpg",
         "width": 1000,
         "height": 852,
         "mapTypes": "fcr bbr bbf bwr bwf",
@@ -11155,12 +11155,12 @@
             }
         ]
     },
-    "SMR1_185wbt - Philips Travels": {
+    "SMR_185wbt - Philips Travels": {
         "title": { "en": "Philip’s Travels" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_185wbt - Philips Travels.jpg",
+        "imgFilename": "SMR_185wbt - Philips Travels.jpg",
         "width": 600,
         "height": 1000,
         "mapTypes": "fcr bbr bbf bwr bwf",
@@ -11476,12 +11476,12 @@
             }
         ]
     },
-    "SMR1_195wbt - Paul journey 1 [bwf-dark]": {
+    "SMR_195wbt - Paul journey 1 [bwf-dark]": {
         "title": { "en": "Paul’s First Journey" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_195wbt - Paul journey 1 [bwf-dark].jpg",
+        "imgFilename": "SMR_195wbt - Paul journey 1 [bwf-dark].jpg",
         "width": 1000,
         "height": 923,
         "mapTypes": "",
@@ -11896,12 +11896,12 @@
             }
         ]
     },
-    "SMR1_195wbt - Paul journey 1 [bwf-light]": {
+    "SMR_195wbt - Paul journey 1 [bwf-light]": {
         "title": { "en": "Paul’s First Journey" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_195wbt - Paul journey 1 [bwf-light].jpg",
+        "imgFilename": "SMR_195wbt - Paul journey 1 [bwf-light].jpg",
         "width": 1000,
         "height": 620,
         "mapTypes": "",
@@ -12140,12 +12140,12 @@
             }
         ]
     },
-    "SMR1_195wbt - Paul journey 1 [bwr]": {
+    "SMR_195wbt - Paul journey 1 [bwr]": {
         "title": { "en": "Paul’s First Journey" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_195wbt - Paul journey 1 [bwr].jpg",
+        "imgFilename": "SMR_195wbt - Paul journey 1 [bwr].jpg",
         "width": 830,
         "height": 1000,
         "mapTypes": "",
@@ -12417,12 +12417,12 @@
             }
         ]
     },
-    "SMR1_205wbt - Paul journey 2 [bwf-dark]": {
+    "SMR_205wbt - Paul journey 2 [bwf-dark]": {
         "title": { "en": "Paul’s Second Journey" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_205wbt - Paul journey 2 [bwf-dark].jpg",
+        "imgFilename": "SMR_205wbt - Paul journey 2 [bwf-dark].jpg",
         "width": 1000,
         "height": 927,
         "mapTypes": "",
@@ -12925,12 +12925,12 @@
             }
         ]
     },
-    "SMR1_205wbt - Paul journey 2 [bwf-light]": {
+    "SMR_205wbt - Paul journey 2 [bwf-light]": {
         "title": { "en": "Paul’s Second Journey" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_205wbt - Paul journey 2 [bwf-light].jpg",
+        "imgFilename": "SMR_205wbt - Paul journey 2 [bwf-light].jpg",
         "width": 1000,
         "height": 650,
         "mapTypes": "",
@@ -13312,12 +13312,12 @@
             }
         ]
     },
-    "SMR1_205wbt - Paul journey 2 [bwr]": {
+    "SMR_205wbt - Paul journey 2 [bwr]": {
         "title": { "en": "Paul’s Second Journey" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_205wbt - Paul journey 2 [bwr].jpg",
+        "imgFilename": "SMR_205wbt - Paul journey 2 [bwr].jpg",
         "width": 1000,
         "height": 854,
         "mapTypes": "bwr",
@@ -13864,12 +13864,12 @@
             }
         ]
     },
-    "SMR1_215wbt - Paul journey 3 [bwf-dark]": {
+    "SMR_215wbt - Paul journey 3 [bwf-dark]": {
         "title": { "en": "Paul’s Third Journey" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_215wbt - Paul journey 3 [bwf-dark].jpg",
+        "imgFilename": "SMR_215wbt - Paul journey 3 [bwf-dark].jpg",
         "width": 1000,
         "height": 923,
         "mapTypes": "",
@@ -14306,12 +14306,12 @@
             }
         ]
     },
-    "SMR1_215wbt - Paul journey 3 [bwf-light]": {
+    "SMR_215wbt - Paul journey 3 [bwf-light]": {
         "title": { "en": "Paul’s Third Journey" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_215wbt - Paul journey 3 [bwf-light].jpg",
+        "imgFilename": "SMR_215wbt - Paul journey 3 [bwf-light].jpg",
         "width": 1000,
         "height": 644,
         "mapTypes": "",
@@ -14748,12 +14748,12 @@
             }
         ]
     },
-    "SMR1_215wbt - Paul journey 3 [bwr]": {
+    "SMR_215wbt - Paul journey 3 [bwr]": {
         "title": { "en": "Paul’s Third Journey" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_215wbt - Paul journey 3 [bwr].jpg",
+        "imgFilename": "SMR_215wbt - Paul journey 3 [bwr].jpg",
         "width": 1000,
         "height": 862,
         "mapTypes": "bwr",
@@ -15245,12 +15245,12 @@
             }
         ]
     },
-    "SMR1_225wbt - Paul to Rome [bwf-dark]": {
+    "SMR_225wbt - Paul to Rome [bwf-dark]": {
         "title": { "en": "Paul’s Journey to Rome" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_225wbt - Paul to Rome [bwf-dark].jpg",
+        "imgFilename": "SMR_225wbt - Paul to Rome [bwf-dark].jpg",
         "width": 1000,
         "height": 692,
         "mapTypes": "",
@@ -15676,12 +15676,12 @@
             }
         ]
     },
-    "SMR1_225wbt - Paul to Rome [bwf-light]": {
+    "SMR_225wbt - Paul to Rome [bwf-light]": {
         "title": { "en": "Paul’s Journey to Rome" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_225wbt - Paul to Rome [bwf-light].jpg",
+        "imgFilename": "SMR_225wbt - Paul to Rome [bwf-light].jpg",
         "width": 1000,
         "height": 651,
         "mapTypes": "",
@@ -15997,12 +15997,12 @@
             }
         ]
     },
-    "SMR1_225wbt - Paul to Rome [bwr]": {
+    "SMR_225wbt - Paul to Rome [bwr]": {
         "title": { "en": "Paul’s Journey to Rome" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_225wbt - Paul to Rome [bwr].jpg",
+        "imgFilename": "SMR_225wbt - Paul to Rome [bwr].jpg",
         "width": 1000,
         "height": 672,
         "mapTypes": "",
@@ -16483,12 +16483,12 @@
             }
         ]
     },
-    "SMR1_235wbt - Paul Journeys [2pg]": {
+    "SMR_235wbt - Paul Journeys [2pg]": {
         "title": { "en": "Paul’s Missionary Journeys" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_235wbt - Paul Journeys [2pg].jpg",
+        "imgFilename": "SMR_235wbt - Paul Journeys [2pg].jpg",
         "width": 1000,
         "height": 769,
         "mapTypes": "fcr bbr bbf bwr bwf",
@@ -17464,12 +17464,12 @@
             }
         ]
     },
-    "SMR1_235wbt - Paul Journeys [bwf-light]": {
+    "SMR_235wbt - Paul Journeys [bwf-light]": {
         "title": { "en": "Paul’s Missionary Journeys" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_235wbt - Paul Journeys [bwf-light].jpg",
+        "imgFilename": "SMR_235wbt - Paul Journeys [bwf-light].jpg",
         "width": 1000,
         "height": 734,
         "mapTypes": "",
@@ -18654,12 +18654,12 @@
             }
         ]
     },
-    "SMR1_245wbt - Seven Churches [bwf-dark]": {
+    "SMR_245wbt - Seven Churches [bwf-dark]": {
         "title": { "en": "Seven Churches of Asia" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_245wbt - Seven Churches [bwf-dark].jpg",
+        "imgFilename": "SMR_245wbt - Seven Churches [bwf-dark].jpg",
         "width": 1000,
         "height": 791,
         "mapTypes": "",
@@ -18799,12 +18799,12 @@
             }
         ]
     },
-    "SMR1_245wbt - Seven Churches": {
+    "SMR_245wbt - Seven Churches": {
         "title": { "en": "Seven Churches of Asia" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_245wbt - Seven Churches.jpg",
+        "imgFilename": "SMR_245wbt - Seven Churches.jpg",
         "width": 923,
         "height": 1000,
         "mapTypes": "fcr bwr bwf",
@@ -18933,12 +18933,12 @@
             }
         ]
     },
-    "SMR1_265wbt - World": {
+    "SMR_265wbt - World": {
         "title": { "en": "Map of the World" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_265wbt - World.jpg",
+        "imgFilename": "SMR_265wbt - World.jpg",
         "width": 1000,
         "height": 600,
         "mapTypes": "mcr bbr bbf bwr bwf",
@@ -19111,12 +19111,12 @@
             }
         ]
     },
-    "SMR1_265wbt - World [flipped]": {
+    "SMR_265wbt - World [flipped]": {
         "title": { "en": "Map of the World" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_265wbt - World [flipped].jpg",
+        "imgFilename": "SMR_265wbt - World [flipped].jpg",
         "width": 1000,
         "height": 600,
         "mapTypes": "mcr fcr",
@@ -19289,12 +19289,12 @@
             }
         ]
     },
-    "SMR1_275wbt - World Simple": {
+    "SMR_275wbt - World Simple": {
         "title": { "en": "The World" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_275wbt - World Simple.jpg",
+        "imgFilename": "SMR_275wbt - World Simple.jpg",
         "width": 1000,
         "height": 629,
         "mapTypes": "",
@@ -19346,12 +19346,12 @@
             }
         ]
     },
-    "SMR1_278wbt - Africa": {
+    "SMR_278wbt - Africa": {
         "title": { "en": "Africa" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_278wbt - Africa.jpg",
+        "imgFilename": "SMR_278wbt - Africa.jpg",
         "width": 601,
         "height": 1000,
         "mapTypes": "bbf bwf",
@@ -19403,12 +19403,12 @@
             }
         ]
     },
-    "SMR1_285wbt - Mediterranean Area": {
+    "SMR_285wbt - Mediterranean Area": {
         "title": { "en": "The Mediterranean Area" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_285wbt - Mediterranean Area.jpg",
+        "imgFilename": "SMR_285wbt - Mediterranean Area.jpg",
         "width": 1000,
         "height": 769,
         "mapTypes": "fcr mcr bbr bbf bwr bwf",
@@ -20351,12 +20351,12 @@
             }
         ]
     },
-    "SMR1_288gt - Roman Empire": {
+    "SMR_288gt - Roman Empire": {
         "title": { "en": "The Roman Empire during the time of Christ" },
         "description": { "en": "" },
         "owner": "SIL Global",
         "ownerRules": "https://tiny.cc/wbt-rules",
-        "imgFilename": "SMR1_288gt - Roman Empire.jpg",
+        "imgFilename": "SMR_288gt - Roman Empire.jpg",
         "width": 1000,
         "height": 767,
         "mapTypes": "",
