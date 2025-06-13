@@ -465,8 +465,7 @@ function App() {
         ],
         multiple: false,
       });      if (fileHandle) {
-        let newTemplateBase = fileHandle.name.replace(/\..*$/, '').replace(/^([a-z0-9-]+)_/i, '').trim().replace(/\s*[@(].*/, '');
-        // Extract the collection ID from the start of the filename - handled by getCollectionIdFromTemplate later
+        let newTemplateBase = fileHandle.name.replace(/\..*$/, '').trim().replace(/\s*[@(].*/, '');
         const labels = {};
         if (fileHandle.name.endsWith('.txt')) {
           // Handle data merge file
@@ -492,7 +491,8 @@ function App() {
           // Handle map image file
         } else {
           return;
-        }          const collectionId = getCollectionIdFromTemplate(newTemplateBase);
+        }
+        const collectionId = getCollectionIdFromTemplate(newTemplateBase);
         const foundTemplate = getMapDefSync(newTemplateBase, collectionId);
         if (!foundTemplate) {
           alert(inLang(uiStr.noTemplate, lang) + ": " + newTemplateBase);
