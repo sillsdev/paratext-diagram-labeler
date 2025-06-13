@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import './App.css';
 import uiStr from './data/ui-strings.json';
 import { MAP_VIEW, TABLE_VIEW, USFM_VIEW, STATUS_NO_RENDERINGS, STATUS_GUESSED } from './constants.js';
-import { collPlacenames } from './CollPlacenamesAndRefs.js';
+import { collectionManager, getCollectionIdFromTemplate } from './CollectionManager';
 import { getMapDef } from './MapData';
 import { inLang, statusValue } from './Utils.js';
 
@@ -21,8 +21,8 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
         return;
       }
       
-      try {
-        const data = await getMapDef(mapDef.template, collPlacenames);
+      try {        const collectionId = getCollectionIdFromTemplate(mapDef.template);
+        const data = await getMapDef(mapDef.template, collectionId);
         setTemplateData(data || {});
       } catch (error) {
         console.error(`Error loading template data for ${mapDef.template}:`, error);
@@ -150,11 +150,11 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
       </div>
       </div>
     );  }
-
   // Use the status from the location object which is already calculated in App.js
   // This is more reliable than recalculating it here
   const status = locations[selLocation]?.status || 0;
-  let transliteration = collPlacenames.getTransliteration(locations[selLocation]?.mergeKey);
+  const collectionId = getCollectionIdFromTemplate(mapDef.template);
+  let transliteration = collectionManager.getTransliteration(locations[selLocation]?.mergeKey, collectionId);
   if (transliteration) { transliteration = ` /${transliteration}/`; }
 
   return (
@@ -342,9 +342,8 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
         </table>
       </div>
       <div style={{ border: '1px solid #ccc', borderRadius: 6, marginBottom: 16, padding: 8, background: '#f9f9f9' }}>
-        <h2>{inLang(locations[selLocation]?.gloss, lang)}</h2>
-        <p><span style={{ fontStyle: 'italic' }}>({locations[selLocation]?.termId})  <span style={{ display: 'inline-block', width: 12 }} />{transliteration}</span><br />
-          {inLang(collPlacenames.getDefinition(locations[selLocation]?.mergeKey), lang)}
+        <h2>{inLang(locations[selLocation]?.gloss, lang)}</h2>        <p><span style={{ fontStyle: 'italic' }}>({locations[selLocation]?.termId})  <span style={{ display: 'inline-block', width: 12 }} />{transliteration}</span><br />
+          {inLang(collectionManager.getDefinition(locations[selLocation]?.mergeKey, collectionId), lang)}
         </p>
         <div className="vernacularGroup" style={{ backgroundColor: statusValue[status].bkColor, margin: '8px', padding: '8px', border: '1px solid black', borderRadius: '0.7em' }}>
           <input

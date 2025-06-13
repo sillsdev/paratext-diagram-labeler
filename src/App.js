@@ -4,13 +4,14 @@ import BottomPane from './BottomPane.js';
 import uiStr from './data/ui-strings.json';
 import { DEFAULT_PROJECTS_FOLDER, DEMO_PROJECT, INITIAL_USFM } from './demo.js';
 import { MAP_VIEW, TABLE_VIEW, USFM_VIEW,  } from './constants.js';
-import { collPlacenames } from './CollPlacenamesAndRefs.js';
+import { collectionManager, getCollectionIdFromTemplate } from './CollectionManager';
 import { getMapDef, getMapDefSync } from './MapData';
 import { inLang, getStatus, getMapForm } from './Utils.js';
 import MapPane from './MapPane.js';
 import TableView from './TableView.js';
 import DetailsPane from './DetailsPane.js';
 import SettingsModal from './SettingsModal.js';
+import { useInitialization } from './InitializationProvider';
 // import { app } from 'electron';
 
 const electronAPI = window.electronAPI;
@@ -36,15 +37,15 @@ const emptyInitialMap = {
 };
 console.log('Creating empty initial map state');
 
-function getRefList(labels, collPlacenames) {
+function getRefList(labels, collectionId = 'SMR') {
   const rl = Array.from(
     new Set(
       labels
-        .map(label => collPlacenames.getRefs(label.mergeKey)) 
+        .map(label => collectionManager.getRefs(label.mergeKey, collectionId)) 
         .flat()
     )
   ).sort();
-  console.log('getRefList():', rl.length, 'refs for', labels.length, 'labels from collPlacenames:', collPlacenames);
+  console.log(`getRefList(): ${rl.length} refs for ${labels.length} labels from collection ${collectionId}`);
   return rl;
 }
 
@@ -90,10 +91,9 @@ async function mapFromUsfm(usfm) {
   
   const templateName = templateMatch[1];
   let mapDefData;
-  
-  try {
-    // Now getMapDef returns a Promise
-    mapDefData = await getMapDef(templateName, collPlacenames);
+    try {
+    // Get map definition from collection manager
+    mapDefData = await getMapDef(templateName);
     
     if (mapDefData) {
       mapDefData.mapView = true;
@@ -182,13 +182,15 @@ function App() {
   const isDraggingVertical = useRef(false);
   const isDraggingHorizontal = useRef(false);
   const vernacularInputRef = useRef(null);
-  const renderingsTextareaRef = useRef();
-  const [extractedVerses, setExtractedVerses] = useState({});
+  const renderingsTextareaRef = useRef();  const [extractedVerses, setExtractedVerses] = useState({});
   const [termRenderings, setTermRenderings] = useState();
-  const [isInitialized, setIsInitialized] = useState(false); // Track initialization state
+  // Get initialization state from context
+  const { isInitialized } = useInitialization();
 
   // Initialize map from USFM
   useEffect(() => {
+    if (!isInitialized) return; // Don't initialize map until collections are loaded
+    
     const initializeMap = async () => {
       try {
         // Initialize from the demo USFM
@@ -196,16 +198,14 @@ function App() {
         console.log('Initial Map loaded:', initialMap);
         setMapDef(initialMap);
         setMapPaneView(initialMap.mapView ? MAP_VIEW : TABLE_VIEW);
-        setIsInitialized(true);
       } catch (error) {
         console.error("Error initializing map:", error);
         // Keep using empty map if initialization fails
-        setIsInitialized(true);
       }
     };
     
     initializeMap();
-  }, []);
+  }, [isInitialized]);
 
   // Load term renderings from new project folder
   useEffect(() => {
@@ -238,13 +238,12 @@ function App() {
     };
     
     loadData();
-  }, [projectFolder, mapDef, isInitialized]);
-
-  // setExtractedVerses when projectFolder or mapDef.labels change
+  }, [projectFolder, mapDef, isInitialized]);  // setExtractedVerses when projectFolder or mapDef.labels change
   useEffect(() => {
     if (!projectFolder || !mapDef.labels?.length || !isInitialized) return;
     
-    const refs = getRefList(mapDef.labels, collPlacenames);
+    const collectionId = getCollectionIdFromTemplate(mapDef.template);
+    const refs = getRefList(mapDef.labels, collectionId);
     if (!refs.length) {
       setExtractedVerses({});
       return;
@@ -260,7 +259,7 @@ function App() {
         alert('Failed to requested filtered verses ' + (verses && verses.error));
       }
     });
-  }, [projectFolder, mapDef.labels]);
+  }, [projectFolder, mapDef.labels, mapDef.template, isInitialized]);
 
 
   // UI handler to select project folder
@@ -465,15 +464,9 @@ function App() {
           },
         ],
         multiple: false,
-      });
-      if (fileHandle) {
+      });      if (fileHandle) {
         let newTemplateBase = fileHandle.name.replace(/\..*$/, '').replace(/^([a-z0-9-]+)_/i, '').trim().replace(/\s*[@(].*/, '');
-        let collId = 'SMR'; // Default collection ID
-        // Extract the collection ID from the start of the filename
-        const collectionIdMatch = fileHandle.name.match(/^([a-z0-9-]+)_/i);
-        if (collectionIdMatch) {
-          collId = collectionIdMatch[1].toUpperCase(); // Use the first part as the collection ID
-        }
+        // Extract the collection ID from the start of the filename - handled by getCollectionIdFromTemplate later
         const labels = {};
         if (fileHandle.name.endsWith('.txt')) {
           // Handle data merge file
@@ -499,8 +492,8 @@ function App() {
           // Handle map image file
         } else {
           return;
-        }        
-        const foundTemplate = getMapDefSync(newTemplateBase, collPlacenames);
+        }          const collectionId = getCollectionIdFromTemplate(newTemplateBase);
+        const foundTemplate = getMapDefSync(newTemplateBase, collectionId);
         if (!foundTemplate) {
           alert(inLang(uiStr.noTemplate, lang) + ": " + newTemplateBase);
           return;
