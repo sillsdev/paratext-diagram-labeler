@@ -43,15 +43,17 @@ class CollectionManager {
         this.isInitialized = false;
         this.isLoading = false;
         this.loadError = null;
-    }
-
-    // Initialize by loading all collections
-    async initializeAllCollections() {
+    }    // Initialize by loading all collections
+    async initializeAllCollections(paratextPath = null) {
         if (this.isInitialized) return;
         if (this.isLoading) return;
         
         this.isLoading = true;
         this.loadError = null;
+        
+        // Store the Paratext path
+        this.paratextPath = paratextPath || DEFAULT_PROJECTS_FOLDER;
+        console.log(`Using Paratext projects path: ${this.paratextPath}`);
         
         try {
             const collectionIds = getAllCollectionIds();
@@ -90,10 +92,10 @@ class CollectionManager {
                     isLoaded: false,
                     placenames: null,
                     mapDefs: null
-                };
-            }
+                };            }
             
-            const templatePath = DEFAULT_PROJECTS_FOLDER + '/_MapLabelerTemplates';
+            const templatePath = (this.paratextPath || DEFAULT_PROJECTS_FOLDER) + '/_MapLabelerTemplates';
+            console.log(`Loading collection data from: ${templatePath}`);
             
             // Load placenames and map definitions in parallel
             const [placenames, mapDefs] = await Promise.all([

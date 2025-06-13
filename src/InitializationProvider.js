@@ -1,8 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { collectionManager } from './CollectionManager';
+import { settingsService } from './services/SettingsService';
 
 const InitializationContext = createContext({
   isInitialized: false,
+  settings: null,
   error: null
 });
 
@@ -10,31 +12,51 @@ export function InitializationProvider({ children }) {
   const [state, setState] = useState({
     isInitialized: false,
     isLoading: true,
+    isLoadingSettings: true,
+    settings: null,
     error: null
   });
   
   useEffect(() => {
     async function initialize() {
       try {
-        await collectionManager.initializeAllCollections();
-        setState({
+        // First step: Load settings
+        setState(prev => ({ ...prev, isLoadingSettings: true }));
+        
+        console.log("Loading application settings...");
+        const settings = await settingsService.loadSettings();
+        
+        setState(prev => ({ 
+          ...prev, 
+          isLoadingSettings: false, 
+          settings 
+        }));
+        
+        // Second step: Initialize collections with the paratext path
+        console.log("Loading map collections...");
+        await collectionManager.initializeAllCollections(settings.paratextProjects);
+        
+        // Everything is initialized
+        setState(prev => ({
+          ...prev,
           isInitialized: true,
-          isLoading: false,
-          error: null
-        });
+          isLoading: false
+        }));
       } catch (error) {
-        setState({
+        console.error("Initialization error:", error);
+        setState(prev => ({
+          ...prev,
           isInitialized: false,
+          isLoadingSettings: false,
           isLoading: false,
-          error
-        });
+          error: error
+        }));
       }
     }
     
     initialize();
   }, []);
-  
-  // Show loading or error UI while initializing
+    // Show loading or error UI while initializing
   if (state.isLoading) {
     return (
       <div className="initializing" style={{ 
@@ -43,7 +65,7 @@ export function InitializationProvider({ children }) {
         fontSize: '1.2rem',
         color: '#444' 
       }}>
-        Loading map collections...
+        {state.isLoadingSettings ? "Loading application settings..." : "Loading map collections..."}
       </div>
     );
   }

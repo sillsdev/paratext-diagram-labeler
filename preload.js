@@ -8,5 +8,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
   saveTermRenderings: (folder, data) => ipcRenderer.invoke('save-term-renderings', folder, data),
   loadFromJson: (jsonPath, jsonFilename) => ipcRenderer.invoke('load-from-json', jsonPath, jsonFilename),
   saveToJson: (jsonPath, jsonFilename, settings) => ipcRenderer.invoke('save-to-json', jsonPath, jsonFilename, settings),
-
+  statPath: (path) => ipcRenderer.invoke('stat-path', path)
 });

@@ -352,8 +352,27 @@ ipcMain.handle('load-from-json', async (event, jsonPath, jsonFilename) => {
   return loadFromJson(jsonPath, jsonFilename);
 });
 
-ipcMain.handle('save-to-json', async (event, settings) => {
-  return saveToJson(settings);
+ipcMain.handle('save-to-json', async (event, jsonPath, jsonFilename, settings) => {
+  return saveToJson(jsonPath, jsonFilename, settings);
+});
+
+// Handler to check path status
+ipcMain.handle('stat-path', async (event, filePath) => {
+  try {
+    const stats = fs.statSync(filePath);
+    return {
+      exists: true,
+      isFile: stats.isFile(),
+      isDirectory: stats.isDirectory(),
+      size: stats.size,
+      modifiedTime: stats.mtime
+    };
+  } catch (error) {
+    return {
+      exists: false,
+      error: error.message
+    };
+  }
 });
 
 app.whenReady().then(createWindow);
