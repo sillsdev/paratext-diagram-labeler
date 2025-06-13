@@ -2,10 +2,10 @@ import React, { useEffect, useMemo } from 'react';
 import Leaf from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { inLang, statusValue, getMatchTally } from './Utils.js';
-import { collPlacenames } from './CollPlacenamesAndRefs.js';
+import { collectionManager } from './CollectionManager';
 
 
-export default function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScale, mapDef, termRenderings, lang, resetZoomFlag, setResetZoomFlag, extractedVerses }) {
+export default function MapPane({ imageUrl, locations, onSelectLocation, selLocation, labelScale, mapDef, termRenderings, lang, resetZoomFlag, setResetZoomFlag, extractedVerses, collectionId = 'SMR' }) {
   // Log all props to check for identity changes
   // console.log('[MapPane] render', {
   //   imageUrl,
@@ -143,9 +143,8 @@ export default function MapPane({ imageUrl, locations, onSelectLocation, selLoca
               loc.angle,
               loc.size,
               loc.status,
-              selLocation === loc.idx,
-              labelScale,
-              frac(getMatchTally(termRenderings[loc.termId], collPlacenames.getRefs(loc.mergeKey), extractedVerses), true)
+              selLocation === loc.idx,              labelScale,
+              frac(getMatchTally(termRenderings[loc.termId], collectionManager.getRefs(loc.mergeKey, collectionId), extractedVerses), true)
             )}
             eventHandlers={{ click: () => onSelectLocation(loc) }}
             tabIndex={0}

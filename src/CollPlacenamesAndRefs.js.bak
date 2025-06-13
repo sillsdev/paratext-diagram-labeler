@@ -1,3 +1,7 @@
+
+/* UNUSED 
+
+import { DEFAULT_PROJECTS_FOLDER } from './demo.js';
 // Collection mapping structure
 // Collection mapping structure - export it to be used elsewhere in the app
 export const COLLECTIONS = {
@@ -49,7 +53,7 @@ class CollPlacenamesAndRefs {
             // Get the configuration for this collection
             const collection = COLLECTIONS[collectionId] || COLLECTIONS.SMR;
             const fileName = collection.placeNamesFile;            // Load data asynchronously from the specified path
-            const templatePath = 'C:/My Paratext 9 Projects/_MapLabelerTemplates';
+            const templatePath = DEFAULT_PROJECTS_FOLDER + '/_MapLabelerTemplates';
             console.log(`Loading placenames file: ${templatePath}/${fileName}`);
             
             this.data = await window.electronAPI.loadFromJson(templatePath, fileName);
@@ -137,3 +141,4 @@ const collPlacenames = new CollPlacenamesAndRefs();
 
 export { collPlacenames };
 export default CollPlacenamesAndRefs;
+*/

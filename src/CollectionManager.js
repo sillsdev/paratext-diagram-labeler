@@ -1,3 +1,4 @@
+import { DEFAULT_PROJECTS_FOLDER } from './demo.js';
 // Collection mapping structure
 export const COLLECTIONS = {
     SMR: {
@@ -92,7 +93,7 @@ class CollectionManager {
                 };
             }
             
-            const templatePath = 'C:/My Paratext 9 Projects/_MapLabelerTemplates';
+            const templatePath = DEFAULT_PROJECTS_FOLDER + '/_MapLabelerTemplates';
             
             // Load placenames and map definitions in parallel
             const [placenames, mapDefs] = await Promise.all([

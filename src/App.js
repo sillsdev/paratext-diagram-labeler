@@ -724,6 +724,12 @@ function App() {
   const memoizedLocations = useMemo(() => locations, [locations]);
   const memoizedMapDef = useMemo(() => mapDef, [mapDef]);
   const memoizedHandleSelectLocation = useCallback(handleSelectLocation, [handleSelectLocation]);
+  
+  // Extract the current collection ID from the template name
+  const currentCollectionId = useMemo(() => {
+    return getCollectionIdFromTemplate(mapDef.template);
+  }, [mapDef.template]);
+  
   // Function to update locations when denials change
   const handleDenialsChanged = useCallback(() => {
     // Make sure we're using the latest term renderings state
@@ -754,8 +760,7 @@ function App() {
 
   return (
     <div className="app-container">
-      <div className="top-section" style={{ flex: `0 0 ${topHeight}%` }}>        <div className="map-pane" style={{ flex: `0 0 ${mapWidth}%` }}>
-          {mapPaneView === MAP_VIEW && mapDef.mapView && (
+      <div className="top-section" style={{ flex: `0 0 ${topHeight}%` }}>        <div className="map-pane" style={{ flex: `0 0 ${mapWidth}%` }}>          {mapPaneView === MAP_VIEW && mapDef.mapView && (
             <MapPane
               imageUrl={memoizedMapDef.imgFilename ? `/assets/maps/${memoizedMapDef.imgFilename}` : ''}
               locations={memoizedLocations}
@@ -768,9 +773,9 @@ function App() {
               resetZoomFlag={resetZoomFlag} // Pass to MapPane
               setResetZoomFlag={setResetZoomFlag} // Pass setter to MapPane
               extractedVerses={extractedVerses} // Pass extracted verses
+              collectionId={currentCollectionId} // Pass the collection ID
             />
-          )}
-          {mapPaneView === TABLE_VIEW && (
+          )}          {mapPaneView === TABLE_VIEW && (
             <TableView
               locations={locations}
               selLocation={selLocation}
@@ -779,7 +784,8 @@ function App() {
               termRenderings={termRenderings}
               onNextLocation={handleNextLocation}
               lang={lang} // <-- pass lang
-              extractedVerses={extractedVerses} 
+              extractedVerses={extractedVerses}
+              collectionId={currentCollectionId} // Pass the collection ID
             />
           )}
           {mapPaneView === USFM_VIEW && (
@@ -825,8 +831,7 @@ function App() {
         onMouseDown={handleHorizontalDragStart}
       >
         ═════
-      </div>
-      <div className="bottom-pane" style={{ flex: `0 0 ${100 - topHeight}%` }}>
+      </div>      <div className="bottom-pane" style={{ flex: `0 0 ${100 - topHeight}%` }}>
         <BottomPane
           termId={locations[selLocation]?.termId}
           mergeKey={locations[selLocation]?.mergeKey}
@@ -839,6 +844,7 @@ function App() {
           onDenialsChanged={handleDenialsChanged}
           extractedVerses={extractedVerses}
           setTermRenderings={setTermRenderings}
+          collectionId={currentCollectionId} // Pass the collection ID
         />
       </div>
       <SettingsModal 

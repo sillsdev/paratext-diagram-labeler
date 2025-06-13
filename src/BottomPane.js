@@ -6,7 +6,7 @@ import { MATCH_PRE_B, MATCH_POST_B, MATCH_W } from './demo.js';
 // import { MAP_VIEW, TABLE_VIEW, USFM_VIEW, STATUS_NO_RENDERINGS, STATUS_GUESSED } from './constants.js';
 // Status values not yet used: STATUS_BLANK, STATUS_MULTIPLE,  STATUS_UNMATCHED, STATUS_MATCHED, STATUS_RENDERING_SHORT, STATUS_BAD_EXPLICIT_FORM 
 // import TermRenderings from './TermRenderings';
-import { collPlacenames } from './CollPlacenamesAndRefs.js';
+import { collectionManager } from './CollectionManager';
 import { inLang } from './Utils.js';
 
 const bookNames = 'GEN,EXO,LEV,NUM,DEU,JOS,JDG,RUT,1SA,2SA,1KI,2KI,1CH,2CH,EZR,NEH,EST,JOB,PSA,PRO,ECC,SNG,ISA,JER,LAM,EZK,DAN,HOS,JOL,AMO,OBA,JON,MIC,NAM,HAB,ZEP,HAG,ZEC,MAL,MAT,MRK,LUK,JHN,ACT,ROM,1CO,2CO,GAL,EPH,PHP,COL,1TH,2TH,1TI,2TI,TIT,PHM,HEB,JAS,1PE,2PE,1JN,2JN,3JN,JUD,REV,TOB,JDT,ESG,WIS,SIR,BAR,LJE,S3Y,SUS,BEL,1MA,2MA,3MA,4MA,1ES,2ES,MAN,PS2,ODA,PSS';
@@ -21,7 +21,7 @@ function prettyRef(ref) {
 }
 
 // Bottom Pane component to display a scrollable list of verses referencing the termId
-function BottomPane({ termId, mergeKey, renderings, onAddRendering, onReplaceRendering, lang, termRenderings, setRenderings, onDenialsChanged, extractedVerses, setTermRenderings }) {
+function BottomPane({ termId, mergeKey, renderings, onAddRendering, onReplaceRendering, lang, termRenderings, setRenderings, onDenialsChanged, extractedVerses, setTermRenderings, collectionId = 'SMR' }) {
   const paneRef = React.useRef();
   const [selectedText, setSelectedText] = React.useState('');
   // Add a local state to force re-render on denial toggle
@@ -52,9 +52,8 @@ function BottomPane({ termId, mergeKey, renderings, onAddRendering, onReplaceRen
       document.removeEventListener('keyup', handleSelectionChange);
     };
   }, []);
-
   if (!termId) return <div className="bottom-pane" ref={paneRef} />;
-  const refs = collPlacenames.getRefs(mergeKey);
+  const refs = collectionManager.getRefs(mergeKey, collectionId);
 
   // Prepare renderings: remove comments, split, trim, and convert to regex patterns
   let renderingList = [];

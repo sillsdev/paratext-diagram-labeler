@@ -5,11 +5,11 @@ import { CheckmarkIcon, DeniedCheckmarkIcon, WarningIcon } from './TermIcons';
 // import { MAP_VIEW, TABLE_VIEW, USFM_VIEW, STATUS_NO_RENDERINGS, STATUS_GUESSED } from './constants.js';
 // Status values not yet used: STATUS_BLANK, STATUS_MULTIPLE,  STATUS_UNMATCHED, STATUS_MATCHED, STATUS_RENDERING_SHORT, STATUS_BAD_EXPLICIT_FORM 
 // import TermRenderings from './TermRenderings';
-import { collPlacenames } from './CollPlacenamesAndRefs.js';
+import { collectionManager } from './CollectionManager';
 import { inLang, statusValue, getMatchTally } from './Utils.js';
 
 // Table View component
-export default function TableView({ locations, selLocation, onUpdateVernacular, onNextLocation, termRenderings, onSelectLocation, lang, extractedVerses }) {
+export default function TableView({ locations, selLocation, onUpdateVernacular, onNextLocation, termRenderings, onSelectLocation, lang, extractedVerses, collectionId = 'SMR' }) {
     const inputRefs = useRef([]);
     useEffect(() => {
       // Focus the input for the selected row
@@ -68,9 +68,8 @@ export default function TableView({ locations, selLocation, onUpdateVernacular, 
             }}
             style={{}}
             spellCheck={false}
-            />
-            </td>
-            <Frac value={getMatchTally(termRenderings[loc.termId], collPlacenames.getRefs(loc.mergeKey), extractedVerses)} />
+            />            </td>
+            <Frac value={getMatchTally(termRenderings[loc.termId], collectionManager.getRefs(loc.mergeKey, collectionId), extractedVerses)} />
             <td>
 
             <span
