@@ -1,6 +1,6 @@
 // src/services/SettingsService.js
 import { DEFAULT_PROJECTS_FOLDER } from '../demo.js';
-
+import { templateSubfolder } from '../CollectionManager.js';
 class SettingsService {  constructor() {
     this.settings = null;
     this.isLoaded = false;
@@ -31,17 +31,42 @@ class SettingsService {  constructor() {
         await this.saveSettings();
         console.log("Created default settings:", this.settings);
       }
-        // Validate the Paratext Projects folder exists
-      const folderExists = await this.folderExists(this.settings.paratextProjects);
+        // Validate the Paratext Projects folder and templateSubfolder exists
+      const folderExists = await this.folderExists(this.settings.paratextProjects + '/' + templateSubfolder);      
       if (!folderExists) {
-        this.loadError = `Paratext projects folder not found: ${this.settings.paratextProjects}`;
+        this.loadError = `Paratext projects folder containing _MapLabelerTemplates not found: ${this.settings.paratextProjects}`;
         console.warn(this.loadError);
         
-        // Show alert to user
-        alert(`${this.loadError}\n\nUsing default folder instead. You may need to update the Paratext Projects path in a future version.`);
+        // Prompt user to select the Paratext projects folder, that must include the _MapLabelerTemplates subfolder.
+        // If we don't get a valid folder, we must exit.
+        alert("Please identify the location of the 'My Paratext Projects' folder.\n\nIt must contain a _MapLabelerTemplates subfolder containing the map template collection(s) you wish to use.");
+        const selectedFolder = await window.electronAPI.selectProjectFolder();
+        if (selectedFolder && await this.folderExists(selectedFolder + '/' + templateSubfolder)) {
+          this.settings.paratextProjects = selectedFolder;
+          await this.saveSettings();
+          console.log("Updated Paratext projects folder:", this.settings.paratextProjects);
+        } else {
+          throw new Error("Invalid Paratext projects folder selected. Please ensure it contains the _MapLabelerTemplates subfolder.");
+        }
+      }
+      
+        // Validate the specific project folder exists
+      const projFolderExists = await this.folderExists(this.settings.lastProjectFolder );      
+      if (!projFolderExists) {
+        this.loadError = `Paratext project folder not found: ${this.settings.lastProjectFolder}`;
+        console.warn(this.loadError);
         
-        // Fall back to default folder
-        this.settings.paratextProjects = DEFAULT_PROJECTS_FOLDER;
+        // Prompt user to select the project folder.
+        // If we don't get a valid folder, we must exit.
+        alert("Please identify the location of the specific folder containing the project you wish to work with.");
+        const selectedFolder = await window.electronAPI.selectProjectFolder();
+        if (selectedFolder && await this.folderExists(selectedFolder )) {
+          this.settings.lastProjectFolder = selectedFolder;
+          await this.saveSettings();
+          console.log("Updated lastProjectFolder:", this.settings.lastProjectFolder);
+        } else {
+          throw new Error("Invalid project folder selected.");
+        }
       }
       
       this.isLoaded = true;

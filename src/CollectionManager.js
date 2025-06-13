@@ -20,6 +20,8 @@ export const COLLECTIONS = {
     // Additional collections as needed
 };
 
+export const templateSubfolder = '_MapLabelerTemplates';
+
 // Helper functions for collections
 export function getAllCollectionIds() {
     return Object.keys(COLLECTIONS);
@@ -94,7 +96,7 @@ class CollectionManager {
                     mapDefs: null
                 };            }
             
-            const templatePath = (this.paratextPath || DEFAULT_PROJECTS_FOLDER) + '/_MapLabelerTemplates';
+            const templatePath = (this.paratextPath || DEFAULT_PROJECTS_FOLDER) + '/' + templateSubfolder;
             console.log(`Loading collection data from: ${templatePath}`);
             
             // Load placenames and map definitions in parallel
