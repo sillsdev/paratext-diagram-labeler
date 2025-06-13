@@ -5,7 +5,7 @@ import uiStr from './data/ui-strings.json';
 import { DEFAULT_PROJECTS_FOLDER, DEMO_PROJECT, INITIAL_USFM } from './demo.js';
 import { MAP_VIEW, TABLE_VIEW, USFM_VIEW,  } from './constants.js';
 import { collectionManager, getCollectionIdFromTemplate } from './CollectionManager';
-import { getMapDef, getMapDefSync } from './MapData';
+import { getMapDef } from './MapData';
 import { inLang, getStatus, getMapForm } from './Utils.js';
 import MapPane from './MapPane.js';
 import TableView from './TableView.js';
@@ -465,7 +465,14 @@ function App() {
         ],
         multiple: false,
       });      if (fileHandle) {
-        let newTemplateBase = fileHandle.name.replace(/\..*$/, '').trim().replace(/\s*[@(].*/, '');
+        // Extract template name from filename and log the process
+        console.log("Original file name:", fileHandle.name);
+        let newTemplateBase = fileHandle.name.replace(/\..*$/, ''); // Remove file extension
+        console.log("After removing extension:", newTemplateBase);
+        newTemplateBase = newTemplateBase.trim();
+        console.log("After trim:", newTemplateBase);
+        newTemplateBase = newTemplateBase.replace(/\s*[@(].*/, ''); // Remove anything after @ or (
+        console.log("Final template base name:", newTemplateBase);
         const labels = {};
         if (fileHandle.name.endsWith('.txt')) {
           // Handle data merge file
@@ -491,10 +498,24 @@ function App() {
           // Handle map image file
         } else {
           return;
-        }
+        }        // Add diagnostic logs to see what's happening
+        console.log("Template base name:", newTemplateBase);
         const collectionId = getCollectionIdFromTemplate(newTemplateBase);
-        const foundTemplate = getMapDefSync(newTemplateBase, collectionId);
+        console.log("Detected collection ID:", collectionId);
+        console.log("Collections loaded:", collectionManager.collectionsData);
+        console.log("Is collection loaded?", collectionManager.isCollectionLoaded(collectionId));
+        
+        // Try to get the map definition
+        const foundTemplate = getMapDef(newTemplateBase, collectionId);
+        console.log("Found template:", foundTemplate);
+        
         if (!foundTemplate) {
+          console.error("Template not found. Looking for:", newTemplateBase, "in collection:", collectionId);
+          
+          // Examine available templates for debugging
+          const availableTemplates = Object.keys(collectionManager.getMapDefs(collectionId));
+          console.log("Available templates in collection:", availableTemplates);
+          
           alert(inLang(uiStr.noTemplate, lang) + ": " + newTemplateBase);
           return;
         }

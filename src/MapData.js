@@ -20,11 +20,4 @@ function getMapDef(templateName, collectionId = null) {
     return collectionManager.getMapDef(templateName, collectionId);
 }
 
-/**
- * For backward compatibility - equivalent to getMapDef
- */
-function getMapDefSync(templateName, collectionId = null) {
-    return getMapDef(templateName, collectionId);
-}
-
-export { getMapDef, getMapDefSync };
+export { getMapDef };

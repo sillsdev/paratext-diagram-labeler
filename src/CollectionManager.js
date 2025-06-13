@@ -32,7 +32,8 @@ export function getCollectionById(id) {
 export function getCollectionIdFromTemplate(templateName) {
     if (!templateName) return 'SMR'; // Default to SMR if no template
     const match = templateName.match(/^([^_]+)_/);
-    return match ? match[1] : 'SMR'; // Default to SMR if no match
+    // Always uppercase the collection ID to match the COLLECTIONS object keys
+    return match ? match[1].toUpperCase() : 'SMR'; // Default to SMR if no match
 }
 
 class CollectionManager {
@@ -107,12 +108,17 @@ class CollectionManager {
             if (!mapDefs || Object.keys(mapDefs).length === 0) {
                 throw new Error(`Empty map definitions loaded from ${collection.mapDefsFile}`);
             }
-            
-            // Build normalized map defs for case-insensitive lookup
+              // Build normalized map defs for case-insensitive lookup
             const normalizedMapDefs = {};
+            console.log(`Building normalized map definitions for collection ${collectionId}`);
             for (const key in mapDefs) {
                 normalizedMapDefs[key.toLowerCase()] = key; // Store original key for lookup
+                console.log(`Map key: "${key}" => normalized: "${key.toLowerCase()}"`);
             }
+            console.log(`Created ${Object.keys(normalizedMapDefs).length} normalized map definition keys for ${collectionId}`);
+            // Show some examples of normalized keys
+            const exampleKeys = Object.keys(normalizedMapDefs).slice(0, 3);
+            console.log("Example normalized keys:", exampleKeys);
             
             // Store the loaded data
             this.collectionsData[collectionId] = {
@@ -133,29 +139,38 @@ class CollectionManager {
     }
     
     // Synchronous methods to access collection data
-    
-    isCollectionLoaded(collectionId) {
-        return !!this.collectionsData[collectionId]?.isLoaded;
+      isCollectionLoaded(collectionId) {
+        // Ensure uppercase collection ID for consistency
+        const normalizedId = (collectionId || '').toUpperCase();
+        return !!this.collectionsData[normalizedId]?.isLoaded;
     }
-    
-    getPlacenames(collectionId) {
-        return this.collectionsData[collectionId]?.placenames || {};
+      getPlacenames(collectionId) {
+        // Ensure uppercase collection ID for consistency
+        const normalizedId = (collectionId || '').toUpperCase();
+        return this.collectionsData[normalizedId]?.placenames || {};
     }
     
     getMapDefs(collectionId) {
-        return this.collectionsData[collectionId]?.mapDefs || {};
-    }
-    
-    // Get map definition with case-insensitive lookup
+        // Ensure uppercase collection ID for consistency
+        const normalizedId = (collectionId || '').toUpperCase();
+        return this.collectionsData[normalizedId]?.mapDefs || {};
+    }// Get map definition with case-insensitive lookup
     getMapDef(templateName, collectionId) {
+        // Add diagnostics
+        console.log("getMapDef called with templateName:", templateName, "collectionId:", collectionId);
+        
         // Extract collection ID from template if not provided
         if (!collectionId && templateName) {
             collectionId = getCollectionIdFromTemplate(templateName);
+            console.log("Extracted collection ID:", collectionId);
         }
         
-        collectionId = collectionId || 'SMR';
+        // Ensure collection ID is uppercase to match our keys
+        collectionId = (collectionId || 'SMR').toUpperCase();
+        console.log("Using normalized collection ID:", collectionId);
         
         if (!templateName) {
+            console.warn("No template name provided to getMapDef");
             return null;
         }
         
@@ -165,21 +180,30 @@ class CollectionManager {
             return null;
         }
         
+        console.log("Collection is loaded:", collection.isLoaded);
+        
         // Try direct lookup first
+        console.log("Attempting direct lookup with key:", templateName);
         if (collection.mapDefs[templateName]) {
+            console.log("Found template with exact match");
             const result = { ...collection.mapDefs[templateName] };
             result.template = templateName;
             return this.enrichMapDefWithGlosses(result, collectionId);
         }
         
         // Try case-insensitive lookup
+        console.log("Attempting case-insensitive lookup with key:", templateName.toLowerCase());
+        console.log("Available normalized keys:", Object.keys(collection.normalizedMapDefs).slice(0, 5), "...");
+        
         const normalizedKey = collection.normalizedMapDefs[templateName.toLowerCase()];
         if (normalizedKey) {
+            console.log("Found template with case-insensitive match:", normalizedKey);
             const result = { ...collection.mapDefs[normalizedKey] };
             result.template = templateName; // Use the requested template name
             return this.enrichMapDefWithGlosses(result, collectionId);
         }
         
+        console.warn("No template match found for:", templateName);
         return null;
     }
     
