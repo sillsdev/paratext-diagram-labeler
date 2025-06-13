@@ -78,7 +78,7 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
 
   // --- Template info/browse group ---
   // Access the template name from the global map object
-  const templateName = mapDef.template || '(' + inLang({en: 'no template'}, lang) + ')';
+  const templateName = mapDef.template || '(' + inLang(uiStr.noTemplate, lang) + ')';
 
   // Export to data merge file handler
   const handleExportDataMerge = async () => {
@@ -114,16 +114,43 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
     return (
       <div>
       {/* Button Row */}
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
-        <button onClick={onSwitchView} style={{ marginRight: 60 }}>Switch view</button>
-        <button onClick={handleCancel} style={{ marginRight: 8, width:80 }}>{inLang(uiStr.cancel, lang)}</button>
-        <button onClick={handleOk}  style={{ width:80 }}>{inLang(uiStr.ok, lang)}</button>
-        <button
-          onClick={handleExportDataMerge}
-          style={{ marginLeft: 16, width: 40, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#e3f2fd', border: '1px solid #1976d2', borderRadius: 4, cursor: 'pointer' }}
-          title={inLang(uiStr.export, lang)}
-        >
-          {/* Export icon: two stacked files with an arrow */}
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
+          <button
+            onClick={onSwitchView}
+            style={{ marginRight: 60, whiteSpace: 'nowrap' }}
+          >
+            {inLang(uiStr.switchView, lang)}
+          </button>
+          <button
+            onClick={handleCancel}
+            style={{ marginRight: 8, width: 80, whiteSpace: 'nowrap' }}
+          >
+            {inLang(uiStr.cancel, lang)}
+          </button>
+          <button
+            onClick={handleOk}
+            style={{ width: 80, whiteSpace: 'nowrap' }}
+          >
+            {inLang(uiStr.ok, lang)}
+          </button>
+          <button
+            onClick={handleExportDataMerge}
+            style={{
+          marginLeft: 16,
+          width: 40,
+          height: 32,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: '#e3f2fd',
+          border: '1px solid #1976d2',
+          borderRadius: 4,
+          cursor: 'pointer',
+          whiteSpace: 'nowrap'
+            }}
+            title={inLang(uiStr.export, lang)}
+          >
+            {/* Export icon: two stacked files with an arrow */}
           <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect x="4" y="4" width="10" height="14" rx="2" fill="#fff" stroke="#1976d2" strokeWidth="1.2"/>
             <rect x="8" y="2" width="10" height="14" rx="2" fill="#e3f2fd" stroke="#1976d2" strokeWidth="1.2"/>
@@ -235,8 +262,8 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
               <line x1="6" y1="13" x2="12" y2="13" stroke="#1976d2" strokeWidth="1.2"/>
             </svg>
           </button>
-          <button onClick={handleCancel} style={{ marginRight: 8, height: 32, minWidth: 80, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{inLang(uiStr.cancel, lang)}</button>
-          <button onClick={handleOk} style={{ height: 32, minWidth: 80, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{inLang(uiStr.ok, lang)}</button>
+          <button onClick={handleCancel} style={{ marginRight: 8, height: 32, minWidth: 80, whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{inLang(uiStr.cancel, lang)}</button>
+          <button onClick={handleOk} style={{ height: 32, minWidth: 80, whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{inLang(uiStr.ok, lang)}</button>
           <div style={{ flex:  1 }} />
           <button
             onClick={handleSettings}
@@ -297,7 +324,7 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
           background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center'
         }}>
           <div style={{ background: 'white', borderRadius: 10, padding: 24, minWidth: 520, maxWidth: 900, boxShadow: '0 4px 24px #0008', position: 'relative' }}>
-            <button onClick={() => setShowTemplateInfo(false)} style={{ position: 'absolute', top:  8, right: 12, background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#888' }} title="Close">×</button>
+            <button onClick={() => setShowTemplateInfo(false)} style={{ position: 'absolute', top:  8, right: 12, background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#888' }} title={inLang(uiStr.close, lang)}>×</button>
             <h4 style={{ marginTop: 0}}>{templateName}</h4>
             {inLang(templateData.title, lang) && <p style={{ margin: '8px 0', fontWeight: 'bold', fontStyle: 'italic'}}>{inLang(templateData.title, lang)}</p>}
             {inLang(templateData.description, lang) && <p style={{ margin: '8px 0' }}>{inLang(templateData.description, lang)}</p>}

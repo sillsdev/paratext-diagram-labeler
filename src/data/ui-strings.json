@@ -100,6 +100,7 @@
   "replaceRenderings": { "en": "Replace renderings and label", "es": "Reemplazar", "fr": "Remplacer", "ne": "प्रतिस्थापन गर्नुहोस्" },
   "settings": { "en": "Settings", "es": "Configuración", "fr": "Paramètres", "ne": "सेटिङहरू" },
   "status": { "en": "Status", "es": "Estado", "fr": "Statut", "ne": "स्थिति" },
+  "switchView": { "en": "Switch view", "es": "Cambiar vista", "fr": "Changer de vue", "ne": "दृश्य परिवर्तन गर्नुहोस्" },
   "tableView": { "en": "Table View", "es": "Vista de tabla", "fr": "Vue du tableau", "ne": "तालिका दृश्य" },  "tally": { "en": "Tally", "es": "Conteo", "fr": "Total", "ne": "गणना" },
   "templateInfo": { "en": "Template info", "es": "Información de la plantilla", "fr": "Infos du modèle", "ne": "टेम्प्लेट जानकारी" },
   "termRenderings": { "en": "Term Renderings", "es": "Renderizaciones de Términos", "fr": "Rendus des Termes", "ne": "शब्द अनुवादहरू" },
