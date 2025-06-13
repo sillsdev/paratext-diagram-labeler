@@ -15,7 +15,7 @@ export const DEFAULT_PROJECTS_FOLDER = 'c:/My Paratext 9 Projects';
 export const DEMO_PROJECT = 'Zezi';
 
 export const INITIAL_USFM = String.raw`\zdiagram-s |template="SMR_185wbt - Philips Travels [sm]"\*
-\fig |src="185wbt - Philips Travels [sm] (fcr) @en.jpg" size="span" loc="paw" copy="WBT" ref="8:5-40"\fig*
+\fig |src="smr_185wbt - Philips Travels [sm] (fcr) @en.jpg" size="span" loc="paw" copy="WBT" ref="8:5-40"\fig*
 \zdiagram-e \*`;
 
  

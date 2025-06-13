@@ -2,10 +2,10 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import './App.css';
 import BottomPane from './BottomPane.js';
 import uiStr from './data/ui-strings.json';
-import { DEFAULT_PROJECTS_FOLDER,  DEMO_PROJECT, INITIAL_USFM } from './demo.js';
+import { DEFAULT_PROJECTS_FOLDER, DEMO_PROJECT, INITIAL_USFM } from './demo.js';
 import { MAP_VIEW, TABLE_VIEW, USFM_VIEW,  } from './constants.js';
 import { collPlacenames } from './CollPlacenamesAndRefs.js';
-import { getMapDef } from './MapData';
+import { getMapDef, getMapDefSync } from './MapData';
 import { inLang, getStatus, getMapForm } from './Utils.js';
 import MapPane from './MapPane.js';
 import TableView from './TableView.js';
@@ -25,8 +25,16 @@ const electronAPI = window.electronAPI;
 // console.log('App settings after default:', appSettings);
 const appSettings = { projectsFolder: DEFAULT_PROJECTS_FOLDER };
 
-const iniMap = mapFromUsfm(INITIAL_USFM);
-console.log('Initial Map:', iniMap);
+// Define an empty initial map state to be used until the async load completes
+const emptyInitialMap = {
+  template: '',
+  mapView: false,
+  imgFilename: '',
+  width: 1000,
+  height: 1000,
+  labels: []
+};
+console.log('Creating empty initial map state');
 
 function getRefList(labels, collPlacenames) {
   const rl = Array.from(
@@ -62,19 +70,41 @@ function decodeFileAsString(arrayBuffer) {
   return new TextDecoder('utf-8').decode(uint8);
 }
 
-function mapFromUsfm(usfm) {
+async function mapFromUsfm(usfm) {
   // Extract template and \fig field
   const figMatch = usfm.match(/\\fig[\s\S]*?\\fig\*/);
   const templateMatch = usfm.match(/\\zdiagram-s\s+\|template="([^"]*)"/);
   
+  // Empty template case
+  if (!templateMatch) {
+    return {
+      template: '',
+      fig: figMatch ? figMatch[0] : '',
+      mapView: false,
+      imgFilename: '',
+      width: 1000,
+      height: 1000,
+      labels: []
+    };
+  }
+  
+  const templateName = templateMatch[1];
   let mapDefData;
+  
   try {
-    mapDefData = getMapDef(templateMatch[1], collPlacenames);
-    mapDefData.mapView = true;
-    mapDefData.template = templateMatch[1];
+    // Now getMapDef returns a Promise
+    mapDefData = await getMapDef(templateName, collPlacenames);
+    
+    if (mapDefData) {
+      mapDefData.mapView = true;
+      mapDefData.template = templateName;
+    } else {
+      throw new Error("Map definition not found");
+    }
   } catch (e) {
+    console.error("Error loading map definition:", e);
     mapDefData = {
-      template: templateMatch ? templateMatch[1] : '',
+      template: templateName,
       fig: figMatch ? figMatch[0] : '',
       mapView: false,
       imgFilename: '',
@@ -83,6 +113,7 @@ function mapFromUsfm(usfm) {
       labels: []
     }
   }
+  
   mapDefData.fig = figMatch ? figMatch[0] : '';
   let maxIdx = mapDefData.labels.length;
   const regex = /\\zlabel\s+\|key="([^"]+)"\s+termid="([^"]+)"\s+gloss="([^"]+)"\s+label="([^"]*)"/g;
@@ -134,14 +165,14 @@ function usfmFromMap(map, lang) {
 function App() {
   const [projectFolder, setProjectFolder] = useState(appSettings.projectsFolder + "/" + DEMO_PROJECT); // Default to demo project
   const [lang, setLang] = useState('en');  //TODO: Persist in localStorage
-  const [mapDef, setMapDef] = useState(iniMap);
+  const [mapDef, setMapDef] = useState(emptyInitialMap);
   const [locations, setLocations] = useState([]);
   const [selLocation, setSelLocation] = useState(0);
   const [mapWidth, setMapWidth] = useState(70);
   const [topHeight, setTopHeight] = useState(80);
   const [renderings, setRenderings] = useState('');
   const [isApproved, setIsApproved] = useState(false);
-  const [mapPaneView, setMapPaneView] = useState(iniMap.mapView ? MAP_VIEW : TABLE_VIEW); // 0: Map, 1: Table, 2: USFM
+  const [mapPaneView, setMapPaneView] = useState(MAP_VIEW); // Default to MAP_VIEW, will be updated after loading
   const [labelScale, setLabelScale] = useState(() => {
     const saved = localStorage.getItem('labelScale'); // Persist labelScale in localStorage
     return saved ? parseFloat(saved) : 1;
@@ -154,11 +185,32 @@ function App() {
   const renderingsTextareaRef = useRef();
   const [extractedVerses, setExtractedVerses] = useState({});
   const [termRenderings, setTermRenderings] = useState();
+  const [isInitialized, setIsInitialized] = useState(false); // Track initialization state
 
+  // Initialize map from USFM
+  useEffect(() => {
+    const initializeMap = async () => {
+      try {
+        // Initialize from the demo USFM
+        const initialMap = await mapFromUsfm(INITIAL_USFM);
+        console.log('Initial Map loaded:', initialMap);
+        setMapDef(initialMap);
+        setMapPaneView(initialMap.mapView ? MAP_VIEW : TABLE_VIEW);
+        setIsInitialized(true);
+      } catch (error) {
+        console.error("Error initializing map:", error);
+        // Keep using empty map if initialization fails
+        setIsInitialized(true);
+      }
+    };
+    
+    initializeMap();
+  }, []);
 
   // Load term renderings from new project folder
   useEffect(() => {
-    if (!electronAPI || !projectFolder) return;
+    if (!electronAPI || !projectFolder || !isInitialized || !mapDef) return;
+    
     const loadData = async () => {
       try {
         const newTermRenderings = await electronAPI.loadTermRenderings(projectFolder);
@@ -166,7 +218,7 @@ function App() {
         if (newTermRenderings && !newTermRenderings.error) {
           setTermRenderings(newTermRenderings);
           // Re-init locations from map and new termRenderings
-          const initialLocations = iniMap.labels.map(loc => {
+          const initialLocations = mapDef.labels.map(loc => {
             if (!loc.vernLabel) {
               loc.vernLabel = getMapForm(newTermRenderings, loc.termId);
             }
@@ -184,18 +236,20 @@ function App() {
         console.log(`Failed to load term-renderings.json from project folder <${projectFolder}>.`, e);
       }
     };
+    
     loadData();
-  }, [projectFolder]);
-
+  }, [projectFolder, mapDef, isInitialized]);
 
   // setExtractedVerses when projectFolder or mapDef.labels change
   useEffect(() => {
-    if (!projectFolder || !mapDef.labels?.length) return;
+    if (!projectFolder || !mapDef.labels?.length || !isInitialized) return;
+    
     const refs = getRefList(mapDef.labels, collPlacenames);
     if (!refs.length) {
       setExtractedVerses({});
       return;
     }
+    
     electronAPI.getFilteredVerses(projectFolder, refs).then(verses => {
       console.log('[IPC] getFilteredVerses:', projectFolder, 'for refs:', refs.length);
       if (verses && !verses.error) {
@@ -413,7 +467,13 @@ function App() {
         multiple: false,
       });
       if (fileHandle) {
-        let newTemplateBase = fileHandle.name.replace(/\..*$/, '').trim().replace(/^\w+_/, '').replace(/\s*[@(].*/, '');
+        let newTemplateBase = fileHandle.name.replace(/\..*$/, '').replace(/^([a-z0-9-]+)_/i, '').trim().replace(/\s*[@(].*/, '');
+        let collId = 'SMR'; // Default collection ID
+        // Extract the collection ID from the start of the filename
+        const collectionIdMatch = fileHandle.name.match(/^([a-z0-9-]+)_/i);
+        if (collectionIdMatch) {
+          collId = collectionIdMatch[1].toUpperCase(); // Use the first part as the collection ID
+        }
         const labels = {};
         if (fileHandle.name.endsWith('.txt')) {
           // Handle data merge file
@@ -439,15 +499,15 @@ function App() {
           // Handle map image file
         } else {
           return;
-        }
-        const foundTemplate = getMapDef('SMR_' + newTemplateBase, collPlacenames);
+        }        
+        const foundTemplate = getMapDefSync(newTemplateBase, collPlacenames);
         if (!foundTemplate) {
           alert(inLang(uiStr.noTemplate, lang) + ": " + newTemplateBase);
           return;
         }
         // Set mapDef and locations 
         setMapDef({
-          template: 'SMR_' + newTemplateBase,
+          template: newTemplateBase,
           fig: foundTemplate.fig || '',
           mapView: true,
           imgFilename: foundTemplate.imgFilename,
@@ -528,32 +588,36 @@ function App() {
       });
       setSelLocation(0);
       setLocations(initialLocations);
-      //  update map object
-      iniMap.labels = newMap.labels;
-      iniMap.template = newMap.template;
-      iniMap.fig = newMap.fig;
-      iniMap.mapView = newMap.mapView;
+      //  update map object      // Update map data in state
+      setMapDef({
+        ...mapDef,
+        labels: newMap.labels,
+        template: newMap.template,
+        fig: newMap.fig,
+        mapView: newMap.mapView,
+        imgFilename: newMap.imgFilename,
+        width: newMap.width,
+        height: newMap.height
+      });
       setUsfmText(text); // keep USFM text in sync after parse
-      setMapDef({template: newMap.template, fig: newMap.fig, mapView: newMap.mapView, imgFilename: newMap.imgFilename, width: newMap.width, height: newMap.height});
     } catch (e) {
       alert(inLang(uiStr.invalidUsfm, lang));
     }
-  }, [termRenderings, setLocations, setSelLocation, lang]);
-
+  }, [termRenderings, setLocations, setSelLocation, lang, mapDef]);
   // Intercept view switch to update map if leaving USFM view
   const handleSwitchViewWithUsfm = useCallback(() => {
     if (mapPaneView === USFM_VIEW) {
       updateMapFromUsfm();
     }
     setMapPaneView(prev => {
-      if (!iniMap.mapView) {
+      if (!mapDef.mapView) {
         // Only cycle between Table (1) and USFM (2)
         return prev === TABLE_VIEW ? USFM_VIEW : TABLE_VIEW;
       }
       // Cycle through Map (0), Table (1), USFM (2)
       return (prev + 1) % 3;  // Maybe this can be simplified now that Switch View is only from USFM
     });
-  }, [mapPaneView, updateMapFromUsfm]);
+  }, [mapPaneView, updateMapFromUsfm, mapDef.mapView]);
 
   // Intercept OK button in DetailsPane
   const handleOkWithUsfm = useCallback(() => {
@@ -676,9 +740,8 @@ function App() {
 
   return (
     <div className="app-container">
-      <div className="top-section" style={{ flex: `0 0 ${topHeight}%` }}>
-        <div className="map-pane" style={{ flex: `0 0 ${mapWidth}%` }}>
-          {mapPaneView === MAP_VIEW && iniMap.mapView && (
+      <div className="top-section" style={{ flex: `0 0 ${topHeight}%` }}>        <div className="map-pane" style={{ flex: `0 0 ${mapWidth}%` }}>
+          {mapPaneView === MAP_VIEW && mapDef.mapView && (
             <MapPane
               imageUrl={memoizedMapDef.imgFilename ? `/assets/maps/${memoizedMapDef.imgFilename}` : ''}
               locations={memoizedLocations}
@@ -727,9 +790,8 @@ function App() {
             locations={locations}
             onSwitchView={handleSwitchViewWithUsfm}
             onOk={handleOkWithUsfm}
-            mapPaneView={mapPaneView}
-            onSetView={viewIdx => {
-              if (viewIdx === MAP_VIEW && !iniMap.mapView) return;
+            mapPaneView={mapPaneView}            onSetView={viewIdx => {
+              if (viewIdx === MAP_VIEW && !mapDef.mapView) return;
               if (mapPaneView === USFM_VIEW) updateMapFromUsfm();
               setMapPaneView(viewIdx);
             }}

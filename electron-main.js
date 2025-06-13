@@ -4,8 +4,6 @@ const { ipcMain, dialog } = require('electron');
 const fs = require('fs');
 const path = require('path');
 const xml2js = require('xml2js');
-const { json } = require('stream/consumers');
-// const usfm = require('usfm-js');
 
 initialize();
 
@@ -318,11 +316,17 @@ function loadFromJson(jsonPath, jsonFilename) {
   console.log('Loading from:', jsonFilePath);
   try {
     if (fs.existsSync(jsonFilePath)) {
+      console.log('File exists, reading content');
       const data = fs.readFileSync(jsonFilePath, 'utf8');
-      return JSON.parse(data);
+      const parsed = JSON.parse(data);
+      const entryCount = parsed ? Object.keys(parsed).length : 0;
+      console.log(`Successfully parsed JSON with ${entryCount} entries`);
+      return parsed;
+    } else {
+      console.error(`File not found: ${jsonFilePath}`);
     }
   } catch (error) {
-    console.error('Failed to load settings:', error);
+    console.error('Failed to load JSON file:', error);
   }
   return {}; // Return empty settings if file doesn't exist or has an error
 }
@@ -344,8 +348,8 @@ function saveToJson(jsonPath, jsonFilename, settings) {
 }
 
 // Expose these functions via IPC
-ipcMain.handle('load-from-json', async () => {
-  return loadFromJson();
+ipcMain.handle('load-from-json', async (event, jsonPath, jsonFilename) => {
+  return loadFromJson(jsonPath, jsonFilename);
 });
 
 ipcMain.handle('save-to-json', async (event, settings) => {

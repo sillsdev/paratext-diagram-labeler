@@ -1,29 +1,95 @@
-//import collPlacenamesAndRefs from './data/smr-PlaceNames&Refs.json';
+// Collection mapping structure
+// Collection mapping structure - export it to be used elsewhere in the app
+export const COLLECTIONS = {
+    SMR: {
+        id: 'SMR',
+        name: 'SIL Map Repository',
+        placeNamesFile: 'SMR_PlaceNames&Refs.json',
+        mapDefsFile: 'smr-map-defs.json'
+    },
+    BFBS: {
+        id: 'BFBS',
+        name: 'BFBS Map Collection',
+        placeNamesFile: 'BFBS-PlaceNames&Refs.json',
+        mapDefsFile: 'bfbs-map-defs.json'
+    }
+};
+
+// Function to determine collection ID from template name - export it to be used elsewhere in the app
+export function getCollectionIdFromTemplate(templateName) {
+    if (!templateName) return 'SMR'; // Default to SMR if no template
+    const match = templateName.match(/^([^_]+)_/);
+    return match ? match[1] : 'SMR'; // Default to SMR if no match
+}
 
 class CollPlacenamesAndRefs {
-    constructor() {
-        this.data = {}; // Initialize with empty object
-        this.isLoading = true; // Track loading state
-        this.loadData(); // Start loading asynchronously
+    constructor(initialData = null, collectionId = null) {
+        this.data = initialData || {}; // Initialize with empty object
+        this.isLoading = !initialData; // Track loading state
+        this.collectionId = collectionId || 'SMR'; // Default to SMR if not specified
+        this.allCollectionsData = {}; // Store data for all loaded collections
+        
+        if (!initialData) {
+            this.loadData(this.collectionId); // Start loading asynchronously
+        }
     }
     
-    async loadData() {
+    async loadData(collectionId = 'SMR') {
         try {
-            // Load data asynchronously 
-            this.data = await window.electronAPI.loadFromJson('C:/My Paratext 9 Projects/_MapLabelerTemplates', 'smr-PlaceNames&Refs.json');
+            this.collectionId = collectionId;
+            
+            // Check if we already have this collection data loaded
+            if (this.allCollectionsData[collectionId]) {
+                this.data = this.allCollectionsData[collectionId];
+                this.isLoading = false;
+                console.log(`Place names data for ${collectionId} already loaded`);
+                return this.data;
+            }
+            
+            // Get the configuration for this collection
+            const collection = COLLECTIONS[collectionId] || COLLECTIONS.SMR;
+            const fileName = collection.placeNamesFile;            // Load data asynchronously from the specified path
+            const templatePath = 'C:/My Paratext 9 Projects/_MapLabelerTemplates';
+            console.log(`Loading placenames file: ${templatePath}/${fileName}`);
+            
+            this.data = await window.electronAPI.loadFromJson(templatePath, fileName);
+            
+            if (!this.data || Object.keys(this.data).length === 0) {
+                console.warn(`Received empty data from ${fileName}. Data:`, this.data);
+                throw new Error(`Empty data loaded from ${fileName}`);
+            }
+            
+            // Store in the collection cache
+            this.allCollectionsData[collectionId] = this.data;
+            
             this.isLoading = false;
-            console.log('Place names data loaded successfully');
+            console.log(`Place names data for collection ${collectionId} loaded successfully with ${Object.keys(this.data).length} entries`);
+            return this.data;
         } catch (error) {
-            console.error('Failed to load place names data:', error);
+            console.error(`Failed to load place names data for ${collectionId}:`, error);
             this.isLoading = false;
             this.data = {}; // Ensure data is an object even if loading fails
+            return {};
         }
+    }
+      // Switch collection and load new data
+    async switchCollection(collectionId) {
+        if (this.collectionId === collectionId && this.allCollectionsData[collectionId]) {
+            // Already using this collection
+            return this.data;
+        }
+        return this.loadData(collectionId);
+    }
+    
+    // Get the current collection ID
+    getCurrentCollection() {
+        return this.collectionId;
     }
     
     getGloss(mergeKey) {
         const entry = this.data[mergeKey];
         if (!entry) {
-            console.warn(`mergeKey "${mergeKey}" not found in collPlacenamesAndRefs`);
+            console.warn(`mergeKey "${mergeKey}" not found in ${this.collectionId} collection placenames`);
             return '';
         }
         return entry.gloss;   
@@ -32,7 +98,7 @@ class CollPlacenamesAndRefs {
     getTermId(mergeKey) {
         const entry = this.data[mergeKey];
         if (!entry) {
-            console.warn(`mergeKey "${mergeKey}" not found in collPlacenamesAndRefs`);
+            console.warn(`mergeKey "${mergeKey}" not found in ${this.collectionId} collection placenames`);
             return '';
         }
         return entry.termId;   
@@ -41,7 +107,7 @@ class CollPlacenamesAndRefs {
     getDefinition(mergeKey) {
         const entry = this.data[mergeKey];
         if (!entry) {
-  //          console.warn(`mergeKey "${mergeKey}" not found in collPlacenamesAndRefs`);
+            // console.warn(`mergeKey "${mergeKey}" not found in ${this.collectionId} collection placenames`);
             return '';
         }
         return entry.context;   
@@ -50,7 +116,7 @@ class CollPlacenamesAndRefs {
     getTransliteration(mergeKey) {
         const entry = this.data[mergeKey];
         if (!entry) {
-//            console.warn(`mergeKey "${mergeKey}" not found in collPlacenamesAndRefs`);
+            // console.warn(`mergeKey "${mergeKey}" not found in ${this.collectionId} collection placenames`);
             return '';
         }
         return entry.transliteration;   
@@ -59,13 +125,15 @@ class CollPlacenamesAndRefs {
     getRefs(mergeKey) {
         const entry = this.data[mergeKey];
         if (!entry) {
-            console.warn(`mergeKey "${mergeKey}" not found in collPlacenamesAndRefs!!`);
+            console.warn(`mergeKey "${mergeKey}" not found in ${this.collectionId} collection placenames!`);
             return [];
         }
         return entry.refs || [];   
     }
 }
 
+// Create a single instance with default collection (SMR)
 const collPlacenames = new CollPlacenamesAndRefs();
+
 export { collPlacenames };
 export default CollPlacenamesAndRefs;

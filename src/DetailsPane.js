@@ -11,7 +11,27 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
   const [localIsApproved, setLocalIsApproved] = useState(isApproved);
   const [localRenderings, setLocalRenderings] = useState(renderings);
   const [showTemplateInfo, setShowTemplateInfo] = useState(false);
-  const templateData = getMapDef(mapDef.template, collPlacenames) || {};
+  const [templateData, setTemplateData] = useState({});
+  
+  // Load template data when mapDef.template changes
+  useEffect(() => {
+    const loadTemplateData = async () => {
+      if (!mapDef.template) {
+        setTemplateData({});
+        return;
+      }
+      
+      try {
+        const data = await getMapDef(mapDef.template, collPlacenames);
+        setTemplateData(data || {});
+      } catch (error) {
+        console.error(`Error loading template data for ${mapDef.template}:`, error);
+        setTemplateData({});
+      }
+    };
+    
+    loadTemplateData();
+  }, [mapDef.template]);
 
   useEffect(() => {
     setVernacular(locations[selLocation]?.vernLabel || '');
