@@ -781,8 +781,7 @@ function App() {
     settingsService.updateLastProjectFolder(projectFolder);
     console.log('Auto-saved project folder to settings:', projectFolder);
   }, [projectFolder, isInitialized]);
-  
-  // Save language to settings when it changes
+    // Save language to settings when it changes
   useEffect(() => {
     if (!isInitialized) return;
     
@@ -791,27 +790,79 @@ function App() {
       .then(() => console.log('Auto-saved language to settings:', lang))
       .catch(err => console.error('Error saving language to settings:', err));
   }, [lang, isInitialized]);
-  const imgUrl = memoizedMapDef.imgFilename ? 
+    // State for storing the loaded image data URL
+  // undefined = loading, null = error, string = loaded image data
+  const [imageData, setImageData] = useState(undefined);
+  // Load the image via IPC when the map definition or settings change
+  useEffect(() => {
+    if (!memoizedMapDef.imgFilename || !settings?.paratextProjects || !isInitialized) return;
+    
+    // Set to loading state
+    setImageData(undefined);
+    
+    const imagePath = `${settings.paratextProjects}/${templateSubfolder}/${memoizedMapDef.imgFilename}`;
+    console.log('Loading image from path:', imagePath);
+    
+    // Use the IPC function to load the image
+    if (window.electronAPI) {
+      window.electronAPI.loadImage(imagePath)
+        .then(data => {
+          if (data) {
+            setImageData(data);
+            console.log('Image loaded successfully through IPC');
+          } else {
+            console.error(`Failed to load image through IPC from path: ${imagePath}`);
+            setImageData(null); // null indicates error
+          }
+        })
+        .catch(err => {
+          console.error(`Error loading image through IPC from path: ${imagePath}`, err);
+          setImageData(null); // null indicates error
+        });
+    } else {
+      console.error('electronAPI not available');
+      setImageData(null); // null indicates error
+    }
+  }, [memoizedMapDef.imgFilename, settings?.paratextProjects, isInitialized]);
+  
+  // For debugging - keep track of the original path
+  const imgPath = memoizedMapDef.imgFilename ? 
                   settings.paratextProjects + '/' + templateSubfolder + '/' + memoizedMapDef.imgFilename : '';
-  console.log('Image URL:', imgUrl);
+  console.log('Image path:', imgPath);
 
   return (
-    <div className="app-container">
-      <div className="top-section" style={{ flex: `0 0 ${topHeight}%` }}>        <div className="map-pane" style={{ flex: `0 0 ${mapWidth}%` }}>          {mapPaneView === MAP_VIEW && mapDef.mapView && (
-            <MapPane
-              imageUrl={imgUrl}
-              locations={memoizedLocations}
-              onSelectLocation={memoizedHandleSelectLocation}
-              selLocation={selLocation}
-              labelScale={labelScale}
-              mapDef={memoizedMapDef}
-              termRenderings={termRenderings}
-              lang={lang}
-              resetZoomFlag={resetZoomFlag} // Pass to MapPane
-              setResetZoomFlag={setResetZoomFlag} // Pass setter to MapPane
-              extractedVerses={extractedVerses} // Pass extracted verses
-              collectionId={currentCollectionId} // Pass the collection ID
-            />
+    <div className="app-container">      <div className="top-section" style={{ flex: `0 0 ${topHeight}%` }}>        <div className="map-pane" style={{ flex: `0 0 ${mapWidth}%` }}>          {mapPaneView === MAP_VIEW && mapDef.mapView && (
+            <>
+              {imageData === undefined && (
+                <div style={{
+                  position: 'absolute',
+                  top: '10px',
+                  right: '10px',
+                  background: 'rgba(255,255,0,0.8)',
+                  color: 'black',
+                  padding: '5px 10px',
+                  borderRadius: '5px',
+                  zIndex: 1001,
+                  fontSize: '12px'
+                }}>
+                  Loading image...
+                </div>
+              )}
+              <MapPane
+                imageUrl={imageData}
+                locations={memoizedLocations}
+                onSelectLocation={memoizedHandleSelectLocation}
+                selLocation={selLocation}
+                labelScale={labelScale}
+                mapDef={memoizedMapDef}
+                termRenderings={termRenderings}
+                lang={lang}
+                resetZoomFlag={resetZoomFlag} // Pass to MapPane
+                setResetZoomFlag={setResetZoomFlag} // Pass setter to MapPane
+                extractedVerses={extractedVerses} // Pass extracted verses
+                collectionId={currentCollectionId} // Pass the collection ID
+              />
+            </>
           )}          {mapPaneView === TABLE_VIEW && (
             <TableView
               locations={locations}

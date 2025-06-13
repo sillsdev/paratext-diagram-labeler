@@ -128,9 +128,26 @@ export default function MapPane({ imageUrl, locations, onSelectLocation, selLoca
       zoomSnap={0.25}
       zoomControl={false}
       // REMOVE: whenCreated={mapInstance => { if (mapRef) mapRef.current = mapInstance; }}
-    >
-      <ZoomControl position="topright" />
-      <ImageOverlay url={imageUrl} bounds={bounds} />
+    >      <ZoomControl position="topright" />
+      {imageUrl ? (
+        <ImageOverlay url={imageUrl} bounds={bounds} />
+      ) : (
+        <div className="image-loading-error" style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          background: 'rgba(0,0,0,0.7)',
+          color: 'white',
+          padding: '10px',
+          borderRadius: '5px',
+          zIndex: 1000
+        }}>
+          {imageUrl === undefined ? 
+            "Loading map image..." : 
+            "Image loading failed. Please check the installation."}
+        </div>
+      )}
       <MapPanController selLocation={selLocation} locations={locations} mapDef={mapDef} resetZoomFlag={resetZoomFlag} setResetZoomFlag={setResetZoomFlag} />
       {transformedLocations.length > 0 ? (
         transformedLocations.map((loc) => (

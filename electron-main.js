@@ -7,6 +7,69 @@ const xml2js = require('xml2js');
 
 initialize();
 
+// Add IPC handler for loading images
+ipcMain.handle('load-image', async (event, imagePath) => {
+  try {
+    console.log(`[IPC] Attempting to load image from: ${imagePath}`);
+    
+    // Check if path is valid
+    if (!imagePath) {
+      console.error('[IPC] Image path is empty or invalid');
+      return null;
+    }
+    
+    // Normalize path to handle any potential issues with slashes
+    const normalizedPath = path.normalize(imagePath);
+    
+    // Check if file exists
+    if (!fs.existsSync(normalizedPath)) {
+      console.error(`[IPC] Image not found at path: ${normalizedPath}`);
+      return null;
+    }
+    
+    // Read the file and convert to base64
+    const buffer = await fs.promises.readFile(normalizedPath);
+    
+    // Verify that we have actual data
+    if (!buffer || buffer.length === 0) {
+      console.error(`[IPC] Read zero bytes from file: ${normalizedPath}`);
+      return null;
+    }
+    
+    // Determine mime type based on file extension
+    const ext = path.extname(normalizedPath).toLowerCase();
+    let mimeType = 'image/jpeg'; // Default
+    
+    switch(ext) {
+      case '.png':
+        mimeType = 'image/png';
+        break;
+      case '.gif':
+        mimeType = 'image/gif';
+        break;
+      case '.svg':
+        mimeType = 'image/svg+xml';
+        break;
+      case '.webp':
+        mimeType = 'image/webp';
+        break;
+      case '.bmp':
+        mimeType = 'image/bmp';
+        break;
+      default:
+        // Use default image/jpeg for all other cases
+        break;
+    }
+    
+    const dataUrl = `data:${mimeType};base64,${buffer.toString('base64')}`;
+    console.log(`[IPC] Successfully loaded image (${buffer.length} bytes) from: ${normalizedPath}`);
+    return dataUrl;
+  } catch (error) {
+    console.error(`[IPC] Error loading image: ${imagePath}`, error);
+    return null;
+  }
+});
+
 function createWindow() {
   const win = new BrowserWindow({
     width: 1200,
