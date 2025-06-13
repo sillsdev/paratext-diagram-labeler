@@ -100,10 +100,10 @@
   "replaceRenderings": { "en": "Replace renderings and label", "es": "Reemplazar", "fr": "Remplacer", "ne": "प्रतिस्थापन गर्नुहोस्" },
   "settings": { "en": "Settings", "es": "Configuración", "fr": "Paramètres", "ne": "सेटिङहरू" },
   "status": { "en": "Status", "es": "Estado", "fr": "Statut", "ne": "स्थिति" },
-  "tableView": { "en": "Table View", "es": "Vista de tabla", "fr": "Vue du tableau", "ne": "तालिका दृश्य" },
-  "tally": { "en": "Tally", "es": "Conteo", "fr": "Total", "ne": "गणना" },
+  "tableView": { "en": "Table View", "es": "Vista de tabla", "fr": "Vue du tableau", "ne": "तालिका दृश्य" },  "tally": { "en": "Tally", "es": "Conteo", "fr": "Total", "ne": "गणना" },
   "templateInfo": { "en": "Template info", "es": "Información de la plantilla", "fr": "Infos du modèle", "ne": "टेम्प्लेट जानकारी" },
   "termRenderings": { "en": "Term Renderings", "es": "Renderizaciones de Términos", "fr": "Rendus des Termes", "ne": "शब्द अनुवादहरू" },
   "usageRules": { "en": "Usage and Attribution Rules", "es": "Reglas de uso y atribución", "fr": "Règles d'utilisation et d'attribution", "ne": "प्रयोग र श्रेय नियमहरू" },
-  "usfmView": { "en": "USFM View", "es": "Vista USFM", "fr": "Vue USFM", "ne": "USFM दृश्य" }
+  "usfmView": { "en": "USFM View", "es": "Vista USFM", "fr": "Vue USFM", "ne": "USFM दृश्य" },
+  "invalidDataMerge": { "en": "Invalid data merge file format", "es": "Formato de archivo de fusión de datos no válido", "fr": "Format de fichier de fusion de données invalide", "ne": "अमान्य डाटा मर्ज फाइल ढाँचा" }
 }
