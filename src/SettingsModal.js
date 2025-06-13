@@ -37,8 +37,6 @@ export default function SettingsModal ({open, onClose, labelScale, setLabelScale
               // Update state in parent component, which will trigger the useEffect
               // in App.js to save it to settings and maintain consistency
               setLang(newLang);
-              // For backwards compatibility, also save to localStorage
-              localStorage.setItem('lang', newLang);
             }}
             style={{ fontSize: 15, padding: '2px 8px', borderRadius: 4 }}
           >

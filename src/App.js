@@ -13,6 +13,7 @@ import DetailsPane from './DetailsPane.js';
 import SettingsModal from './SettingsModal.js';
 import { useInitialization } from './InitializationProvider';
 import { settingsService } from './services/SettingsService';
+import { templateSubfolder } from './CollectionManager.js';
 // import { app } from 'electron';
 
 const electronAPI = window.electronAPI;
@@ -166,8 +167,8 @@ function App() {
     return settings?.lastProjectFolder || DEMO_PROJECT_FOLDER;
   });  
   const [lang, setLang] = useState(() => {
-    // First check settings, then localStorage as fallback, then default to 'en'
-    return settings?.language || localStorage.getItem('lang') || 'en';
+    // First check settings, then default to 'en'
+    return settings?.language || 'en';
   });
   const [mapDef, setMapDef] = useState(emptyInitialMap);
   const [locations, setLocations] = useState([]);
@@ -790,12 +791,15 @@ function App() {
       .then(() => console.log('Auto-saved language to settings:', lang))
       .catch(err => console.error('Error saving language to settings:', err));
   }, [lang, isInitialized]);
+  const imgUrl = memoizedMapDef.imgFilename ? 
+                  settings.paratextProjects + '/' + templateSubfolder + '/' + memoizedMapDef.imgFilename : '';
+  console.log('Image URL:', imgUrl);
 
   return (
     <div className="app-container">
       <div className="top-section" style={{ flex: `0 0 ${topHeight}%` }}>        <div className="map-pane" style={{ flex: `0 0 ${mapWidth}%` }}>          {mapPaneView === MAP_VIEW && mapDef.mapView && (
             <MapPane
-              imageUrl={memoizedMapDef.imgFilename ? `/assets/maps/${memoizedMapDef.imgFilename}` : ''}
+              imageUrl={imgUrl}
               locations={memoizedLocations}
               onSelectLocation={memoizedHandleSelectLocation}
               selLocation={selLocation}

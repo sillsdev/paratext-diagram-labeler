@@ -5,6 +5,7 @@ import { MAP_VIEW, TABLE_VIEW, USFM_VIEW, STATUS_NO_RENDERINGS, STATUS_GUESSED }
 import { collectionManager, getCollectionIdFromTemplate } from './CollectionManager';
 import { getMapDef } from './MapData';
 import { inLang, statusValue } from './Utils.js';
+import { settingsService } from './services/SettingsService.js';
 
 export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings, mapDef, onBrowseMapTemplate, vernacularInputRef, renderingsTextareaRef, lang, setTermRenderings, onCreateRendering }) {
   const [vernacular, setVernacular] = useState(locations[selLocation]?.vernLabel || '');
@@ -69,8 +70,39 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
   const handleCancel = () => {
     alert('At this point, the USFM text would be discarded and not saved.'); // TODO:
   };
+  
+  // Helper function to generate USFM from the current map state // TODO: compare with usfmFromMap(). Could probably be consolidated.
+  const generateUsfm = () => {
+    console.log('Converting map to USFM:', mapDef);
+    // Reconstruct USFM string from current map state
+    let usfm = `\\zdiagram-s |template="${mapDef.template}"\\*\n`;
+    
+    // Always include the \fig line if present, and ensure it is in correct USFM format
+    if (mapDef.fig && !/^\\fig/.test(mapDef.fig)) {
+      usfm += `\\fig ${mapDef.fig}\\fig*\n`;
+    } else if (mapDef.fig) {
+      usfm += `${mapDef.fig}\n`;
+    }
+    
+    // Add each label as a \zlabel entry
+    locations.forEach(label => {
+      usfm += `\\zlabel |key="${label.mergeKey}" termid="${label.termId}" gloss="${inLang(label.gloss, lang)}" label="${label.vernLabel || ''}"\\*\n`;
+    });
+    
+    usfm += '\\zdiagram-e \\*';
+    // Remove unnecessary escaping for output
+    return usfm.replace(/\\/g, '\\');
+  };
+  
   const handleOk = () => {
-    alert("At this point, the USFM text would be saved to Paratext.");  // TODO: 
+    // Save current USFM to settings.lastUsfm
+    const currentUsfm = generateUsfm();
+    settingsService.updateLastUsfm(currentUsfm)
+      .then(() => console.log('USFM saved to settings successfully'))
+      .catch(err => console.error('Error saving USFM to settings:', err));
+    
+    // Alert user (this will be replaced with actual Paratext saving logic later)
+    alert("At this point, the USFM text would be saved to Paratext.");
   };
   const handleSettings = () => {
     if (onShowSettings) onShowSettings();
