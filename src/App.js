@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import './App.css';
 import BottomPane from './BottomPane.js';
 import uiStr from './data/ui-strings.json';
-import { DEFAULT_PROJECTS_FOLDER, DEMO_PROJECT, INITIAL_USFM } from './demo.js';
+import { DEFAULT_PROJECTS_FOLDER, DEMO_PROJECT_FOLDER, INITIAL_USFM } from './demo.js';
 import { MAP_VIEW, TABLE_VIEW, USFM_VIEW,  } from './constants.js';
 import { collectionManager, getCollectionIdFromTemplate } from './CollectionManager';
 import { getMapDef } from './MapData';
@@ -12,6 +12,7 @@ import TableView from './TableView.js';
 import DetailsPane from './DetailsPane.js';
 import SettingsModal from './SettingsModal.js';
 import { useInitialization } from './InitializationProvider';
+import { settingsService } from './services/SettingsService';
 // import { app } from 'electron';
 
 const electronAPI = window.electronAPI;
@@ -163,8 +164,17 @@ function usfmFromMap(map, lang) {
 }
 
 function App() {
-  const [projectFolder, setProjectFolder] = useState(appSettings.projectsFolder + "/" + DEMO_PROJECT); // Default to demo project
-  const [lang, setLang] = useState('en');  //TODO: Persist in localStorage
+  // Get initialization state and settings from context
+  const { isInitialized, settings } = useInitialization();
+
+  // Use settings for projectFolder if available, otherwise use default
+  const [projectFolder, setProjectFolder] = useState(() => {
+    return settings?.lastProjectFolder || DEMO_PROJECT_FOLDER;
+  }); 
+  
+  const [lang, setLang] = useState(() => {
+    return settings?.language || 'en';  // Use settings language if available
+  });
   const [mapDef, setMapDef] = useState(emptyInitialMap);
   const [locations, setLocations] = useState([]);
   const [selLocation, setSelLocation] = useState(0);
@@ -182,19 +192,20 @@ function App() {
   const isDraggingVertical = useRef(false);
   const isDraggingHorizontal = useRef(false);
   const vernacularInputRef = useRef(null);
-  const renderingsTextareaRef = useRef();  const [extractedVerses, setExtractedVerses] = useState({});
-  const [termRenderings, setTermRenderings] = useState();
-  // Get initialization state from context
-  const { isInitialized } = useInitialization();
-
-  // Initialize map from USFM
+  const renderingsTextareaRef = useRef();
+  const [extractedVerses, setExtractedVerses] = useState({});
+  const [termRenderings, setTermRenderings] = useState();  // Initialize map from USFM
   useEffect(() => {
     if (!isInitialized) return; // Don't initialize map until collections are loaded
     
     const initializeMap = async () => {
       try {
-        // Initialize from the demo USFM
-        const initialMap = await mapFromUsfm(INITIAL_USFM);
+        // Use the last USFM from settings if available, otherwise use the demo USFM
+        const usfmToUse = settings?.lastUsfm || INITIAL_USFM;
+        console.log('Initializing map from USFM:', settings?.lastUsfm ? 'using saved USFM' : 'using demo USFM');
+        
+        // Initialize from USFM
+        const initialMap = await mapFromUsfm(usfmToUse);
         console.log('Initial Map loaded:', initialMap);
         setMapDef(initialMap);
         setMapPaneView(initialMap.mapView ? MAP_VIEW : TABLE_VIEW);
@@ -205,7 +216,7 @@ function App() {
     };
     
     initializeMap();
-  }, [isInitialized]);
+  }, [isInitialized, settings]);
 
   // Load term renderings from new project folder
   useEffect(() => {
@@ -261,7 +272,6 @@ function App() {
     });
   }, [projectFolder, mapDef.labels, mapDef.template, isInitialized]);
 
-
   // UI handler to select project folder
   const handleSelectProjectFolder = useCallback(async () => {
     if (!electronAPI) return;
@@ -269,11 +279,16 @@ function App() {
       const folderPath = await electronAPI.selectProjectFolder();
       if (folderPath) {
         setProjectFolder(folderPath);
+        // Save the project folder to settings
+        if (isInitialized) {
+          settingsService.updateLastProjectFolder(folderPath);
+          console.log('Saved project folder to settings:', folderPath);
+        }
       }
     } catch (e) {
       alert('Failed to select project folder.');
     }
-  }, []);
+  }, [isInitialized]);
   
   // On first load, prompt for project folder if not set
   useEffect(() => {
@@ -582,7 +597,6 @@ function App() {
     }
     prevMapPaneView.current = mapPaneView;
   }, [mapPaneView, locations, mapDef, lang]);
-
   // --- USFM to map/locations sync ---
   // Helper to update map/locations from USFM text
   const updateMapFromUsfm = useCallback(() => {
@@ -614,8 +628,11 @@ function App() {
         height: newMap.height
       });
       setUsfmText(text); // keep USFM text in sync after parse
+      
+      return true; // Indicate success
     } catch (e) {
       alert(inLang(uiStr.invalidUsfm, lang));
+      return false; // Indicate failure
     }
   }, [termRenderings, setLocations, setSelLocation, lang, mapDef]);
   // Intercept view switch to update map if leaving USFM view
@@ -632,15 +649,20 @@ function App() {
       return (prev + 1) % 3;  // Maybe this can be simplified now that Switch View is only from USFM
     });
   }, [mapPaneView, updateMapFromUsfm, mapDef.mapView]);
-
   // Intercept OK button in DetailsPane
   const handleOkWithUsfm = useCallback(() => {
     if (mapPaneView === USFM_VIEW) {
       updateMapFromUsfm();
     }
+    
+    // Generate the current USFM from map state and save to settings
+    const currentUsfm = usfmFromMap({ ...mapDef, labels: locations }, lang);
+    settingsService.updateLastUsfm(currentUsfm);
+    console.log('Saved USFM to settings');
+    
     // Optionally: do other OK logic here
     alert("At this point, the USFM text would be saved to Paratext.");  // TODO: 
-  }, [mapPaneView, updateMapFromUsfm]);
+  }, [mapPaneView, updateMapFromUsfm, mapDef, locations, lang]);
 
 
   // Add rendering from bottom pane selection
@@ -757,6 +779,14 @@ function App() {
     return () => clearTimeout(handler);
   }, [termRenderings, projectFolder]);
 
+  // Save project folder to settings when it changes
+  useEffect(() => {
+    if (!isInitialized || !projectFolder) return;
+    
+    // Save the project folder to settings
+    settingsService.updateLastProjectFolder(projectFolder);
+    console.log('Auto-saved project folder to settings:', projectFolder);
+  }, [projectFolder, isInitialized]);
 
   return (
     <div className="app-container">

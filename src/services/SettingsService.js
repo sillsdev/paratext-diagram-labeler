@@ -1,8 +1,7 @@
 // src/services/SettingsService.js
 import { DEFAULT_PROJECTS_FOLDER } from '../demo.js';
 
-class SettingsService {
-  constructor() {
+class SettingsService {  constructor() {
     this.settings = null;
     this.isLoaded = false;
     this.loadError = null;
@@ -21,10 +20,11 @@ class SettingsService {
         // Create default settings
         this.settings = {
           paratextProjects: DEFAULT_PROJECTS_FOLDER,
-          // Add other default settings here
           language: "en",
           autoSave: true,
-          recentProjects: []
+          recentProjects: [],
+          lastProjectFolder: null,
+          lastUsfm: null
         };
         
         // Save the default settings
@@ -75,6 +75,26 @@ class SettingsService {
 
   getParatextProjectsFolder() {
     return this.settings?.paratextProjects || DEFAULT_PROJECTS_FOLDER;
+  }
+
+  async updateLastProjectFolder(folderPath) {
+    if (!this.settings) await this.loadSettings();
+    this.settings.lastProjectFolder = folderPath;
+    return this.saveSettings();
+  }
+
+  async updateLastUsfm(usfmContent) {
+    if (!this.settings) await this.loadSettings();
+    this.settings.lastUsfm = usfmContent;
+    return this.saveSettings();
+  }
+
+  getLastProjectFolder() {
+    return this.settings?.lastProjectFolder || null;
+  }
+
+  getLastUsfm() {
+    return this.settings?.lastUsfm || null;
   }
 }
 

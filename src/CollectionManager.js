@@ -113,15 +113,15 @@ class CollectionManager {
             }
               // Build normalized map defs for case-insensitive lookup
             const normalizedMapDefs = {};
-            console.log(`Building normalized map definitions for collection ${collectionId}`);
+            // console.log(`Building normalized map definitions for collection ${collectionId}`);
             for (const key in mapDefs) {
                 normalizedMapDefs[key.toLowerCase()] = key; // Store original key for lookup
-                console.log(`Map key: "${key}" => normalized: "${key.toLowerCase()}"`);
+                // console.log(`Map key: "${key}" => normalized: "${key.toLowerCase()}"`);
             }
-            console.log(`Created ${Object.keys(normalizedMapDefs).length} normalized map definition keys for ${collectionId}`);
+            // console.log(`Created ${Object.keys(normalizedMapDefs).length} normalized map definition keys for ${collectionId}`);
             // Show some examples of normalized keys
             const exampleKeys = Object.keys(normalizedMapDefs).slice(0, 3);
-            console.log("Example normalized keys:", exampleKeys);
+            // console.log("Example normalized keys:", exampleKeys);
             
             // Store the loaded data
             this.collectionsData[collectionId] = {
