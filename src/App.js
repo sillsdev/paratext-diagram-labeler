@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import './App.css';
 import BottomPane from './BottomPane.js';
 import uiStr from './data/ui-strings.json';
-import { DEFAULT_PROJECTS_FOLDER, DEMO_PROJECT_FOLDER, INITIAL_USFM } from './demo.js';
+import { DEMO_PROJECT_FOLDER, INITIAL_USFM } from './demo.js';
 import { MAP_VIEW, TABLE_VIEW, USFM_VIEW,  } from './constants.js';
 import { collectionManager, getCollectionIdFromTemplate } from './CollectionManager';
 import { getMapDef } from './MapData';
@@ -17,15 +17,9 @@ import { settingsService } from './services/SettingsService';
 
 const electronAPI = window.electronAPI;
 
-// let appSettings = electronAPI.loadSettings();
-// console.log('App settings loaded:', appSettings);
-// if (!appSettings.projectsFolder) {  
-//   appSettings.projectsFolder = DEFAULT_PROJECTS_FOLDER;
-//   electronAPI.saveSettings(appSettings);
-//   console.log('App settings updated with default projectsFolder:', appSettings.projectsFolder);
-// }
-// console.log('App settings after default:', appSettings);
-const appSettings = { projectsFolder: DEFAULT_PROJECTS_FOLDER };
+// This section is now handled by the SettingsService
+// The following lines are no longer needed as we're using settingsService
+// to manage app settings.
 
 // Define an empty initial map state to be used until the async load completes
 const emptyInitialMap = {
@@ -170,10 +164,10 @@ function App() {
   // Use settings for projectFolder if available, otherwise use default
   const [projectFolder, setProjectFolder] = useState(() => {
     return settings?.lastProjectFolder || DEMO_PROJECT_FOLDER;
-  }); 
-  
+  });  
   const [lang, setLang] = useState(() => {
-    return settings?.language || 'en';  // Use settings language if available
+    // First check settings, then localStorage as fallback, then default to 'en'
+    return settings?.language || localStorage.getItem('lang') || 'en';
   });
   const [mapDef, setMapDef] = useState(emptyInitialMap);
   const [locations, setLocations] = useState([]);
@@ -778,7 +772,6 @@ function App() {
 
     return () => clearTimeout(handler);
   }, [termRenderings, projectFolder]);
-
   // Save project folder to settings when it changes
   useEffect(() => {
     if (!isInitialized || !projectFolder) return;
@@ -787,6 +780,16 @@ function App() {
     settingsService.updateLastProjectFolder(projectFolder);
     console.log('Auto-saved project folder to settings:', projectFolder);
   }, [projectFolder, isInitialized]);
+  
+  // Save language to settings when it changes
+  useEffect(() => {
+    if (!isInitialized) return;
+    
+    // Save the language to settings
+    settingsService.updateLanguage(lang)
+      .then(() => console.log('Auto-saved language to settings:', lang))
+      .catch(err => console.error('Error saving language to settings:', err));
+  }, [lang, isInitialized]);
 
   return (
     <div className="app-container">

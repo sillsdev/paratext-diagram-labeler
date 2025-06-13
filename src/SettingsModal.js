@@ -31,12 +31,14 @@ export default function SettingsModal ({open, onClose, labelScale, setLabelScale
           <span>{labelScale.toFixed(2)}x</span>
         </div>
         <div style={{ marginBottom: 16, textAlign: 'center'  }}>
-          <label style={{ fontWeight: 'bold', marginRight: 8 }}>{inLang(uiStr.language, lang)}:</label>
-          <select
-            value={lang}
-            onChange={e => {
-              setLang(e.target.value);
-              localStorage.setItem('lang', e.target.value);
+          <label style={{ fontWeight: 'bold', marginRight: 8 }}>{inLang(uiStr.language, lang)}:</label>          <select
+            value={lang}            onChange={e => {
+              const newLang = e.target.value;
+              // Update state in parent component, which will trigger the useEffect
+              // in App.js to save it to settings and maintain consistency
+              setLang(newLang);
+              // For backwards compatibility, also save to localStorage
+              localStorage.setItem('lang', newLang);
             }}
             style={{ fontSize: 15, padding: '2px 8px', borderRadius: 4 }}
           >

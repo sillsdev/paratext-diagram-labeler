@@ -21,8 +21,6 @@ class SettingsService {  constructor() {
         this.settings = {
           paratextProjects: DEFAULT_PROJECTS_FOLDER,
           language: "en",
-          autoSave: true,
-          recentProjects: [],
           lastProjectFolder: null,
           lastUsfm: null
         };
@@ -117,9 +115,18 @@ class SettingsService {  constructor() {
   getLastProjectFolder() {
     return this.settings?.lastProjectFolder || null;
   }
-
   getLastUsfm() {
     return this.settings?.lastUsfm || null;
+  }
+  
+  async updateLanguage(languageCode) {
+    if (!this.settings) await this.loadSettings();
+    this.settings.language = languageCode;
+    return this.saveSettings();
+  }
+  
+  getLanguage() {
+    return this.settings?.language || 'en';
   }
 }
 
