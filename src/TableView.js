@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import './App.css';
+import './MainApp.css';
 import uiStr from './data/ui-strings.json';
 import { CheckmarkIcon, DeniedCheckmarkIcon, WarningIcon } from './TermIcons';
 // import { MAP_VIEW, TABLE_VIEW, USFM_VIEW, STATUS_NO_RENDERINGS, STATUS_GUESSED } from './constants.js';
