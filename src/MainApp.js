@@ -11,7 +11,7 @@ import MapPane from './MapPane.js';
 import TableView from './TableView.js';
 import DetailsPane from './DetailsPane.js';
 import SettingsModal from './SettingsModal.js';
-import { useInitialization } from './InitializationProvider';
+import { useInitialization, InitializationProvider } from './InitializationProvider';
 import { settingsService } from './services/SettingsService';
 
 const electronAPI = window.electronAPI;
@@ -156,11 +156,12 @@ function usfmFromMap(map, lang) {
   return usfm.replace(/\\/g, '\\');
 }
 
-function MainApp(settings) {
-  // Get initialization state and settings from context
-  const { isInitialized } = useInitialization();
-    // const isInitialized = true;
-    console.log('MainApp initialized with settings:', settings);
+function MainApp({ settings }) {
+  console.log('MainApp initialized with settings:', settings);
+  
+  // Wrap content with InitializationProvider and use the hook inside the wrapped component
+  function MainContent() {
+    const { isInitialized } = useInitialization();
   const projectFolder = settings?.projectFolder;  
   const [lang, setLang] = useState(() => {
     // First check settings, then default to 'en'
@@ -207,7 +208,7 @@ function MainApp(settings) {
     };
     
     initializeMap();
-  }, [isInitialized, settings]);
+  }, [isInitialized]);
 
   // Load term renderings from new project folder
   useEffect(() => {
@@ -801,7 +802,7 @@ function MainApp(settings) {
       console.error('electronAPI not available');
       setImageData(null); // null indicates error
       setImageError('Electron API not available. Cannot load images.');
-    }  }, [memoizedMapDef.imgFilename, settings?.templateFolder, isInitialized, settings]);
+    }  }, [memoizedMapDef.imgFilename, isInitialized]);
   // For debugging - keep track of the original path with proper Windows path separators
   const imgPath = memoizedMapDef.imgFilename ? 
                   (settingsService.getTemplateFolder()) + '\\' + memoizedMapDef.imgFilename : '';
@@ -934,8 +935,15 @@ function MainApp(settings) {
         setLabelScale={setLabelScale}
         lang={lang}
         setLang={setLang}
-      />
-    </div>
+      />    </div>
+    );
+  }
+  
+  // Return the wrapped component with InitializationProvider
+  return (
+    <InitializationProvider settings={settings}>
+      <MainContent />
+    </InitializationProvider>
   );
 }
 

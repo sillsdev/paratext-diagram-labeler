@@ -1,7 +1,6 @@
 // filepath: c:\git\mapLabelerExt\biblical-map-app\src\InitializationProvider.js
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { collectionManager } from './CollectionManager';
-import { settingsService } from './services/SettingsService';
 
 const InitializationContext = createContext({
   isInitialized: false,
@@ -9,35 +8,32 @@ const InitializationContext = createContext({
   error: null
 });
 
-export function InitializationProvider({ children }) {
+export function InitializationProvider({ children, settings }) {
   const [state, setState] = useState({
     isInitialized: false,
     isLoading: true,
-    isLoadingSettings: true,
-    settings: null,
+    settings: settings, // Use the settings passed as props
     error: null
   });
-  
-  useEffect(() => {
-    async function initialize() {
+    useEffect(() => {
+    async function initializeCollections() {
       try {
-        // First step: Load settings
-        setState(prev => ({ ...prev, isLoadingSettings: true }));
-        
-        console.log("Loading application settings...");
-        const settings = await settingsService.loadSettings();
-        
-        setState(prev => ({ 
-          ...prev, 
-          isLoadingSettings: false, 
-          settings 
-        }));
-          // Second step: Initialize collections with template folder path
+        // Load collections using the provided settings
         console.log("Loading map collections...");
+        
+        // Make sure we have the required settings
+        if (!settings || !settings.templateFolder) {
+          console.error("Template folder setting is missing", settings);
+          throw new Error("Template folder setting is missing");
+        }
+        
         try {
-          await collectionManager.initializeAllCollections(settings.templateFolder);
+          await collectionManager.initializeAllCollections(
+            settings.paratextProjects,
+            settings.templateFolder
+          );
           
-          // Everything is initialized
+          // Collections successfully initialized
           setState(prev => ({
             ...prev,
             isInitialized: true,
@@ -48,55 +44,37 @@ export function InitializationProvider({ children }) {
           
           // Check if this is a template folder issue
           if (collectionError.message && collectionError.message.includes('Template folder not found')) {
-            // Prompt user to select the template folder
-            alert("The configured template folder could not be found.\n\nPlease select the location of your map template folder.");
-            
-            try {
-              const selectedFolder = await window.electronAPI.selectProjectFolder();
-              if (selectedFolder) {
-                // Update settings with the new folder
-                await settingsService.updateTemplateFolder(selectedFolder);
-                
-                // Try initializing again with the new folder
-                await collectionManager.initializeAllCollections(settings.templateFolder);
-                
-                // Success!
-                setState(prev => ({
-                  ...prev,
-                  isInitialized: true,
-                  isLoading: false,
-                  settings: {...prev.settings, templateFolder: selectedFolder}
-                }));
-                
-                return; // Exit early on successful recovery
-              }
-            } catch (retryError) {
-              console.error("Failed to retry initialization after template folder selection:", retryError);
-            }
+            // This would now be handled in the PreLaunchScreen or settings validation
+            // We just report the error here
+            setState(prev => ({
+              ...prev,
+              isInitialized: false, 
+              isLoading: false,
+              error: "Template folder not found. Please check your settings."
+            }));
+          } else {
+            // Some other error occurred
+            setState(prev => ({
+              ...prev,
+              isInitialized: false, 
+              isLoading: false,
+              error: collectionError.message || "Failed to initialize map collections"
+            }));
           }
-          
-          // If we got here, the recovery failed or this was some other error
-          setState(prev => ({
-            ...prev,
-            isInitialized: false, 
-            isLoading: false,
-            error: collectionError.message || "Failed to initialize map collections"
-          }));
         }
       } catch (error) {
         console.error("Initialization error:", error);
         setState(prev => ({
           ...prev,
           isInitialized: false,
-          isLoadingSettings: false,
           isLoading: false,
           error: error.message || "Failed to initialize"
         }));
       }
     }
     
-    initialize();
-  }, []); // Run once on component mount
+    initializeCollections();
+  }, [settings]); // Depend on settings prop
 
   return (
     <InitializationContext.Provider value={state}>
