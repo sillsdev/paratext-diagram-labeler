@@ -1,5 +1,5 @@
 // filepath: c:\git\mapLabelerExt\biblical-map-app\src\CollectionManager.js
-import { DEFAULT_PROJECTS_FOLDER } from './demo.js';
+// import { DEFAULT_PROJECTS_FOLDER } from './demo.js';
 // Collection mapping structure
 export const COLLECTIONS = {
     SMR: {
@@ -21,7 +21,7 @@ export const COLLECTIONS = {
     // Additional collections as needed
 };
 
-export const templateSubfolder = '_MapLabelerTemplates';
+// export const templateSubfolder = '_MapLabelerTemplates';
 
 // Helper functions for collections
 export function getAllCollectionIds() {

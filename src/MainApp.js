@@ -11,7 +11,7 @@ import MapPane from './MapPane.js';
 import TableView from './TableView.js';
 import DetailsPane from './DetailsPane.js';
 import SettingsModal from './SettingsModal.js';
-import { useInitialization, InitializationProvider } from './InitializationProvider';
+// import { useInitialization, InitializationProvider } from './InitializationProvider';
 import { settingsService } from './services/SettingsService';
 
 const electronAPI = window.electronAPI;
@@ -159,9 +159,7 @@ function usfmFromMap(map, lang) {
 function MainApp({ settings }) {
   console.log('MainApp initialized with settings:', settings);
   
-  // Wrap content with InitializationProvider and use the hook inside the wrapped component
-  function MainContent() {
-    const { isInitialized } = useInitialization();
+  const [isInitialized, setIsInitialized] = useState(false);
   const projectFolder = settings?.projectFolder;  
   const [lang, setLang] = useState(() => {
     // First check settings, then default to 'en'
@@ -187,6 +185,31 @@ function MainApp({ settings }) {
   const renderingsTextareaRef = useRef();
   const [extractedVerses, setExtractedVerses] = useState({});
   const [termRenderings, setTermRenderings] = useState();  // Initialize map from USFM
+
+  useEffect(() => { // Load collections on mount, and then never again.
+    
+    const initializeColls = async () => {
+
+        // Load collections using the provided settings
+        console.log("Loading map collections...");
+        
+        // Make sure we have the required settings
+        if (!settings || !settings.templateFolder) {
+          console.error("Template folder setting is missing", settings);
+          throw new Error("Template folder setting is missing");
+        }
+        
+        try {
+          await collectionManager.initializeAllCollections(settings.templateFolder);
+          setIsInitialized(true);
+          
+        } catch (collectionError) {
+          console.error("Failed to initialize map collections:", collectionError);          
+        }
+    }    
+    initializeColls();
+  }, []);
+
   useEffect(() => {
     if (!isInitialized) return; // Don't initialize map until collections are loaded
     
@@ -937,14 +960,7 @@ function MainApp({ settings }) {
         setLang={setLang}
       />    </div>
     );
-  }
   
-  // Return the wrapped component with InitializationProvider
-  return (
-    <InitializationProvider settings={settings}>
-      <MainContent />
-    </InitializationProvider>
-  );
 }
 
 export default MainApp;

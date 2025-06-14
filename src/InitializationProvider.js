@@ -1,4 +1,4 @@
-// filepath: c:\git\mapLabelerExt\biblical-map-app\src\InitializationProvider.js
+/* // filepath: c:\git\mapLabelerExt\biblical-map-app\src\InitializationProvider.js
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { collectionManager } from './CollectionManager';
 
@@ -18,6 +18,9 @@ export function InitializationProvider({ children, settings }) {
     useEffect(() => {
     async function initializeCollections() {
       try {
+        if (!settings) {
+          return;
+        }
         // Load collections using the provided settings
         console.log("Loading map collections...");
         
@@ -86,3 +89,4 @@ export function InitializationProvider({ children, settings }) {
 export function useInitialization() {
   return useContext(InitializationContext);
 }
+ */
