@@ -97,34 +97,17 @@ class CollectionManager {
                     isLoaded: false,
                     placenames: null,
                     mapDefs: null
-                };            }              // Use templateFolderPath if provided, otherwise fall back to the old method
-            // Ensure consistent path separator (backslash for Windows)
-            const templatePath = this.templateFolderPath ? 
-                                this.templateFolderPath.replace(/\//g, '\\') :
-                                ((this.paratextPath || DEFAULT_PROJECTS_FOLDER) + '\\' + templateSubfolder);
+                };            }
             
-            // Check if template path exists before trying to load from it
-            console.log(`Verifying template folder exists: ${templatePath}`);
-            const folderExists = await this.checkFolderExists(templatePath);
-            
-            if (!folderExists) {
-                throw new Error(`Template folder not found: ${templatePath}`);
-            }
-            
-            console.log(`Loading collection data from verified path: ${templatePath}`);
+            // Use templateFolderPath if provided, otherwise fall back to the old method
+            const templatePath = this.templateFolderPath || 
+                                ((this.paratextPath || DEFAULT_PROJECTS_FOLDER) + '/' + templateSubfolder);
+            console.log(`Loading collection data from: ${templatePath}`);
             
             // Load placenames and map definitions in parallel
             const [placenames, mapDefs] = await Promise.all([
-                window.electronAPI.loadFromJson(templatePath, collection.placeNamesFile)
-                    .catch(err => {
-                        console.error(`Failed to load placenames file: ${collection.placeNamesFile}`, err);
-                        throw new Error(`Could not load required file: ${collection.placeNamesFile}. Please check that your template folder is configured correctly.`);
-                    }),
+                window.electronAPI.loadFromJson(templatePath, collection.placeNamesFile),
                 window.electronAPI.loadFromJson(templatePath, collection.mapDefsFile)
-                    .catch(err => {
-                        console.error(`Failed to load map definitions file: ${collection.mapDefsFile}`, err);
-                        throw new Error(`Could not load required file: ${collection.mapDefsFile}. Please check that your template folder is configured correctly.`);
-                    })
             ]);
             
             // Check if data was loaded successfully
@@ -298,19 +281,6 @@ class CollectionManager {
             return [];
         }
         return entry.refs || [];
-    }
-      // Helper method to check if a folder exists
-    async checkFolderExists(folderPath) {
-        if (!folderPath) return false;
-        
-        try {
-            console.log(`CollectionManager: Checking if folder exists: ${folderPath}`);
-            const stat = await window.electronAPI.statPath(folderPath);
-            return stat && stat.isDirectory === true;
-        } catch (error) {
-            console.error('Error checking folder exists in CollectionManager:', error);
-            return false;
-        }
     }
 }
 

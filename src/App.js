@@ -13,7 +13,6 @@ import DetailsPane from './DetailsPane.js';
 import SettingsModal from './SettingsModal.js';
 import { useInitialization } from './InitializationProvider';
 import { settingsService } from './services/SettingsService';
-import { templateSubfolder } from './CollectionManager.js';
 // import { app } from 'electron';
 
 const electronAPI = window.electronAPI;
@@ -166,6 +165,10 @@ function App() {
   const [projectFolder, setProjectFolder] = useState(() => {
     return settings?.lastProjectFolder || DEMO_PROJECT_FOLDER;
   });  
+  // Use templateFolder from settings
+  const [templateFolder, setTemplateFolder] = useState(() => {
+    return settings?.templateFolder || null;
+  });
   const [lang, setLang] = useState(() => {
     // First check settings, then default to 'en'
     return settings?.language || 'en';
@@ -284,6 +287,30 @@ function App() {
       alert('Failed to select project folder.');
     }
   }, [isInitialized]);
+  
+  // Handler for selecting the template folder
+  const handleSelectTemplateFolder = useCallback(async () => {
+    if (!electronAPI) return;
+    try {
+      const folderPath = await electronAPI.selectProjectFolder();
+      if (folderPath) {
+        setTemplateFolder(folderPath);
+        // Save the template folder to settings
+        if (isInitialized) {
+          await settingsService.updateTemplateFolder(folderPath);
+          console.log('Saved template folder to settings:', folderPath);
+          
+          // Reload collections with the new template folder
+          await collectionManager.initializeAllCollections(
+            settings.paratextProjects, 
+            folderPath
+          );
+        }
+      }
+    } catch (e) {
+      alert('Failed to select template folder.');
+    }
+  }, [isInitialized, settings?.paratextProjects]);
   
   // On first load, prompt for project folder if not set
   useEffect(() => {
@@ -793,14 +820,21 @@ function App() {
     // State for storing the loaded image data URL
   // undefined = loading, null = error, string = loaded image data
   const [imageData, setImageData] = useState(undefined);
+  // Add state to track specific image load error message
+  const [imageError, setImageError] = useState(null);
+
   // Load the image via IPC when the map definition or settings change
   useEffect(() => {
-    if (!memoizedMapDef.imgFilename || !settings?.paratextProjects || !isInitialized) return;
+    if (!memoizedMapDef.imgFilename || !settings || !isInitialized) return;
     
     // Set to loading state
     setImageData(undefined);
-    
-    const imagePath = `${settings.paratextProjects}/${templateSubfolder}/${memoizedMapDef.imgFilename}`;
+    setImageError(null);
+      
+    // Use the template folder from settings service for proper path handling
+    const templateFolder = settingsService.getTemplateFolder();
+    // Normalize path separators for Windows
+    const imagePath = templateFolder.replace(/[/\\]$/, '') + '\\' + memoizedMapDef.imgFilename;
     console.log('Loading image from path:', imagePath);
     
     // Use the IPC function to load the image
@@ -813,21 +847,22 @@ function App() {
           } else {
             console.error(`Failed to load image through IPC from path: ${imagePath}`);
             setImageData(null); // null indicates error
+            setImageError(`Could not load map image from template folder. Please check that the template folder contains the required image: ${memoizedMapDef.imgFilename}`);
           }
         })
         .catch(err => {
           console.error(`Error loading image through IPC from path: ${imagePath}`, err);
           setImageData(null); // null indicates error
+          setImageError(`Error loading map image: ${err.message || 'Unknown error'}`);
         });
     } else {
       console.error('electronAPI not available');
       setImageData(null); // null indicates error
-    }
-  }, [memoizedMapDef.imgFilename, settings?.paratextProjects, isInitialized]);
-  
-  // For debugging - keep track of the original path
+      setImageError('Electron API not available. Cannot load images.');
+    }  }, [memoizedMapDef.imgFilename, settings?.templateFolder, settings?.paratextProjects, isInitialized, settings]);
+  // For debugging - keep track of the original path with proper Windows path separators
   const imgPath = memoizedMapDef.imgFilename ? 
-                  settings.paratextProjects + '/' + templateSubfolder + '/' + memoizedMapDef.imgFilename : '';
+                  (settingsService.getTemplateFolder()) + '\\' + memoizedMapDef.imgFilename : '';
   console.log('Image path:', imgPath);
 
   return (
@@ -846,6 +881,22 @@ function App() {
                   fontSize: '12px'
                 }}>
                   Loading image...
+                </div>
+              )}
+              {imageData === null && imageError && (
+                <div style={{
+                  position: 'absolute',
+                  top: '10px',
+                  right: '10px',
+                  background: 'rgba(255,100,100,0.9)',
+                  color: 'white',
+                  padding: '5px 10px',
+                  borderRadius: '5px',
+                  zIndex: 1001,
+                  fontSize: '12px',
+                  maxWidth: '80%'
+                }}>
+                  {imageError}
                 </div>
               )}
               <MapPane
@@ -934,8 +985,7 @@ function App() {
           setTermRenderings={setTermRenderings}
           collectionId={currentCollectionId} // Pass the collection ID
         />
-      </div>
-      <SettingsModal 
+      </div>      <SettingsModal 
         open={showSettings} 
         onClose={() => setShowSettings(false)} 
         labelScale={labelScale} 
@@ -944,6 +994,8 @@ function App() {
         setLang={setLang}
         projectFolder={projectFolder}
         handleSelectProjectFolder={handleSelectProjectFolder}
+        templateFolder={templateFolder}
+        handleSelectTemplateFolder={handleSelectTemplateFolder}
       />
     </div>
   );

@@ -1,0 +1,73 @@
+// filepath: c:\git\mapLabelerExt\biblical-map-app\src\InitializationProvider.js
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { collectionManager } from './CollectionManager';
+import { settingsService } from './services/SettingsService';
+
+const InitializationContext = createContext({
+  isInitialized: false,
+  settings: null,
+  error: null
+});
+
+export function InitializationProvider({ children }) {
+  const [state, setState] = useState({
+    isInitialized: false,
+    isLoading: true,
+    isLoadingSettings: true,
+    settings: null,
+    error: null
+  });
+  
+  useEffect(() => {
+    async function initialize() {
+      try {
+        // First step: Load settings
+        setState(prev => ({ ...prev, isLoadingSettings: true }));
+        
+        console.log("Loading application settings...");
+        const settings = await settingsService.loadSettings();
+        
+        setState(prev => ({ 
+          ...prev, 
+          isLoadingSettings: false, 
+          settings 
+        }));
+        
+        // Second step: Initialize collections with both the paratext path and template folder path
+        console.log("Loading map collections...");
+        await collectionManager.initializeAllCollections(
+          settings.paratextProjects, 
+          settings.templateFolder
+        );
+        
+        // Everything is initialized
+        setState(prev => ({
+          ...prev,
+          isInitialized: true,
+          isLoading: false
+        }));
+      } catch (error) {
+        console.error("Initialization error:", error);
+        setState(prev => ({
+          ...prev,
+          isInitialized: false,
+          isLoadingSettings: false,
+          isLoading: false,
+          error: error.message || "Failed to initialize"
+        }));
+      }
+    }
+    
+    initialize();
+  }, []); // Run once on component mount
+
+  return (
+    <InitializationContext.Provider value={state}>
+      {children}
+    </InitializationContext.Provider>
+  );
+}
+
+export function useInitialization() {
+  return useContext(InitializationContext);
+}

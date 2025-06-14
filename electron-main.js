@@ -15,16 +15,23 @@ ipcMain.handle('load-image', async (event, imagePath) => {
     // Check if path is valid
     if (!imagePath) {
       console.error('[IPC] Image path is empty or invalid');
-      return null;
+      throw new Error('Image path is empty or invalid');
     }
     
     // Normalize path to handle any potential issues with slashes
     const normalizedPath = path.normalize(imagePath);
+    console.log(`[IPC] Normalized image path: ${normalizedPath}`);
     
-    // Check if file exists
-    if (!fs.existsSync(normalizedPath)) {
-      console.error(`[IPC] Image not found at path: ${normalizedPath}`);
-      return null;
+    // Check if file exists with more detailed error
+    try {
+      const stats = fs.statSync(normalizedPath);
+      if (!stats.isFile()) {
+        console.error(`[IPC] Path exists but is not a file: ${normalizedPath}`);
+        throw new Error(`Path exists but is not a file: ${normalizedPath}`);
+      }
+    } catch (err) {
+      console.error(`[IPC] Image not found at path: ${normalizedPath}`, err.message);
+      throw new Error(`Image file not found: ${path.basename(normalizedPath)}`);
     }
     
     // Read the file and convert to base64
@@ -33,7 +40,7 @@ ipcMain.handle('load-image', async (event, imagePath) => {
     // Verify that we have actual data
     if (!buffer || buffer.length === 0) {
       console.error(`[IPC] Read zero bytes from file: ${normalizedPath}`);
-      return null;
+      throw new Error(`Image file is empty: ${path.basename(normalizedPath)}`);
     }
     
     // Determine mime type based on file extension
@@ -422,11 +429,18 @@ ipcMain.handle('save-to-json', async (event, jsonPath, jsonFilename, settings) =
 // Handler to check path status
 ipcMain.handle('stat-path', async (event, filePath) => {
   try {
-    const stats = fs.statSync(filePath);
+    // Normalize the path for Windows
+    const normalizedPath = path.normalize(filePath);
+    console.log(`Checking if path exists: ${normalizedPath}`);
+    
+    const stats = fs.statSync(normalizedPath);
+    const isDir = stats.isDirectory();
+    console.log(`Path ${normalizedPath} exists and isDirectory: ${isDir}`);
+    
     return {
       exists: true,
       isFile: stats.isFile(),
-      isDirectory: stats.isDirectory(),
+      isDirectory: isDir, // Boolean value, not a function
       size: stats.size,
       modifiedTime: stats.mtime
     };

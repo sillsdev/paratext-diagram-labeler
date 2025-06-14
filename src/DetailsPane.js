@@ -64,7 +64,7 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
       });
     }
     return tally;
-  }, [locations, termRenderings]);
+  }, [locations]);
 
   // --- Button Row Handlers (implement as needed) ---
   const handleCancel = () => {
