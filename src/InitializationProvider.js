@@ -32,13 +32,10 @@ export function InitializationProvider({ children }) {
           isLoadingSettings: false, 
           settings 
         }));
-          // Second step: Initialize collections with both the paratext path and template folder path
+          // Second step: Initialize collections with template folder path
         console.log("Loading map collections...");
         try {
-          await collectionManager.initializeAllCollections(
-            settings.paratextProjects, 
-            settings.templateFolder
-          );
+          await collectionManager.initializeAllCollections(settings.templateFolder);
           
           // Everything is initialized
           setState(prev => ({
@@ -61,10 +58,7 @@ export function InitializationProvider({ children }) {
                 await settingsService.updateTemplateFolder(selectedFolder);
                 
                 // Try initializing again with the new folder
-                await collectionManager.initializeAllCollections(
-                  settings.paratextProjects, 
-                  selectedFolder
-                );
+                await collectionManager.initializeAllCollections(settings.templateFolder);
                 
                 // Success!
                 setState(prev => ({

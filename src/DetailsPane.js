@@ -95,9 +95,9 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
   };
   
   const handleOk = () => {
-    // Save current USFM to settings.lastUsfm
+    // Save current USFM to settings.usfm
     const currentUsfm = generateUsfm();
-    settingsService.updateLastUsfm(currentUsfm)
+    settingsService.updateUsfm(currentUsfm)
       .then(() => console.log('USFM saved to settings successfully'))
       .catch(err => console.error('Error saving USFM to settings:', err));
     

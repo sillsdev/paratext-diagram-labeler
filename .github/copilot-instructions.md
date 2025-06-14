@@ -1,0 +1,1 @@
+You are running on Windows using PowerShell. Use `;` to separate commands instead of `&&`. Always generate PowerShell-compatible syntax for terminal commands.

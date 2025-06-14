@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import './App.css';
 import BottomPane from './BottomPane.js';
 import uiStr from './data/ui-strings.json';
-import { DEMO_PROJECT_FOLDER, INITIAL_USFM } from './demo.js';
-import { MAP_VIEW, TABLE_VIEW, USFM_VIEW,  } from './constants.js';
+import { INITIAL_USFM } from './demo.js';
+import { MAP_VIEW, TABLE_VIEW, USFM_VIEW } from './constants.js';
 import { collectionManager, getCollectionIdFromTemplate } from './CollectionManager';
 import { getMapDef } from './MapData';
 import { inLang, getStatus, getMapForm } from './Utils.js';
@@ -13,7 +13,6 @@ import DetailsPane from './DetailsPane.js';
 import SettingsModal from './SettingsModal.js';
 import { useInitialization } from './InitializationProvider';
 import { settingsService } from './services/SettingsService';
-// import { app } from 'electron';
 
 const electronAPI = window.electronAPI;
 
@@ -160,15 +159,7 @@ function usfmFromMap(map, lang) {
 function App() {
   // Get initialization state and settings from context
   const { isInitialized, settings } = useInitialization();
-
-  // Use settings for projectFolder if available, otherwise use default
-  const [projectFolder, setProjectFolder] = useState(() => {
-    return settings?.lastProjectFolder || DEMO_PROJECT_FOLDER;
-  });  
-  // Use templateFolder from settings
-  const [templateFolder, setTemplateFolder] = useState(() => {
-    return settings?.templateFolder || null;
-  });
+  const projectFolder = settings?.projectFolder;  
   const [lang, setLang] = useState(() => {
     // First check settings, then default to 'en'
     return settings?.language || 'en';
@@ -199,8 +190,8 @@ function App() {
     const initializeMap = async () => {
       try {
         // Use the last USFM from settings if available, otherwise use the demo USFM
-        const usfmToUse = settings?.lastUsfm || INITIAL_USFM;
-        console.log('Initializing map from USFM:', settings?.lastUsfm ? 'using saved USFM' : 'using demo USFM');
+        const usfmToUse = settings?.usfm || INITIAL_USFM;
+        console.log('Initializing map from USFM:', settings?.usfm ? 'using saved USFM' : 'using demo USFM');
         
         // Initialize from USFM
         const initialMap = await mapFromUsfm(usfmToUse);
@@ -270,57 +261,6 @@ function App() {
     });
   }, [projectFolder, mapDef.labels, mapDef.template, isInitialized]);
 
-  // UI handler to select project folder
-  const handleSelectProjectFolder = useCallback(async () => {
-    if (!electronAPI) return;
-    try {
-      const folderPath = await electronAPI.selectProjectFolder();
-      if (folderPath) {
-        setProjectFolder(folderPath);
-        // Save the project folder to settings
-        if (isInitialized) {
-          settingsService.updateLastProjectFolder(folderPath);
-          console.log('Saved project folder to settings:', folderPath);
-        }
-      }
-    } catch (e) {
-      alert('Failed to select project folder.');
-    }
-  }, [isInitialized]);
-  
-  // Handler for selecting the template folder
-  const handleSelectTemplateFolder = useCallback(async () => {
-    if (!electronAPI) return;
-    try {
-      const folderPath = await electronAPI.selectProjectFolder();
-      if (folderPath) {
-        setTemplateFolder(folderPath);
-        // Save the template folder to settings
-        if (isInitialized) {
-          await settingsService.updateTemplateFolder(folderPath);
-          console.log('Saved template folder to settings:', folderPath);
-          
-          // Reload collections with the new template folder
-          await collectionManager.initializeAllCollections(
-            settings.paratextProjects, 
-            folderPath
-          );
-        }
-      }
-    } catch (e) {
-      alert('Failed to select template folder.');
-    }
-  }, [isInitialized, settings?.paratextProjects]);
-  
-  // On first load, prompt for project folder if not set
-  useEffect(() => {
-    if (!projectFolder && electronAPI) {
-      handleSelectProjectFolder();
-    }
-    // eslint-disable-next-line
-  }, [projectFolder]);
-
-  
   // Handler to set the selected location (e.g. Label clicked)
   const handleSelectLocation = useCallback((location) => {
     console.log('Selected location:', location);
@@ -679,7 +619,7 @@ function App() {
     
     // Generate the current USFM from map state and save to settings
     const currentUsfm = usfmFromMap({ ...mapDef, labels: locations }, lang);
-    settingsService.updateLastUsfm(currentUsfm);
+    settingsService.updateUsfm(currentUsfm);
     console.log('Saved USFM to settings');
     
     // Optionally: do other OK logic here
@@ -805,7 +745,7 @@ function App() {
     if (!isInitialized || !projectFolder) return;
     
     // Save the project folder to settings
-    settingsService.updateLastProjectFolder(projectFolder);
+    settingsService.updateProjectFolder(projectFolder);
     console.log('Auto-saved project folder to settings:', projectFolder);
   }, [projectFolder, isInitialized]);
     // Save language to settings when it changes
@@ -859,7 +799,7 @@ function App() {
       console.error('electronAPI not available');
       setImageData(null); // null indicates error
       setImageError('Electron API not available. Cannot load images.');
-    }  }, [memoizedMapDef.imgFilename, settings?.templateFolder, settings?.paratextProjects, isInitialized, settings]);
+    }  }, [memoizedMapDef.imgFilename, settings?.templateFolder, isInitialized, settings]);
   // For debugging - keep track of the original path with proper Windows path separators
   const imgPath = memoizedMapDef.imgFilename ? 
                   (settingsService.getTemplateFolder()) + '\\' + memoizedMapDef.imgFilename : '';
@@ -992,10 +932,6 @@ function App() {
         setLabelScale={setLabelScale}
         lang={lang}
         setLang={setLang}
-        projectFolder={projectFolder}
-        handleSelectProjectFolder={handleSelectProjectFolder}
-        templateFolder={templateFolder}
-        handleSelectTemplateFolder={handleSelectTemplateFolder}
       />
     </div>
   );

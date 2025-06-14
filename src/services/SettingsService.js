@@ -1,7 +1,5 @@
 // filepath: c:\git\mapLabelerExt\biblical-map-app\src\services\SettingsService.js
 // src/services/SettingsService.js
-import { DEFAULT_PROJECTS_FOLDER } from '../demo.js';
-import { templateSubfolder } from '../CollectionManager.js';
 class SettingsService {  constructor() {
     this.settings = null;
     this.isLoaded = false;
@@ -18,13 +16,11 @@ class SettingsService {  constructor() {
         this.settings = settings;
         console.log("Settings loaded:", settings);
       } else {
-        // Create default settings with templateFolder property
         this.settings = {
-          paratextProjects: DEFAULT_PROJECTS_FOLDER,
           language: "en",
-          lastProjectFolder: null,
-          lastUsfm: null,
-          templateFolder: `${DEFAULT_PROJECTS_FOLDER}/${templateSubfolder}` // Default template folder
+          projectFolder: null,
+          usfm: null,
+          templateFolder: null
         };
         
         // Save the default settings
@@ -51,11 +47,11 @@ class SettingsService {  constructor() {
       }
       
         // Validate the specific project folder exists
-      if (this.settings.lastProjectFolder) {
-        const projectExists = await this.folderExists(this.settings.lastProjectFolder);
+      if (this.settings.projectFolder) {
+        const projectExists = await this.folderExists(this.settings.projectFolder);
         if (!projectExists) {
-          console.warn(`Last project folder not found: ${this.settings.lastProjectFolder}`);
-          this.settings.lastProjectFolder = null;
+          console.warn(`project folder not found: ${this.settings.projectFolder}`);
+          this.settings.projectFolder = null;
           await this.saveSettings();
         }
       }
@@ -107,33 +103,12 @@ class SettingsService {  constructor() {
     return this.settings;
   }
 
-  getParatextProjectsFolder() {
-    return this.settings?.paratextProjects || DEFAULT_PROJECTS_FOLDER;
-  }
-
   getLastProjectFolder() {
-    return this.settings?.lastProjectFolder || null;
+    return this.settings?.projectFolder || null;
   }
   // Enhanced getter for templateFolder with proper path normalization
   getTemplateFolder() {
-    try {
-      if (this.settings?.templateFolder) {
-        // Normalize any existing path to ensure consistent Windows backslashes
-        const normalizedPath = this.settings.templateFolder.replace(/\//g, '\\');
-        console.log('Using configured template folder:', normalizedPath);
-        return normalizedPath;
-      } else {
-        // Combine paths with proper Windows path separator
-        const paratextPath = this.getParatextProjectsFolder();
-        const defaultPath = paratextPath.replace(/[/\\]$/, '') + '\\' + templateSubfolder;
-        console.log('Using default template folder:', defaultPath);
-        return defaultPath;
-      }
-    } catch (error) {
-      console.error('Error in getTemplateFolder:', error);
-      // Fall back to a safe default in case of any errors
-      return DEFAULT_PROJECTS_FOLDER + '\\' + templateSubfolder;
-    }
+    return this.settings?.templateFolder || null;
   }
   
   // Get language setting (defaults to 'en')
@@ -142,22 +117,13 @@ class SettingsService {  constructor() {
   }
   
   // Get last USFM
-  getLastUsfm() {
-    return this.settings?.lastUsfm || null;
+  getUsfm() {
+    return this.settings?.usfm || null;
   }
 
-  async updateParatextProjectsFolder(folder) {
+  async updateProjectFolder(folder) {
     if (this.settings) {
-      this.settings.paratextProjects = folder;
-      await this.saveSettings();
-      return true;
-    }
-    return false;
-  }
-
-  async updateLastProjectFolder(folder) {
-    if (this.settings) {
-      this.settings.lastProjectFolder = folder;
+      this.settings.projectFolder = folder;
       await this.saveSettings();
       return true;
     }
@@ -173,9 +139,9 @@ class SettingsService {  constructor() {
     return false;
   }
   
-  async updateLastUsfm(usfm) {
+  async updateUsfm(usfm) {
     if (this.settings) {
-      this.settings.lastUsfm = usfm;
+      this.settings.usfm = usfm;
       await this.saveSettings();
       return true;
     }

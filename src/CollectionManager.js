@@ -47,18 +47,17 @@ class CollectionManager {
         this.isLoading = false;
         this.loadError = null;
     }    // Initialize by loading all collections
-    async initializeAllCollections(paratextPath = null, templateFolderPath = null) {
+    async initializeAllCollections(templateFolderPath) {
         if (this.isInitialized) return;
         if (this.isLoading) return;
         
         this.isLoading = true;
         this.loadError = null;
         
-        // Store both paths
-        this.paratextPath = paratextPath || DEFAULT_PROJECTS_FOLDER;
         this.templateFolderPath = templateFolderPath;
-        console.log(`Using Paratext projects path: ${this.paratextPath}`);
-        console.log(`Using template folder path: ${this.templateFolderPath || '(none specified)'}`);
+        if (!this.templateFolderPath) {
+            this.loadError = new Error('Template folder path is not set. Please configure the template folder in settings.');
+        }
         
         try {
             const collectionIds = getAllCollectionIds();
@@ -99,9 +98,7 @@ class CollectionManager {
                     mapDefs: null
                 };            }              // Use templateFolderPath if provided, otherwise fall back to the old method
             // Ensure consistent path separator (backslash for Windows)
-            const templatePath = this.templateFolderPath ? 
-                                this.templateFolderPath.replace(/\//g, '\\') :
-                                ((this.paratextPath || DEFAULT_PROJECTS_FOLDER) + '\\' + templateSubfolder);
+            const templatePath = this.templateFolderPath;
             
             // Check if template path exists before trying to load from it
             console.log(`Verifying template folder exists: ${templatePath}`);
