@@ -26,7 +26,8 @@ class SettingsService {  constructor() {
         // Save the default settings
         await this.saveSettings();
         console.log("Created default settings:", this.settings);
-      }        // Validate the template folder exists
+      }        
+/*       // Validate the template folder exists
       const templatePath = this.getTemplateFolder(); // Use the getter for proper path construction
       const folderExists = await this.folderExists(templatePath);
       
@@ -55,7 +56,7 @@ class SettingsService {  constructor() {
           await this.saveSettings();
         }
       }
-      
+ */      
       this.isLoaded = true;
       return this.settings;
     } catch (error) {

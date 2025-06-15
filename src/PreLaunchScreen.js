@@ -10,7 +10,8 @@ const ErrorIcon = () => (
   <span className="status-icon invalid">✗</span>
 );
 
-const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLaunch, hasErrors }) => {  const [editedSettings, setEditedSettings] = useState({ ...settings });
+const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLaunch, hasErrors }) => {  
+    const [editedSettings, setEditedSettings] = useState({ ...settings });
   const [errors, setErrors] = useState(propErrors || {});  // Function to validate all settings - use useCallback to prevent recreating on every render
   const validateSettings = useCallback(async () => {
     const newErrors = {};
@@ -84,18 +85,30 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
       onSettingsChange(updatedSettings);
     }
   };
-
   // Handle folder picker
   const handleSelectFolder = async (key) => {
     try {
       const folder = await window.electronAPI.selectProjectFolder();
       if (folder) {
+        // Update local state and notify parent
         handleSettingChange(key, folder);
+        
+        // Direct save to settings file when folder is selected via picker
+        try {
+          const updatedSettings = {
+            ...editedSettings,
+            [key]: folder
+          };
+          await window.electronAPI.saveToJson(updatedSettings, null, "MapLabelerSettings.json");
+          console.log(`Folder selection for ${key} saved to settings file`);
+        } catch (saveError) {
+          console.error('Error saving settings after folder selection:', saveError);
+        }
       }
     } catch (error) {
       console.error('Error selecting folder:', error);
     }
-  };  // Save settings and launch app - use useCallback to prevent recreating on every render
+  };// Save settings and launch app - use useCallback to prevent recreating on every render
   const handleLaunch = useCallback(async () => {
     // If we're handling validation internally, do a final check
     if (!onSettingsChange) {
