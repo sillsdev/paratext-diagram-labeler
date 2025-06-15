@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './PreLaunchScreen.css';
 
 // Icons for valid/invalid status
@@ -10,12 +10,9 @@ const ErrorIcon = () => (
   <span className="status-icon invalid">✗</span>
 );
 
-const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLaunch, hasErrors }) => {
-  const [editedSettings, setEditedSettings] = useState({ ...settings });
-  const [errors, setErrors] = useState(propErrors || {});
-  const [isUsfmExpanded, setIsUsfmExpanded] = useState(false);
-  // Function to validate all settings
-  const validateSettings = async () => {
+const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLaunch, hasErrors }) => {  const [editedSettings, setEditedSettings] = useState({ ...settings });
+  const [errors, setErrors] = useState(propErrors || {});  // Function to validate all settings - use useCallback to prevent recreating on every render
+  const validateSettings = useCallback(async () => {
     const newErrors = {};
     
     // Validate template folder
@@ -53,7 +50,7 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };  // Update local errors when prop errors change
+  }, [editedSettings]);// Update local errors when prop errors change
   useEffect(() => {
     if (propErrors) {
       setErrors(propErrors);
@@ -96,9 +93,8 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
     } catch (error) {
       console.error('Error selecting folder:', error);
     }
-  };
-  // Save settings and launch app
-  const handleLaunch = async () => {
+  };  // Save settings and launch app - use useCallback to prevent recreating on every render
+  const handleLaunch = useCallback(async () => {
     // If we're handling validation internally, do a final check
     if (!onSettingsChange) {
       const isValid = await validateSettings();
@@ -122,18 +118,49 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
     
     // Launch the app with current settings
     onLaunch(editedSettings);
-  };
+  }, [editedSettings, onLaunch, onSettingsChange, validateSettings, setErrors]);
+  // Handle Enter key press - use useCallback to ensure the function doesn't change on every render
+  const handleKeyDown = useCallback((e) => {
+    if (e.key === 'Enter' && !hasErrors && Object.keys(errors).length === 0) {
+      handleLaunch();
+    }
+  }, [errors, hasErrors, handleLaunch]);
+
+  // Add event listener for Enter key when component mounts
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleKeyDown]); // Only depends on handleKeyDown which is memoized with useCallback
 
   return (
     <div className="pre-launch-screen">
       <div className="pre-launch-header">
-        <h2>Paratext 9 standalone preview of the</h2>
-        <h1>Scripture Map Labeler extension for Paratext 10</h1>
-        <p className="subheading">In the Paratext 10 extension, the settings below will come from the installation.</p>
+        <h2>Paratext 9 standalone UX preview of the</h2>
+        <h1>Scripture Map Labeler </h1>
+        <h2>extension for Paratext 10</h2>
+        <p className="subheading">In the Paratext 10 extension, the settings below will come from Paratext.</p>
+      </div>
+        {/* Launch Button */}
+      <div className="launch-container">        {!hasErrors && Object.keys(errors).length === 0 ? (
+          <button 
+            className="launch-button" 
+            onClick={handleLaunch}
+            tabIndex="0"
+            aria-label="Launch Application"
+          >
+            Launch Application
+          </button>
+        ) : (
+          <div className="launch-error">
+            Please fix all errors before launching the application
+          </div>
+        )}
       </div>
 
       <div className="settings-container">
-        <h3>Application Settings</h3>
+        <h4>Application Settings</h4>
         
         {/* Template Folder Setting */}
         <div className="setting-row">
@@ -175,7 +202,7 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
           </div>
         </div>
         
-        {/* Language Setting */}
+        {/* Language Setting 
         <div className="setting-row">
           <div className="setting-status">
             <CheckIcon />
@@ -192,44 +219,28 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
               <option value="pt">Português</option>
             </select>
           </div>
-        </div>
-          {/* USFM Setting */}
+        </div>*/}          {/* USFM Setting */}
         <div className="setting-row">
           <div className="setting-status">
             {errors.usfm ? <ErrorIcon /> : (editedSettings.usfm ? <CheckIcon /> : null)}
           </div>
           <div className="setting-content">
-            <div className="setting-header" onClick={() => setIsUsfmExpanded(!isUsfmExpanded)}>
+            <div className="setting-header">
               <label>USFM Content</label>
-              <span className={`expand-icon ${isUsfmExpanded ? 'expanded' : ''}`}>▼</span>
-            </div>
-            {isUsfmExpanded && (
-              <>                <textarea
-                  className={errors.usfm ? "usfm-textarea error" : "usfm-textarea"}
-                  value={editedSettings.usfm || ''}
-                  onChange={(e) => handleSettingChange('usfm', e.target.value)}
-                  rows={10}
-                  placeholder="Enter USFM content here..."
-                />
-                {errors.usfm && (
-                  <div className="error-message">{errors.usfm}</div>
-                )}
-              </>
+            </div>            <textarea
+              className={errors.usfm ? "usfm-textarea error" : "usfm-textarea"}
+              value={editedSettings.usfm || ''}
+              onChange={(e) => handleSettingChange('usfm', e.target.value)}
+              rows={10}
+              placeholder="Enter USFM content here..."
+              style={{ whiteSpace: 'nowrap' }}
+              wrap="off"
+            />
+            {errors.usfm && (
+              <div className="error-message">{errors.usfm}</div>
             )}
           </div>
         </div>
-      </div>
-        {/* Launch Button */}
-      <div className="launch-container">
-        {!hasErrors && Object.keys(errors).length === 0 ? (
-          <button className="launch-button" onClick={handleLaunch}>
-            Launch Application
-          </button>
-        ) : (
-          <div className="launch-error">
-            Please fix all errors before launching the application
-          </div>
-        )}
       </div>
     </div>
   );

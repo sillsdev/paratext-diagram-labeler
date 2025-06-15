@@ -144,6 +144,12 @@ textarea {
   resize: vertical;
 }
 
+.usfm-textarea {
+  white-space: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
 .setting-header {
   display: flex;
   justify-content: space-between;
