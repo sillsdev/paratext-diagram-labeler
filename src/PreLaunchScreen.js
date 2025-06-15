@@ -133,14 +133,20 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [handleKeyDown]); // Only depends on handleKeyDown which is memoized with useCallback
-
   return (
     <div className="pre-launch-screen">
       <div className="pre-launch-header">
-        <h2>Paratext 9 standalone UX preview of the</h2>
-        <h1>Scripture Map Labeler </h1>
-        <h2>extension for Paratext 10</h2>
-        <p className="subheading">In the Paratext 10 extension, the settings below will come from Paratext.</p>
+        <div className="header-content">
+          <div className="logo-container">
+            <img src="/assets/logo.svg" alt="Scripture Map Labeler Logo" className="app-logo" />
+          </div>
+          <div className="header-text">
+            <h2>Paratext 9 standalone UX preview of the</h2>
+            <h1>Scripture Map Labeler </h1>
+            <h2>extension for Paratext 10</h2>
+            <p className="subheading">In the Paratext 10 extension, the settings below will come from Paratext.</p>
+          </div>
+        </div>
       </div>
         {/* Launch Button */}
       <div className="launch-container">        {!hasErrors && Object.keys(errors).length === 0 ? (
