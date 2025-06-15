@@ -1,1 +1,1 @@
-You are running on Windows using PowerShell. Use `;` to separate commands instead of `&&`. Always generate PowerShell-compatible syntax for terminal commands.
+You are running on Windows. If you need to use PowerShell commands when asked to implement changes, remember to use `;` to separate commands instead of `&&`.

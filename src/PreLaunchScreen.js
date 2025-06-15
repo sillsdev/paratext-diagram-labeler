@@ -11,129 +11,43 @@ const ErrorIcon = () => (
 );
 
 const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLaunch, hasErrors }) => {  
-    const [editedSettings, setEditedSettings] = useState({ ...settings });
-  const [errors, setErrors] = useState(propErrors || {});  // Function to validate all settings - use useCallback to prevent recreating on every render
-  const validateSettings = useCallback(async () => {
-    const newErrors = {};
-    
-    // Validate template folder
-    if (!editedSettings.templateFolder) {
-      newErrors.templateFolder = 'Please specify the location of the folder containing the map templates';
-    } else {
-      try {
-        const exists = await window.electronAPI.statPath(editedSettings.templateFolder);
-        if (!exists || !exists.isDirectory) {
-          newErrors.templateFolder = 'Please specify the location of the folder containing the map templates';
-        }
-      } catch (error) {
-        newErrors.templateFolder = `Error: ${error.message}`;
-      }
-    }
-    
-    // Validate project folder if present
-    if (!editedSettings.projectFolder) {
-        newErrors.projectFolder = 'Please specify the location of your Paratext project folder';
-    } else {
-      try {
-        const exists = await window.electronAPI.statPath(editedSettings.projectFolder);
-        if (!exists || !exists.isDirectory) {
-          newErrors.projectFolder = 'Project folder not found';
-        }
-      } catch (error) {
-        newErrors.projectFolder = `Error: ${error.message}`;
-      }
-    }
-    
-    // Validate USFM if present
-    if (editedSettings.usfm) {
-      if (!editedSettings.usfm.includes('\\zdiagram-s')) {
-        newErrors.usfm = 'USFM does not appear to be valid diagram markup';
-      }
-    }
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  }, [editedSettings]);// Update local errors when prop errors change
-  useEffect(() => {
-    if (propErrors) {
-      setErrors(propErrors);
-    }
-  }, [propErrors]);
+  // Use local state for editing but rely on parent for validated errors
+  const [editedSettings, setEditedSettings] = useState({ ...settings });
+  // Only use errors passed from parent
+  const [errors, setErrors] = useState(propErrors || {});
   
-  // Validate settings if no external validation is provided
+  // Update local errors when prop errors change
   useEffect(() => {
-    const runValidation = async () => {
-      // Only run internal validation if we don't have external validation
-      if (!onSettingsChange) {
-        await validateSettings();
-      }
-    };
-    runValidation();
-    // We're intentionally only running this when editedSettings changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editedSettings]);
-  // Handle settings changes
-  const handleSettingChange = (key, value) => {
+    setErrors(propErrors || {});
+  }, [propErrors]);  // Handle settings changes - send changes to parent for validation
+  const handleSettingChange = useCallback((key, value) => {
     const updatedSettings = {
       ...editedSettings,
       [key]: value
     };
     setEditedSettings(updatedSettings);
     
-    // Notify parent component of changes
+    // Always notify parent component of changes for validation
     if (onSettingsChange) {
       onSettingsChange(updatedSettings);
     }
-  };
-  // Handle folder picker
-  const handleSelectFolder = async (key) => {
+  }, [editedSettings, onSettingsChange]);  // Handle folder picker - use useCallback to avoid recreation
+  const handleSelectFolder = useCallback(async (key) => {
     try {
       const folder = await window.electronAPI.selectProjectFolder();
       if (folder) {
-        // Update local state and notify parent
+        // Update local state and notify parent - the parent will handle validation and saving
         handleSettingChange(key, folder);
-        
-        // Direct save to settings file when folder is selected via picker
-        try {
-          const updatedSettings = {
-            ...editedSettings,
-            [key]: folder
-          };
-          await window.electronAPI.saveToJson(updatedSettings, null, "MapLabelerSettings.json");
-          console.log(`Folder selection for ${key} saved to settings file`);
-        } catch (saveError) {
-          console.error('Error saving settings after folder selection:', saveError);
-        }
       }
     } catch (error) {
       console.error('Error selecting folder:', error);
     }
-  };// Save settings and launch app - use useCallback to prevent recreating on every render
-  const handleLaunch = useCallback(async () => {
-    // If we're handling validation internally, do a final check
-    if (!onSettingsChange) {
-      const isValid = await validateSettings();
-      if (!isValid) {
-        alert('Please fix all errors before launching');
-        return;
-      }
-      
-      // Save settings if we're managing them internally
-      try {
-        await window.electronAPI.saveToJson(editedSettings, null, "MapLabelerSettings.json");
-      } catch (error) {
-        console.error('Failed to save settings:', error);
-        setErrors(prev => ({
-          ...prev,
-          general: `Failed to save settings: ${error.message}`
-        }));
-        return;
-      }
-    }
-    
-    // Launch the app with current settings
+  }, [handleSettingChange]);  // Save settings and launch app - use useCallback to prevent recreating on every render
+  const handleLaunch = useCallback(() => {
+    // Let the parent component handle all validation and saving
+    // Just pass the current settings to launch
     onLaunch(editedSettings);
-  }, [editedSettings, onLaunch, onSettingsChange, validateSettings, setErrors]);
+  }, [editedSettings, onLaunch]);
   // Handle Enter key press - use useCallback to ensure the function doesn't change on every render
   const handleKeyDown = useCallback((e) => {
     if (e.key === 'Enter' && !hasErrors && Object.keys(errors).length === 0) {
