@@ -156,7 +156,7 @@ function usfmFromMap(map, lang) {
   return usfm.replace(/\\/g, '\\');
 }
 
-function MainApp({ settings }) {
+function MainApp({ settings, onExit }) {
   console.log('MainApp initialized with settings:', settings);
   
   const [isInitialized, setIsInitialized] = useState(false);
@@ -637,20 +637,21 @@ function MainApp({ settings }) {
       return (prev + 1) % 3;  // Maybe this can be simplified now that Switch View is only from USFM
     });
   }, [mapPaneView, updateMapFromUsfm, mapDef.mapView]);
+
   // Intercept OK button in DetailsPane
-  const handleOkWithUsfm = useCallback(() => {
-    if (mapPaneView === USFM_VIEW) {
-      updateMapFromUsfm();
-    }
+//   const handleOkWithUsfm = useCallback(() => {
+//     if (mapPaneView === USFM_VIEW) {
+//       updateMapFromUsfm();
+//     }
     
-    // Generate the current USFM from map state and save to settings
-    const currentUsfm = usfmFromMap({ ...mapDef, labels: locations }, lang);
-    settingsService.updateUsfm(currentUsfm);
-    console.log('Saved USFM to settings');
+//     // Generate the current USFM from map state and save to settings
+//     const currentUsfm = usfmFromMap({ ...mapDef, labels: locations }, lang);
+//     settingsService.updateUsfm(currentUsfm);
+//     console.log('Saved USFM to settings');
     
-    // Optionally: do other OK logic here
-    alert("At this point, the USFM text would be saved to Paratext.");  // TODO: 
-  }, [mapPaneView, updateMapFromUsfm, mapDef, locations, lang]);
+//     // Optionally: do other OK logic here
+//     alert("At this point, the USFM text would be saved to Paratext.");  // TODO: 
+//   }, [mapPaneView, updateMapFromUsfm, mapDef, locations, lang]);
 
 
   // Add rendering from bottom pane selection
@@ -914,7 +915,6 @@ function MainApp({ settings }) {
             termRenderings={termRenderings}
             locations={locations}
             onSwitchView={handleSwitchViewWithUsfm}
-            onOk={handleOkWithUsfm}
             mapPaneView={mapPaneView}            onSetView={viewIdx => {
               if (viewIdx === MAP_VIEW && !mapDef.mapView) return;
               if (mapPaneView === USFM_VIEW) updateMapFromUsfm();
@@ -928,6 +928,7 @@ function MainApp({ settings }) {
             lang={lang} // <-- pass lang
             setTermRenderings={setTermRenderings} // <-- pass setter
             onCreateRendering ={handleReplaceRendering} // <-- pass handler
+            onExit={onExit}
           />
         </div>
       </div>

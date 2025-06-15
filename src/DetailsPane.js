@@ -7,7 +7,7 @@ import { getMapDef } from './MapData';
 import { inLang, statusValue } from './Utils.js';
 import { settingsService } from './services/SettingsService.js';
 
-export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings, mapDef, onBrowseMapTemplate, vernacularInputRef, renderingsTextareaRef, lang, setTermRenderings, onCreateRendering }) {
+export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings, mapDef, onBrowseMapTemplate, vernacularInputRef, renderingsTextareaRef, lang, setTermRenderings, onCreateRendering, onExit }) {
   const [vernacular, setVernacular] = useState(locations[selLocation]?.vernLabel || '');
   const [localIsApproved, setLocalIsApproved] = useState(isApproved);
   const [localRenderings, setLocalRenderings] = useState(renderings);
@@ -68,7 +68,7 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
 
   // --- Button Row Handlers (implement as needed) ---
   const handleCancel = () => {
-    alert('At this point, the USFM text would be discarded and not saved.'); // TODO:
+    onExit(); 
   };
   
   // Helper function to generate USFM from the current map state // TODO: compare with usfmFromMap(). Could probably be consolidated.
@@ -97,12 +97,13 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
   const handleOk = () => {
     // Save current USFM to settings.usfm
     const currentUsfm = generateUsfm();
+    console.log('OK! Generated USFM:', currentUsfm);
     settingsService.updateUsfm(currentUsfm)
+      .then(() => {settingsService.saveSettings();})
       .then(() => console.log('USFM saved to settings successfully'))
       .catch(err => console.error('Error saving USFM to settings:', err));
-    
-    // Alert user (this will be replaced with actual Paratext saving logic later)
-    alert("At this point, the USFM text would be saved to Paratext.");
+    // At this point, close the MainApplication and return to the pre-launch screen
+    onExit(); 
   };
   const handleSettings = () => {
     if (onShowSettings) onShowSettings();

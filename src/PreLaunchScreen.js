@@ -10,11 +10,10 @@ const ErrorIcon = () => (
   <span className="status-icon invalid">✗</span>
 );
 
-const PreLaunchScreen = ({ settings, onLaunch }) => {
+const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLaunch, hasErrors }) => {
   const [editedSettings, setEditedSettings] = useState({ ...settings });
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState(propErrors || {});
   const [isUsfmExpanded, setIsUsfmExpanded] = useState(false);
-
   // Function to validate all settings
   const validateSettings = async () => {
     const newErrors = {};
@@ -45,25 +44,46 @@ const PreLaunchScreen = ({ settings, onLaunch }) => {
       }
     }
     
+    // Validate USFM if present
+    if (editedSettings.usfm) {
+      if (!editedSettings.usfm.includes('\\zdiagram-s')) {
+        newErrors.usfm = 'USFM does not appear to be valid diagram markup';
+      }
+    }
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
-  // Validate settings whenever they change
+  };  // Update local errors when prop errors change
+  useEffect(() => {
+    if (propErrors) {
+      setErrors(propErrors);
+    }
+  }, [propErrors]);
+  
+  // Validate settings if no external validation is provided
   useEffect(() => {
     const runValidation = async () => {
-      await validateSettings();
+      // Only run internal validation if we don't have external validation
+      if (!onSettingsChange) {
+        await validateSettings();
+      }
     };
     runValidation();
     // We're intentionally only running this when editedSettings changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editedSettings]);
-
   // Handle settings changes
   const handleSettingChange = (key, value) => {
-    setEditedSettings(prev => ({
-      ...prev,
+    const updatedSettings = {
+      ...editedSettings,
       [key]: value
-    }));
+    };
+    setEditedSettings(updatedSettings);
+    
+    // Notify parent component of changes
+    if (onSettingsChange) {
+      onSettingsChange(updatedSettings);
+    }
   };
 
   // Handle folder picker
@@ -77,30 +97,31 @@ const PreLaunchScreen = ({ settings, onLaunch }) => {
       console.error('Error selecting folder:', error);
     }
   };
-
   // Save settings and launch app
   const handleLaunch = async () => {
-    // Final validation before launching
-    const isValid = await validateSettings();
-    if (!isValid) {
-      alert('Please fix all errors before launching');
-      return;
+    // If we're handling validation internally, do a final check
+    if (!onSettingsChange) {
+      const isValid = await validateSettings();
+      if (!isValid) {
+        alert('Please fix all errors before launching');
+        return;
+      }
+      
+      // Save settings if we're managing them internally
+      try {
+        await window.electronAPI.saveToJson(editedSettings, null, "MapLabelerSettings.json");
+      } catch (error) {
+        console.error('Failed to save settings:', error);
+        setErrors(prev => ({
+          ...prev,
+          general: `Failed to save settings: ${error.message}`
+        }));
+        return;
+      }
     }
     
-    // Save settings
-    try {
-      // Update app's settings
-      await window.electronAPI.saveToJson(editedSettings, null, "MapLabelerSettings.json");
-      
-      // Launch the app
-      onLaunch(editedSettings);
-    } catch (error) {
-      console.error('Failed to save settings:', error);
-      setErrors(prev => ({
-        ...prev,
-        general: `Failed to save settings: ${error.message}`
-      }));
-    }
+    // Launch the app with current settings
+    onLaunch(editedSettings);
   };
 
   return (
@@ -172,12 +193,10 @@ const PreLaunchScreen = ({ settings, onLaunch }) => {
             </select>
           </div>
         </div>
-        
-        {/* USFM Setting */}
+          {/* USFM Setting */}
         <div className="setting-row">
           <div className="setting-status">
-            {/* USFM is optional, so always show checkmark */}
-            <CheckIcon />
+            {errors.usfm ? <ErrorIcon /> : (editedSettings.usfm ? <CheckIcon /> : null)}
           </div>
           <div className="setting-content">
             <div className="setting-header" onClick={() => setIsUsfmExpanded(!isUsfmExpanded)}>
@@ -185,20 +204,24 @@ const PreLaunchScreen = ({ settings, onLaunch }) => {
               <span className={`expand-icon ${isUsfmExpanded ? 'expanded' : ''}`}>▼</span>
             </div>
             {isUsfmExpanded && (
-              <textarea
-                value={editedSettings.lastUsfm || ''}
-                onChange={(e) => handleSettingChange('lastUsfm', e.target.value)}
-                rows={10}
-                placeholder="Enter USFM content here (optional)"
-              />
+              <>                <textarea
+                  className={errors.usfm ? "usfm-textarea error" : "usfm-textarea"}
+                  value={editedSettings.usfm || ''}
+                  onChange={(e) => handleSettingChange('usfm', e.target.value)}
+                  rows={10}
+                  placeholder="Enter USFM content here..."
+                />
+                {errors.usfm && (
+                  <div className="error-message">{errors.usfm}</div>
+                )}
+              </>
             )}
           </div>
         </div>
       </div>
-      
-      {/* Launch Button */}
+        {/* Launch Button */}
       <div className="launch-container">
-        {Object.keys(errors).length === 0 ? (
+        {!hasErrors && Object.keys(errors).length === 0 ? (
           <button className="launch-button" onClick={handleLaunch}>
             Launch Application
           </button>

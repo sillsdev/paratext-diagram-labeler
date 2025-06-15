@@ -1,0 +1,15 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Start Map Labeler Dev",
+			"type": "shell",
+			"command": "npm start",
+			"problemMatcher": [
+				"$eslint-stylish"
+			],
+			"group": "test",
+			"isBackground": true
+		}
+	]
+}
