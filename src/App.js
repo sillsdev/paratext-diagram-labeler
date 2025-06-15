@@ -70,6 +70,7 @@ function App() {
 
   // Handle onExit to return to pre-launch screen
   const handleExit = () => {
+    setSettings(settingsService.getSettings())
     setLaunched(false);
     setSettingsErrors({});
   };
