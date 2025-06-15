@@ -17,12 +17,12 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
     
     // Validate template folder
     if (!editedSettings.templateFolder) {
-      newErrors.templateFolder = 'Template folder is required';
+      newErrors.templateFolder = 'Please specify the location of the folder containing the map templates';
     } else {
       try {
         const exists = await window.electronAPI.statPath(editedSettings.templateFolder);
         if (!exists || !exists.isDirectory) {
-          newErrors.templateFolder = 'Template folder not found';
+          newErrors.templateFolder = 'Please specify the location of the folder containing the map templates';
         }
       } catch (error) {
         newErrors.templateFolder = `Error: ${error.message}`;
@@ -30,7 +30,9 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
     }
     
     // Validate project folder if present
-    if (editedSettings.projectFolder) {
+    if (!editedSettings.projectFolder) {
+        newErrors.projectFolder = 'Please specify the location of your Paratext project folder';
+    } else {
       try {
         const exists = await window.electronAPI.statPath(editedSettings.projectFolder);
         if (!exists || !exists.isDirectory) {
@@ -144,7 +146,6 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
             <h2>Paratext 9 standalone UX preview of the</h2>
             <h1>Scripture Map Labeler </h1>
             <h2>extension for Paratext 10</h2>
-            <p className="subheading">In the Paratext 10 extension, the settings below will come from Paratext.</p>
           </div>
         </div>
       </div>
@@ -160,13 +161,12 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
           </button>
         ) : (
           <div className="launch-error">
-            Please fix all errors before launching the application
+            Please provide the required settings below in order to launch the application.
           </div>
         )}
       </div>
 
       <div className="settings-container">
-        <h4>Application Settings</h4>
         
         {/* Template Folder Setting */}
         <div className="setting-row">
@@ -181,6 +181,7 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
                 value={editedSettings.templateFolder || ''} 
                 onChange={(e) => handleSettingChange('templateFolder', e.target.value)}
                 className={errors.templateFolder ? 'error' : ''}
+                spellCheck={false}
               />
               <button onClick={() => handleSelectFolder('templateFolder')}>Browse...</button>
             </div>
@@ -201,6 +202,7 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
                 value={editedSettings.projectFolder || ''} 
                 onChange={(e) => handleSettingChange('projectFolder', e.target.value)}
                 className={errors.projectFolder ? 'error' : ''}
+                spellCheck={false}
               />
               <button onClick={() => handleSelectFolder('projectFolder')}>Browse...</button>
             </div>
@@ -241,6 +243,7 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
               placeholder="Enter USFM content here..."
               style={{ whiteSpace: 'nowrap' }}
               wrap="off"
+              spellCheck={false}
             />
             {errors.usfm && (
               <div className="error-message">{errors.usfm}</div>

@@ -86,8 +86,8 @@
 }
 
 .status-icon.valid {
-  background-color: #2ecc71;
-  color: white;
+  background-color: #b8d533;
+  color: #4b5a28;
 }
 
 .status-icon.invalid {
@@ -124,7 +124,7 @@
 }
 
 .setting-input-group button {
-  background-color: #3498db;
+  background-color: #4b5a28;
   color: white;
   border: none;
   border-radius: 0 4px 4px 0;
@@ -135,7 +135,7 @@
 }
 
 .setting-input-group button:hover {
-  background-color: #2980b9;
+  background-color: #5d6e32;
 }
 
 select {
@@ -191,8 +191,8 @@ textarea {
 }
 
 .launch-button {
-  background-color: #27ae60;
-  color: white;
+  background-color: #b8d533;
+  color: #4b5a28;
   border: none;
   border-radius: 4px;
   padding: 12px 30px;
@@ -204,7 +204,7 @@ textarea {
 }
 
 .launch-button:hover {
-  background-color: #2ecc71;
+  background-color: #c8e258;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 

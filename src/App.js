@@ -34,24 +34,26 @@ function App() {
     
     // Check templateFolder exists
     if (!settingsToValidate.templateFolder) {
-      errors.templateFolder = 'Template folder is required';
+      errors.templateFolder = 'Please specify the location of the folder containing the map templates';
     } else {
       try {
         const exists = await window.electronAPI.statPath(settingsToValidate.templateFolder);
         if (!exists || !exists.isDirectory) {
-          errors.templateFolder = 'Template folder not found';
+          errors.templateFolder = 'Template folder not found. Please specify the location of the folder containing the map templates.';
         }
       } catch (error) {
         errors.templateFolder = `Error checking template folder: ${error.message}`;
       }
     }
     
-    // Check projectFolder exists if provided
-    if (settingsToValidate.projectFolder) {
+    // Check projectFolder exists 
+    if (!settingsToValidate.projectFolder) {
+      errors.projectFolder = 'Please specify the location of your Paratext project folder';
+    } else {
       try {
         const exists = await window.electronAPI.statPath(settingsToValidate.projectFolder);
         if (!exists || !exists.isDirectory) {
-          errors.projectFolder = 'Project folder not found';
+          errors.projectFolder = 'Project folder not found. Please specify the location of your Paratext project folder.';
         }
       } catch (error) {
         errors.projectFolder = `Error checking project folder: ${error.message}`;
