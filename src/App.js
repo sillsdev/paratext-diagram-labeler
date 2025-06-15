@@ -24,8 +24,6 @@ function App() {
     initialize();
   }, []); // Run once on component mount
 
-
-
   if (isLoadingSettings) {
     return null;
   }
@@ -34,8 +32,7 @@ function App() {
       <div className="pre-launch">
         <h2>Paratext 9 standalone preview of the</h2>
         <h1>Scripture Map Labeler extension for Paratext 10</h1>
-        <p>Template folder: {settings.templateFolder}</p>
-        <p>Project folder: {settings.projectFolder}</p>
+        <p>In the Paratext 10 extension, the settings below will come from the installation.</p>
         <p>
           <button onClick={() => {
             settingsService.saveSettings();  //TODO: do this when settings change
@@ -44,6 +41,8 @@ function App() {
             Launch App
           </button>
         </p>
+        <p>Template folder: {settings.templateFolder}</p>
+        <p>Project folder: {settings.projectFolder}</p>
       </div>
     )    
   }
