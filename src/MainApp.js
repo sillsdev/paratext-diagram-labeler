@@ -857,6 +857,50 @@ function MainApp({ settings, templateFolder, onExit }) {
   }, [settings, templateFolder, mapDef, lang, onExit]);
     // This effect is no longer needed as we directly use handleSaveAndExit in the component
   // We've removed the unused variables originalOnExit and enhancedOnExit
+    // Add cleanup effect to handle unmounting gracefully
+  useEffect(() => {
+    console.log("MainApp mounted - initializing");
+    
+    // Return a cleanup function that will run when MainApp is unmounted
+    return () => {
+      // Cancel any timers, requests or operations that could cause errors when unmounted
+      console.log("MainApp is unmounting - performing cleanup");
+      
+      // Create a dummy element to replace any map references
+      // This helps prevent Leaflet errors during unmounting
+      if (!window._mapCleanupDummy) {
+        window._mapCleanupDummy = document.createElement('div');
+      }
+      
+      // Create a global flag to prevent any Leaflet operations during unmounting
+      window._mapIsUnmounting = true;
+      
+      // Attempt to clean up any leaflet resources
+      if (window.L && window.L.DomUtil) {
+        try {
+          // Clean up any leaflet eventHandlers
+          window.L.DomEvent._globalEventHandlers = {};
+          
+          // Manually clear any Leaflet references still in the DOM
+          const leafletContainers = document.querySelectorAll('.leaflet-container');
+          leafletContainers.forEach(container => {
+            try {
+              container.outerHTML = '';
+            } catch (e) {
+              // Ignore errors
+            }
+          });
+        } catch (e) {
+          console.log("Error cleaning up Leaflet:", e);
+        }
+      }
+      
+      // Add a timeout to clear the unmounting flag
+      setTimeout(() => {
+        window._mapIsUnmounting = false;
+      }, 500);
+    };
+  }, []);
 
   return (
     <div className="app-container">      <div className="top-section" style={{ flex: `0 0 ${topHeight}%` }}>        <div className="map-pane" style={{ flex: `0 0 ${mapWidth}%` }}>          {mapPaneView === MAP_VIEW && mapDef.mapView && (

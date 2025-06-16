@@ -70,19 +70,38 @@ function App() {
     return errors;
   };  // Handle onExit to return to pre-launch screen
   const handleExit = async () => {
-    // First ensure the settingsService internal state is updated with our latest settings
-    await settingsService.updateSettings(settings);
-    
-    // Explicitly get settings from file to ensure we have the latest version
-    const currentSettings = await settingsService.loadSettings();
-    setSettings(currentSettings);
-    
-    // Re-validate settings to update error state
-    const errors = await validateSettings(currentSettings);
-    setSettingsErrors(errors);
-    
-    // Switch back to pre-launch mode
-    setLaunched(false);
+    try {
+      console.log("App: Preparing to exit MainApp");
+      
+      // First ensure the settingsService internal state is updated with our latest settings
+      await settingsService.updateSettings(settings);
+      console.log("App: Settings updated in service");
+      
+      // Explicitly get settings from file to ensure we have the latest version
+      const currentSettings = await settingsService.loadSettings();
+      console.log("App: Fresh settings loaded from disk");
+      
+      // Set the settings state first
+      setSettings(currentSettings);
+      
+      // Re-validate settings to update error state
+      const errors = await validateSettings(currentSettings);
+      setSettingsErrors(errors);
+      console.log("App: Settings validated");
+      
+      // Give the app time to process cleanup before unmounting
+      // This helps prevent issues with map cleanup
+      console.log("App: Scheduling unmount with delay");
+      setTimeout(() => {
+        // Switch back to pre-launch mode
+        console.log("App: Unmounting MainApp component now");
+        setLaunched(false);
+      }, 100);
+    } catch (error) {
+      console.error("Error during exit handling:", error);
+      // Force exit even if there was an error
+      setTimeout(() => setLaunched(false), 100);
+    }
   };
   
   // Handle settings changes
@@ -117,10 +136,9 @@ function App() {
       </div>
     );
   }
-
-  if (!launched) {
-    return (
-      <div className="app-container">
+  return (
+    <div className="app-container">
+      {!launched ? (
         <PreLaunchScreen 
           settings={settings}
           errors={settingsErrors}
@@ -128,18 +146,16 @@ function App() {
           onLaunch={handleLaunch}
           hasErrors={Object.keys(settingsErrors).length > 0}
         />
-      </div>
-    );   
-  }  
-  return (
-    <div className="app-container">
-      <div className="main-content">
-        <MainApp 
-          settings={settings} 
-          templateFolder={settings.templateFolder} 
-          onExit={handleExit}
-        />
-      </div>
+      ) : (
+        <div className="main-content">
+          <MainApp 
+            key="main-app-instance" // Adding a key forces recreation when re-rendering
+            settings={settings} 
+            templateFolder={settings.templateFolder} 
+            onExit={handleExit}
+          />
+        </div>
+      )}
     </div>
   );
 }
