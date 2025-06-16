@@ -21,7 +21,6 @@ export const COLLECTIONS = {
     // Additional collections as needed
 };
 
-// export const templateSubfolder = '_MapLabelerTemplates';
 
 // Helper functions for collections
 export function getAllCollectionIds() {

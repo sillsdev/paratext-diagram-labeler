@@ -122,12 +122,15 @@ function App() {
         />
       </div>
     );   
-  }
-  
+  }  
   return (
     <div className="app-container">
       <div className="main-content">
-        <MainApp settings={settings} onExit={handleExit}/>
+        <MainApp 
+          settings={settings} 
+          templateFolder={settings.templateFolder} 
+          onExit={handleExit}
+        />
       </div>
     </div>
   );

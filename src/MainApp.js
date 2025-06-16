@@ -156,8 +156,8 @@ function usfmFromMap(map, lang) {
   return usfm.replace(/\\/g, '\\');
 }
 
-function MainApp({ settings, onExit }) {
-  console.log('MainApp initialized with settings:', settings);
+function MainApp({ settings, templateFolder, onExit }) {
+  console.log('MainApp initialized with templateFolder prop:', templateFolder);
   
   const [isInitialized, setIsInitialized] = useState(false);
   const projectFolder = settings?.projectFolder;  
@@ -198,9 +198,9 @@ function MainApp({ settings, onExit }) {
           console.error("Template folder setting is missing", settings);
           throw new Error("Template folder setting is missing");
         }
-        
-        try {
-          await collectionManager.initializeAllCollections(settings.templateFolder);
+          try {
+          // Use the template folder prop instead of settings to ensure consistency
+          await collectionManager.initializeAllCollections(templateFolder);
           setIsInitialized(true);
           
         } catch (collectionError) {
@@ -208,7 +208,7 @@ function MainApp({ settings, onExit }) {
         }
     }    
     initializeColls();
-  }, []);
+  }, [settings, templateFolder]);
 
   useEffect(() => {
     if (!isInitialized) return; // Don't initialize map until collections are loaded
@@ -231,7 +231,7 @@ function MainApp({ settings, onExit }) {
     };
     
     initializeMap();
-  }, [isInitialized]);
+  }, [isInitialized, settings]);
 
   // Load term renderings from new project folder
   useEffect(() => {
@@ -791,18 +791,18 @@ function MainApp({ settings, onExit }) {
   const [imageError, setImageError] = useState(null);
 
   // Load the image via IPC when the map definition or settings change
-  useEffect(() => {
-    if (!memoizedMapDef.imgFilename || !settings || !isInitialized) return;
+  useEffect(() => {    if (!memoizedMapDef.imgFilename || !settings || !isInitialized) return;
     
     // Set to loading state
     setImageData(undefined);
     setImageError(null);
       
-    // Use the template folder from settings service for proper path handling
-    const templateFolder = settingsService.getTemplateFolder();
+    // Use the template folder passed as prop instead of from settings service
+    // This ensures we always use the latest version that's in memory
+    const folderPath = templateFolder || settings.templateFolder;
     // Normalize path separators for Windows
-    const imagePath = templateFolder.replace(/[/\\]$/, '') + '\\' + memoizedMapDef.imgFilename;
-    console.log('Loading image from path:', imagePath);
+    const imagePath = folderPath.replace(/[/\\]$/, '') + '\\' + memoizedMapDef.imgFilename;
+    console.log('Loading image from path:', imagePath, 'templatefolder', templateFolder);
     
     // Use the IPC function to load the image
     if (window.electronAPI) {
@@ -826,11 +826,11 @@ function MainApp({ settings, onExit }) {
       console.error('electronAPI not available');
       setImageData(null); // null indicates error
       setImageError('Electron API not available. Cannot load images.');
-    }  }, [memoizedMapDef.imgFilename, isInitialized]);
+    }  }, [memoizedMapDef.imgFilename, isInitialized, settings, templateFolder]);
   // For debugging - keep track of the original path with proper Windows path separators
-  const imgPath = memoizedMapDef.imgFilename ? 
-                  (settingsService.getTemplateFolder()) + '\\' + memoizedMapDef.imgFilename : '';
-  console.log('Image path:', imgPath);
+//   const imgPath = memoizedMapDef.imgFilename ? 
+                //   (settingsService.getTemplateFolder()) + '\\' + memoizedMapDef.imgFilename : '';
+//   console.log('Image path is based on settingsService.getTemplateFolder():', settingsService.getTemplateFolder());
 
   return (
     <div className="app-container">      <div className="top-section" style={{ flex: `0 0 ${topHeight}%` }}>        <div className="map-pane" style={{ flex: `0 0 ${mapWidth}%` }}>          {mapPaneView === MAP_VIEW && mapDef.mapView && (
