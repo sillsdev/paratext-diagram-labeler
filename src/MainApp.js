@@ -832,6 +832,32 @@ function MainApp({ settings, templateFolder, onExit }) {
                 //   (settingsService.getTemplateFolder()) + '\\' + memoizedMapDef.imgFilename : '';
 //   console.log('Image path is based on settingsService.getTemplateFolder():', settingsService.getTemplateFolder());
 
+  // Ensure template folder is saved correctly before exiting
+  const handleSaveAndExit = useCallback(async () => {
+    try {
+      // First generate updated USFM from current map
+      const updatedUsfm = usfmFromMap(mapDef, lang);
+        // Update settings with the latest template folder and USFM
+      const updatedSettings = {
+        ...settings,
+        templateFolder: templateFolder, // Use the correct path from props
+        usfm: updatedUsfm
+      };
+        // Save settings to disk through the SettingsService to ensure consistent state
+      await settingsService.updateSettings(updatedSettings);
+      console.log('Saved settings with correct templateFolder before exit:', templateFolder);
+      
+      // Then call the onExit function provided by the parent
+      onExit();
+    } catch (error) {
+      console.error('Error saving settings before exit:', error);
+      // Still exit even if saving fails
+      onExit();
+    }
+  }, [settings, templateFolder, mapDef, lang, onExit]);
+    // This effect is no longer needed as we directly use handleSaveAndExit in the component
+  // We've removed the unused variables originalOnExit and enhancedOnExit
+
   return (
     <div className="app-container">      <div className="top-section" style={{ flex: `0 0 ${topHeight}%` }}>        <div className="map-pane" style={{ flex: `0 0 ${mapWidth}%` }}>          {mapPaneView === MAP_VIEW && mapDef.mapView && (
             <>
@@ -928,7 +954,7 @@ function MainApp({ settings, templateFolder, onExit }) {
             lang={lang} // <-- pass lang
             setTermRenderings={setTermRenderings} // <-- pass setter
             onCreateRendering ={handleReplaceRendering} // <-- pass handler
-            onExit={onExit}
+            onExit={handleSaveAndExit}
           />
         </div>
       </div>

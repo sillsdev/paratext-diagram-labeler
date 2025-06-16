@@ -62,6 +62,14 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [handleKeyDown]); // Only depends on handleKeyDown which is memoized with useCallback
+  // Trigger validation when component mounts to ensure errors are displayed correctly
+  useEffect(() => {
+    // Only trigger if we have settings and onSettingsChange handler
+    if (settings && onSettingsChange) {
+      // Re-validate the settings by notifying the parent
+      onSettingsChange({...settings});
+    }
+  }, []); // Empty dependency array runs only on mount
   return (
     <div className="pre-launch-screen">
       <div className="pre-launch-header">

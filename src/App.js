@@ -68,13 +68,21 @@ function App() {
     }
     
     return errors;
-  };
-
-  // Handle onExit to return to pre-launch screen
-  const handleExit = () => {
-    setSettings(settingsService.getSettings())
+  };  // Handle onExit to return to pre-launch screen
+  const handleExit = async () => {
+    // First ensure the settingsService internal state is updated with our latest settings
+    await settingsService.updateSettings(settings);
+    
+    // Explicitly get settings from file to ensure we have the latest version
+    const currentSettings = await settingsService.loadSettings();
+    setSettings(currentSettings);
+    
+    // Re-validate settings to update error state
+    const errors = await validateSettings(currentSettings);
+    setSettingsErrors(errors);
+    
+    // Switch back to pre-launch mode
     setLaunched(false);
-    setSettingsErrors({});
   };
   
   // Handle settings changes

@@ -181,6 +181,16 @@ class SettingsService {  constructor() {
       return false;
     }
   }
+
+  async updateSettings(newSettings) {
+    if (!newSettings) return false;
+    
+    // Update the internal settings
+    this.settings = { ...newSettings };
+    
+    // Save to disk
+    return await this.saveSettings();
+  }
 }
 
 // Create singleton instance
