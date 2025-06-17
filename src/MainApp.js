@@ -157,7 +157,7 @@ function usfmFromMap(map, lang) {
 }
 
 function MainApp({ settings, templateFolder, onExit }) {
-  console.log('MainApp initialized with templateFolder prop:', templateFolder);
+//   console.log('MainApp initialized with templateFolder prop:', templateFolder);
   
   const [isInitialized, setIsInitialized] = useState(false);
   const projectFolder = settings?.projectFolder;  
@@ -767,31 +767,31 @@ function MainApp({ settings, templateFolder, onExit }) {
 
     return () => clearTimeout(handler);
   }, [termRenderings, projectFolder]);
+  
   // Save project folder to settings when it changes
-  useEffect(() => {
-    if (!isInitialized || !projectFolder) return;
-    
-    // Save the project folder to settings
-    settingsService.updateProjectFolder(projectFolder);
-    console.log('Auto-saved project folder to settings:', projectFolder);
-  }, [projectFolder, isInitialized]);
+//   useEffect(() => {
+//     if (!isInitialized || !projectFolder) return;
+//     settingsService.updateProjectFolder(projectFolder); // Save the project folder to settings
+//     console.log('Auto-saved project folder to settings:', projectFolder);
+//   }, [projectFolder, isInitialized]);
+
     // Save language to settings when it changes
   useEffect(() => {
     if (!isInitialized) return;
-    
-    // Save the language to settings
-    settingsService.updateLanguage(lang)
+    settingsService.updateLanguage(lang)  // Save the language to settings
       .then(() => console.log('Auto-saved language to settings:', lang))
       .catch(err => console.error('Error saving language to settings:', err));
   }, [lang, isInitialized]);
-    // State for storing the loaded image data URL
+
+  // State for storing the loaded image data URL
   // undefined = loading, null = error, string = loaded image data
   const [imageData, setImageData] = useState(undefined);
   // Add state to track specific image load error message
   const [imageError, setImageError] = useState(null);
 
   // Load the image via IPC when the map definition or settings change
-  useEffect(() => {    if (!memoizedMapDef.imgFilename || !settings || !isInitialized) return;
+  useEffect(() => {    
+    if (!memoizedMapDef.imgFilename || !settings || !isInitialized) return;
     
     // Set to loading state
     setImageData(undefined);

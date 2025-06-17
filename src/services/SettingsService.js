@@ -132,6 +132,7 @@ class SettingsService {  constructor() {
   }
 
   async updateLanguage(language) {
+    console.log('Updating language to:', language);
     if (this.settings) {
       this.settings.language = language;
       await this.saveSettings();
