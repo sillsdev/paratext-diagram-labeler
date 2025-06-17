@@ -1,5 +1,5 @@
 .pre-launch-screen {
-  transform: scale(0.85); /* Scale down by 15% */
+  /* transform: scale(0.85);  */
   transform-origin: top center; /* Keep the top centered when scaling */
   margin: 0 auto; /* Center horizontally */
   width: 117.65%; /* Compensate for the scaling (100/0.85 = 117.65) */
@@ -9,6 +9,13 @@
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+   /* margin: 20px 0; */
+  border-top: 1px solid #eaeaea;
+  padding-top: 20px;
+  max-height: 120vh; /* 60% of viewport height */
+  overflow-y: auto; /* Enable vertical scrolling */
+  overflow-x: hidden; /* Hide horizontal scrolling */
+
 }
 
 
@@ -60,6 +67,7 @@
   padding: 1.5rem;
   margin-bottom: 2rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  overflow-y: auto;
 }
 
 .settings-container h3 {
@@ -109,6 +117,7 @@
 .setting-content label {
   display: block;
   margin-bottom: 6px;
+  margin-right: 10px;
   font-weight: 500;
   color: #2c3e50;
 }
@@ -201,7 +210,7 @@ textarea {
 .launch-button {
   background-color: #b8d533;
   color: #4b5a28;
-  border: none;
+  border: solid 3px #4b5a28;
   border-radius: 4px;
   padding: 12px 30px;
   font-size: 16px;

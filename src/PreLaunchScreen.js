@@ -103,7 +103,7 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
             tabIndex="0"
             aria-label="Launch Application"
           >
-            Launch Application
+            Launch
           </button>
         ) : (
           <div className="launch-error">
@@ -113,6 +113,7 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
       </div>
 
       <div className="settings-container">
+
         
         {/* Template Folder Setting */}
         <div className="setting-row">
@@ -120,8 +121,9 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
             {errors.templateFolder ? <ErrorIcon /> : <CheckIcon />}
           </div>
           <div className="setting-content">
-            <label>Template Folder</label>
+            
             <div className="setting-input-group">
+              <label>Template Folder:</label>
               <input 
                 type="text" 
                 value={editedSettings.templateFolder || ''} 
@@ -141,8 +143,9 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
             {errors.projectFolder ? <ErrorIcon /> : <CheckIcon />}
           </div>
           <div className="setting-content">
-            <label>Project Folder</label>
+            
             <div className="setting-input-group">
+              <label>Project Folder:</label>
               <input 
                 type="text" 
                 value={editedSettings.projectFolder || ''} 
@@ -156,39 +159,23 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
           </div>
         </div>
         
-        {/* Language Setting 
-        <div className="setting-row">
-          <div className="setting-status">
-            <CheckIcon />
-          </div>
-          <div className="setting-content">
-            <label>Interface Language</label>
-            <select 
-              value={editedSettings.language || 'en'} 
-              onChange={(e) => handleSettingChange('language', e.target.value)}
-            >
-              <option value="en">English</option>
-              <option value="fr">Français</option>
-              <option value="es">Español</option>
-              <option value="pt">Português</option>
-            </select>
-          </div>
-        </div>*/}          
-        
+
         {/* Save Renderings To Setting */}
         <div className="setting-row">
           <div className="setting-status">
             <CheckIcon />
           </div>
           <div className="setting-content">
-            <label>Save Renderings To</label>
-            <select 
-              value={editedSettings.saveToDemo ? 'true' : 'false'} 
-              onChange={(e) => handleSettingChange('saveToDemo', e.target.value === 'true')}
-            >
-              <option value="true">TermRenderings-Demo.xml</option>
-              <option value="false">TermRenderings.xml</option>
-            </select>
+            <div className="setting-input-group">
+              <label>Save Renderings To:</label>
+              <select 
+                value={editedSettings.saveToDemo ? 'true' : 'false'} 
+                onChange={(e) => handleSettingChange('saveToDemo', e.target.value === 'true')}
+              >
+                <option value="true">TermRenderings-Demo.xml</option>
+                <option value="false">TermRenderings.xml</option>
+              </select>
+            </div>
           </div>
         </div>
         
