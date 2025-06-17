@@ -20,7 +20,8 @@ class SettingsService {  constructor() {
           language: "en",
           projectFolder: null,
           usfm: null,
-          templateFolder: null
+          templateFolder: null,
+          saveToDemo: true
         };
         
         // Save the default settings
@@ -135,6 +136,16 @@ class SettingsService {  constructor() {
     console.log('Updating language to:', language);
     if (this.settings) {
       this.settings.language = language;
+      await this.saveSettings();
+      return true;
+    }
+    return false;
+  }
+  
+  async updateSaveToDemo(saveToDemo) {
+    console.log('Updating saveToDemo to:', saveToDemo);
+    if (this.settings) {
+      this.settings.saveToDemo = saveToDemo;
       await this.saveSettings();
       return true;
     }

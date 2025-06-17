@@ -16,22 +16,26 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
   // Only use errors passed from parent
   const [errors, setErrors] = useState(propErrors || {});
   
+
   // Update local errors when prop errors change
   useEffect(() => {
     setErrors(propErrors || {});
   }, [propErrors]);  // Handle settings changes - send changes to parent for validation
+
+
   const handleSettingChange = useCallback((key, value) => {
     const updatedSettings = {
       ...editedSettings,
       [key]: value
     };
     setEditedSettings(updatedSettings);
-    
-    // Always notify parent component of changes for validation
+     // Always notify parent component of changes for validation
     if (onSettingsChange) {
       onSettingsChange(updatedSettings);
     }
   }, [editedSettings, onSettingsChange]);  // Handle folder picker - use useCallback to avoid recreation
+
+
   const handleSelectFolder = useCallback(async (key) => {
     try {
       const folder = await window.electronAPI.selectProjectFolder();
@@ -43,6 +47,8 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
       console.error('Error selecting folder:', error);
     }
   }, [handleSettingChange]);  // Save settings and launch app - use useCallback to prevent recreating on every render
+
+
   const handleLaunch = useCallback(() => {
     // Let the parent component handle all validation and saving
     // Just pass the current settings to launch
@@ -55,6 +61,7 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
     }
   }, [errors, hasErrors, handleLaunch]);
 
+
   // Add event listener for Enter key when component mounts
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);
@@ -62,6 +69,8 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [handleKeyDown]); // Only depends on handleKeyDown which is memoized with useCallback
+
+
   // Trigger validation when component mounts to ensure errors are displayed correctly
   useEffect(() => {
     // Only trigger if we have settings and onSettingsChange handler
@@ -70,6 +79,8 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
       onSettingsChange({...settings});
     }
   }, []); // Empty dependency array runs only on mount
+
+
   return (
     <div className="pre-launch-screen">
       <div className="pre-launch-header">
@@ -162,7 +173,26 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
               <option value="pt">Português</option>
             </select>
           </div>
-        </div>*/}          {/* USFM Setting */}
+        </div>*/}          
+        
+        {/* Save Renderings To Setting */}
+        <div className="setting-row">
+          <div className="setting-status">
+            <CheckIcon />
+          </div>
+          <div className="setting-content">
+            <label>Save Renderings To</label>
+            <select 
+              value={editedSettings.saveToDemo ? 'true' : 'false'} 
+              onChange={(e) => handleSettingChange('saveToDemo', e.target.value === 'true')}
+            >
+              <option value="true">TermRenderings-Demo.xml</option>
+              <option value="false">TermRenderings.xml</option>
+            </select>
+          </div>
+        </div>
+        
+        {/* USFM Setting */}
         <div className="setting-row">
           <div className="setting-status">
             {errors.usfm ? <ErrorIcon /> : (editedSettings.usfm ? <CheckIcon /> : null)}

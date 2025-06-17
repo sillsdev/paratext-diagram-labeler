@@ -215,10 +215,10 @@ async function termsObjectToXml(obj) {
   }
 }
 
-ipcMain.handle('load-term-renderings', async (event, projectFolder) => {
+ipcMain.handle('load-term-renderings', async (event, projectFolder, saveToDemo) => {
   try {
     const xmlFilePath = path.join(projectFolder, 'TermRenderings.xml');
-    const xmlFilePathDemo = path.join(projectFolder, 'TermRenderings-Demo.xml');
+    const xmlFilePathDemo = path.join(projectFolder, saveToDemo ? 'TermRenderings-Demo.xml' : 'TermRenderings.xml');
 
     let xmlFilePathToUse = xmlFilePath;
     if (fs.existsSync(xmlFilePathDemo)) {
@@ -239,9 +239,9 @@ ipcMain.handle('load-term-renderings', async (event, projectFolder) => {
   return {};
 });
 
-ipcMain.handle('save-term-renderings', async (event, projectFolder, data) => {
+ipcMain.handle('save-term-renderings', async (event, projectFolder, saveToDemo, data) => {
   try {
-    const filePath = path.join(projectFolder, 'TermRenderings-Demo.xml');
+    const filePath = path.join(projectFolder, saveToDemo ? 'TermRenderings-Demo.xml' : 'TermRenderings.xml');
     const xmlOutput = await termsObjectToXml(data);
     fs.writeFileSync(filePath, xmlOutput, 'utf8');
     console.log('Term renderings saved successfully.');

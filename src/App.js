@@ -34,12 +34,12 @@ function App() {
     
     // Check templateFolder exists
     if (!settingsToValidate.templateFolder) {
-      errors.templateFolder = 'Please to specify the location of the folder containing the map templates';
+      errors.templateFolder = 'Please specify the location of the folder containing the map templates';
     } else {
       try {
         const exists = await window.electronAPI.statPath(settingsToValidate.templateFolder);
         if (!exists || !exists.isDirectory) {
-          errors.templateFolder = 'Template folder not found. Please to specify the location of the folder containing the map templates.';
+          errors.templateFolder = 'Template folder not found. Please specify the location of the folder containing the map templates.';
         }
       } catch (error) {
         errors.templateFolder = `Error checking template folder: ${error.message}`;
@@ -48,12 +48,12 @@ function App() {
     
     // Check projectFolder exists 
     if (!settingsToValidate.projectFolder) {
-      errors.projectFolder = 'Please to specify the location of your Paratext project folder';
+      errors.projectFolder = 'Please specify the location of your Paratext project folder';
     } else {
       try {
         const exists = await window.electronAPI.statPath(settingsToValidate.projectFolder);
         if (!exists || !exists.isDirectory) {
-          errors.projectFolder = 'Project folder not found. Please to specify the location of your Paratext project folder.';
+          errors.projectFolder = 'Project folder not found. Please specify the location of your Paratext project folder.';
         }
       } catch (error) {
         errors.projectFolder = `Error checking project folder: ${error.message}`;

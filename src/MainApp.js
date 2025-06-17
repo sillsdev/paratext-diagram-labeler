@@ -239,8 +239,8 @@ function MainApp({ settings, templateFolder, onExit }) {
     
     const loadData = async () => {
       try {
-        const newTermRenderings = await electronAPI.loadTermRenderings(projectFolder);
-        console.log('[IPC] Loaded term renderings:', newTermRenderings, 'from folder:', projectFolder);
+        const newTermRenderings = await electronAPI.loadTermRenderings(projectFolder, settings.saveToDemo);
+        console.log('[IPC] Loaded term renderings:', newTermRenderings, 'from folder:', projectFolder, 'saveToDemo:', settings.saveToDemo);
         if (newTermRenderings && !newTermRenderings.error) {
           setTermRenderings(newTermRenderings);
           // Re-init locations from map and new termRenderings
@@ -759,8 +759,8 @@ function MainApp({ settings, templateFolder, onExit }) {
     if (!termRenderings) return;
 
     const handler = setTimeout(() => {
-      electronAPI.saveTermRenderings(projectFolder, termRenderings);
-      console.log('[IPC] Auto-saved termRenderings to disk:', projectFolder);
+      electronAPI.saveTermRenderings(projectFolder, settings.saveToDemo, termRenderings);
+      console.log('[IPC] Auto-saved termRenderings to disk:', projectFolder, 'saveToDemo:', settings.saveToDemo);
       // Optionally: show a "saved" indicator here
       // console.log('Auto-saved termRenderings to disk');
     }, 2000); // 2 seconds after last change
