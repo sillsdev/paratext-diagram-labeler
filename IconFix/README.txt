@@ -1,7 +1,7 @@
-Biblical Map App Icon Fix Tool
+Scripture Map App Icon Fix Tool
 ===========================
 
-This tool helps fix icon issues with the Biblical Map App executable.
+This tool helps fix icon issues with the Scripture Map App executable.
 
 Instructions:
 

@@ -1,17 +1,38 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import './App.css';
+import './MainApp.css';
 import uiStr from './data/ui-strings.json';
 import { MAP_VIEW, TABLE_VIEW, USFM_VIEW, STATUS_NO_RENDERINGS, STATUS_GUESSED } from './constants.js';
-import { collPlacenames } from './CollPlacenamesAndRefs.js';
+import { collectionManager, getCollectionIdFromTemplate } from './CollectionManager';
 import { getMapDef } from './MapData';
 import { inLang, statusValue } from './Utils.js';
+import { settingsService } from './services/SettingsService.js';
 
-export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings, mapDef, onBrowseMapTemplate, vernacularInputRef, renderingsTextareaRef, lang, setTermRenderings, onCreateRendering }) {
+export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLocation, renderings, isApproved, onRenderingsChange, onApprovedChange, termRenderings, locations, onSwitchView, mapPaneView, onSetView, onShowSettings, mapDef, onBrowseMapTemplate, vernacularInputRef, renderingsTextareaRef, lang, setTermRenderings, onCreateRendering, onExit }) {
   const [vernacular, setVernacular] = useState(locations[selLocation]?.vernLabel || '');
   const [localIsApproved, setLocalIsApproved] = useState(isApproved);
   const [localRenderings, setLocalRenderings] = useState(renderings);
   const [showTemplateInfo, setShowTemplateInfo] = useState(false);
-  const templateData = getMapDef(mapDef.template, collPlacenames) || {};
+  const [templateData, setTemplateData] = useState({});
+  
+  // Load template data when mapDef.template changes
+  useEffect(() => {
+    const loadTemplateData = async () => {
+      if (!mapDef.template) {
+        setTemplateData({});
+        return;
+      }
+      
+      try {        const collectionId = getCollectionIdFromTemplate(mapDef.template);
+        const data = await getMapDef(mapDef.template, collectionId);
+        setTemplateData(data || {});
+      } catch (error) {
+        console.error(`Error loading template data for ${mapDef.template}:`, error);
+        setTemplateData({});
+      }
+    };
+    
+    loadTemplateData();
+  }, [mapDef.template]);
 
   useEffect(() => {
     setVernacular(locations[selLocation]?.vernLabel || '');
@@ -43,14 +64,46 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
       });
     }
     return tally;
-  }, [locations, termRenderings]);
+  }, [locations]);
 
   // --- Button Row Handlers (implement as needed) ---
   const handleCancel = () => {
-    alert('At this point, the USFM text would be discarded and not saved.'); // TODO:
+    onExit(); 
   };
+  
+  // Helper function to generate USFM from the current map state // TODO: compare with usfmFromMap(). Could probably be consolidated.
+  const generateUsfm = () => {
+    console.log('Converting map to USFM:', mapDef);
+    // Reconstruct USFM string from current map state
+    let usfm = `\\zdiagram-s |template="${mapDef.template}"\\*\n`;
+    
+    // Always include the \fig line if present, and ensure it is in correct USFM format
+    if (mapDef.fig && !/^\\fig/.test(mapDef.fig)) {
+      usfm += `\\fig ${mapDef.fig}\\fig*\n`;
+    } else if (mapDef.fig) {
+      usfm += `${mapDef.fig}\n`;
+    }
+    
+    // Add each label as a \zlabel entry
+    locations.forEach(label => {
+      usfm += `\\zlabel |key="${label.mergeKey}" termid="${label.termId}" gloss="${inLang(label.gloss, lang)}" label="${label.vernLabel || ''}"\\*\n`;
+    });
+    
+    usfm += '\\zdiagram-e \\*';
+    // Remove unnecessary escaping for output
+    return usfm.replace(/\\/g, '\\');
+  };
+  
   const handleOk = () => {
-    alert("At this point, the USFM text would be saved to Paratext.");  // TODO: 
+    // Save current USFM to settings.usfm
+    const currentUsfm = generateUsfm();
+    console.log('OK! Generated USFM:', currentUsfm);
+    settingsService.updateUsfm(currentUsfm)
+      .then(() => {settingsService.saveSettings();})
+      .then(() => console.log('USFM saved to settings successfully'))
+      .catch(err => console.error('Error saving USFM to settings:', err));
+    // At this point, close the MainApplication and return to the pre-launch screen
+    onExit(); 
   };
   const handleSettings = () => {
     if (onShowSettings) onShowSettings();
@@ -58,7 +111,7 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
 
   // --- Template info/browse group ---
   // Access the template name from the global map object
-  const templateName = mapDef.template || '(' + inLang({en: 'no template'}, lang) + ')';
+  const templateName = mapDef.template || '(' + inLang(uiStr.noTemplate, lang) + ')';
 
   // Export to data merge file handler
   const handleExportDataMerge = async () => {
@@ -94,16 +147,43 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
     return (
       <div>
       {/* Button Row */}
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
-        <button onClick={onSwitchView} style={{ marginRight: 60 }}>Switch view</button>
-        <button onClick={handleCancel} style={{ marginRight: 8, width:80 }}>{inLang(uiStr.cancel, lang)}</button>
-        <button onClick={handleOk}  style={{ width:80 }}>{inLang(uiStr.ok, lang)}</button>
-        <button
-          onClick={handleExportDataMerge}
-          style={{ marginLeft: 16, width: 40, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#e3f2fd', border: '1px solid #1976d2', borderRadius: 4, cursor: 'pointer' }}
-          title={inLang(uiStr.export, lang)}
-        >
-          {/* Export icon: two stacked files with an arrow */}
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
+          <button
+            onClick={onSwitchView}
+            style={{ marginRight: 60, whiteSpace: 'nowrap' }}
+          >
+            {inLang(uiStr.switchView, lang)}
+          </button>
+          <button
+            onClick={handleCancel}
+            style={{ marginRight: 8, width: 80, whiteSpace: 'nowrap' }}
+          >
+            {inLang(uiStr.cancel, lang)}
+          </button>
+          <button
+            onClick={handleOk}
+            style={{ width: 80, whiteSpace: 'nowrap' }}
+          >
+            {inLang(uiStr.ok, lang)}
+          </button>
+          <button
+            onClick={handleExportDataMerge}
+            style={{
+          marginLeft: 16,
+          width: 40,
+          height: 32,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: '#e3f2fd',
+          border: '1px solid #1976d2',
+          borderRadius: 4,
+          cursor: 'pointer',
+          whiteSpace: 'nowrap'
+            }}
+            title={inLang(uiStr.export, lang)}
+          >
+            {/* Export icon: two stacked files with an arrow */}
           <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect x="4" y="4" width="10" height="14" rx="2" fill="#fff" stroke="#1976d2" strokeWidth="1.2"/>
             <rect x="8" y="2" width="10" height="14" rx="2" fill="#e3f2fd" stroke="#1976d2" strokeWidth="1.2"/>
@@ -130,11 +210,11 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
       </div>
       </div>
     );  }
-
   // Use the status from the location object which is already calculated in App.js
   // This is more reliable than recalculating it here
   const status = locations[selLocation]?.status || 0;
-  let transliteration = collPlacenames.getTransliteration(locations[selLocation]?.mergeKey);
+  const collectionId = getCollectionIdFromTemplate(mapDef.template);
+  let transliteration = collectionManager.getTransliteration(locations[selLocation]?.mergeKey, collectionId);
   if (transliteration) { transliteration = ` /${transliteration}/`; }
 
   return (
@@ -215,8 +295,8 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
               <line x1="6" y1="13" x2="12" y2="13" stroke="#1976d2" strokeWidth="1.2"/>
             </svg>
           </button>
-          <button onClick={handleCancel} style={{ marginRight: 8, height: 32, minWidth: 80, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{inLang(uiStr.cancel, lang)}</button>
-          <button onClick={handleOk} style={{ height: 32, minWidth: 80, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{inLang(uiStr.ok, lang)}</button>
+          <button onClick={handleCancel} style={{ marginRight: 8, height: 32, minWidth: 80, whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{inLang(uiStr.cancel, lang)}</button>
+          <button onClick={handleOk} style={{ height: 32, minWidth: 80, whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{inLang(uiStr.ok, lang)}</button>
           <div style={{ flex:  1 }} />
           <button
             onClick={handleSettings}
@@ -277,7 +357,7 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
           background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center'
         }}>
           <div style={{ background: 'white', borderRadius: 10, padding: 24, minWidth: 520, maxWidth: 900, boxShadow: '0 4px 24px #0008', position: 'relative' }}>
-            <button onClick={() => setShowTemplateInfo(false)} style={{ position: 'absolute', top:  8, right: 12, background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#888' }} title="Close">×</button>
+            <button onClick={() => setShowTemplateInfo(false)} style={{ position: 'absolute', top:  8, right: 12, background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#888' }} title={inLang(uiStr.close, lang)}>×</button>
             <h4 style={{ marginTop: 0}}>{templateName}</h4>
             {inLang(templateData.title, lang) && <p style={{ margin: '8px 0', fontWeight: 'bold', fontStyle: 'italic'}}>{inLang(templateData.title, lang)}</p>}
             {inLang(templateData.description, lang) && <p style={{ margin: '8px 0' }}>{inLang(templateData.description, lang)}</p>}
@@ -322,9 +402,8 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
         </table>
       </div>
       <div style={{ border: '1px solid #ccc', borderRadius: 6, marginBottom: 16, padding: 8, background: '#f9f9f9' }}>
-        <h2>{inLang(locations[selLocation]?.gloss, lang)}</h2>
-        <p><span style={{ fontStyle: 'italic' }}>({locations[selLocation]?.termId})  <span style={{ display: 'inline-block', width: 12 }} />{transliteration}</span><br />
-          {inLang(collPlacenames.getDefinition(locations[selLocation]?.mergeKey), lang)}
+        <h2>{inLang(locations[selLocation]?.gloss, lang)}</h2>        <p><span style={{ fontStyle: 'italic' }}>({locations[selLocation]?.termId})  <span style={{ display: 'inline-block', width: 12 }} />{transliteration}</span><br />
+          {inLang(collectionManager.getDefinition(locations[selLocation]?.mergeKey, collectionId), lang)}
         </p>
         <div className="vernacularGroup" style={{ backgroundColor: statusValue[status].bkColor, margin: '8px', padding: '8px', border: '1px solid black', borderRadius: '0.7em' }}>
           <input

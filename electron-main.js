@@ -4,9 +4,78 @@ const { ipcMain, dialog } = require('electron');
 const fs = require('fs');
 const path = require('path');
 const xml2js = require('xml2js');
-// const usfm = require('usfm-js');
 
 initialize();
+
+// Add IPC handler for loading images
+ipcMain.handle('load-image', async (event, imagePath) => {
+  try {
+    console.log(`[IPC] Attempting to load image from: ${imagePath}`);
+    
+    // Check if path is valid
+    if (!imagePath) {
+      console.error('[IPC] Image path is empty or invalid');
+      throw new Error('Image path is empty or invalid');
+    }
+    
+    // Normalize path to handle any potential issues with slashes
+    const normalizedPath = path.normalize(imagePath);
+    console.log(`[IPC] Normalized image path: ${normalizedPath}`);
+    
+    // Check if file exists with more detailed error
+    try {
+      const stats = fs.statSync(normalizedPath);
+      if (!stats.isFile()) {
+        console.error(`[IPC] Path exists but is not a file: ${normalizedPath}`);
+        throw new Error(`Path exists but is not a file: ${normalizedPath}`);
+      }
+    } catch (err) {
+      console.error(`[IPC] Image not found at path: ${normalizedPath}`, err.message);
+      throw new Error(`Image file not found: ${path.basename(normalizedPath)}`);
+    }
+    
+    // Read the file and convert to base64
+    const buffer = await fs.promises.readFile(normalizedPath);
+    
+    // Verify that we have actual data
+    if (!buffer || buffer.length === 0) {
+      console.error(`[IPC] Read zero bytes from file: ${normalizedPath}`);
+      throw new Error(`Image file is empty: ${path.basename(normalizedPath)}`);
+    }
+    
+    // Determine mime type based on file extension
+    const ext = path.extname(normalizedPath).toLowerCase();
+    let mimeType = 'image/jpeg'; // Default
+    
+    switch(ext) {
+      case '.png':
+        mimeType = 'image/png';
+        break;
+      case '.gif':
+        mimeType = 'image/gif';
+        break;
+      case '.svg':
+        mimeType = 'image/svg+xml';
+        break;
+      case '.webp':
+        mimeType = 'image/webp';
+        break;
+      case '.bmp':
+        mimeType = 'image/bmp';
+        break;
+      default:
+        // Use default image/jpeg for all other cases
+        break;
+    }
+    
+    const dataUrl = `data:${mimeType};base64,${buffer.toString('base64')}`;
+    console.log(`[IPC] Successfully loaded image (${buffer.length} bytes) from: ${normalizedPath}`);
+    return dataUrl;
+  } catch (error) {
+    console.error(`[IPC] Error loading image: ${imagePath}`, error);
+    return null;
+  }
+});
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -305,6 +374,81 @@ ipcMain.handle('get-filtered-verses', async (event, projectFolder, curRefs) => {
   } catch (e) {
     console.log('Error getting filtered verses:', e);
     return { error: e.message };
+  }
+});
+
+// Function to load settings
+function loadFromJson(jsonPath, jsonFilename) {
+  if (!jsonPath) {
+    jsonPath = app.getPath('userData');
+  }
+  const jsonFilePath = path.join(jsonPath, jsonFilename);
+  console.log('Loading from:', jsonFilePath);
+  try {
+    if (fs.existsSync(jsonFilePath)) {
+      console.log('File exists, reading content');
+      const data = fs.readFileSync(jsonFilePath, 'utf8');
+      const parsed = JSON.parse(data);
+      const entryCount = parsed ? Object.keys(parsed).length : 0;
+      console.log(`Successfully parsed JSON with ${entryCount} entries`);
+      return parsed;
+    } else {
+      console.error(`File not found: ${jsonFilePath}`);
+    }
+  } catch (error) {
+    console.error('Failed to load JSON file:', error);
+  }
+  return {}; // Return empty settings if file doesn't exist or has an error
+}
+
+// Function to save settings
+function saveToJson(jsonPath, jsonFilename, settings) {
+  if (!jsonPath) {
+    jsonPath = app.getPath('userData');
+  }
+  const jsonFilePath = path.join(jsonPath, jsonFilename);
+  console.log('Saving settings to:', jsonFilePath);
+  try {
+    fs.writeFileSync(jsonFilePath, JSON.stringify(settings, null, 2), 'utf8');
+    return true;
+  } catch (error) {
+    console.error('Failed to save settings:', error);
+    return false;
+  }
+}
+
+// Expose these functions via IPC
+ipcMain.handle('load-from-json', async (event, jsonPath, jsonFilename) => {
+  return loadFromJson(jsonPath, jsonFilename);
+});
+
+ipcMain.handle('save-to-json', async (event, jsonPath, jsonFilename, settings) => {
+  return saveToJson(jsonPath, jsonFilename, settings);
+});
+
+// Handler to check path status
+ipcMain.handle('stat-path', async (event, filePath) => {
+  try {
+    // Normalize the path for Windows
+    const normalizedPath = path.normalize(filePath);
+    console.log(`Checking if path exists: ${normalizedPath}`);
+    
+    const stats = fs.statSync(normalizedPath);
+    const isDir = stats.isDirectory();
+    console.log(`Path ${normalizedPath} exists and isDirectory: ${isDir}`);
+    
+    return {
+      exists: true,
+      isFile: stats.isFile(),
+      isDirectory: isDir, // Boolean value, not a function
+      size: stats.size,
+      modifiedTime: stats.mtime
+    };
+  } catch (error) {
+    return {
+      exists: false,
+      error: error.message
+    };
   }
 });
 

@@ -5,10 +5,13 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'leaflet/dist/leaflet.css';
+// import { InitializationProvider } from './InitializationProvider';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
+  
     <App />
+  
 );
 
 // If you want to start measuring performance in your app, pass a function

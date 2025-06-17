@@ -1,19 +1,23 @@
-const allMapData = require('./data/smr-map-defs.json');
+import { collectionManager, getCollectionIdFromTemplate } from './CollectionManager';
 
-function getMapDef(mapId, collPlacenames) {
-    // TODO: Dynamically import the JSON file and return the requested map data
-    try {
-        const mapData = allMapData[mapId];
-        if (!mapData) return null;
-        if (Array.isArray(mapData.labels)) {
-            mapData.labels = mapData.labels.map((label, idx) => ({ ...label, idx, gloss: collPlacenames.getGloss(label.mergeKey) }));
-        }
-        mapData.template = mapId;
-        return { ...mapData };
-    } catch (e) {
-        console.error('Failed to load smr-map-defs.json:', e);
+/**
+ * Get map definition for a specific template name
+ * @param {string} templateName - The template name to look up
+ * @param {string} [collectionId] - Optional collection ID (if not provided, will be extracted from templateName)
+ * @returns {Object|null} - The map definition or null if not found
+ */
+function getMapDef(templateName, collectionId = null) {
+    if (!templateName) {
+        console.warn('Empty template name provided to getMapDef');
         return null;
     }
+    
+    // Extract collection ID from template if not provided
+    if (!collectionId) {
+        collectionId = getCollectionIdFromTemplate(templateName);
+    }
+    
+    return collectionManager.getMapDef(templateName, collectionId);
 }
 
 export { getMapDef };

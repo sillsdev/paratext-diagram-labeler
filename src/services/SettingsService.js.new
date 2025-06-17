@@ -1,0 +1,176 @@
+// filepath: c:\git\mapLabelerExt\biblical-map-app\src\services\SettingsService.js
+// src/services/SettingsService.js
+import { DEFAULT_PROJECTS_FOLDER } from '../demo.js';
+import { templateSubfolder } from '../CollectionManager.js';
+class SettingsService {  constructor() {
+    this.settings = null;
+    this.isLoaded = false;
+    this.loadError = null;
+  }
+
+  async loadSettings() {
+    try {
+      // Try to load settings file
+      const settings = await window.electronAPI.loadFromJson(null, "MapLabelerSettings.json");
+      
+      // If settings were loaded successfully
+      if (settings && Object.keys(settings).length > 0) {
+        this.settings = settings;
+        console.log("Settings loaded:", settings);
+      } else {
+        // Create default settings with templateFolder property
+        this.settings = {
+          paratextProjects: DEFAULT_PROJECTS_FOLDER,
+          language: "en",
+          lastProjectFolder: null,
+          lastUsfm: null,
+          templateFolder: `${DEFAULT_PROJECTS_FOLDER}/${templateSubfolder}` // Default template folder
+        };
+        
+        // Save the default settings
+        await this.saveSettings();
+        console.log("Created default settings:", this.settings);
+      }
+        // Validate the template folder exists
+      const folderExists = await this.folderExists(this.settings.templateFolder || 
+                                                 `${this.settings.paratextProjects}/${templateSubfolder}`);      
+      if (!folderExists) {
+        this.loadError = `Template folder not found: ${this.settings.templateFolder}`;
+        console.warn(this.loadError);
+        
+        // Prompt user to select the template folder
+        alert("Please identify the location of the templates folder.\n\nThis folder should contain the map template collection(s) you wish to use.");
+        const selectedFolder = await window.electronAPI.selectProjectFolder();
+        if (selectedFolder && await this.folderExists(selectedFolder)) {
+          this.settings.templateFolder = selectedFolder;
+          await this.saveSettings();
+          console.log("Updated template folder:", this.settings.templateFolder);
+        } else {
+          throw new Error("Invalid template folder selected.");
+        }
+      }
+      
+        // Validate the specific project folder exists
+      if (this.settings.lastProjectFolder) {
+        const projectExists = await this.folderExists(this.settings.lastProjectFolder);
+        if (!projectExists) {
+          console.warn(`Last project folder not found: ${this.settings.lastProjectFolder}`);
+          this.settings.lastProjectFolder = null;
+          await this.saveSettings();
+        }
+      }
+      
+      this.isLoaded = true;
+      return this.settings;
+    } catch (error) {
+      this.loadError = error.message || "Failed to load settings";
+      console.error("Error loading settings:", error);
+      this.isLoaded = false;
+      throw error;
+    }
+  }
+  // Helper to check if a folder exists
+  async folderExists(path) {
+    if (!path) return false;
+    
+    try {
+      // Use path.normalize to fix slashes
+      const stat = await window.electronAPI.statPath(path);
+      return stat && stat.isDirectory();
+    } catch {
+      return false;
+    }
+  }
+
+  async saveSettings() {
+    if (!this.settings) return false;
+    
+    try {
+      await window.electronAPI.saveToJson(null, "MapLabelerSettings.json", this.settings);
+      return true;
+    } catch (error) {
+      console.error("Error saving settings:", error);
+      return false;
+    }
+  }
+
+  isSettingsLoaded() {
+    return this.isLoaded;
+  }
+
+  getSettings() {
+    return this.settings;
+  }
+
+  getParatextProjectsFolder() {
+    return this.settings?.paratextProjects || DEFAULT_PROJECTS_FOLDER;
+  }
+
+  getLastProjectFolder() {
+    return this.settings?.lastProjectFolder || null;
+  }
+  
+  // Add getter for templateFolder
+  getTemplateFolder() {
+    return this.settings?.templateFolder || `${this.getParatextProjectsFolder()}/${templateSubfolder}`;
+  }
+  
+  // Get language setting (defaults to 'en')
+  getLanguage() {
+    return this.settings?.language || 'en';
+  }
+  
+  // Get last USFM
+  getLastUsfm() {
+    return this.settings?.lastUsfm || null;
+  }
+
+  async updateParatextProjectsFolder(folder) {
+    if (this.settings) {
+      this.settings.paratextProjects = folder;
+      await this.saveSettings();
+      return true;
+    }
+    return false;
+  }
+
+  async updateLastProjectFolder(folder) {
+    if (this.settings) {
+      this.settings.lastProjectFolder = folder;
+      await this.saveSettings();
+      return true;
+    }
+    return false;
+  }
+
+  async updateLanguage(language) {
+    if (this.settings) {
+      this.settings.language = language;
+      await this.saveSettings();
+      return true;
+    }
+    return false;
+  }
+  
+  async updateLastUsfm(usfm) {
+    if (this.settings) {
+      this.settings.lastUsfm = usfm;
+      await this.saveSettings();
+      return true;
+    }
+    return false;
+  }
+  
+  // Add setter for templateFolder
+  async updateTemplateFolder(folder) {
+    if (this.settings) {
+      this.settings.templateFolder = folder;
+      await this.saveSettings();
+      return true;
+    }
+    return false;
+  }
+}
+
+// Create singleton instance
+export const settingsService = new SettingsService();
