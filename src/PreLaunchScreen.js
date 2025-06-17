@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import './PreLaunchScreen.css';
 
 // Icons for valid/invalid status
@@ -53,22 +53,16 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
     // Let the parent component handle all validation and saving
     // Just pass the current settings to launch
     onLaunch(editedSettings);
-  }, [editedSettings, onLaunch]);
-  // Handle Enter key press - use useCallback to ensure the function doesn't change on every render
-  const handleKeyDown = useCallback((e) => {
-    if (e.key === 'Enter' && !hasErrors && Object.keys(errors).length === 0) {
-      handleLaunch();
-    }
-  }, [errors, hasErrors, handleLaunch]);
-
-
-  // Add event listener for Enter key when component mounts
+  }, [editedSettings, onLaunch]);  // Create a ref for the launch button
+  const launchButtonRef = useRef(null);
+  
+  // Focus the launch button when component mounts
   useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [handleKeyDown]); // Only depends on handleKeyDown which is memoized with useCallback
+    // Set focus to launch button when the component mounts
+    if (launchButtonRef.current && !hasErrors && Object.keys(errors).length === 0) {
+      launchButtonRef.current.focus();
+    }
+  }, [errors, hasErrors]);
 
 
   // Trigger validation when component mounts to ensure errors are displayed correctly
@@ -95,13 +89,14 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
           </div>
         </div>
       </div>
-        {/* Launch Button */}
-      <div className="launch-container">        {!hasErrors && Object.keys(errors).length === 0 ? (
+        {/* Launch Button */}      <div className="launch-container">        {!hasErrors && Object.keys(errors).length === 0 ? (
           <button 
             className="launch-button" 
             onClick={handleLaunch}
             tabIndex="0"
             aria-label="Launch Application"
+            ref={launchButtonRef}
+            autoFocus
           >
             Launch
           </button>
