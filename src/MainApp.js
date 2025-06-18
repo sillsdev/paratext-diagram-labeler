@@ -215,9 +215,10 @@ function MainApp({ settings, templateFolder, onExit }) {
     
     const initializeMap = async () => {
       try {
+        if (!settings.usfm) throw new Error("No USFM provided in settings");
         // Use the last USFM from settings if available, otherwise use the demo USFM
-        const usfmToUse = settings?.usfm || INITIAL_USFM;
-        console.log('Initializing map from USFM:', settings?.usfm ? 'using saved USFM' : 'using demo USFM');
+        const usfmToUse = settings.usfm;
+        console.log('Initializing map from USFM:', settings.usfm );
         
         // Initialize from USFM
         const initialMap = await mapFromUsfm(usfmToUse);
@@ -227,6 +228,7 @@ function MainApp({ settings, templateFolder, onExit }) {
       } catch (error) {
         console.error("Error initializing map:", error);
         // Keep using empty map if initialization fails
+        handleBrowseMapTemplate();
       }
     };
     
@@ -469,7 +471,9 @@ function MainApp({ settings, templateFolder, onExit }) {
           },
         ],
         multiple: false,
-      });      if (fileHandle) {
+      });      
+      let figFilename = '';
+      if (fileHandle) {
         // Extract template name from filename and log the process
         console.log("Original file name:", fileHandle.name);
         let newTemplateBase = fileHandle.name.replace(/\..*$/, ''); // Remove file extension
@@ -501,9 +505,15 @@ function MainApp({ settings, templateFolder, onExit }) {
           }
         } else if (fileHandle.name.endsWith('.jpg') || fileHandle.name.endsWith('.jpeg')) {
           // Handle map image file
+          figFilename = fileHandle.name;
         } else {
           return;
-        }        // Add diagnostic logs to see what's happening
+        }        
+        if (!figFilename) {
+          // If no figFilename, use the template base name as figFilename 
+          figFilename = newTemplateBase + '.jpg'; // Default to .jpg
+        }
+        // Add diagnostic logs to see what's happening
         console.log("Template base name:", newTemplateBase);
         const collectionId = getCollectionIdFromTemplate(newTemplateBase);
         console.log("Detected collection ID:", collectionId);
@@ -527,7 +537,7 @@ function MainApp({ settings, templateFolder, onExit }) {
         // Set mapDef and locations 
         setMapDef({
           template: newTemplateBase,
-          fig: foundTemplate.fig || '',
+          fig: '\\fig | src="' + figFilename + '" size="span" ref=""\\fig*',
           mapView: true,
           imgFilename: foundTemplate.imgFilename,
           width: foundTemplate.width,

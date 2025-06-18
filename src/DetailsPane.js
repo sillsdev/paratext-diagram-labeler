@@ -22,7 +22,8 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
         return;
       }
       
-      try {        const collectionId = getCollectionIdFromTemplate(mapDef.template);
+      try {        
+        const collectionId = getCollectionIdFromTemplate(mapDef.template);
         const data = await getMapDef(mapDef.template, collectionId);
         setTemplateData(data || {});
       } catch (error) {
@@ -41,7 +42,7 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
   }, [selLocation, isApproved, renderings, locations]);
 
   useEffect(() => {
-    if (vernacularInputRef && vernacularInputRef.current && mapPaneView === 0) {
+    if (vernacularInputRef && vernacularInputRef.current && mapPaneView === MAP_VIEW) {
       vernacularInputRef.current.focus();
     }
   }, [selLocation, mapPaneView, vernacularInputRef]);
@@ -105,6 +106,7 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
     // At this point, close the MainApplication and return to the pre-launch screen
     onExit(); 
   };
+
   const handleSettings = () => {
     if (onShowSettings) onShowSettings();
   };
