@@ -264,7 +264,9 @@ function MainApp({ settings, templateFolder, onExit }) {
     };
     
     loadData();
-  }, [projectFolder, mapDef, isInitialized, settings.saveToDemo]);  // setExtractedVerses when projectFolder or mapDef.labels change
+  }, [projectFolder, mapDef, isInitialized, settings.saveToDemo]);  
+  
+  // setExtractedVerses when projectFolder or mapDef.labels change
   useEffect(() => {
     if (!projectFolder || !mapDef.labels?.length || !isInitialized) return;
     

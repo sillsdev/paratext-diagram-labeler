@@ -110,7 +110,6 @@ function App() {
       console.error("Cannot launch with validation errors:", errors);
       return;
     }
-    
     // Update settings
     await settingsService.updateSettings(updatedSettings);
     setLaunched(true);
@@ -133,7 +132,6 @@ function App() {
           errors={settingsErrors}
           onSettingsChange={handleSettingsChange}
           onLaunch={handleLaunch}
-          hasErrors={Object.keys(settingsErrors).length > 0}
         />
       ) : (
         <div className="main-content">

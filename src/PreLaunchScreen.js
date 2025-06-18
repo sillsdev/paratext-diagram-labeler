@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './PreLaunchScreen.css';
 
 // Icons for valid/invalid status
@@ -10,18 +10,9 @@ const ErrorIcon = () => (
   <span className="status-icon invalid">✗</span>
 );
 
-const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLaunch, hasErrors }) => {  
+const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch }) => {  
   // Use local state for editing but rely on parent for validated errors
   const [editedSettings, setEditedSettings] = useState({ ...settings });
-  // Only use errors passed from parent
-  const [errors, setErrors] = useState(propErrors || {});
-  
-
-  // Update local errors when prop errors change
-  useEffect(() => {
-    setErrors(propErrors || {});
-  }, [propErrors]);  // Handle settings changes - send changes to parent for validation
-
 
   const handleSettingChange = useCallback((key, value) => {
     const updatedSettings = {
@@ -53,26 +44,17 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
     // Let the parent component handle all validation and saving
     // Just pass the current settings to launch
     onLaunch(editedSettings);
-  }, [editedSettings, onLaunch]);  // Create a ref for the launch button
-  const launchButtonRef = useRef(null);
+  }, [editedSettings, onLaunch]);  
   
-  // Focus the launch button when component mounts
-  // useEffect(() => {
-  //   // Set focus to launch button when the component mounts
-  //   if (launchButtonRef.current && !hasErrors && Object.keys(errors).length === 0) {
-  //     launchButtonRef.current.focus();
-  //   }
-  // }, []);
-
-
+  
   // Trigger validation when component mounts to ensure errors are displayed correctly
-  useEffect(() => {
-    // Only trigger if we have settings and onSettingsChange handler
-    if (settings && onSettingsChange) {
-      // Re-validate the settings by notifying the parent
-      onSettingsChange({...settings});
-    }
-  }, []); // Empty dependency array runs only on mount
+  // useEffect(() => {
+  //   // Only trigger if we have settings and onSettingsChange handler
+  //   if (settings && onSettingsChange) {
+  //     // Re-validate the settings by notifying the parent
+  //     onSettingsChange({...settings});
+  //   }
+  // }, []); // Empty dependency array runs only on mount
 
 
   return (
@@ -83,19 +65,21 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
             <img src="/assets/logo.svg" alt="Scripture Map Labeler Logo" className="app-logo" />
           </div>
           <div className="header-text">
-            <h2>Paratext 9 standalone UX preview of the</h2>
+            <h2>Paratext 9 standalone proposed UX preview of the</h2>
             <h1>Scripture Map Labeler </h1>
             <h2>extension for Paratext 10</h2>
           </div>
         </div>
       </div>
-        {/* Launch Button */}      <div className="launch-container">        {!hasErrors && Object.keys(errors).length === 0 ? (
+        {/* Launch Button */}      
+        <div className="launch-container">        
+          {Object.keys(errors).length === 0 ? (
           <button 
             className="launch-button" 
             onClick={handleLaunch}
             tabIndex="0"
             aria-label="Launch Application"
-            ref={launchButtonRef}
+            // ref={launchButtonRef}
           >
             Launch
           </button>
@@ -107,7 +91,6 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
       </div>
 
       <div className="settings-container">
-
         
         {/* Template Folder Setting */}
         <div className="setting-row">
@@ -197,8 +180,9 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
             )}
           </div>
         </div>
-      </div>
-    </div>
+
+      </div> {/* settings-container */}
+    </div> /* pre-launch-screen */
   );
 };
 
