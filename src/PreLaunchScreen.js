@@ -57,12 +57,12 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
   const launchButtonRef = useRef(null);
   
   // Focus the launch button when component mounts
-  useEffect(() => {
-    // Set focus to launch button when the component mounts
-    if (launchButtonRef.current && !hasErrors && Object.keys(errors).length === 0) {
-      launchButtonRef.current.focus();
-    }
-  }, [errors, hasErrors]);
+  // useEffect(() => {
+  //   // Set focus to launch button when the component mounts
+  //   if (launchButtonRef.current && !hasErrors && Object.keys(errors).length === 0) {
+  //     launchButtonRef.current.focus();
+  //   }
+  // }, []);
 
 
   // Trigger validation when component mounts to ensure errors are displayed correctly
@@ -96,7 +96,6 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
             tabIndex="0"
             aria-label="Launch Application"
             ref={launchButtonRef}
-            autoFocus
           >
             Launch
           </button>
@@ -181,8 +180,9 @@ const PreLaunchScreen = ({ settings, errors: propErrors, onSettingsChange, onLau
           </div>
           <div className="setting-content">
             <div className="setting-header">
-              <label>USFM Content</label>
-            </div>            <textarea
+              <label>USFM Content:</label>
+            </div>            
+            <textarea
               className={errors.usfm ? "usfm-textarea error" : "usfm-textarea"}
               value={editedSettings.usfm || ''}
               onChange={(e) => handleSettingChange('usfm', e.target.value)}
