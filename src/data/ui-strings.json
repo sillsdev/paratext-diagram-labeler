@@ -46,7 +46,7 @@
       } 
     },      
     { 
-      "text": { "en": "Guessed", "es": "Adivinado", "fr": "Deviné", "ne": "अनुमान गरिएको" }, 
+      "text": { "en": "Guessed", "es": "Adivinada", "fr": "Deviné", "ne": "अनुमान गरिएको" }, 
       "help": { 
         "en": "This label matches a guessed rendering which must be approved.", 
         "es": "Esta etiqueta coincide con una renderización adivinada que debe ser aprobada.", 
