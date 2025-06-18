@@ -99,7 +99,7 @@ export default function DetailsPane({ selLocation, onUpdateVernacular, onNextLoc
     const currentUsfm = generateUsfm();
     console.log('OK! Generated USFM:', currentUsfm);
     settingsService.updateUsfm(currentUsfm)
-      .then(() => {settingsService.saveSettings();})
+      // .then(() => {settingsService.saveSettings();})
       .then(() => console.log('USFM saved to settings successfully'))
       .catch(err => console.error('Error saving USFM to settings:', err));
     // At this point, close the MainApplication and return to the pre-launch screen

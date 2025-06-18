@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect  } from 'react';
 import { settingsService } from './services/SettingsService';
 import MainApp from './MainApp';
 import PreLaunchScreen from './PreLaunchScreen';
@@ -8,7 +8,7 @@ import './App.css';
 function App() {
   const [isLoadingSettings, setIsLoadingSettings] = useState(true);
   const [launched, setLaunched] = useState(false);
-  const [settings, setSettings] = useState(null);
+  // const [settings, setSettings] = useState(null);
   const [settingsErrors, setSettingsErrors] = useState({});
 
   // Load settings when component mounts
@@ -16,12 +16,11 @@ function App() {
     async function initialize() {
       console.log("Loading application settings...");
       const newSettings = await settingsService.loadSettings();
-      setSettings(newSettings);
+      // setSettings(newSettings);
       
       // Validate settings
       const errors = await validateSettings(newSettings);
       setSettingsErrors(errors);
-      
       setIsLoadingSettings(false);        
     }
     
@@ -68,24 +67,15 @@ function App() {
     }
     
     return errors;
-  };  // Handle onExit to return to pre-launch screen
+  };  
+  
+  // Handle onExit to return to pre-launch screen
   const handleExit = async () => {
     try {
       console.log("App: Preparing to exit MainApp");
       
-      // First ensure the settingsService internal state is updated with our latest settings
-      await settingsService.updateSettings(settings);
-      console.log("App: Settings updated in service");
-      
-      // Explicitly get settings from file to ensure we have the latest version
-      const currentSettings = await settingsService.loadSettings();
-      console.log("App: Fresh settings loaded from disk");
-      
-      // Set the settings state first
-      setSettings(currentSettings);
-      
       // Re-validate settings to update error state
-      const errors = await validateSettings(currentSettings);
+      const errors = await validateSettings(settingsService.getSettings());
       setSettingsErrors(errors);
       console.log("App: Settings validated");
       
@@ -106,10 +96,10 @@ function App() {
   
   // Handle settings changes
   const handleSettingsChange = async (newSettings) => {
-    setSettings(newSettings);
+    // setSettings(newSettings);
+    await settingsService.updateSettings(newSettings);
     const errors = await validateSettings(newSettings);
     setSettingsErrors(errors);
-    await settingsService.saveSettings(newSettings);
   };
 
   // Handle launching the app
@@ -122,8 +112,7 @@ function App() {
     }
     
     // Update settings
-    await settingsService.saveSettings(updatedSettings);
-    setSettings(updatedSettings);
+    await settingsService.updateSettings(updatedSettings);
     setLaunched(true);
   };
 
@@ -140,7 +129,7 @@ function App() {
     <div className="app-container">
       {!launched ? (
         <PreLaunchScreen 
-          settings={settings}
+          settings={settingsService.getSettings()}
           errors={settingsErrors}
           onSettingsChange={handleSettingsChange}
           onLaunch={handleLaunch}
@@ -150,8 +139,8 @@ function App() {
         <div className="main-content">
           <MainApp 
             key="main-app-instance" // Adding a key forces recreation when re-rendering
-            settings={settings} 
-            templateFolder={settings.templateFolder} 
+            settings={settingsService.getSettings()} 
+            templateFolder={settingsService.getSettings().templateFolder} 
             onExit={handleExit}
           />
         </div>

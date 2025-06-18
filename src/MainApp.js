@@ -264,7 +264,7 @@ function MainApp({ settings, templateFolder, onExit }) {
     };
     
     loadData();
-  }, [projectFolder, mapDef, isInitialized]);  // setExtractedVerses when projectFolder or mapDef.labels change
+  }, [projectFolder, mapDef, isInitialized, settings.saveToDemo]);  // setExtractedVerses when projectFolder or mapDef.labels change
   useEffect(() => {
     if (!projectFolder || !mapDef.labels?.length || !isInitialized) return;
     
@@ -766,7 +766,7 @@ function MainApp({ settings, templateFolder, onExit }) {
     }, 2000); // 2 seconds after last change
 
     return () => clearTimeout(handler);
-  }, [termRenderings, projectFolder]);
+  }, [termRenderings, projectFolder, settings.saveToDemo]);
   
   // Save project folder to settings when it changes
 //   useEffect(() => {
@@ -832,31 +832,7 @@ function MainApp({ settings, templateFolder, onExit }) {
                 //   (settingsService.getTemplateFolder()) + '\\' + memoizedMapDef.imgFilename : '';
 //   console.log('Image path is based on settingsService.getTemplateFolder():', settingsService.getTemplateFolder());
 
-  // Ensure template folder is saved correctly before exiting
-  const handleSaveAndExit = useCallback(async () => {
-    try {
-      // First generate updated USFM from current map
-      const updatedUsfm = usfmFromMap(mapDef, lang);
-        // Update settings with the latest template folder and USFM
-      const updatedSettings = {
-        ...settings,
-        templateFolder: templateFolder, // Use the correct path from props
-        usfm: updatedUsfm
-      };
-        // Save settings to disk through the SettingsService to ensure consistent state
-      await settingsService.updateSettings(updatedSettings);
-      console.log('Saved settings with correct templateFolder before exit:', templateFolder);
-      
-      // Then call the onExit function provided by the parent
-      onExit();
-    } catch (error) {
-      console.error('Error saving settings before exit:', error);
-      // Still exit even if saving fails
-      onExit();
-    }
-  }, [settings, templateFolder, mapDef, lang, onExit]);
-    // This effect is no longer needed as we directly use handleSaveAndExit in the component
-  // We've removed the unused variables originalOnExit and enhancedOnExit
+ 
     // Add cleanup effect to handle unmounting gracefully
   useEffect(() => {
     console.log("MainApp mounted - initializing");
@@ -998,7 +974,7 @@ function MainApp({ settings, templateFolder, onExit }) {
             lang={lang} // <-- pass lang
             setTermRenderings={setTermRenderings} // <-- pass setter
             onCreateRendering ={handleReplaceRendering} // <-- pass handler
-            onExit={handleSaveAndExit}
+            onExit={onExit}
           />
         </div>
       </div>

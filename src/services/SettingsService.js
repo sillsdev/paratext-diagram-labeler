@@ -15,7 +15,7 @@ class SettingsService {  constructor() {
       if (settings && Object.keys(settings).length > 0) {
         this.settings = settings;
         console.log("Settings loaded:", settings);
-      } else {
+      } else {  // Unable to load settings or file is empty
         this.settings = {
           language: "en",
           projectFolder: null,
@@ -23,41 +23,9 @@ class SettingsService {  constructor() {
           templateFolder: null,
           saveToDemo: true
         };
-        
-        // Save the default settings
-        await this.saveSettings();
+        await this.saveSettings(); // Save the default settings
         console.log("Created default settings:", this.settings);
       }        
-/*       // Validate the template folder exists
-      const templatePath = this.getTemplateFolder(); // Use the getter for proper path construction
-      const folderExists = await this.folderExists(templatePath);
-      
-      if (!folderExists) {
-        this.loadError = `Template folder not found: ${templatePath}`;
-        console.warn(this.loadError);
-        
-        // Prompt user to select the template folder
-        alert("Please identify the location of the templates folder.\n\nThis folder should contain the map template collection(s) you wish to use.");
-        const selectedFolder = await window.electronAPI.selectProjectFolder();
-        if (selectedFolder && await this.folderExists(selectedFolder)) {
-          this.settings.templateFolder = selectedFolder;
-          await this.saveSettings();
-          console.log("Updated template folder:", this.settings.templateFolder);
-        } else {
-          throw new Error("Invalid template folder selected.");
-        }
-      }
-      
-        // Validate the specific project folder exists
-      if (this.settings.projectFolder) {
-        const projectExists = await this.folderExists(this.settings.projectFolder);
-        if (!projectExists) {
-          console.warn(`project folder not found: ${this.settings.projectFolder}`);
-          this.settings.projectFolder = null;
-          await this.saveSettings();
-        }
-      }
- */      
       this.isLoaded = true;
       return this.settings;
     } catch (error) {
@@ -65,7 +33,8 @@ class SettingsService {  constructor() {
       console.error("Error loading settings:", error);
       this.isLoaded = false;
       throw error;
-    }  }
+    }  
+  }
   
   // Helper to check if a folder exists
   async folderExists(path) {
