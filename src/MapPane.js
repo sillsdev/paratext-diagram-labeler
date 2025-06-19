@@ -236,15 +236,11 @@ export default function MapPane({
       
       try {
         if (map._loaded) {
-          console.log("Resetting map zoom...");
+          console.log("Starting zoom reset sequence...");
           
-          // Define proper bounds based on the image dimensions
-          const bounds = [
-            [0, 0],
-            [mapDef.height, mapDef.width]
-          ];
-          
-          // Update bounds for all ImageOverlay instances
+          // Step 1: Define correct bounds
+          const bounds = [[0, 0], [mapDef.height, mapDef.width]];
+            // Step 2: Update ImageOverlay bounds explicitly (more gentle approach)
           map.eachLayer((layer) => {
             if (layer instanceof Leaf.ImageOverlay) {
               console.log("Updating ImageOverlay bounds");
@@ -252,33 +248,31 @@ export default function MapPane({
             }
           });
           
-          // Reset the map view to fit the bounds
+          // Step 3: Reset map view with gentle options to preserve event handlers
           map.fitBounds(bounds, {
-            padding: [10, 10], // Add slight padding
-            animate: true
+            padding: [10, 10],
+            animate: true // Keep animation to preserve normal behavior
           });
           
-          // Force a redraw after a small delay to ensure everything updates
+          // Step 4: Single invalidation after a delay to ensure everything settles
           if (timeoutRef.current) {
             clearTimeout(timeoutRef.current);
           }
           
           timeoutRef.current = setTimeout(() => {
             if (map && isMountedRef.current && map._loaded) {
-              console.log("Invalidating map size to force redraw");
-              map.invalidateSize(true);
+              map.invalidateSize();
+              console.log("Zoom reset sequence completed");
             }
-          }, 100);
+          }, 200); // Longer delay to let animation complete
         }
       } catch (err) {
-        console.error("Error resetting zoom:", err);
+        console.error("Error in zoom reset:", err);
       } finally {
-        // Always reset the flag to prevent getting stuck
         if (isMountedRef.current) {
           setResetZoomFlag(false);
         }
-      }
-    }, [resetZoomFlag, map, mapDef.height, mapDef.width, setResetZoomFlag, isMountedRef, timeoutRef]);
+      }    }, [resetZoomFlag, map, mapDef.height, mapDef.width, setResetZoomFlag, isMountedRef, timeoutRef]);
 
     return null;
   }
@@ -303,7 +297,11 @@ export default function MapPane({
     >
       {' '}
       <ZoomControl position="topright" />      {imageUrl ? (
-        <ImageOverlay url={imageUrl} bounds={bounds} />
+        <ImageOverlay 
+          key={`image-${mapDef.imgFilename || 'default'}`}
+          bounds={[[0, 0], [mapDef.height, mapDef.width]]}
+          url={imageUrl} 
+        />
       ) : (
         <div
           className="image-loading-error"
