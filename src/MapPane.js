@@ -230,26 +230,55 @@ export default function MapPane({
           // Ignore cleanup errors
         }
       };
-    }, [map, selLocation, locations, mapDef, isMountedRef]); // --- Reset zoom to fit bounds when resetZoomFlag changes ---
+    }, [map, selLocation, locations, mapDef, isMountedRef]);    // --- Reset zoom to fit bounds when resetZoomFlag changes ---
     useEffect(() => {
       if (!map || !isMountedRef.current || !resetZoomFlag) return;
-
+      
       try {
         if (map._loaded) {
-          map.fitBounds([
+          console.log("Resetting map zoom...");
+          
+          // Define proper bounds based on the image dimensions
+          const bounds = [
             [0, 0],
-            [mapDef.height, mapDef.width],
-          ]);
+            [mapDef.height, mapDef.width]
+          ];
+          
+          // Update bounds for all ImageOverlay instances
+          map.eachLayer((layer) => {
+            if (layer instanceof Leaf.ImageOverlay) {
+              console.log("Updating ImageOverlay bounds");
+              layer.setBounds(bounds);
+            }
+          });
+          
+          // Reset the map view to fit the bounds
+          map.fitBounds(bounds, {
+            padding: [10, 10], // Add slight padding
+            animate: true
+          });
+          
+          // Force a redraw after a small delay to ensure everything updates
+          if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+          }
+          
+          timeoutRef.current = setTimeout(() => {
+            if (map && isMountedRef.current && map._loaded) {
+              console.log("Invalidating map size to force redraw");
+              map.invalidateSize(true);
+            }
+          }, 100);
         }
       } catch (err) {
-        console.log('Error resetting zoom:', err);
+        console.error("Error resetting zoom:", err);
       } finally {
         // Always reset the flag to prevent getting stuck
         if (isMountedRef.current) {
           setResetZoomFlag(false);
         }
       }
-    }, [resetZoomFlag, map, mapDef.height, mapDef.width, setResetZoomFlag, isMountedRef]);
+    }, [resetZoomFlag, map, mapDef.height, mapDef.width, setResetZoomFlag, isMountedRef, timeoutRef]);
 
     return null;
   }
@@ -273,8 +302,7 @@ export default function MapPane({
       // REMOVE: whenCreated={mapInstance => { if (mapRef) mapRef.current = mapInstance; }}
     >
       {' '}
-      <ZoomControl position="topright" />
-      {imageUrl ? (
+      <ZoomControl position="topright" />      {imageUrl ? (
         <ImageOverlay url={imageUrl} bounds={bounds} />
       ) : (
         <div
