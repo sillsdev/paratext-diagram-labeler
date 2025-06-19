@@ -2,13 +2,13 @@
 // export const MATCH_POST_B = '';
 // export const MATCH_W = '\\w';
 
-export const MATCH_PRE_B = '\\b';
-export const MATCH_POST_B = '\\b';
-export const MATCH_W = '\\w';
+// export const MATCH_PRE_B = '\\b';
+// export const MATCH_POST_B = '\\b';
+// export const MATCH_W = '\\w';
 
-// export const MATCH_PRE_B = '(?<=[\\p{L}|\\p{M}|\\p{Cf}-])';
-// export const MATCH_POST_B = '(?=[\\p{L}|\\p{M}|\\p{Cf}-])';
-// export const MATCH_W = '[\\p{L}|\\p{M}|\\p{Cf}-]'; 
+export const MATCH_PRE_B = '(?<=[^\\p{L}|\\p{M}|\\p{Cf}-])';
+export const MATCH_POST_B = '(?=[^\\p{L}|\\p{M}|\\p{Cf}-])';
+export const MATCH_W = '[\\p{L}|\\p{M}|\\p{Cf}-]'; 
 
 // export const DEMO_PROJECT_FOLDER = 'c:/My Paratext 9 Projects/Zezi';
 export const DEFAULT_PROJECTS_FOLDER = 'c:/My Paratext 9 Projects';

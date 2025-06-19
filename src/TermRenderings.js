@@ -1,34 +1,5 @@
 import { STATUS_BLANK, STATUS_MULTIPLE, STATUS_NO_RENDERINGS, STATUS_UNMATCHED, STATUS_MATCHED, STATUS_GUESSED, STATUS_RENDERING_SHORT, STATUS_BAD_EXPLICIT_FORM } from './constants.js';
-import { MATCH_W } from './demo.js';
-
-
-function wordMatchesRenderings(word, renderings, anchored = true) {
-  let renderingList = [];
-  renderingList = renderings
-    .replace(/\|\|/g, '\n').split(/(\r?\n)/)
-    .map(r => r.replace(/\(.*/g, '').replace(/.*\)/g, '')) // Remove content in parentheses (comments), even if only partially enclosed. (The user may be typing a comment.)
-    .map(r => r.trim())
-    .filter(r => r.length > 0)
-    .map(r => r.replace(/\*/g, MATCH_W + '*'));  // TODO: 1. implement better \w.   2. Handle isoolated * better.
-      
-  for (let rendering of renderingList) {
-    try {
-      const pattern = anchored ? "^" + rendering + "$" : rendering
-      console.log(`Checking word "${word}" against rendering "${rendering}" with pattern "${pattern}"`);
-      const regex = new RegExp(pattern, 'iu');
-      if (regex.test(word)) {
-        // console.log(`Word "${word}" matches rendering "${rendering}"`);
-        return true;
-      } else {
-        // console.log(`Word "${word}" doesn't match rendering "${rendering}" with pattern "${pattern}"`);
-      }
-    } catch (e) {
-      // Invalid regex, skip it
-      continue;
-    } 
-  }
-  return false;
-}
+import { wordMatchesRenderings } from './Utils.js';
 
 class TermRenderings {
   constructor() {

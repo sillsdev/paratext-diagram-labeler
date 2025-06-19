@@ -56,9 +56,14 @@ export function getMatchTally(entry, refs, extractedVerses) {
     // Compute match tally
     let matchCount = 0;
     let deniedRefs = entry?.denials || [];
+    let nonEmptyRefCt = 0;
 
     refs.map(refId => {
       const verse = extractedVerses[refId] || '';
+      if (!verse) {
+        return false; // Skip empty verses
+      }
+      nonEmptyRefCt++;
       const hasMatch = renderingList.some(r => r.test(verse));
       if (hasMatch) {
         matchCount++;
@@ -70,7 +75,7 @@ export function getMatchTally(entry, refs, extractedVerses) {
       }
       return hasMatch;
     });
-    return [matchCount, refs.length, anyDenials];
+    return [matchCount, nonEmptyRefCt, anyDenials];
   } catch (error) {
     console.error(`Error in getMatchTally":`, error);
     return [0,0, false];
@@ -149,7 +154,7 @@ export function getMapForm(termRenderings, termId) {
 }
 
 
-function wordMatchesRenderings(word, renderings, anchored = true) {
+export function wordMatchesRenderings(word, renderings, anchored = true) {
   let renderingList = [];
   renderingList = renderings
     .replace(/\|\|/g, '\n').split(/(\r?\n)/)

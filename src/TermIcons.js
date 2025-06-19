@@ -48,4 +48,14 @@ function WarningIcon() {
     </svg>
   )
 }
-export { CheckmarkIcon, CrossIcon, DeniedCheckmarkIcon, WarningIcon };
+
+function NoneIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+      <circle cx="4" cy="8" r="1.5" fill="#888888" />
+      <circle cx="8" cy="8" r="1.5" fill="#888888" />
+      <circle cx="12" cy="8" r="1.5" fill="#888888" />
+    </svg>
+  );
+}
+export { CheckmarkIcon, CrossIcon, DeniedCheckmarkIcon, WarningIcon, NoneIcon };

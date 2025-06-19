@@ -1,7 +1,7 @@
 import React from 'react';
 import { FaPencilAlt } from 'react-icons/fa';
 import uiStr from './data/ui-strings.json';
-import { CheckmarkIcon, DeniedCheckmarkIcon, CrossIcon } from './TermIcons';
+import { CheckmarkIcon, DeniedCheckmarkIcon, CrossIcon, NoneIcon } from './TermIcons';
 import { MATCH_PRE_B, MATCH_POST_B, MATCH_W } from './demo.js';
 // import { MAP_VIEW, TABLE_VIEW, USFM_VIEW, STATUS_NO_RENDERINGS, STATUS_GUESSED } from './constants.js';
 // Status values not yet used: STATUS_BLANK, STATUS_MULTIPLE,  STATUS_UNMATCHED, STATUS_MATCHED, STATUS_RENDERING_SHORT, STATUS_BAD_EXPLICIT_FORM 
@@ -71,7 +71,7 @@ function BottomPane({ termId, mergeKey, renderings, onAddRendering, onReplaceRen
         if (!pattern.endsWith('*')) pattern = pattern + MATCH_POST_B;
         // Replace * [with [\w-]* (word chars + dash)
         pattern = pattern.replace(/\*/g, MATCH_W + '*');
-        console.log(`Creating regex for rendering "${r}" with pattern "${pattern}"`);
+        console.log(`BP: Creating regex for rendering "${r}" with pattern "${pattern}"`);
         try {
           return new RegExp(pattern, 'iu');
         } catch (e) {
@@ -115,8 +115,14 @@ function BottomPane({ termId, mergeKey, renderings, onAddRendering, onReplaceRen
   //   console.log(`compute match tally for ${termId}`, termRenderings);
   // }
   let matchCount = 0;
+  let nonEmptyRefCt = 0; // Count of non-empty references
   const matchResults = refs.map(refId => {
     const verse = extractedVerses[refId] || '';
+    if (!verse) {
+      // Skip empty verses
+      return false;
+    } 
+    nonEmptyRefCt++;
     const hasMatch = renderingList.some(r => r.test(verse));
     if (hasMatch || deniedRefs.includes(refId)) matchCount++;
     return hasMatch;
@@ -147,7 +153,7 @@ function BottomPane({ termId, mergeKey, renderings, onAddRendering, onReplaceRen
         borderBottom: '1px solid #eee',
         minHeight: 28
       }}>
-        <span>{inLang(uiStr.found, lang)}: {matchCount}/{refs.length}</span>
+        <span>{inLang(uiStr.found, lang)}: {matchCount}/{nonEmptyRefCt}</span>
         {selectedText && (
           <>
             <button
@@ -201,7 +207,7 @@ function BottomPane({ termId, mergeKey, renderings, onAddRendering, onReplaceRen
                 return (
                   <tr key={refId} style={{ borderBottom: '1px solid #eee', verticalAlign: 'top' }}>
                     <td style={{ width: 38, textAlign: 'center', padding: '2px 0', verticalAlign: 'top', whiteSpace: 'nowrap' }}>
-                      {hasMatch ? (
+                      {!verse ? <NoneIcon title="No verse text yet"/> : hasMatch ? (
                         <CheckmarkIcon title="Match found" />
                       ) : (
                         <span style={{ cursor: 'pointer', display: 'inline-block' }} onClick={handleToggleDenied} title={isDenied ? 'Remove denial' : 'Mark as denied'}>
@@ -230,7 +236,7 @@ function BottomPane({ termId, mergeKey, renderings, onAddRendering, onReplaceRen
                     </td>
                     <td style={{ padding: '2px 0 2px 8px', verticalAlign: 'top', wordBreak: 'break-word', whiteSpace: 'normal' }}>
                       <span style={{ fontWeight: 'bold', marginRight: 4 }}>{prettyRef(refId)} </span>
-                      {hasMatch ? highlightMatch(verse, renderingList) : verse || <span style={{ color: '#888' }}>[Verse not found]</span>}
+                      {hasMatch ? highlightMatch(verse, renderingList) : verse || <span style={{ color: '#888' }}>[No verse text yet]</span>}
                     </td>
                   </tr>
                 );
