@@ -7,17 +7,17 @@ import { collectionManager, getCollectionIdFromTemplate } from './CollectionMana
  * @returns {Object|null} - The map definition or null if not found
  */
 function getMapDef(templateName, collectionId = null) {
-    if (!templateName) {
-        console.warn('Empty template name provided to getMapDef');
-        return null;
-    }
-    
-    // Extract collection ID from template if not provided
-    if (!collectionId) {
-        collectionId = getCollectionIdFromTemplate(templateName);
-    }
-    
-    return collectionManager.getMapDef(templateName, collectionId);
+  if (!templateName) {
+    console.warn('Empty template name provided to getMapDef');
+    return null;
+  }
+
+  // Extract collection ID from template if not provided
+  if (!collectionId) {
+    collectionId = getCollectionIdFromTemplate(templateName);
+  }
+
+  return collectionManager.getMapDef(templateName, collectionId);
 }
 
 export { getMapDef };

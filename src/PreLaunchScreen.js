@@ -2,51 +2,50 @@ import React, { useState, useCallback } from 'react';
 import './PreLaunchScreen.css';
 
 // Icons for valid/invalid status
-const CheckIcon = () => (
-  <span className="status-icon valid">✓</span>
-);
+const CheckIcon = () => <span className="status-icon valid">✓</span>;
 
-const ErrorIcon = () => (
-  <span className="status-icon invalid">✗</span>
-);
+const ErrorIcon = () => <span className="status-icon invalid">✗</span>;
 
-const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch }) => {  
+const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch }) => {
   // Use local state for editing but rely on parent for validated errors
   const [editedSettings, setEditedSettings] = useState({ ...settings });
 
-  const handleSettingChange = useCallback((key, value) => {
-    const updatedSettings = {
-      ...editedSettings,
-      [key]: value
-    };
-    setEditedSettings(updatedSettings);
-     // Always notify parent component of changes for validation
-    if (onSettingsChange) {
-      onSettingsChange(updatedSettings);
-    }
-  }, [editedSettings, onSettingsChange]);  // Handle folder picker - use useCallback to avoid recreation
-
-
-  const handleSelectFolder = useCallback(async (key) => {
-    try {
-      const folder = await window.electronAPI.selectProjectFolder();
-      if (folder) {
-        // Update local state and notify parent - the parent will handle validation and saving
-        handleSettingChange(key, folder);
+  const handleSettingChange = useCallback(
+    (key, value) => {
+      const updatedSettings = {
+        ...editedSettings,
+        [key]: value,
+      };
+      setEditedSettings(updatedSettings);
+      // Always notify parent component of changes for validation
+      if (onSettingsChange) {
+        onSettingsChange(updatedSettings);
       }
-    } catch (error) {
-      console.error('Error selecting folder:', error);
-    }
-  }, [handleSettingChange]);  // Save settings and launch app - use useCallback to prevent recreating on every render
+    },
+    [editedSettings, onSettingsChange]
+  ); // Handle folder picker - use useCallback to avoid recreation
 
+  const handleSelectFolder = useCallback(
+    async key => {
+      try {
+        const folder = await window.electronAPI.selectProjectFolder();
+        if (folder) {
+          // Update local state and notify parent - the parent will handle validation and saving
+          handleSettingChange(key, folder);
+        }
+      } catch (error) {
+        console.error('Error selecting folder:', error);
+      }
+    },
+    [handleSettingChange]
+  ); // Save settings and launch app - use useCallback to prevent recreating on every render
 
   const handleLaunch = useCallback(() => {
     // Let the parent component handle all validation and saving
     // Just pass the current settings to launch
     onLaunch(editedSettings);
-  }, [editedSettings, onLaunch]);  
-  
-  
+  }, [editedSettings, onLaunch]);
+
   // Trigger validation when component mounts to ensure errors are displayed correctly
   // useEffect(() => {
   //   // Only trigger if we have settings and onSettingsChange handler
@@ -55,7 +54,6 @@ const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch }) => {
   //     onSettingsChange({...settings});
   //   }
   // }, []); // Empty dependency array runs only on mount
-
 
   return (
     <div className="pre-launch-screen">
@@ -71,11 +69,11 @@ const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch }) => {
           </div>
         </div>
       </div>
-        {/* Launch Button */}      
-        <div className="launch-container">        
-          {Object.keys(errors).length === 0 ? (
-          <button 
-            className="launch-button" 
+      {/* Launch Button */}
+      <div className="launch-container">
+        {Object.keys(errors).length === 0 ? (
+          <button
+            className="launch-button"
             onClick={handleLaunch}
             tabIndex="0"
             aria-label="Launch Application"
@@ -89,22 +87,19 @@ const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch }) => {
           </div>
         )}
       </div>
-
       <div className="settings-container">
-        
         {/* Template Folder Setting */}
         <div className="setting-row">
           <div className="setting-status">
             {errors.templateFolder ? <ErrorIcon /> : <CheckIcon />}
           </div>
           <div className="setting-content">
-            
             <div className="setting-input-group">
               <label>Template Folder:</label>
-              <input 
-                type="text" 
-                value={editedSettings.templateFolder || ''} 
-                onChange={(e) => handleSettingChange('templateFolder', e.target.value)}
+              <input
+                type="text"
+                value={editedSettings.templateFolder || ''}
+                onChange={e => handleSettingChange('templateFolder', e.target.value)}
                 className={errors.templateFolder ? 'error' : ''}
                 spellCheck={false}
               />
@@ -113,20 +108,19 @@ const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch }) => {
             {errors.templateFolder && <div className="error-message">{errors.templateFolder}</div>}
           </div>
         </div>
-        
+
         {/* Project Folder Setting */}
         <div className="setting-row">
           <div className="setting-status">
             {errors.projectFolder ? <ErrorIcon /> : <CheckIcon />}
           </div>
           <div className="setting-content">
-            
             <div className="setting-input-group">
               <label>Project Folder:</label>
-              <input 
-                type="text" 
-                value={editedSettings.projectFolder || ''} 
-                onChange={(e) => handleSettingChange('projectFolder', e.target.value)}
+              <input
+                type="text"
+                value={editedSettings.projectFolder || ''}
+                onChange={e => handleSettingChange('projectFolder', e.target.value)}
                 className={errors.projectFolder ? 'error' : ''}
                 spellCheck={false}
               />
@@ -135,7 +129,6 @@ const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch }) => {
             {errors.projectFolder && <div className="error-message">{errors.projectFolder}</div>}
           </div>
         </div>
-        
 
         {/* Save Renderings To Setting */}
         <div className="setting-row">
@@ -145,9 +138,9 @@ const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch }) => {
           <div className="setting-content">
             <div className="setting-input-group">
               <label>Save Renderings To:</label>
-              <select 
-                value={editedSettings.saveToDemo ? 'true' : 'false'} 
-                onChange={(e) => handleSettingChange('saveToDemo', e.target.value === 'true')}
+              <select
+                value={editedSettings.saveToDemo ? 'true' : 'false'}
+                onChange={e => handleSettingChange('saveToDemo', e.target.value === 'true')}
               >
                 <option value="true">TermRenderings-Demo.xml</option>
                 <option value="false">TermRenderings.xml</option>
@@ -155,33 +148,29 @@ const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch }) => {
             </div>
           </div>
         </div>
-        
+
         {/* USFM Setting */}
         <div className="setting-row">
-          <div className="setting-status">
-            {errors.usfm ? <ErrorIcon /> :  <CheckIcon /> }
-          </div>
+          <div className="setting-status">{errors.usfm ? <ErrorIcon /> : <CheckIcon />}</div>
           <div className="setting-content">
             <div className="setting-header">
               <label>USFM In/Out:</label>
-            </div>            
+            </div>
             <textarea
-              className={errors.usfm ? "usfm-textarea error" : "usfm-textarea"}
+              className={errors.usfm ? 'usfm-textarea error' : 'usfm-textarea'}
               value={editedSettings.usfm || ''}
-              onChange={(e) => handleSettingChange('usfm', e.target.value)}
+              onChange={e => handleSettingChange('usfm', e.target.value)}
               rows={10}
               placeholder="Enter USFM content here, or select a sample image or data merge file after launch..."
               style={{ whiteSpace: 'nowrap' }}
               wrap="off"
               spellCheck={false}
             />
-            {errors.usfm && (
-              <div className="error-message">{errors.usfm}</div>
-            )}
+            {errors.usfm && <div className="error-message">{errors.usfm}</div>}
           </div>
         </div>
-
-      </div> {/* settings-container */}
+      </div>{' '}
+      {/* settings-container */}
     </div> /* pre-launch-screen */
   );
 };
