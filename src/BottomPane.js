@@ -229,7 +229,7 @@ function BottomPane({ termId, mergeKey, renderings, onAddRendering, onReplaceRen
                         }}
                         title="Edit"
                         aria-label="Edit"
-                        onClick={() => alert(`Editing is not yet implemented for verse: ${prettyRef(refId)}`)}
+                        onClick={() => alert(`Edit ${prettyRef(refId)} directly in Paratext.`, 'Edit Verse')}
                       >
                         <FaPencilAlt />
                       </button>
