@@ -8,7 +8,6 @@ import './App.css';
 function App() {
   const [isLoadingSettings, setIsLoadingSettings] = useState(true);
   const [launched, setLaunched] = useState(false);
-  // const [settings, setSettings] = useState(null);
   const [settingsErrors, setSettingsErrors] = useState({});
 
   // Load settings when component mounts
@@ -16,7 +15,6 @@ function App() {
     async function initialize() {
       console.log("Loading application settings...");
       const newSettings = await settingsService.loadSettings();
-      // setSettings(newSettings);
       
       // Validate settings
       const errors = await validateSettings(newSettings);
@@ -61,9 +59,9 @@ function App() {
     
     // Validate USFM if present
     if (settingsToValidate.usfm) {
-      if (!settingsToValidate.usfm.includes('\\zdiagram-s')) {
-        errors.usfm = 'USFM does not appear to be valid diagram markup';
-      }
+      // if (!settingsToValidate.usfm.includes('\\zdiagram-s')) {
+      //   errors.usfm = 'USFM does not appear to be valid diagram markup';
+      // }
     }
     
     return errors;

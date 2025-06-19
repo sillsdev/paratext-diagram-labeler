@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import './MainApp.css';
 import BottomPane from './BottomPane.js';
 import uiStr from './data/ui-strings.json';
-import { INITIAL_USFM } from './demo.js';
 import { MAP_VIEW, TABLE_VIEW, USFM_VIEW } from './constants.js';
 import { collectionManager, getCollectionIdFromTemplate } from './CollectionManager';
 import { getMapDef } from './MapData';
@@ -67,23 +66,30 @@ function decodeFileAsString(arrayBuffer) {
 
 async function mapFromUsfm(usfm) {
   // Extract template and \fig field
-  const figMatch = usfm.match(/\\fig[\s\S]*?\\fig\*/);
+  const figMatch = usfm.match(/\\fig [^\\]*src="([^\\]+)"[^\\]*\\fig\*/);
   const templateMatch = usfm.match(/\\zdiagram-s\s+\|template="([^"]*)"/);
-  
-  // Empty template case
-  if (!templateMatch) {
-    return {
-      template: '',
-      fig: figMatch ? figMatch[0] : '',
-      mapView: false,
-      imgFilename: '',
-      width: 1000,
-      height: 1000,
-      labels: []
-    };
+  let templateName = '';
+
+  if (templateMatch) {
+    templateName = templateMatch[1];
+  } else {
+    if (!figMatch) {
+      return {
+        template: '',
+        fig: '',
+        mapView: false,
+        imgFilename: '',
+        width: 1000,
+        height: 1000,
+        labels: []
+      };
+    }
+    templateName = figMatch[1]                    
+                    .replace(/\..*$/, '') // Remove file extension
+                    .trim()
+                    .replace(/\s*[@(].*/, ''); // Remove anything after @ or (
   }
   
-  const templateName = templateMatch[1];
   let mapDefData;
     try {
     // Get map definition from collection manager

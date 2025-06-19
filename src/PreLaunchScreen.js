@@ -159,18 +159,18 @@ const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch }) => {
         {/* USFM Setting */}
         <div className="setting-row">
           <div className="setting-status">
-            {errors.usfm ? <ErrorIcon /> : (editedSettings.usfm ? <CheckIcon /> : null)}
+            {errors.usfm ? <ErrorIcon /> :  <CheckIcon /> }
           </div>
           <div className="setting-content">
             <div className="setting-header">
-              <label>USFM Content:</label>
+              <label>USFM In/Out:</label>
             </div>            
             <textarea
               className={errors.usfm ? "usfm-textarea error" : "usfm-textarea"}
               value={editedSettings.usfm || ''}
               onChange={(e) => handleSettingChange('usfm', e.target.value)}
               rows={10}
-              placeholder="Enter USFM content here..."
+              placeholder="Enter USFM content here, or select a sample image or data merge file after launch..."
               style={{ whiteSpace: 'nowrap' }}
               wrap="off"
               spellCheck={false}
