@@ -36,7 +36,6 @@ function MapController({
 
     return () => clearTimeout(timeoutId);
   }, [resetZoomFlag, setResetZoomFlag, map, imageHeight, imageWidth]);
-
   // Effect for smart panning to selected location
   useEffect(() => {
     if (!selLocation || !map || !transformedLocations.length) return;
@@ -46,53 +45,59 @@ function MapController({
         const selectedLoc = transformedLocations.find(loc => loc.idx === selLocation);
         if (!selectedLoc) return;
 
-        const targetPoint = [selectedLoc.yLeaflet, selectedLoc.x];
-        const mapSize = map.getSize();
+        const locationPoint = [selectedLoc.yLeaflet, selectedLoc.x];
+        
+        // Get current map bounds in image coordinates
+        const bounds = map.getBounds();
+        const currentTopLeft = [bounds.getNorth(), bounds.getWest()];
+        const currentBottomRight = [bounds.getSouth(), bounds.getEast()];
 
-        // Calculate 15% buffer zone
-        const bufferX = mapSize.x * 0.15;
-        const bufferY = mapSize.y * 0.15;
+        // Calculate buffer zone in image coordinates (15% of current view)
+        const viewHeight = currentBottomRight[0] - currentTopLeft[0];
+        const viewWidth = currentBottomRight[1] - currentTopLeft[1];
+        const bufferY = viewHeight * 0.15;
+        const bufferX = viewWidth * 0.15;
 
-        // Convert target point to pixel coordinates
-        const targetPixel = map.latLngToContainerPoint(targetPoint);
+        // Define comfortable viewing area boundaries
+        const comfortableTop = currentTopLeft[0] + bufferY;
+        const comfortableBottom = currentBottomRight[0] - bufferY;
+        const comfortableLeft = currentTopLeft[1] + bufferX;
+        const comfortableRight = currentBottomRight[1] - bufferX;
 
-        // Check if point is outside the buffer zone
-        const needsPan = 
-          targetPixel.x < bufferX || 
-          targetPixel.x > (mapSize.x - bufferX) ||
-          targetPixel.y < bufferY || 
-          targetPixel.y > (mapSize.y - bufferY);
+        // Check if location is outside comfortable viewing area
+        const needsPanning = (
+          locationPoint[0] < comfortableTop ||    // Above comfort zone
+          locationPoint[0] > comfortableBottom || // Below comfort zone
+          locationPoint[1] < comfortableLeft ||   // Left of comfort zone
+          locationPoint[1] > comfortableRight     // Right of comfort zone
+        );
 
-        if (needsPan) {
-          // Calculate the center of the buffer zone
-          const centerX = mapSize.x / 2;
-          const centerY = mapSize.y / 2;
-          
-          // Calculate how much to adjust the pan
-          let deltaX = 0;
-          let deltaY = 0;
+        if (needsPanning) {
+          // Calculate new center to bring location into comfortable zone
+          const currentCenter = map.getCenter();
+          let newLat = currentCenter.lat;
+          let newLng = currentCenter.lng;
 
-          if (targetPixel.x < bufferX) {
-            deltaX = bufferX - targetPixel.x + 20; // Extra 20px margin
-          } else if (targetPixel.x > (mapSize.x - bufferX)) {
-            deltaX = (mapSize.x - bufferX) - targetPixel.x - 20;
+          // Adjust vertically if needed
+          if (locationPoint[0] < comfortableTop) {
+            // Location is above comfort zone, pan up (decrease lat)
+            newLat = currentCenter.lat - (comfortableTop - locationPoint[0]);
+          } else if (locationPoint[0] > comfortableBottom) {
+            // Location is below comfort zone, pan down (increase lat)
+            newLat = currentCenter.lat + (locationPoint[0] - comfortableBottom);
           }
 
-          if (targetPixel.y < bufferY) {
-            deltaY = bufferY - targetPixel.y + 20;
-          } else if (targetPixel.y > (mapSize.y - bufferY)) {
-            deltaY = (mapSize.y - bufferY) - targetPixel.y - 20;
+          // Adjust horizontally if needed
+          if (locationPoint[1] < comfortableLeft) {
+            // Location is left of comfort zone, pan left (decrease lng)
+            newLng = currentCenter.lng - (comfortableLeft - locationPoint[1]);
+          } else if (locationPoint[1] > comfortableRight) {
+            // Location is right of comfort zone, pan right (increase lng)
+            newLng = currentCenter.lng + (locationPoint[1] - comfortableRight);
           }
 
-          // Convert the adjusted pixel position back to lat/lng
-          const newCenterPixel = {
-            x: centerX + deltaX,
-            y: centerY + deltaY
-          };
-          const newCenter = map.containerPointToLatLng(newCenterPixel);
-
-          // Pan to the new center with animation
-          map.panTo(newCenter, { animate: true, duration: 0.5 });
+          // Pan to the new center with smooth animation
+          map.panTo([newLat, newLng], { animate: true, duration: 0.5 });
         }
       } catch (error) {
         console.error('Error panning to selected location:', error);
