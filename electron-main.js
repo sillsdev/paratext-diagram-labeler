@@ -263,7 +263,7 @@ ipcMain.handle('select-project-folder', async (event) => {
 
 function getVerseText(usfmChapterText, verseNum) {
   // Regular expression to match verse markers (single or bridged, e.g., \v 12 or \v 11-14)
-  const verseRegex = /\\v (\d+(?:-\d+)?)(.*?)(?=(?:\\v \d+(?:-\d+)?|$))/gs;
+  const verseRegex = /\\v (\d+(?:\u200f?-\d+)?)(.*?)(?=(?:\\v \d+(?:\u200f?-\d+)?|$))/gs;
   
   let result = '';
   let match;
@@ -276,7 +276,7 @@ function getVerseText(usfmChapterText, verseNum) {
     // Check if verseNum is a single number or part of a range
     if (verseRange.includes('-')) {
       // Handle bridged verses (e.g., "11-14")
-      const [start, end] = verseRange.split('-').map(Number);
+      const [start, end] = verseRange.split(/\u200f?-/).map(Number);
       if (verseNum >= start && verseNum <= end) {
         return verseContent;
       }
