@@ -67,9 +67,9 @@ function MapController({
         const locationPixel = map.latLngToContainerPoint(locationPoint);
         console.log('Location in pixels:', locationPixel);
 
-        // Calculate 15% buffer zone in pixels
-        const bufferX = mapSize.x * 0.15;
-        const bufferY = mapSize.y * 0.15;
+        // Calculate 6% buffer zone in pixels
+        const bufferX = mapSize.x * 0.06;
+        const bufferY = mapSize.y * 0.06;
         console.log('Buffer zone (pixels):', { bufferX, bufferY });
 
         // Define comfortable viewing area in pixel coordinates
@@ -82,45 +82,132 @@ function MapController({
           comfortableRight,
           comfortableTop,
           comfortableBottom
-        });        // Check if location pixel is TOO CLOSE to any edge
-        const tooCloseToLeft = locationPixel.x < comfortableLeft;
-        const tooCloseToRight = locationPixel.x > comfortableRight;
-        const tooCloseToTop = locationPixel.y < comfortableTop;
-        const tooCloseToBottom = locationPixel.y > comfortableBottom;
+        });        // Calculate label endpoints based on alignment and rotation
+        // Optimization: use simple point-based logic for centered, non-rotated labels
+        const angle = selectedLoc.angle || 0;
+        const align = selectedLoc.align || 'center';
+        const isSimpleCase = (align === 'center' && angle === 0);
         
-        const needsPanning = tooCloseToTop || tooCloseToBottom || tooCloseToLeft || tooCloseToRight;
-        console.log('Needs panning:', needsPanning, {
-          tooCloseToTop,
-          tooCloseToBottom,
-          tooCloseToLeft,
-          tooCloseToRight
-        });        if (needsPanning) {
-          // Calculate pixel adjustments needed
-          const currentCenter = map.getCenter();
-          let adjustX = 0;
-          let adjustY = 0;
+        let startPoint, endPoint;
+        
+        if (isSimpleCase) {
+          // Simple case: just use the anchor point
+          startPoint = endPoint = locationPixel;
+          console.log('Using optimized simple case for centered, non-rotated label');
+        } else {
+          // Calculate label length (14% of horizontal viewable area)
+          const labelLengthPixels = mapSize.x * 0.14;
+          
+          // Convert angle to radians (0° = horizontal right, negative or 270-360° = down-right)
+          const angleRad = angle * Math.PI / 180;
+          
+          // Calculate label direction vector (unit vector)
+          const labelDirX = Math.cos(angleRad);
+          const labelDirY = Math.sin(angleRad);
+          
+          console.log('Label calculation:', { 
+            angle, 
+            align, 
+            labelLengthPixels, 
+            labelDirX, 
+            labelDirY 
+          });
+          
+          // Calculate start and end points based on alignment
+          if (align === 'left') {
+            // Label extends rightward from anchor
+            startPoint = locationPixel;
+            endPoint = {
+              x: locationPixel.x + labelLengthPixels * labelDirX,
+              y: locationPixel.y + labelLengthPixels * labelDirY
+            };
+          } else if (align === 'right') {
+            // Label extends leftward from anchor  
+            endPoint = locationPixel;
+            startPoint = {
+              x: locationPixel.x - labelLengthPixels * labelDirX,
+              y: locationPixel.y - labelLengthPixels * labelDirY
+            };
+          } else { // center
+            // Label extends both ways from anchor
+            const halfLength = labelLengthPixels / 2;
+            startPoint = {
+              x: locationPixel.x - halfLength * labelDirX,
+              y: locationPixel.y - halfLength * labelDirY
+            };
+            endPoint = {
+              x: locationPixel.x + halfLength * labelDirX,
+              y: locationPixel.y + halfLength * labelDirY
+            };
+          }
+          
+          console.log('Label endpoints:', { startPoint, endPoint });
+        }
 
-          if (tooCloseToLeft) {
-            adjustX = comfortableLeft - locationPixel.x;
-            console.log('Too close to left, adjusting by:', adjustX);
-          } else if (tooCloseToRight) {
-            adjustX = comfortableRight - locationPixel.x;
-            console.log('Too close to right, adjusting by:', adjustX);
+        // Check if either endpoint violates buffer zone
+        const startViolations = {
+          left: startPoint.x < comfortableLeft,
+          right: startPoint.x > comfortableRight,
+          top: startPoint.y < comfortableTop,
+          bottom: startPoint.y > comfortableBottom
+        };
+
+        const endViolations = {
+          left: endPoint.x < comfortableLeft,
+          right: endPoint.x > comfortableRight,
+          top: endPoint.y < comfortableTop,
+          bottom: endPoint.y > comfortableBottom
+        };
+
+        const anyViolation = Object.values(startViolations).some(v => v) || 
+                           Object.values(endViolations).some(v => v);
+        
+        console.log('Buffer violations:', { 
+          startViolations, 
+          endViolations, 
+          anyViolation 
+        });        
+        const needsPanning = anyViolation;
+        console.log('Needs panning:', needsPanning);        if (needsPanning) {
+          // Calculate minimum adjustments needed to bring label within buffer zone
+          // Priority: keep anchor point visible
+          const currentCenter = map.getCenter();
+          let adjustmentX = 0;
+          let adjustmentY = 0;
+
+          // Handle horizontal violations
+          if (startViolations.left || endViolations.left) {
+            const minX = Math.min(startPoint.x, endPoint.x);
+            const neededAdjustment = comfortableLeft - minX;
+            adjustmentX = Math.max(adjustmentX, neededAdjustment);
+            console.log('Left violation, adjusting by:', neededAdjustment);
+          }
+          if (startViolations.right || endViolations.right) {
+            const maxX = Math.max(startPoint.x, endPoint.x);
+            const neededAdjustment = comfortableRight - maxX;
+            adjustmentX = Math.min(adjustmentX, neededAdjustment);
+            console.log('Right violation, adjusting by:', neededAdjustment);
           }
 
-          if (tooCloseToTop) {
-            adjustY = comfortableTop - locationPixel.y;
-            console.log('Too close to top, adjusting by:', adjustY);
-          } else if (tooCloseToBottom) {
-            adjustY = comfortableBottom - locationPixel.y;
-            console.log('Too close to bottom, adjusting by:', adjustY);
+          // Handle vertical violations
+          if (startViolations.top || endViolations.top) {
+            const minY = Math.min(startPoint.y, endPoint.y);
+            const neededAdjustment = comfortableTop - minY;
+            adjustmentY = Math.max(adjustmentY, neededAdjustment);
+            console.log('Top violation, adjusting by:', neededAdjustment);
+          }
+          if (startViolations.bottom || endViolations.bottom) {
+            const maxY = Math.max(startPoint.y, endPoint.y);
+            const neededAdjustment = comfortableBottom - maxY;
+            adjustmentY = Math.min(adjustmentY, neededAdjustment);
+            console.log('Bottom violation, adjusting by:', neededAdjustment);
           }
 
           // Convert pixel adjustment to map coordinate adjustment
           const centerPixel = map.latLngToContainerPoint(currentCenter);
           const newCenterPixel = {
-            x: centerPixel.x - adjustX,
-            y: centerPixel.y - adjustY
+            x: centerPixel.x - adjustmentX,
+            y: centerPixel.y - adjustmentY
           };
           const newCenter = map.containerPointToLatLng(newCenterPixel);
 
