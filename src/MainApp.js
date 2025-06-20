@@ -646,23 +646,21 @@ function MainApp({ settings, templateFolder, onExit }) {
     }
   }, [setMapDef, setLocations, termRenderings, lang, handleSelectLocation]);
 
-  // Store the function in a ref for stable reference (Option 2 solution)
+  // Store the function in a ref for stable reference 
   useEffect(() => {
     handleBrowseMapTemplateRef.current = handleBrowseMapTemplate;
   }, [handleBrowseMapTemplate]);
 
+  // Initialize map from USFM once settings and collections are loaded
   useEffect(() => {
     if (!isInitialized) return; // Don't initialize map until collections are loaded
-
     const initializeMap = async () => {
       try {
         if (!settings.usfm) throw new Error("No USFM provided in settings");
-        // Use the last USFM from settings if available, otherwise use the demo USFM
-        const usfmToUse = settings.usfm;
         console.log("Initializing map from USFM:", settings.usfm);
 
         // Initialize from USFM
-        const initialMap = await mapFromUsfm(usfmToUse);
+        const initialMap = await mapFromUsfm(settings.usfm);
         console.log("Initial Map loaded:", initialMap);
         setMapDef(initialMap);
         setMapPaneView(initialMap.mapView ? MAP_VIEW : TABLE_VIEW);
@@ -672,9 +670,8 @@ function MainApp({ settings, templateFolder, onExit }) {
         await handleBrowseMapTemplateRef.current();
       }
     };
-
     initializeMap();
-  }, [isInitialized, settings]);
+  }, [isInitialized, settings.usfm]);
 
   // USFM View component (editable, uncontrolled)
   const usfmTextareaRef = useRef();
