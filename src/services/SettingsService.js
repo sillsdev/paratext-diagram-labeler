@@ -76,7 +76,7 @@ class SettingsService {
     return this.settings;
   }
 
-  getLastProjectFolder() {
+  getProjectFolder() {
     return this.settings?.projectFolder || null;
   }
   // Enhanced getter for templateFolder with proper path normalization

@@ -156,8 +156,10 @@ export default function DetailsPane({
       const data = dataMergeHeader + '\n' + dataMergeContent + '\n';
 
       // Write to file using the browser file system API
+      const projectFolder = settingsService.getProjectFolder();
+      const projectName = projectFolder.replace(/.*[\\\/]/, '').trim(); // TODO: Handle project name properly
       const fileHandle = await window.showSaveFilePicker({
-        suggestedName: templateName + '.idml.txt',
+        suggestedName: templateName + ' @' + projectName + '.idml.txt', 
         startIn: 'documents',
         types: [
           {
