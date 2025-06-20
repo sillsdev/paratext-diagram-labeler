@@ -399,7 +399,7 @@ export default function DetailsPane({
             style={{
               marginRight: 8,
               height: 32,
-              minWidth: 80,
+              minWidth: 60,
               whiteSpace: 'nowrap',
               display: 'flex',
               alignItems: 'center',
@@ -412,7 +412,7 @@ export default function DetailsPane({
             onClick={handleOk}
             style={{
               height: 32,
-              minWidth: 80,
+              minWidth: 60,
               whiteSpace: 'nowrap',
               display: 'flex',
               alignItems: 'center',

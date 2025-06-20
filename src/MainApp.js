@@ -246,7 +246,7 @@ function MainApp({ settings, templateFolder, onExit }) {
       } catch (error) {
         console.error("Error initializing map:", error);
         // Keep using empty map if initialization fails
-        handleBrowseMapTemplate();
+        console.log("Using empty map due to initialization error");
       }
     };
 
@@ -528,7 +528,7 @@ function MainApp({ settings, templateFolder, onExit }) {
   };
 
   // Handler for map image browse
-  const handleBrowseMapTemplate = async () => {
+  const handleBrowseMapTemplate = useCallback(async () => {
     try {
       const [fileHandle] = await window.showOpenFilePicker({
         types: [
@@ -668,7 +668,7 @@ function MainApp({ settings, templateFolder, onExit }) {
       // User cancelled or not supported
       console.log("Map template browse cancelled or not supported:", e);
     }
-  };
+  }, [setMapDef, setLocations, termRenderings, lang, handleSelectLocation]);
 
   // USFM View component (editable, uncontrolled)
   const usfmTextareaRef = useRef();
@@ -696,13 +696,15 @@ function MainApp({ settings, templateFolder, onExit }) {
     }
     prevMapPaneView.current = mapPaneView;
   }, [mapPaneView, locations, mapDef, lang]);
+
   // --- USFM to map/locations sync ---
   // Helper to update map/locations from USFM text
-  const updateMapFromUsfm = useCallback(() => {
+  const updateMapFromUsfm = useCallback(async () => {
     if (!usfmTextareaRef.current) return;
     const text = usfmTextareaRef.current.value;
     try {
-      const newMap = mapFromUsfm(text);
+      const newMap = await mapFromUsfm(text);
+      console.log("Parsed map from USFM:", newMap);
       // Re-init locations and selection      // Create a local copy of termRenderings to ensure we're using the latest state
       const currentTermRenderings = { ...termRenderings };
 
@@ -734,14 +736,15 @@ function MainApp({ settings, templateFolder, onExit }) {
 
       return true; // Indicate success
     } catch (e) {
+      console.error("Error parsing USFM:", e);
       alert(inLang(uiStr.invalidUsfm, lang));
       return false; // Indicate failure
     }
   }, [termRenderings, setLocations, setSelLocation, lang, mapDef]);
   // Intercept view switch to update map if leaving USFM view
-  const handleSwitchViewWithUsfm = useCallback(() => {
+  const handleSwitchViewWithUsfm = useCallback(async () => {
     if (mapPaneView === USFM_VIEW) {
-      updateMapFromUsfm();
+      await updateMapFromUsfm();
     }
     setMapPaneView((prev) => {
       if (!mapDef.mapView) {
@@ -1136,9 +1139,9 @@ function MainApp({ settings, templateFolder, onExit }) {
             locations={locations}
             onSwitchView={handleSwitchViewWithUsfm}
             mapPaneView={mapPaneView}
-            onSetView={(viewIdx) => {
+            onSetView={async (viewIdx) => {
               if (viewIdx === MAP_VIEW && !mapDef.mapView) return;
-              if (mapPaneView === USFM_VIEW) updateMapFromUsfm();
+              if (mapPaneView === USFM_VIEW) await updateMapFromUsfm();
               setMapPaneView(viewIdx);
             }}
             onShowSettings={() => setShowSettings(true)} // <-- add onShowSettings
