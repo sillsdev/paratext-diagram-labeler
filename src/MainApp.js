@@ -202,6 +202,7 @@ function MainApp({ settings, templateFolder, onExit }) {
   const isDraggingHorizontal = useRef(false);
   const vernacularInputRef = useRef(null);
   const renderingsTextareaRef = useRef();
+  const handleBrowseMapTemplateRef = useRef();
   const [extractedVerses, setExtractedVerses] = useState({});
   const [termRenderings, setTermRenderings] = useState(); // Initialize map from USFM
 
@@ -227,31 +228,6 @@ function MainApp({ settings, templateFolder, onExit }) {
     };
     initializeColls();
   }, [settings, templateFolder]);
-
-  useEffect(() => {
-    if (!isInitialized) return; // Don't initialize map until collections are loaded
-
-    const initializeMap = async () => {
-      try {
-        if (!settings.usfm) throw new Error("No USFM provided in settings");
-        // Use the last USFM from settings if available, otherwise use the demo USFM
-        const usfmToUse = settings.usfm;
-        console.log("Initializing map from USFM:", settings.usfm);
-
-        // Initialize from USFM
-        const initialMap = await mapFromUsfm(usfmToUse);
-        console.log("Initial Map loaded:", initialMap);
-        setMapDef(initialMap);
-        setMapPaneView(initialMap.mapView ? MAP_VIEW : TABLE_VIEW);
-      } catch (error) {
-        console.error("Error initializing map:", error);
-        // Keep using empty map if initialization fails
-        console.log("Using empty map due to initialization error");
-      }
-    };
-
-    initializeMap();
-  }, [isInitialized, settings]);
 
   // Load term renderings from new project folder
   useEffect(() => {
@@ -669,6 +645,36 @@ function MainApp({ settings, templateFolder, onExit }) {
       console.log("Map template browse cancelled or not supported:", e);
     }
   }, [setMapDef, setLocations, termRenderings, lang, handleSelectLocation]);
+
+  // Store the function in a ref for stable reference (Option 2 solution)
+  useEffect(() => {
+    handleBrowseMapTemplateRef.current = handleBrowseMapTemplate;
+  }, [handleBrowseMapTemplate]);
+
+  useEffect(() => {
+    if (!isInitialized) return; // Don't initialize map until collections are loaded
+
+    const initializeMap = async () => {
+      try {
+        if (!settings.usfm) throw new Error("No USFM provided in settings");
+        // Use the last USFM from settings if available, otherwise use the demo USFM
+        const usfmToUse = settings.usfm;
+        console.log("Initializing map from USFM:", settings.usfm);
+
+        // Initialize from USFM
+        const initialMap = await mapFromUsfm(usfmToUse);
+        console.log("Initial Map loaded:", initialMap);
+        setMapDef(initialMap);
+        setMapPaneView(initialMap.mapView ? MAP_VIEW : TABLE_VIEW);
+      } catch (error) {
+        console.error("Error initializing map:", error);
+        // browse for a map template if no map
+        await handleBrowseMapTemplateRef.current();
+      }
+    };
+
+    initializeMap();
+  }, [isInitialized, settings]);
 
   // USFM View component (editable, uncontrolled)
   const usfmTextareaRef = useRef();
