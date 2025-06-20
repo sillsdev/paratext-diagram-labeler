@@ -1,5 +1,8 @@
-import { MATCH_PRE_B, MATCH_POST_B, MATCH_W } from './demo.js';
 import {
+  BOOK_NAMES,
+  MATCH_PRE_B,
+  MATCH_POST_B,
+  MATCH_W,
   STATUS_BLANK,
   STATUS_MULTIPLE,
   STATUS_NO_RENDERINGS,
@@ -20,6 +23,15 @@ export const statusValue = [
   { bkColor: 'crimson', textColor: 'white', sort: 6 }, // 6 - Rendering shorter than label
   { bkColor: '#80FF00', textColor: 'black', sort: 7 }, // 7 - Bad explicit form : #80FF00
 ];
+
+export function prettyRef(ref) {
+  // ref is a 9 digit string. First 3 digits are the book code, next 3 are chapter, last 3 are verse.
+  const bookCode = parseInt(ref.slice(0, 3), 10) - 1;
+  const chapter = parseInt(ref.slice(3, 6), 10);
+  const verse = parseInt(ref.slice(6, 9), 10);
+  const bookName = BOOK_NAMES.slice(bookCode * 4, bookCode * 4 + 3); // Use the top-level bookNames constant, 4 chars per code.
+  return `${bookName} ${chapter}:${verse}`;
+}
 
 export function inLang(prop, lang = 'en') {
   if (!prop) return '';

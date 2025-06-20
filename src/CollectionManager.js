@@ -1,5 +1,4 @@
 // filepath: c:\git\mapLabelerExt\biblical-map-app\src\CollectionManager.js
-// import { DEFAULT_PROJECTS_FOLDER } from './demo.js';
 // Collection mapping structure
 export const COLLECTIONS = {
   SMR: {

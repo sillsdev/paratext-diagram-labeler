@@ -2,24 +2,9 @@ import React from 'react';
 import { FaPencilAlt } from 'react-icons/fa';
 import uiStr from './data/ui-strings.json';
 import { CheckmarkIcon, DeniedCheckmarkIcon, CrossIcon, NoneIcon } from './TermIcons';
-import { MATCH_PRE_B, MATCH_POST_B, MATCH_W } from './demo.js';
-// import { MAP_VIEW, TABLE_VIEW, USFM_VIEW, STATUS_NO_RENDERINGS, STATUS_GUESSED } from './constants.js';
-// Status values not yet used: STATUS_BLANK, STATUS_MULTIPLE,  STATUS_UNMATCHED, STATUS_MATCHED, STATUS_RENDERING_SHORT, STATUS_BAD_EXPLICIT_FORM
-// import TermRenderings from './TermRenderings';
+import { MATCH_PRE_B, MATCH_POST_B, MATCH_W } from './constants.js';
 import { collectionManager } from './CollectionManager';
-import { inLang } from './Utils.js';
-
-const bookNames =
-  'GEN,EXO,LEV,NUM,DEU,JOS,JDG,RUT,1SA,2SA,1KI,2KI,1CH,2CH,EZR,NEH,EST,JOB,PSA,PRO,ECC,SNG,ISA,JER,LAM,EZK,DAN,HOS,JOL,AMO,OBA,JON,MIC,NAM,HAB,ZEP,HAG,ZEC,MAL,MAT,MRK,LUK,JHN,ACT,ROM,1CO,2CO,GAL,EPH,PHP,COL,1TH,2TH,1TI,2TI,TIT,PHM,HEB,JAS,1PE,2PE,1JN,2JN,3JN,JUD,REV,TOB,JDT,ESG,WIS,SIR,BAR,LJE,S3Y,SUS,BEL,1MA,2MA,3MA,4MA,1ES,2ES,MAN,PS2,ODA,PSS';
-
-function prettyRef(ref) {
-  // ref is a 9 digit string. First 3 digits are the book code, next 3 are chapter, last 3 are verse.
-  const bookCode = parseInt(ref.slice(0, 3), 10) - 1;
-  const chapter = parseInt(ref.slice(3, 6), 10);
-  const verse = parseInt(ref.slice(6, 9), 10);
-  const bookName = bookNames.slice(bookCode * 4, bookCode * 4 + 3); // Use the top-level bookNames constant, 4 chars per code.
-  return `${bookName} ${chapter}:${verse}`;
-}
+import { inLang, prettyRef } from './Utils.js';
 
 // Bottom Pane component to display a scrollable list of verses referencing the termId
 function BottomPane({
