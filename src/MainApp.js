@@ -662,6 +662,7 @@ function MainApp({ settings, templateFolder, onExit }) {
           handleSelectLocation(initialLocations[0]); // Auto-select first location
         }
         setMapPaneView(MAP_VIEW); // Map View
+        setResetZoomFlag(true); // Reset zoom on new map
       }
     } catch (e) {
       // User cancelled or not supported

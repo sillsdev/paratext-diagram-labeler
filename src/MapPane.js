@@ -5,13 +5,13 @@ import { inLang, statusValue, getMatchTally } from './Utils.js';
 import { collectionManager } from './CollectionManager';
 
 // Component that handles map zoom and pan logic
-function MapController({ 
-  resetZoomFlag, 
-  setResetZoomFlag, 
-  selLocation, 
-  transformedLocations, 
-  imageHeight, 
-  imageWidth 
+function MapController({
+  resetZoomFlag,
+  setResetZoomFlag,
+  selLocation,
+  transformedLocations,
+  imageHeight,
+  imageWidth,
 }) {
   const { useMap } = require('react-leaflet');
   const map = useMap();
@@ -23,9 +23,12 @@ function MapController({
     const timeoutId = setTimeout(() => {
       try {
         // Reset zoom and pan to fit the map image
-        const bounds = [[0, 0], [imageHeight, imageWidth]];
+        const bounds = [
+          [0, 0],
+          [imageHeight, imageWidth],
+        ];
         map.fitBounds(bounds, { animate: true, duration: 0.5 });
-        
+
         // Clear the reset flag
         setResetZoomFlag(false);
       } catch (error) {
@@ -36,6 +39,7 @@ function MapController({
 
     return () => clearTimeout(timeoutId);
   }, [resetZoomFlag, setResetZoomFlag, map, imageHeight, imageWidth]);
+
   // Effect for smart panning to selected location
   useEffect(() => {
     if (!selLocation || !map || !transformedLocations.length) return;
@@ -46,54 +50,72 @@ function MapController({
         if (!selectedLoc) return;
 
         const locationPoint = [selectedLoc.yLeaflet, selectedLoc.x];
-        
+        console.log('Selected location point:', locationPoint);
+
         // Get current map bounds in image coordinates
         const bounds = map.getBounds();
         const currentTopLeft = [bounds.getNorth(), bounds.getWest()];
         const currentBottomRight = [bounds.getSouth(), bounds.getEast()];
+        console.log('Current map bounds:', {
+          currentTopLeft,
+          currentBottomRight,
+        });
 
         // Calculate buffer zone in image coordinates (15% of current view)
         const viewHeight = currentBottomRight[0] - currentTopLeft[0];
         const viewWidth = currentBottomRight[1] - currentTopLeft[1];
+        console.log('Current view dimensions:', { viewHeight, viewWidth });
         const bufferY = viewHeight * 0.15;
         const bufferX = viewWidth * 0.15;
+        console.log('Buffer zone:', { bufferY, bufferX });
 
         // Define comfortable viewing area boundaries
         const comfortableTop = currentTopLeft[0] + bufferY;
         const comfortableBottom = currentBottomRight[0] - bufferY;
         const comfortableLeft = currentTopLeft[1] + bufferX;
         const comfortableRight = currentBottomRight[1] - bufferX;
+        console.log('Comfortable viewing area:', {
+          comfortableTop,
+          comfortableBottom,
+          comfortableLeft,
+          comfortableRight,
+        });
 
         // Check if location is outside comfortable viewing area
-        const needsPanning = (
-          locationPoint[0] < comfortableTop ||    // Above comfort zone
+        const needsPanning =
+          locationPoint[0] < comfortableTop || // Above comfort zone
           locationPoint[0] > comfortableBottom || // Below comfort zone
-          locationPoint[1] < comfortableLeft ||   // Left of comfort zone
-          locationPoint[1] > comfortableRight     // Right of comfort zone
-        );
+          locationPoint[1] < comfortableLeft || // Left of comfort zone
+          locationPoint[1] > comfortableRight; // Right of comfort zone
+        console.log('Needs panning:', needsPanning);
 
         if (needsPanning) {
           // Calculate new center to bring location into comfortable zone
           const currentCenter = map.getCenter();
           let newLat = currentCenter.lat;
           let newLng = currentCenter.lng;
+          console.log('Current map center:', currentCenter);
 
           // Adjust vertically if needed
           if (locationPoint[0] < comfortableTop) {
             // Location is above comfort zone, pan up (decrease lat)
             newLat = currentCenter.lat - (comfortableTop - locationPoint[0]);
+            console.log('Panning up to new lat:', newLat);
           } else if (locationPoint[0] > comfortableBottom) {
             // Location is below comfort zone, pan down (increase lat)
             newLat = currentCenter.lat + (locationPoint[0] - comfortableBottom);
+            console.log('Panning down to new lat:', newLat);
           }
 
           // Adjust horizontally if needed
           if (locationPoint[1] < comfortableLeft) {
             // Location is left of comfort zone, pan left (decrease lng)
             newLng = currentCenter.lng - (comfortableLeft - locationPoint[1]);
+            console.log('Panning left to new lng:', newLng);
           } else if (locationPoint[1] > comfortableRight) {
             // Location is right of comfort zone, pan right (increase lng)
             newLng = currentCenter.lng + (locationPoint[1] - comfortableRight);
+            console.log('Panning right to new lng:', newLng);
           }
 
           // Pan to the new center with smooth animation
@@ -149,10 +171,12 @@ export default function MapPane({
       zoom={0}
       scrollWheelZoom={false}
       zoomDelta={0.25}
-      zoomSnap={0.25}      zoomControl={false}
+      zoomSnap={0.25}
+      zoomControl={false}
+      attributionControl={false} // Disable attribution
       // REMOVE: whenCreated={mapInstance => { if (mapRef) mapRef.current = mapInstance; }}
     >
-      <MapController 
+      <MapController
         resetZoomFlag={resetZoomFlag}
         setResetZoomFlag={setResetZoomFlag}
         selLocation={selLocation}
@@ -162,10 +186,13 @@ export default function MapPane({
       />
       <ZoomControl position="topright" />
       {imageUrl ? (
-        <ImageOverlay 
+        <ImageOverlay
           key={`image-${mapDef.imgFilename || 'default'}`}
-          bounds={[[0, 0], [mapDef.height, mapDef.width]]}
-          url={imageUrl} 
+          bounds={[
+            [0, 0],
+            [mapDef.height, mapDef.width],
+          ]}
+          url={imageUrl}
         />
       ) : (
         <div
