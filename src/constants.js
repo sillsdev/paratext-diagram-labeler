@@ -10,6 +10,7 @@ export const STATUS_MATCHED = 4;
 export const STATUS_GUESSED = 5;
 export const STATUS_RENDERING_SHORT = 6;
 export const STATUS_BAD_EXPLICIT_FORM = 7;
+export const STATUS_INCOMPLETE = 8;
 
 // export const MATCH_PRE_B = '\\b';
 // export const MATCH_POST_B = '\\b';

@@ -11,6 +11,7 @@ import {
   STATUS_GUESSED,
   STATUS_RENDERING_SHORT,
   STATUS_BAD_EXPLICIT_FORM,
+  STATUS_INCOMPLETE
 } from './constants.js';
 
 export const statusValue = [
@@ -21,7 +22,8 @@ export const statusValue = [
   { bkColor: 'white', textColor: 'black', sort: 0 }, // 4 - matched
   { bkColor: '#FF8000', textColor: 'black', sort: 2 }, // 5 - guessed : #FF8000 : #e56300
   { bkColor: 'crimson', textColor: 'white', sort: 6 }, // 6 - Rendering shorter than label
-  { bkColor: '#80FF00', textColor: 'black', sort: 7 }, // 7 - Bad explicit form : #80FF00
+  { bkColor: 'magenta', textColor: 'black', sort: 7 }, // 7 - Bad explicit form 
+  { bkColor: '#80FF00', textColor: 'black', sort: 8 }, // 8 - Incomplete : #80FF00
 ];
 
 export function prettyRef(ref) {
@@ -39,6 +41,9 @@ export function inLang(prop, lang = 'en') {
   return prop[lang] || prop['en'] || Object.values(prop)[0] || '';
 }
 
+// @entry is a term rendering entry
+// @refs is an array of reference IDs (9-digit strings) from collectionManager.getRefs()
+// @extractedVerses is an object mapping reference IDs to verse text from
 export function getMatchTally(entry, refs, extractedVerses) {
   let anyDenials = false;
   try {
@@ -102,10 +107,7 @@ export function getMatchTally(entry, refs, extractedVerses) {
   }
 }
 
-export function getStatus(termRenderings, termId, vernLabel) {
-  // if (termId === "philipstravels_title") {
-  //   console.warn("======================");
-  // }
+export function getStatus(termRenderings, termId, vernLabel, refs, extractedVerses) {
   //console.log(`Checking status for termId: ${termId}, vernLabel: ${vernLabel}`);
   vernLabel = vernLabel ? vernLabel.trim() : '';
   if (!vernLabel) {
@@ -138,7 +140,12 @@ export function getStatus(termRenderings, termId, vernLabel) {
         return STATUS_BAD_EXPLICIT_FORM; // Explicit map form does not match rendering
       }
     }
-    return STATUS_MATCHED; // : "Approved"
+    const matchedTally = getMatchTally(entry, refs, extractedVerses);
+    if (matchedTally[0] === matchedTally[1]) {
+      return STATUS_MATCHED; // : "Approved"
+    } else {
+      return STATUS_INCOMPLETE; // "Incomplete" - some refs matched, but not all
+    }
   }
 
   // vernLabel !== mapForm

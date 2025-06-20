@@ -39,6 +39,7 @@ const emptyInitialMap = {
 };
 console.log("Creating empty initial map state");
 
+// return a list of all refs used by all the labels in the map definition
 function getRefList(labels, collectionId = "SMR") {
   const rl = Array.from(
     new Set(
@@ -196,6 +197,10 @@ function MainApp({ settings, templateFolder, onExit }) {
     const saved = localStorage.getItem("labelScale"); // Persist labelScale in localStorage
     return saved ? parseFloat(saved) : 1;
   });
+  const [showFrac, setShowFrac] = useState(() => {
+    const saved = localStorage.getItem("showFrac"); // Persist showFrac in localStorage
+    return saved === "true";
+  });
   const [showSettings, setShowSettings] = useState(false);
   const [resetZoomFlag, setResetZoomFlag] = useState(false); // For controlling Leaflet map
   const isDraggingVertical = useRef(false);
@@ -205,6 +210,16 @@ function MainApp({ settings, templateFolder, onExit }) {
   const handleBrowseMapTemplateRef = useRef();
   const [extractedVerses, setExtractedVerses] = useState({});
   const [termRenderings, setTermRenderings] = useState(); // Initialize map from USFM
+
+  // Persist labelScale to localStorage
+  useEffect(() => {
+    localStorage.setItem("labelScale", labelScale.toString());
+  }, [labelScale]);
+
+  // Persist showFrac to localStorage
+  useEffect(() => {
+    localStorage.setItem("showFrac", showFrac.toString());
+  }, [showFrac]);
 
   useEffect(() => {
     // Load collections on mount, and then never again.
@@ -258,6 +273,8 @@ function MainApp({ settings, templateFolder, onExit }) {
               newTermRenderings,
               loc.termId,
               loc.vernLabel,
+              collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+              extractedVerses
             );
             return { ...loc, status };
           });
@@ -280,7 +297,7 @@ function MainApp({ settings, templateFolder, onExit }) {
     };
 
     loadData();
-  }, [projectFolder, mapDef, isInitialized, settings.saveToDemo]);
+  }, [projectFolder, mapDef, isInitialized, settings.saveToDemo, extractedVerses]);
 
   // setExtractedVerses when projectFolder or mapDef.labels change
   useEffect(() => {
@@ -344,6 +361,8 @@ function MainApp({ settings, templateFolder, onExit }) {
               currentTermRenderings,
               loc.termId,
               newVernacular,
+              collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+              extractedVerses
             );
             return { ...loc, vernLabel: newVernacular, status };
           }
@@ -351,7 +370,7 @@ function MainApp({ settings, templateFolder, onExit }) {
         }),
       );
     },
-    [termRenderings],
+    [termRenderings, extractedVerses, mapDef.template],
   ); // is just renderings enough here?
 
   // Handler to cycle forward or backward through locations
@@ -450,6 +469,8 @@ function MainApp({ settings, templateFolder, onExit }) {
       updatedData,
       termId,
       locations[selLocation].vernLabel || "",
+      collectionManager.getRefs(locations[selLocation].mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+      extractedVerses
     );
 
     // Update the status of the affected location
@@ -492,6 +513,8 @@ function MainApp({ settings, templateFolder, onExit }) {
       updatedData,
       termId,
       locations[selLocation].vernLabel || "",
+      collectionManager.getRefs(locations[selLocation].mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+      extractedVerses
     );
     setLocations((prevLocations) =>
       prevLocations.map((loc) => {
@@ -615,6 +638,8 @@ function MainApp({ settings, templateFolder, onExit }) {
             currentTermRenderings,
             loc.termId,
             loc.vernLabel || "",
+            collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+            extractedVerses
           );
           return { ...loc, vernLabel: loc.vernLabel || "", status };
         });
@@ -629,6 +654,8 @@ function MainApp({ settings, templateFolder, onExit }) {
             currentTermRenderings,
             loc.termId,
             loc.vernLabel,
+            collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+            extractedVerses
           );
           return { ...loc, status };
         });
@@ -644,7 +671,7 @@ function MainApp({ settings, templateFolder, onExit }) {
       // User cancelled or not supported
       console.log("Map template browse cancelled or not supported:", e);
     }
-  }, [setMapDef, setLocations, termRenderings, lang, handleSelectLocation]);
+  }, [setMapDef, setLocations, termRenderings, lang, handleSelectLocation, extractedVerses, mapDef.template]);
 
   // Store the function in a ref for stable reference 
   useEffect(() => {
@@ -717,6 +744,8 @@ function MainApp({ settings, templateFolder, onExit }) {
           currentTermRenderings,
           loc.termId,
           loc.vernLabel,
+          collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+          extractedVerses
         );
         return { ...loc, status };
       });
@@ -741,7 +770,7 @@ function MainApp({ settings, templateFolder, onExit }) {
       alert(inLang(uiStr.invalidUsfm, lang));
       return false; // Indicate failure
     }
-  }, [termRenderings, setLocations, setSelLocation, lang, mapDef]);
+  }, [termRenderings, setLocations, setSelLocation, lang, mapDef, extractedVerses]);
   // Intercept view switch to update map if leaving USFM view
   const handleSwitchViewWithUsfm = useCallback(async () => {
     if (mapPaneView === USFM_VIEW) {
@@ -793,7 +822,9 @@ function MainApp({ settings, templateFolder, onExit }) {
       setLocations((prevLocations) =>
         prevLocations.map((loc) => {
           if (loc.termId === termId) {
-            const status = getStatus(updatedData, loc.termId, loc.vernLabel);
+            const status = getStatus(updatedData, loc.termId, loc.vernLabel,
+              collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+              extractedVerses);
             return { ...loc, status };
           }
           return loc;
@@ -804,7 +835,7 @@ function MainApp({ settings, templateFolder, onExit }) {
           renderingsTextareaRef.current.focus();
       }, 0);
     },
-    [renderings, selLocation, locations, termRenderings],
+    [renderings, selLocation, locations, termRenderings, extractedVerses, mapDef.template],
   );
 
   // Replace all renderings with selected text (from bottom pane) or create new rendering (from details pane)
@@ -826,7 +857,9 @@ function MainApp({ settings, templateFolder, onExit }) {
         prevLocations.map((loc) => {
           if (loc.termId === termId) {
             const vernLabel = newRenderings;
-            const status = getStatus(updatedData, loc.termId, vernLabel);
+            const status = getStatus(updatedData, loc.termId, vernLabel,
+              collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+              extractedVerses);
             return { ...loc, status, vernLabel };
           }
           return loc;
@@ -837,7 +870,7 @@ function MainApp({ settings, templateFolder, onExit }) {
           renderingsTextareaRef.current.focus();
       }, 0);
     },
-    [selLocation, locations, termRenderings],
+    [selLocation, locations, termRenderings, extractedVerses, mapDef.template],
   );
 
   // Add global PageUp/PageDown navigation for Map and Table views
@@ -886,11 +919,13 @@ function MainApp({ settings, templateFolder, onExit }) {
           currentTermRenderings,
           loc.termId,
           loc.vernLabel || "",
+          collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+          extractedVerses
         );
         return { ...loc, status };
       }),
     );
-  }, [termRenderings]);
+  }, [termRenderings, extractedVerses, mapDef.template]);
 
   // Debounced save of termRenderings to disk via IPC
   useEffect(() => {
@@ -1101,6 +1136,7 @@ function MainApp({ settings, templateFolder, onExit }) {
                 setResetZoomFlag={setResetZoomFlag} // Pass setter to MapPane
                 extractedVerses={extractedVerses} // Pass extracted verses
                 collectionId={currentCollectionId} // Pass the collection ID
+                showFrac={showFrac}
               />
             </>
           )}{" "}
@@ -1186,6 +1222,8 @@ function MainApp({ settings, templateFolder, onExit }) {
         setLabelScale={setLabelScale}
         lang={lang}
         setLang={setLang}
+        showFrac={showFrac}
+        setShowFrac={setShowFrac} 
       />{" "}
     </div>
   );

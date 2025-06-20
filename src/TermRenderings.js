@@ -1,14 +1,15 @@
-import {
-  STATUS_BLANK,
-  STATUS_MULTIPLE,
-  STATUS_NO_RENDERINGS,
-  STATUS_UNMATCHED,
-  STATUS_MATCHED,
-  STATUS_GUESSED,
-  STATUS_RENDERING_SHORT,
-  STATUS_BAD_EXPLICIT_FORM,
-} from './constants.js';
-import { wordMatchesRenderings } from './Utils.js';
+// import {
+//   STATUS_BLANK,
+//   STATUS_MULTIPLE,
+//   STATUS_NO_RENDERINGS,
+//   STATUS_UNMATCHED,
+//   STATUS_MATCHED,
+//   STATUS_GUESSED,
+//   STATUS_RENDERING_SHORT,
+//   STATUS_BAD_EXPLICIT_FORM,
+//   STATUS_INCOMPLETE
+// } from './constants.js';
+// import { wordMatchesRenderings, getMatchTally } from './Utils.js';
 
 class TermRenderings {
   constructor() {
@@ -49,7 +50,7 @@ class TermRenderings {
     return processedItems.join('—');
   }
 
-  getStatus(termId, vernLabel) {
+  /* getStatusX(termId, vernLabel, refs=[], extractedVerses=[]) {
     // if (termId === "philipstravels_title") {
     //   console.warn("======================");
     // }
@@ -85,14 +86,19 @@ class TermRenderings {
           return STATUS_BAD_EXPLICIT_FORM; // Explicit map form does not match rendering
         }
       }
-      return STATUS_MATCHED; // : "Approved"
+      const matchedTally = getMatchTally(entry, refs, extractedVerses);
+      if (matchedTally[0] === matchedTally[1]) {
+        return STATUS_MATCHED; // : "Approved"
+      } else {
+        return STATUS_INCOMPLETE; // "Incomplete" - some refs matched, but not all
+      }
     }
 
     // vernLabel !== mapForm
     return wordMatchesRenderings(vernLabel, entry.renderings, false)
       ? STATUS_RENDERING_SHORT
       : STATUS_UNMATCHED; // "insufficient"
-  }
+  } */
 
   getEntry(termId) {
     return this.data[termId];

@@ -246,6 +246,7 @@ export default function MapPane({
   setResetZoomFlag,
   extractedVerses,
   collectionId = 'SMR',
+  showFrac
 }) {
   const { MapContainer, ImageOverlay, Marker, ZoomControl } = require('react-leaflet');
   const imageHeight = mapDef.height;
@@ -328,14 +329,14 @@ export default function MapPane({
                 loc.status,
                 selLocation === loc.idx,
                 labelScale,
-                frac(
+                showFrac ? frac(
                   getMatchTally(
                     termRenderings[loc.termId],
                     collectionManager.getRefs(loc.mergeKey, collectionId),
                     extractedVerses
                   ),
                   true
-                )
+                ) : ''
               )}
               eventHandlers={{ click: () => onSelectLocation(loc) }}
               tabIndex={0}

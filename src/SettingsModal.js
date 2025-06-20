@@ -3,7 +3,7 @@ import { inLang } from './Utils.js';
 import uiStr from './data/ui-strings.json';
 
 // Settings Modal Dialog
-export default function SettingsModal({ open, onClose, labelScale, setLabelScale, lang, setLang }) {
+export default function SettingsModal({ open, onClose, labelScale, setLabelScale, lang, setLang, showFrac, setShowFrac }) {
   if (!open) return null;
   return (
     <div
@@ -73,8 +73,18 @@ export default function SettingsModal({ open, onClose, labelScale, setLabelScale
               <option key={ling.code} value={ling.code}>
                 {ling.name}
               </option>
-            ))}
-          </select>
+            ))}          </select>
+        </div>
+        <div style={{ marginBottom: 16, textAlign: 'center' }}>
+          <label style={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+            <input
+              type="checkbox"
+              checked={showFrac}
+              onChange={e => setShowFrac(e.target.checked)}
+              style={{ transform: 'scale(1.2)' }}
+            />
+            {inLang(uiStr.showTallyFractions, lang)}
+          </label>
         </div>
         <div style={{ textAlign: 'center' }}>
           <button onClick={onClose} style={{ fontSize: 15, padding: '4px 16px', borderRadius: 4 }}>
