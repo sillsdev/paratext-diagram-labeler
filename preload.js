@@ -19,7 +19,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   saveToJson: (jsonPath, jsonFilename, settings) =>
     ipcRenderer.invoke('save-to-json', jsonPath, jsonFilename, settings),
 
-  statPath: path => ipcRenderer.invoke('stat-path', path),
+  statPath: path => ipcRenderer.invoke('stat-path', path),  loadImage: imagePath => ipcRenderer.invoke('load-image', imagePath),
 
-  loadImage: imagePath => ipcRenderer.invoke('load-image', imagePath),
+  exportDataMerge: (data) => ipcRenderer.invoke('export-data-merge', data),
 });

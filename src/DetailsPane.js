@@ -145,36 +145,27 @@ export default function DetailsPane({
 
   // --- Template info/browse group ---
   // Access the template name from the global map object
-  const templateName = mapDef.template || '(' + inLang(uiStr.noTemplate, lang) + ')';
-
-  // Export to data merge file handler
+  const templateName = mapDef.template || '(' + inLang(uiStr.noTemplate, lang) + ')';  // Export to data merge file handler
   const handleExportDataMerge = async () => {
     try {
-      // Prepare IDML data merge content
-      const dataMergeHeader = locations.map(loc => loc.mergeKey).join('\t');
-      const dataMergeContent = locations.map(loc => loc.vernLabel || '').join('\t');
-      const data = dataMergeHeader + '\n' + dataMergeContent + '\n';
-
-      // Write to file using the browser file system API
-      const projectFolder = settingsService.getProjectFolder();
-      const projectName = projectFolder.replace(/.*[\\\/]/, '').trim(); // TODO: Handle project name properly
-      const fileHandle = await window.showSaveFilePicker({
-        suggestedName: templateName + ' @' + projectName + '.idml.txt', 
-        startIn: 'documents',
-        types: [
-          {
-            description: 'IDML Data Merge Files',
-            accept: { 'text/plain': ['.idml.txt'] },
-          },
-        ],
+      const result = await window.electronAPI.exportDataMerge({
+        locations: locations,
+        templateName: templateName,
+        projectFolder: settingsService.getProjectFolder()
       });
-      if (fileHandle) {
-        const writable = await fileHandle.createWritable();
-        await writable.write(encodeUTF16LE(data, true));
-        await writable.close();
+      
+      if (result.success) {
+        // Success - no alert needed as file was saved successfully
+        console.log('Export successful:', result.message);
+      } else if (result.canceled) {
+        // User cancelled - no error message needed
+        console.log('Export cancelled by user');
+      } else {
+        alert(`Export failed: ${result.error}`);
       }
-    } catch (e) {
-      // User cancelled or not supported
+    } catch (error) {
+      console.error('Export error:', error);
+      alert(`Export failed: ${error.message}`);
     }
   };
 
@@ -801,19 +792,5 @@ export default function DetailsPane({
           />
         </div>
       </div>
-    </div>
-  );
-}
-
-function encodeUTF16LE(str, bom = false) {
-  if (bom) {
-    str = '\uFEFF' + str; // Add BOM if requested
-  }
-  const buf = new Uint8Array(str.length * 2);
-  for (let i = 0; i < str.length; i++) {
-    const code = str.charCodeAt(i);
-    buf[i * 2] = code & 0xff;
-    buf[i * 2 + 1] = code >> 8;
-  }
-  return buf;
+    </div>  );
 }

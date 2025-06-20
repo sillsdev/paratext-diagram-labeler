@@ -470,6 +470,83 @@ ipcMain.handle('stat-path', async (event, filePath) => {
   }
 });
 
+// Handle IDML data merge export
+ipcMain.handle('export-data-merge', async (event, { locations, templateName, projectFolder }) => {
+  try {
+    // Determine default output folder
+    const localFiguresPath = path.join(projectFolder, 'local', 'figures');
+    let defaultPath;
+    
+    try {
+      await fs.promises.access(localFiguresPath);
+      defaultPath = localFiguresPath;
+    } catch {
+      defaultPath = projectFolder;
+    }
+    
+    // Prepare IDML data merge content (same as original logic)
+    const dataMergeHeader = locations.map(loc => loc.mergeKey).join('\t');
+    const dataMergeContent = locations.map(loc => loc.vernLabel || '').join('\t');
+    const data = dataMergeHeader + '\n' + dataMergeContent + '\n';
+    
+    // Generate suggested filename
+    const projectName = path.basename(projectFolder);
+    const suggestedFilename = `${templateName} @${projectName}.idml.txt`;
+    const suggestedPath = path.join(defaultPath, suggestedFilename);
+    
+    // Show save dialog
+    const result = await dialog.showSaveDialog({
+      title: 'Export IDML Data Merge',
+      defaultPath: suggestedPath,
+      filters: [
+        {
+          name: 'IDML Data Merge Files',
+          extensions: ['idml.txt']
+        }
+      ]
+    });
+    
+    if (result.canceled) {
+      return {
+        success: false,
+        canceled: true,
+        message: 'Export canceled by user'
+      };
+    }
+    
+    // Encode to UTF-16 LE with BOM (same as original)
+    const encodeUTF16LE = (str, bom = false) => {
+      if (bom) {
+        str = '\uFEFF' + str; // Add BOM if requested
+      }
+      const buf = new Uint8Array(str.length * 2);
+      for (let i = 0; i < str.length; i++) {
+        const code = str.charCodeAt(i);
+        buf[i * 2] = code & 0xff;
+        buf[i * 2 + 1] = code >> 8;
+      }
+      return buf;
+    };
+    
+    // Write file with UTF-16 LE encoding
+    const encodedData = encodeUTF16LE(data, true);
+    await fs.promises.writeFile(result.filePath, encodedData);
+    
+    return {
+      success: true,
+      filePath: result.filePath,
+      message: `IDML data merge exported successfully to ${path.basename(result.filePath)}`
+    };
+    
+  } catch (error) {
+    console.error('Export data merge error:', error);
+    return {
+      success: false,
+      error: error.message
+    };
+  }
+});
+
 app.whenReady().then(createWindow);
 
 app.on('window-all-closed', () => {
