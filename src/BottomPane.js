@@ -86,7 +86,7 @@ function BottomPane({
         if (!pattern.endsWith('*')) pattern = pattern + MATCH_POST_B;
         // Replace * [with [\w-]* (word chars + dash)
         pattern = pattern.replace(/\*/g, MATCH_W + '*');
-        console.log(`BP: Creating regex for rendering "${r}" with pattern "${pattern}"`);
+        // console.log(`BP: Creating regex for rendering "${r}" with pattern "${pattern}"`);
         try {
           return new RegExp(pattern, 'iu');
         } catch (e) {
