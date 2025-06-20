@@ -38,16 +38,23 @@ function MapController({
     }, 50); // Small delay to ensure map is ready
 
     return () => clearTimeout(timeoutId);
-  }, [resetZoomFlag, setResetZoomFlag, map, imageHeight, imageWidth]);
-
-  // Effect for smart panning to selected location
+  }, [resetZoomFlag, setResetZoomFlag, map, imageHeight, imageWidth]);  // Effect for smart panning to selected location
   useEffect(() => {
-    if (!selLocation || !map || !transformedLocations.length) return;
+    if (selLocation === null || selLocation === undefined || !map || !transformedLocations.length) return;
 
     const timeoutId = setTimeout(() => {
       try {
-        const selectedLoc = transformedLocations.find(loc => loc.idx === selLocation);
-        if (!selectedLoc) return;        const locationPoint = [selectedLoc.yLeaflet, selectedLoc.x];
+        console.log('Looking for selLocation index:', selLocation);
+        console.log('Available transformedLocations length:', transformedLocations.length);
+        
+        // selLocation is an index into the transformedLocations array
+        const selectedLoc = transformedLocations[selLocation];
+        if (!selectedLoc) {
+          console.log('No location found at index:', selLocation);
+          return;
+        }
+
+        const locationPoint = [selectedLoc.yLeaflet, selectedLoc.x];
         console.log('Selected location point:', locationPoint);
 
         // Get current map size and center
