@@ -522,24 +522,24 @@ function MainApp({ settings, templateFolder, onExit }) {
       let figFilename = "";
       if (fileHandle) {
         // Extract template name from filename and log the process
-        console.log("Original file name:", fileHandle.name);
+        // console.log("Original file name:", fileHandle.name);
         let newTemplateBase = fileHandle.name.replace(/\..*$/, ""); // Remove file extension
-        console.log("After removing extension:", newTemplateBase);
+        // console.log("After removing extension:", newTemplateBase);
         newTemplateBase = newTemplateBase.trim();
-        console.log("After trim:", newTemplateBase);
+        // console.log("After trim:", newTemplateBase);
         newTemplateBase = newTemplateBase.replace(/\s*[@(].*/, ""); // Remove anything after @ or (
-        console.log("Final template base name:", newTemplateBase);
+        // console.log("Final template base name:", newTemplateBase);
         const labels = {};
         if (fileHandle.name.endsWith(".txt")) {
           // Handle data merge file
           const file = await fileHandle.getFile();
-          console.log("Reading data merge file:", file.name);
+          // console.log("Reading data merge file:", file.name);
           const fileText = decodeFileAsString(await file.arrayBuffer());
-          console.log(
-            "Imported data merge file:",
-            file.name,
-            ">" + fileText + "<",
-          );
+          // console.log(
+          //   "Imported data merge file:",
+          //   file.name,
+          //   ">" + fileText + "<",
+          // );
           // For now, assume it's an IDML data merge file //TODO: Handle mapx merge
           const lines = fileText.split("\n");
           const mergeKeys = lines[0].split("\t");
@@ -549,7 +549,7 @@ function MainApp({ settings, templateFolder, onExit }) {
             for (let i = 0; i < mergeKeys.length; i++) {
               labels[mergeKeys[i]] = verns[i];
             }
-            console.log("Labels from data merge:", labels);
+            // console.log("Labels from data merge:", labels);
           } else {
             alert(inLang(uiStr.invalidDataMerge, lang));
             return;
@@ -568,18 +568,18 @@ function MainApp({ settings, templateFolder, onExit }) {
           figFilename = newTemplateBase + ".jpg"; // Default to .jpg
         }
         // Add diagnostic logs to see what's happening
-        console.log("Template base name:", newTemplateBase);
+        // console.log("Template base name:", newTemplateBase);
         const collectionId = getCollectionIdFromTemplate(newTemplateBase);
-        console.log("Detected collection ID:", collectionId);
-        console.log("Collections loaded:", collectionManager.collectionsData);
-        console.log(
-          "Is collection loaded?",
-          collectionManager.isCollectionLoaded(collectionId),
-        );
+        // console.log("Detected collection ID:", collectionId);
+        // console.log("Collections loaded:", collectionManager.collectionsData);
+        // console.log(
+        //   "Is collection loaded?",
+        //   collectionManager.isCollectionLoaded(collectionId),
+        // );
 
         // Try to get the map definition
         const foundTemplate = getMapDef(newTemplateBase, collectionId);
-        console.log("Found template:", foundTemplate);
+        // console.log("Found template:", foundTemplate);
 
         if (!foundTemplate) {
           console.error(
@@ -657,15 +657,13 @@ function MainApp({ settings, templateFolder, onExit }) {
     const initializeMap = async () => {
       try {
         if (!settings.usfm) throw new Error("No USFM provided in settings");
-        console.log("Initializing map from USFM:", settings.usfm);
-
-        // Initialize from USFM
+        // console.log("Initializing map from USFM:", settings.usfm);
         const initialMap = await mapFromUsfm(settings.usfm);
-        console.log("Initial Map loaded:", initialMap);
+        console.log("Initial Map loaded (based on usfm):", initialMap);
         setMapDef(initialMap);
         setMapPaneView(initialMap.mapView ? MAP_VIEW : TABLE_VIEW);
       } catch (error) {
-        console.error("Error initializing map:", error);
+        console.log("Unable to initialize map:", error);
         // browse for a map template if no map
         await handleBrowseMapTemplateRef.current();
       }

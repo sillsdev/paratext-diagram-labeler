@@ -39,13 +39,15 @@ function MapController({
 
     return () => clearTimeout(timeoutId);
   }, [resetZoomFlag, setResetZoomFlag, map, imageHeight, imageWidth]);  // Effect for smart panning to selected location
+
+
   useEffect(() => {
     if (selLocation === null || selLocation === undefined || !map || !transformedLocations.length) return;
 
     const timeoutId = setTimeout(() => {
       try {
-        console.log('Looking for selLocation index:', selLocation);
-        console.log('Available transformedLocations length:', transformedLocations.length);
+        // console.log('Looking for selLocation index:', selLocation);
+        // console.log('Available transformedLocations length:', transformedLocations.length);
         
         // selLocation is an index into the transformedLocations array
         const selectedLoc = transformedLocations[selLocation];
@@ -55,34 +57,34 @@ function MapController({
         }
 
         const locationPoint = [selectedLoc.yLeaflet, selectedLoc.x];
-        console.log('Selected location point:', locationPoint);
+        // console.log('Selected location point:', locationPoint);
 
         // Get current map size and center
         const mapSize = map.getSize();
-        const currentCenter = map.getCenter();
-        console.log('Map size (pixels):', mapSize);
-        console.log('Current center:', currentCenter);
+        // const currentCenter = map.getCenter();
+        // console.log('Map size (pixels):', mapSize);
+        // console.log('Current center:', currentCenter);
 
         // Convert location to pixel coordinates
         const locationPixel = map.latLngToContainerPoint(locationPoint);
-        console.log('Location in pixels:', locationPixel);
+        // console.log('Location in pixels:', locationPixel);
 
         // Calculate 6% buffer zone in pixels
         const bufferX = mapSize.x * 0.06;
         const bufferY = mapSize.y * 0.06;
-        console.log('Buffer zone (pixels):', { bufferX, bufferY });
+        // console.log('Buffer zone (pixels):', { bufferX, bufferY });
 
         // Define comfortable viewing area in pixel coordinates
         const comfortableLeft = bufferX;
         const comfortableRight = mapSize.x - bufferX;
         const comfortableTop = bufferY;
         const comfortableBottom = mapSize.y - bufferY;
-        console.log('Comfortable pixel area:', {
-          comfortableLeft,
-          comfortableRight,
-          comfortableTop,
-          comfortableBottom
-        });        // Calculate label endpoints based on alignment and rotation
+        // console.log('Comfortable pixel area:', {
+        //   comfortableLeft,
+        //   comfortableRight,
+        //   comfortableTop,
+        //   comfortableBottom
+        // });        // Calculate label endpoints based on alignment and rotation
         // Optimization: use simple point-based logic for centered, non-rotated labels
         const angle = selectedLoc.angle || 0;
         const align = selectedLoc.align || 'center';
@@ -100,7 +102,7 @@ function MapController({
           } else if (align === 'right') {
             startPoint.x -= labelLengthPixels;
           }
-          console.log('Non-rotated label has endpoints:', { startPoint, endPoint } );
+          // console.log('Non-rotated label has endpoints:', { startPoint, endPoint } );
         } else {
           
           // Convert angle to radians (0° = horizontal right, negative or 270-360° = down-right)
@@ -110,13 +112,13 @@ function MapController({
           const labelDirX = Math.cos(angleRad);
           const labelDirY = Math.sin(angleRad);
           
-          console.log('Label calculation:', { 
-            angle, 
-            align, 
-            labelLengthPixels, 
-            labelDirX, 
-            labelDirY 
-          });
+          // console.log('Label calculation:', { 
+          //   angle, 
+          //   align, 
+          //   labelLengthPixels, 
+          //   labelDirX, 
+          //   labelDirY 
+          // });
           
           // Calculate start and end points based on alignment
           if (align === 'left') {
@@ -146,7 +148,7 @@ function MapController({
             };
           }
           
-          console.log('Label endpoints:', { startPoint, endPoint });
+          // console.log('Label endpoints:', { startPoint, endPoint });
         }
 
         // Check if either endpoint violates buffer zone
@@ -167,13 +169,14 @@ function MapController({
         const anyViolation = Object.values(startViolations).some(v => v) || 
                            Object.values(endViolations).some(v => v);
         
-        console.log('Buffer violations:', { 
-          startViolations, 
-          endViolations, 
-          anyViolation 
-        });        
+        // console.log('Buffer violations:', { 
+        //   startViolations, 
+        //   endViolations, 
+        //   anyViolation 
+        // });        
         const needsPanning = anyViolation;
-        console.log('Needs panning:', needsPanning);        if (needsPanning) {
+        // console.log('Needs panning:', needsPanning);        
+        if (needsPanning) {
           // Calculate minimum adjustments needed to bring label within buffer zone
           // Priority: keep anchor point visible
           const currentCenter = map.getCenter();
@@ -185,13 +188,13 @@ function MapController({
             const minX = Math.min(startPoint.x, endPoint.x);
             const neededAdjustment = comfortableLeft - minX;
             adjustmentX = Math.max(adjustmentX, neededAdjustment);
-            console.log('Left violation, adjusting by:', neededAdjustment);
+            // console.log('Left violation, adjusting by:', neededAdjustment);
           }
           if (startViolations.right || endViolations.right) {
             const maxX = Math.max(startPoint.x, endPoint.x);
             const neededAdjustment = comfortableRight - maxX;
             adjustmentX = Math.min(adjustmentX, neededAdjustment);
-            console.log('Right violation, adjusting by:', neededAdjustment);
+            // console.log('Right violation, adjusting by:', neededAdjustment);
           }
 
           // Handle vertical violations
@@ -199,13 +202,13 @@ function MapController({
             const minY = Math.min(startPoint.y, endPoint.y);
             const neededAdjustment = comfortableTop - minY;
             adjustmentY = Math.max(adjustmentY, neededAdjustment);
-            console.log('Top violation, adjusting by:', neededAdjustment);
+            // console.log('Top violation, adjusting by:', neededAdjustment);
           }
           if (startViolations.bottom || endViolations.bottom) {
             const maxY = Math.max(startPoint.y, endPoint.y);
             const neededAdjustment = comfortableBottom - maxY;
             adjustmentY = Math.min(adjustmentY, neededAdjustment);
-            console.log('Bottom violation, adjusting by:', neededAdjustment);
+            // console.log('Bottom violation, adjusting by:', neededAdjustment);
           }
 
           // Convert pixel adjustment to map coordinate adjustment
@@ -216,11 +219,11 @@ function MapController({
           };
           const newCenter = map.containerPointToLatLng(newCenterPixel);
 
-          console.log('Panning to new center:', newCenter);
+          // console.log('Panning to new center:', newCenter);
           map.panTo(newCenter, { animate: true, duration: 0.5 });
         }
       } catch (error) {
-        console.error('Error panning to selected location:', error);
+        // console.error('Error panning to selected location:', error);
       }
     }, 100); // Small delay to ensure selection state is stable
 
