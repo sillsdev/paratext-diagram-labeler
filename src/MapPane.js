@@ -86,17 +86,22 @@ function MapController({
         // Optimization: use simple point-based logic for centered, non-rotated labels
         const angle = selectedLoc.angle || 0;
         const align = selectedLoc.align || 'center';
-        const isSimpleCase = (align === 'center' && angle === 0);
-        
         let startPoint, endPoint;
         
-        if (isSimpleCase) {
-          // Simple case: just use the anchor point
-          startPoint = endPoint = locationPixel;
-          console.log('Using optimized simple case for centered, non-rotated label');
+        // Calculate start and end points based on alignment and angle.
+        const labelLengthPixels = mapSize.x * 0.2; // Approximate label length as 20% of horizontal viewable area
+        startPoint = endPoint = locationPixel;
+        if (angle === 0) {
+          if (align === 'center') {
+            startPoint.x -= labelLengthPixels / 2;
+            endPoint.x += labelLengthPixels / 2;    
+          } else if (align === 'left') {
+            endPoint.x += labelLengthPixels;  
+          } else if (align === 'right') {
+            startPoint.x -= labelLengthPixels;
+          }
+          console.log('Non-rotated label has endpoints:', { startPoint, endPoint } );
         } else {
-          // Calculate label length (14% of horizontal viewable area)
-          const labelLengthPixels = mapSize.x * 0.14;
           
           // Convert angle to radians (0° = horizontal right, negative or 270-360° = down-right)
           const angleRad = angle * Math.PI / 180;
