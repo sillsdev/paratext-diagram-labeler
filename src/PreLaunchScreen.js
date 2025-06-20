@@ -60,7 +60,7 @@ const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch }) => {
       <div className="pre-launch-header">
         <div className="header-content">
           <div className="logo-container">
-            <img src="/assets/logo.svg" alt="Scripture Map Labeler Logo" className="app-logo" />
+            <img src="./assets/logo.svg" alt="Scripture Map Labeler Logo" className="app-logo" />
           </div>
           <div className="header-text">
             <h2>Paratext 9 standalone proposed UX preview of the</h2>
