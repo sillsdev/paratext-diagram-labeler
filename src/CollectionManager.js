@@ -4,10 +4,9 @@ export const COLLECTIONS = {
   SMR: {
     id: 'SMR',
     name: 'SIL Map Repository',
-    placeNamesFile: 'SMR_PlaceNames&Refs.json',
+    placeNamesFile: 'smr-placenames-refs.json',
     mapDefsFile: 'smr-map-defs.json',
-    description: 'SIL Scripture Map Resources',
-    defaultTemplate: 'SMR_005wbt - Gen10 Descendants Of Noah',
+    description: 'SIL Map Repository collection',
   },
   BFBS: {
     id: 'BFBS',
@@ -15,7 +14,6 @@ export const COLLECTIONS = {
     placeNamesFile: 'BFBS_PlaceNames&Refs.json',
     mapDefsFile: 'bfbs-map-defs.json',
     description: 'British and Foreign Bible Society maps',
-    defaultTemplate: 'BFBS_001 - Jerusalem in Jesus time',
   },
   // Additional collections as needed
 };
