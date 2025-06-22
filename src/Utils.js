@@ -214,3 +214,13 @@ export function wordMatchesRenderings(word, renderings, anchored = true) {
   }
   return false;
 }
+
+// Utility function to determine if a location is visible based on selected variant
+export function isLocationVisible(location, selectedVariant) {
+  // If no variants defined (selectedVariant = 0), or location variant is 0, always visible
+  if (selectedVariant === 0 || !location.variant || location.variant === 0) {
+    return true;
+  }
+  // Bitwise AND check
+  return (selectedVariant & location.variant) !== 0;
+}

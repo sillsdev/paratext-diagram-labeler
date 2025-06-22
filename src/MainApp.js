@@ -14,7 +14,7 @@ import {
   getCollectionIdFromTemplate,
 } from "./CollectionManager";
 import { getMapDef } from "./MapData";
-import { inLang, getStatus, getMapForm } from "./Utils.js";
+import { inLang, getStatus, getMapForm, isLocationVisible } from "./Utils.js";
 import MapPane from "./MapPane.js";
 import TableView from "./TableView.js";
 import DetailsPane from "./DetailsPane.js";
@@ -105,9 +105,7 @@ async function mapFromUsfm(usfm) {
   let mapDefData;
   try {
     // Get map definition from collection manager
-    mapDefData = await getMapDef(templateName);
-
-    if (mapDefData) {
+    mapDefData = await getMapDef(templateName);    if (mapDefData) {
       mapDefData.mapView = true;
       mapDefData.template = templateName;
     } else {
@@ -200,8 +198,8 @@ function MainApp({ settings, templateFolder, onExit }) {
   const [showFrac, setShowFrac] = useState(() => {
     const saved = localStorage.getItem("showFrac"); // Persist showFrac in localStorage
     return saved === "true";
-  });
-  const [showSettings, setShowSettings] = useState(false);
+  });  const [showSettings, setShowSettings] = useState(false);
+  const [selectedVariant, setSelectedVariant] = useState(0); // 0 means no variants, 1+ for actual variants
   const [resetZoomFlag, setResetZoomFlag] = useState(false); // For controlling Leaflet map
   const isDraggingVertical = useRef(false);
   const isDraggingHorizontal = useRef(false);
@@ -370,23 +368,34 @@ function MainApp({ settings, templateFolder, onExit }) {
         }),
       );
     },
-    [termRenderings, extractedVerses, mapDef.template],
-  ); // is just renderings enough here?
+    [termRenderings, extractedVerses, mapDef.template],  ); // is just renderings enough here?
 
   // Handler to cycle forward or backward through locations
   const handleNextLocation = useCallback(
     (fwd) => {
-      const currentIndex = selLocation;
-      let nextIndex;
+      // Find all visible location indices
+      const visibleIndices = locations
+        .map((loc, idx) => ({ loc, idx }))
+        .filter(({ loc }) => isLocationVisible(loc, selectedVariant))
+        .map(({ idx }) => idx);
+      
+      if (visibleIndices.length === 0) return; // No visible locations
+      
+      const currentVisibleIndex = visibleIndices.indexOf(selLocation);
+      let nextVisibleIndex;
+      
       if (fwd) {
-        nextIndex = (currentIndex + 1) % locations.length;
+        nextVisibleIndex = (currentVisibleIndex + 1) % visibleIndices.length;
       } else {
-        nextIndex = (currentIndex - 1 + locations.length) % locations.length;
+        nextVisibleIndex = (currentVisibleIndex - 1 + visibleIndices.length) % visibleIndices.length;
       }
-      const nextLocation = locations[nextIndex];
+      
+      const nextLocationIndex = visibleIndices[nextVisibleIndex];
+      const nextLocation = locations[nextLocationIndex];
+      setSelLocation(nextLocationIndex);
       handleSelectLocation(nextLocation);
     },
-    [locations, selLocation, handleSelectLocation],
+    [locations, selLocation, handleSelectLocation, selectedVariant],
   );
 
   // Handlers for resizing panes
@@ -620,8 +629,7 @@ function MainApp({ settings, templateFolder, onExit }) {
 
           alert(inLang(uiStr.noTemplate, lang) + ": " + newTemplateBase);
           return;
-        }
-        // Set mapDef and locations
+        }        // Set mapDef and locations
         setMapDef({
           template: newTemplateBase,
           fig: '\\fig | src="' + figFilename + '" size="span" ref=""\\fig*',
@@ -630,7 +638,11 @@ function MainApp({ settings, templateFolder, onExit }) {
           width: foundTemplate.width,
           height: foundTemplate.height,
           labels: foundTemplate.labels,
-        }); // Make a local copy to ensure we're using the latest state
+          variants: foundTemplate.variants, // Include variants if they exist
+        });
+        
+        // Initialize selectedVariant based on whether variants exist
+        setSelectedVariant(foundTemplate.variants && Object.keys(foundTemplate.variants).length > 0 ? 1 : 0);// Make a local copy to ensure we're using the latest state
         const currentTermRenderings = { ...termRenderings };
 
         const newLocations = foundTemplate.labels.map((loc) => {
@@ -658,11 +670,15 @@ function MainApp({ settings, templateFolder, onExit }) {
             extractedVerses
           );
           return { ...loc, status };
-        });
-        console.log("Initial locations:", initialLocations);
+        });        console.log("Initial locations:", initialLocations);
         setLocations(initialLocations);
-        if (initialLocations.length > 0) {
-          handleSelectLocation(initialLocations[0]); // Auto-select first location
+        
+        // Find first visible location for initial selection
+        const firstVisibleIndex = initialLocations.findIndex(loc => 
+          isLocationVisible(loc, foundTemplate.variants && Object.keys(foundTemplate.variants).length > 0 ? 1 : 0)
+        );
+        if (firstVisibleIndex !== -1) {
+          handleSelectLocation(initialLocations[firstVisibleIndex]); // Auto-select first visible location
         }
         setMapPaneView(MAP_VIEW); // Map View
         setResetZoomFlag(true); // Reset zoom on new map
@@ -688,6 +704,10 @@ function MainApp({ settings, templateFolder, onExit }) {
         const initialMap = await mapFromUsfm(settings.usfm);
         console.log("Initial Map loaded (based on usfm):", initialMap);
         setMapDef(initialMap);
+        
+        // Initialize selectedVariant based on whether variants exist
+        setSelectedVariant(initialMap.variants && Object.keys(initialMap.variants).length > 0 ? 1 : 0);
+        
         setMapPaneView(initialMap.mapView ? MAP_VIEW : TABLE_VIEW);
       } catch (error) {
         console.log("Unable to initialize map:", error);
@@ -1079,6 +1099,23 @@ function MainApp({ settings, templateFolder, onExit }) {
     };
   }, []);
 
+  // Handle variant selection changes
+  const handleVariantChange = useCallback((newVariantId) => {
+    setSelectedVariant(newVariantId);
+    
+    // Check if current selection is still visible
+    const currentLocation = locations[selLocation];
+    if (!currentLocation || !isLocationVisible(currentLocation, newVariantId)) {
+      // Find first visible location
+      const firstVisibleIndex = locations.findIndex(loc => 
+        isLocationVisible(loc, newVariantId)
+      );
+      if (firstVisibleIndex !== -1) {
+        setSelLocation(firstVisibleIndex);
+      }
+    }
+  }, [locations, selLocation]);
+
   return (
     <div className="app-container">
       {" "}
@@ -1122,8 +1159,7 @@ function MainApp({ settings, templateFolder, onExit }) {
                 >
                   {imageError}
                 </div>
-              )}
-              <MapPane
+              )}              <MapPane
                 imageUrl={imageData}
                 locations={memoizedLocations}
                 onSelectLocation={memoizedHandleSelectLocation}
@@ -1137,11 +1173,11 @@ function MainApp({ settings, templateFolder, onExit }) {
                 extractedVerses={extractedVerses} // Pass extracted verses
                 collectionId={currentCollectionId} // Pass the collection ID
                 showFrac={showFrac}
+                selectedVariant={selectedVariant} // Pass selected variant
               />
             </>
           )}{" "}
-          {mapPaneView === TABLE_VIEW && (
-            <TableView
+          {mapPaneView === TABLE_VIEW && (            <TableView
               locations={locations}
               selLocation={selLocation}
               onSelectLocation={handleSelectLocation}
@@ -1151,6 +1187,7 @@ function MainApp({ settings, templateFolder, onExit }) {
               lang={lang} // <-- pass lang
               extractedVerses={extractedVerses}
               collectionId={currentCollectionId} // Pass the collection ID
+              selectedVariant={selectedVariant} // Pass selected variant
             />
           )}
           {mapPaneView === USFM_VIEW && <USFMView usfmText={usfmText} />}
@@ -1163,8 +1200,7 @@ function MainApp({ settings, templateFolder, onExit }) {
         <div
           className="details-pane"
           style={{ flex: `0 0 ${100 - mapWidth}%` }}
-        >
-          <DetailsPane
+        >          <DetailsPane
             selLocation={selLocation}
             onUpdateVernacular={handleUpdateVernacular}
             onNextLocation={handleNextLocation}
@@ -1190,6 +1226,8 @@ function MainApp({ settings, templateFolder, onExit }) {
             setTermRenderings={setTermRenderings} // <-- pass setter
             onCreateRendering={handleReplaceRendering} // <-- pass handler
             onExit={onExit}
+            selectedVariant={selectedVariant} // Pass selected variant
+            onVariantChange={handleVariantChange} // Pass variant change handler
           />
         </div>
       </div>

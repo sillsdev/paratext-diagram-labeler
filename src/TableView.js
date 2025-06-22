@@ -6,7 +6,7 @@ import { CheckmarkIcon, DeniedCheckmarkIcon, WarningIcon } from './TermIcons';
 // Status values not yet used: STATUS_BLANK, STATUS_MULTIPLE,  STATUS_UNMATCHED, STATUS_MATCHED, STATUS_RENDERING_SHORT, STATUS_BAD_EXPLICIT_FORM
 // import TermRenderings from './TermRenderings';
 import { collectionManager } from './CollectionManager';
-import { inLang, statusValue, getMatchTally } from './Utils.js';
+import { inLang, statusValue, getMatchTally, isLocationVisible } from './Utils.js';
 
 // Table View component
 export default function TableView({
@@ -19,6 +19,7 @@ export default function TableView({
   lang,
   extractedVerses,
   collectionId = 'SMR',
+  selectedVariant = 0,
 }) {
   const inputRefs = useRef([]);
   useEffect(() => {
@@ -39,10 +40,9 @@ export default function TableView({
             <th style={{ textAlign: 'left' }}>{inLang(uiStr.found, lang)}</th>
             <th>{inLang(uiStr.status, lang)}</th>
           </tr>
-        </thead>
-        <tbody>
+        </thead>        <tbody>
           {' '}
-          {locations.map((loc, i) => {
+          {locations.filter(loc => isLocationVisible(loc, selectedVariant)).map((loc, i) => {
             // Use loc.status which is already calculated in App.js
             // This avoids inconsistencies with status calculations
             const status = loc.status;

@@ -35,6 +35,8 @@ export default function DetailsPane({
   setTermRenderings,
   onCreateRendering,
   onExit,
+  selectedVariant = 0,
+  onVariantChange,
 }) {
   const [vernacular, setVernacular] = useState(locations[selLocation]?.vernLabel || '');
   const [localIsApproved, setLocalIsApproved] = useState(isApproved);
@@ -456,10 +458,28 @@ export default function DetailsPane({
           alignItems: 'center',
           gap: '12px',
         }}
-      >
-        <span style={{ fontWeight: 'bold', color: 'black', fontSize: '0.8em' }}>
+      >        <span style={{ fontWeight: 'bold', color: 'black', fontSize: '0.8em' }}>
           {templateName}
         </span>
+        {mapDef.variants && Object.keys(mapDef.variants).length > 0 && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <label htmlFor="variant-select" style={{ fontSize: '0.8em', color: '#666' }}>
+              {inLang(uiStr.variant, lang)}:
+            </label>
+            <select
+              id="variant-select"
+              value={selectedVariant}
+              onChange={(e) => onVariantChange(parseInt(e.target.value))}
+              style={{ fontSize: '0.8em', padding: '2px 4px' }}
+            >
+              {Object.entries(mapDef.variants).map(([id, variant]) => (
+                <option key={id} value={parseInt(id)}>
+                  {inLang(variant.variantName, lang)}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
         <button
           title={inLang(uiStr.templateInfo, lang)}
           style={{

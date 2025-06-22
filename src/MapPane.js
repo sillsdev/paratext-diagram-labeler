@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import Leaf from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { inLang, statusValue, getMatchTally } from './Utils.js';
+import { inLang, statusValue, getMatchTally, isLocationVisible } from './Utils.js';
 import { collectionManager } from './CollectionManager';
 
 // Component that handles map zoom and pan logic
@@ -246,7 +246,8 @@ export default function MapPane({
   setResetZoomFlag,
   extractedVerses,
   collectionId = 'SMR',
-  showFrac
+  showFrac,
+  selectedVariant = 0
 }) {
   const { MapContainer, ImageOverlay, Marker, ZoomControl } = require('react-leaflet');
   const imageHeight = mapDef.height;
@@ -257,12 +258,13 @@ export default function MapPane({
       [imageHeight, imageWidth],
     ],
     [imageHeight, imageWidth]
-  );
-  const crs = Leaf.CRS.Simple;
-  const transformedLocations = locations.map(loc => {
-    const yLeaflet = imageHeight - loc.y;
-    return { ...loc, yLeaflet };
-  });
+  );  const crs = Leaf.CRS.Simple;
+  const transformedLocations = locations
+    .filter(loc => isLocationVisible(loc, selectedVariant))
+    .map(loc => {
+      const yLeaflet = imageHeight - loc.y;
+      return { ...loc, yLeaflet };
+    });
   return (
     <MapContainer
       crs={crs}
