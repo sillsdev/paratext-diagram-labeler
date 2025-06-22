@@ -147,15 +147,15 @@ export default function DetailsPane({
 
   // --- Template info/browse group ---
   // Access the template name from the global map object
-  const templateName = mapDef.template || '(' + inLang(uiStr.noTemplate, lang) + ')';  // Export to data merge file handler
+  const templateName = mapDef.template || '(' + inLang(uiStr.noTemplate, lang) + ')'; // Export to data merge file handler
   const handleExportDataMerge = async () => {
     try {
       const result = await window.electronAPI.exportDataMerge({
         locations: locations,
         templateName: templateName,
-        projectFolder: settingsService.getProjectFolder()
+        projectFolder: settingsService.getProjectFolder(),
       });
-      
+
       if (result.success) {
         // Success - no alert needed as file was saved successfully
         console.log('Export successful:', result.message);
@@ -445,8 +445,7 @@ export default function DetailsPane({
         </div>
       )}
 
-      {/* Template info/browse group */}
-      <div
+      {/* Template info/browse group */}      <div
         className="details-group-frame"
         style={{
           border: '1px solid #ccc',
@@ -455,22 +454,20 @@ export default function DetailsPane({
           padding: 8,
           background: '#f9f9f9',
           display: 'flex',
-          alignItems: 'center',
+          alignItems: 'flex-start',
           gap: '12px',
         }}
-      >        <span style={{ fontWeight: 'bold', color: 'black', fontSize: '0.8em' }}>
-          {templateName}
-        </span>
-        {mapDef.variants && Object.keys(mapDef.variants).length > 0 && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <label htmlFor="variant-select" style={{ fontSize: '0.8em', color: '#666' }}>
-              {inLang(uiStr.variant, lang)}:
-            </label>
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 }}>
+          <span style={{ fontWeight: 'bold', color: 'black', fontSize: '0.8em' }}>
+            {templateName}
+          </span>
+          {mapDef.variants && Object.keys(mapDef.variants).length > 0 && (
             <select
               id="variant-select"
               value={selectedVariant}
-              onChange={(e) => onVariantChange(parseInt(e.target.value))}
-              style={{ fontSize: '0.8em', padding: '2px 4px' }}
+              onChange={e => onVariantChange(parseInt(e.target.value))}
+              style={{ fontSize: '0.8em', padding: '2px 4px', width: 'fit-content' }}
             >
               {Object.entries(mapDef.variants).map(([id, variant]) => (
                 <option key={id} value={parseInt(id)}>
@@ -478,8 +475,9 @@ export default function DetailsPane({
                 </option>
               ))}
             </select>
-          </div>
-        )}
+          )}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
         <button
           title={inLang(uiStr.templateInfo, lang)}
           style={{
@@ -555,9 +553,9 @@ export default function DetailsPane({
               strokeWidth="1.5"
               strokeLinecap="round"
               strokeLinejoin="round"
-            />
-          </svg>
+            />          </svg>
         </button>
+        </div>
       </div>
 
       {/* Modal dialog for template info */}
@@ -812,5 +810,6 @@ export default function DetailsPane({
           />
         </div>
       </div>
-    </div>  );
+    </div>
+  );
 }
