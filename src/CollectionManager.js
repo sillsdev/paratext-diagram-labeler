@@ -251,6 +251,7 @@ class CollectionManager {
       ...label,
       idx,
       gloss: this.getGloss(label.mergeKey, collectionId),
+      termId: this.getTermId(label.mergeKey, collectionId),
     }));
 
     return mapDef;

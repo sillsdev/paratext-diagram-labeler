@@ -93,7 +93,7 @@ function MapController({
         // Calculate start and end points based on alignment and angle.
         const labelLengthPixels = mapSize.x * 0.2; // Approximate label length as 20% of horizontal viewable area
         startPoint = endPoint = locationPixel;
-        if (angle === 0) {
+        if (!angle) {
           if (align === 'center') {
             startPoint.x -= labelLengthPixels / 2;
             endPoint.x += labelLengthPixels / 2;    
