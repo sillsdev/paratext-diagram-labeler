@@ -11,7 +11,7 @@ import {
   STATUS_GUESSED,
   STATUS_RENDERING_SHORT,
   STATUS_BAD_EXPLICIT_FORM,
-  STATUS_INCOMPLETE
+  STATUS_INCOMPLETE,
 } from './constants.js';
 
 export const statusValue = [
@@ -22,7 +22,7 @@ export const statusValue = [
   { bkColor: 'white', textColor: 'black', sort: 0 }, // 4 - matched
   { bkColor: '#FF8000', textColor: 'black', sort: 2 }, // 5 - guessed : #FF8000 : #e56300
   { bkColor: 'crimson', textColor: 'white', sort: 6 }, // 6 - Rendering shorter than label
-  { bkColor: 'magenta', textColor: 'black', sort: 7 }, // 7 - Bad explicit form 
+  { bkColor: 'magenta', textColor: 'black', sort: 7 }, // 7 - Bad explicit form
   { bkColor: '#80FF00', textColor: 'black', sort: 8 }, // 8 - Incomplete : #80FF00
 ];
 

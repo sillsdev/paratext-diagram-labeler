@@ -40,76 +40,79 @@ export default function TableView({
             <th style={{ textAlign: 'left' }}>{inLang(uiStr.found, lang)}</th>
             <th>{inLang(uiStr.status, lang)}</th>
           </tr>
-        </thead>        <tbody>
+        </thead>{' '}
+        <tbody>
           {' '}
-          {locations.filter(loc => isLocationVisible(loc, selectedVariant)).map((loc, i) => {
-            // Use loc.status which is already calculated in App.js
-            // This avoids inconsistencies with status calculations
-            const status = loc.status;
-            const isSelected = selLocation === loc.idx;
-            return (
-              <tr
-                key={loc.termId}
-                style={{
-                  fontWeight: isSelected ? 'bold' : 'normal',
-                  cursor: 'pointer',
-                  border: (isSelected ? '6px' : '1px') + ' solid ' + statusValue[status].bkColor,
-                  paddingTop: isSelected ? 12 : undefined,
-                  paddingBottom: isSelected ? 12 : undefined,
-                }}
-                onClick={() => onSelectLocation(loc)}
-              >
-                <td style={isSelected ? { paddingTop: 4, paddingBottom: 4 } : {}}>
-                  {inLang(loc.gloss, lang)}
-                </td>
-                <td style={isSelected ? { paddingTop: 4, paddingBottom: 4 } : {}}>
-                  <input
-                    ref={el => (inputRefs.current[i] = el)}
-                    type="text"
-                    value={loc.vernLabel || ''}
-                    onChange={e => onUpdateVernacular(loc.termId, e.target.value)}
-                    onFocus={() => onSelectLocation(loc)}
-                    onKeyDown={e => {
-                      if (e.key === 'ArrowDown') {
-                        onNextLocation(true);
-                        e.preventDefault();
-                        e.stopPropagation();
-                      } else if (e.key === 'ArrowUp') {
-                        onNextLocation(false);
-                        e.preventDefault();
-                        e.stopPropagation();
-                      }
-                    }}
-                    style={{}}
-                    spellCheck={false}
-                  />{' '}
-                </td>
-                <Frac
-                  value={getMatchTally(
-                    termRenderings[loc.termId],
-                    collectionManager.getRefs(loc.mergeKey, collectionId),
-                    extractedVerses
-                  )}
-                />
-                <td>
-                  <span
-                    style={{
-                      border: '1px solid black',
-                      background: statusValue[status].bkColor,
-                      color: statusValue[status].textColor,
-                      borderRadius: '0.7em',
-                      padding: '0 10px',
-                      display: 'inline-block',
-                      fontWeight: 'bold',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    {inLang(uiStr.statusValue[status].text, lang)}
-                  </span>
-                </td>
-              </tr>
-            );
-          })}
+          {locations
+            .filter(loc => isLocationVisible(loc, selectedVariant))
+            .map((loc, i) => {
+              // Use loc.status which is already calculated in App.js
+              // This avoids inconsistencies with status calculations
+              const status = loc.status;
+              const isSelected = selLocation === loc.idx;
+              return (
+                <tr
+                  key={loc.termId}
+                  style={{
+                    fontWeight: isSelected ? 'bold' : 'normal',
+                    cursor: 'pointer',
+                    border: (isSelected ? '6px' : '1px') + ' solid ' + statusValue[status].bkColor,
+                    paddingTop: isSelected ? 12 : undefined,
+                    paddingBottom: isSelected ? 12 : undefined,
+                  }}
+                  onClick={() => onSelectLocation(loc)}
+                >
+                  <td style={isSelected ? { paddingTop: 4, paddingBottom: 4 } : {}}>
+                    {inLang(loc.gloss, lang)}
+                  </td>
+                  <td style={isSelected ? { paddingTop: 4, paddingBottom: 4 } : {}}>
+                    <input
+                      ref={el => (inputRefs.current[i] = el)}
+                      type="text"
+                      value={loc.vernLabel || ''}
+                      onChange={e => onUpdateVernacular(loc.termId, e.target.value)}
+                      onFocus={() => onSelectLocation(loc)}
+                      onKeyDown={e => {
+                        if (e.key === 'ArrowDown') {
+                          onNextLocation(true);
+                          e.preventDefault();
+                          e.stopPropagation();
+                        } else if (e.key === 'ArrowUp') {
+                          onNextLocation(false);
+                          e.preventDefault();
+                          e.stopPropagation();
+                        }
+                      }}
+                      style={{}}
+                      spellCheck={false}
+                    />{' '}
+                  </td>
+                  <Frac
+                    value={getMatchTally(
+                      termRenderings[loc.termId],
+                      collectionManager.getRefs(loc.mergeKey, collectionId),
+                      extractedVerses
+                    )}
+                  />
+                  <td>
+                    <span
+                      style={{
+                        border: '1px solid black',
+                        background: statusValue[status].bkColor,
+                        color: statusValue[status].textColor,
+                        borderRadius: '0.7em',
+                        padding: '0 10px',
+                        display: 'inline-block',
+                        fontWeight: 'bold',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {inLang(uiStr.statusValue[status].text, lang)}
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
         </tbody>
       </table>
     </div>

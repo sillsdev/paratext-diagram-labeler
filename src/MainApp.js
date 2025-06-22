@@ -1,26 +1,17 @@
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useMemo,
-  useCallback,
-} from "react";
-import "./MainApp.css";
-import BottomPane from "./BottomPane.js";
-import uiStr from "./data/ui-strings.json";
-import { MAP_VIEW, TABLE_VIEW, USFM_VIEW } from "./constants.js";
-import {
-  collectionManager,
-  getCollectionIdFromTemplate,
-} from "./CollectionManager";
-import { getMapDef } from "./MapData";
-import { inLang, getStatus, getMapForm, isLocationVisible } from "./Utils.js";
-import MapPane from "./MapPane.js";
-import TableView from "./TableView.js";
-import DetailsPane from "./DetailsPane.js";
-import SettingsModal from "./SettingsModal.js";
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import './MainApp.css';
+import BottomPane from './BottomPane.js';
+import uiStr from './data/ui-strings.json';
+import { MAP_VIEW, TABLE_VIEW, USFM_VIEW } from './constants.js';
+import { collectionManager, getCollectionIdFromTemplate } from './CollectionManager';
+import { getMapDef } from './MapData';
+import { inLang, getStatus, getMapForm, isLocationVisible } from './Utils.js';
+import MapPane from './MapPane.js';
+import TableView from './TableView.js';
+import DetailsPane from './DetailsPane.js';
+import SettingsModal from './SettingsModal.js';
 // import { useInitialization, InitializationProvider } from './InitializationProvider';
-import { settingsService } from "./services/SettingsService";
+import { settingsService } from './services/SettingsService';
 
 const electronAPI = window.electronAPI;
 
@@ -30,26 +21,22 @@ const electronAPI = window.electronAPI;
 
 // Define an empty initial map state to be used until the async load completes
 const emptyInitialMap = {
-  template: "",
+  template: '',
   mapView: false,
-  imgFilename: "",
+  imgFilename: '',
   width: 1000,
   height: 1000,
   labels: [],
 };
-console.log("Creating empty initial map state");
+console.log('Creating empty initial map state');
 
 // return a list of all refs used by all the labels in the map definition
-function getRefList(labels, collectionId = "SMR") {
+function getRefList(labels, collectionId = 'SMR') {
   const rl = Array.from(
-    new Set(
-      labels
-        .map((label) => collectionManager.getRefs(label.mergeKey, collectionId))
-        .flat(),
-    ),
+    new Set(labels.map(label => collectionManager.getRefs(label.mergeKey, collectionId)).flat())
   ).sort();
   console.log(
-    `getRefList(): ${rl.length} refs for ${labels.length} labels from collection ${collectionId}`,
+    `getRefList(): ${rl.length} refs for ${labels.length} labels from collection ${collectionId}`
   );
   return rl;
 }
@@ -59,72 +46,73 @@ function decodeFileAsString(arrayBuffer) {
   // UTF-8 BOM: EF BB BF
   if (uint8[0] === 0xef && uint8[1] === 0xbb && uint8[2] === 0xbf) {
     // console.log('Detected UTF-8 BOM');
-    return new TextDecoder("utf-8").decode(uint8.subarray(3));
+    return new TextDecoder('utf-8').decode(uint8.subarray(3));
   }
   // UTF-16LE BOM: FF FE
   if (uint8[0] === 0xff && uint8[1] === 0xfe) {
     // console.log('Detected UTF-16LE BOM');
-    return new TextDecoder("utf-16le").decode(uint8.subarray(2));
+    return new TextDecoder('utf-16le').decode(uint8.subarray(2));
   }
   // UTF-16BE BOM: FE FF
   if (uint8[0] === 0xfe && uint8[1] === 0xff) {
     // console.log('Detected UTF-16BE BOM');
-    return new TextDecoder("utf-16be").decode(uint8.subarray(2));
+    return new TextDecoder('utf-16be').decode(uint8.subarray(2));
   }
   // Default: utf-8
   // console.log('Assuming UTF-8 encoding');
-  return new TextDecoder("utf-8").decode(uint8);
+  return new TextDecoder('utf-8').decode(uint8);
 }
 
 async function mapFromUsfm(usfm) {
   // Extract template and \fig field
   const figMatch = usfm.match(/\\fig [^\\]*src="([^\\]+)"[^\\]*\\fig\*/);
   const templateMatch = usfm.match(/\\zdiagram-s\s+\|template="([^"]*)"/);
-  let templateName = "";
+  let templateName = '';
 
   if (templateMatch) {
     templateName = templateMatch[1];
   } else {
     if (!figMatch) {
       return {
-        template: "",
-        fig: "",
+        template: '',
+        fig: '',
         mapView: false,
-        imgFilename: "",
+        imgFilename: '',
         width: 1000,
         height: 1000,
         labels: [],
       };
     }
     templateName = figMatch[1]
-      .replace(/\..*$/, "") // Remove file extension
+      .replace(/\..*$/, '') // Remove file extension
       .trim()
-      .replace(/\s*[@(].*/, ""); // Remove anything after @ or (
+      .replace(/\s*[@(].*/, ''); // Remove anything after @ or (
   }
 
   let mapDefData;
   try {
     // Get map definition from collection manager
-    mapDefData = await getMapDef(templateName);    if (mapDefData) {
+    mapDefData = await getMapDef(templateName);
+    if (mapDefData) {
       mapDefData.mapView = true;
       mapDefData.template = templateName;
     } else {
-      throw new Error("Map definition not found");
+      throw new Error('Map definition not found');
     }
   } catch (e) {
-    console.error("Error loading map definition:", e);
+    console.error('Error loading map definition:', e);
     mapDefData = {
       template: templateName,
-      fig: figMatch ? figMatch[0] : "",
+      fig: figMatch ? figMatch[0] : '',
       mapView: false,
-      imgFilename: "",
+      imgFilename: '',
       width: 1000,
       height: 1000,
       labels: [],
     };
   }
 
-  mapDefData.fig = figMatch ? figMatch[0] : "";
+  mapDefData.fig = figMatch ? figMatch[0] : '';
   let maxIdx = mapDefData.labels.length;
   const regex =
     /\\zlabel\s+\|key="([^"]+)"\s+termid="([^"]+)"\s+gloss="([^"]+)"\s+label="([^"]*)"/g;
@@ -133,9 +121,7 @@ async function mapFromUsfm(usfm) {
     // eslint-disable-next-line
     const [_, mergeKey, termId, gloss, vernLabel] = match;
     // If mapDefData already has a label with this mergeKey, add vernLabel to it.
-    const existingLabel = mapDefData.labels.find(
-      (label) => label.mergeKey === mergeKey,
-    );
+    const existingLabel = mapDefData.labels.find(label => label.mergeKey === mergeKey);
     if (existingLabel) {
       if (vernLabel) {
         existingLabel.vernLabel = vernLabel;
@@ -146,18 +132,18 @@ async function mapFromUsfm(usfm) {
         mergeKey,
         termId,
         gloss: { en: gloss },
-        vernLabel: vernLabel || "",
+        vernLabel: vernLabel || '',
         idx: maxIdx++, // Assign an index for ordering
       };
       mapDefData.labels.push(label);
     }
   }
-  console.log("Parsed map definition:", mapDefData);
+  console.log('Parsed map definition:', mapDefData);
   return mapDefData;
 }
 
 function usfmFromMap(map, lang) {
-  console.log("Converting map to USFM:", map);
+  console.log('Converting map to USFM:', map);
   // Reconstruct USFM string from current map state
   let usfm = `\\zdiagram-s |template="${map.template}"\\*\n`;
   // Always include the \fig line if present, and ensure it is in correct USFM format
@@ -166,12 +152,15 @@ function usfmFromMap(map, lang) {
   } else if (map.fig) {
     usfm += `${map.fig}\n`;
   }
-  map.labels.forEach((label) => {
-    usfm += `\\zlabel |key="${label.mergeKey}" termid="${label.termId}" gloss="${inLang(label.gloss, lang)}" label="${label.vernLabel || ""}"\\*\n`;
+  map.labels.forEach(label => {
+    usfm += `\\zlabel |key="${label.mergeKey}" termid="${label.termId}" gloss="${inLang(
+      label.gloss,
+      lang
+    )}" label="${label.vernLabel || ''}"\\*\n`;
   });
-  usfm += "\\zdiagram-e \\*";
+  usfm += '\\zdiagram-e \\*';
   // Remove unnecessary escaping for output
-  return usfm.replace(/\\/g, "\\");
+  return usfm.replace(/\\/g, '\\');
 }
 
 function MainApp({ settings, templateFolder, onExit }) {
@@ -181,24 +170,25 @@ function MainApp({ settings, templateFolder, onExit }) {
   const projectFolder = settings?.projectFolder;
   const [lang, setLang] = useState(() => {
     // First check settings, then default to 'en'
-    return settings?.language || "en";
+    return settings?.language || 'en';
   });
   const [mapDef, setMapDef] = useState(emptyInitialMap);
   const [locations, setLocations] = useState([]);
   const [selLocation, setSelLocation] = useState(0);
   const [mapWidth, setMapWidth] = useState(70);
   const [topHeight, setTopHeight] = useState(80);
-  const [renderings, setRenderings] = useState("");
+  const [renderings, setRenderings] = useState('');
   const [isApproved, setIsApproved] = useState(false);
   const [mapPaneView, setMapPaneView] = useState(MAP_VIEW); // Default to MAP_VIEW, will be updated after loading
   const [labelScale, setLabelScale] = useState(() => {
-    const saved = localStorage.getItem("labelScale"); // Persist labelScale in localStorage
+    const saved = localStorage.getItem('labelScale'); // Persist labelScale in localStorage
     return saved ? parseFloat(saved) : 1;
   });
   const [showFrac, setShowFrac] = useState(() => {
-    const saved = localStorage.getItem("showFrac"); // Persist showFrac in localStorage
-    return saved === "true";
-  });  const [showSettings, setShowSettings] = useState(false);
+    const saved = localStorage.getItem('showFrac'); // Persist showFrac in localStorage
+    return saved === 'true';
+  });
+  const [showSettings, setShowSettings] = useState(false);
   const [selectedVariant, setSelectedVariant] = useState(0); // 0 means no variants, 1+ for actual variants
   const [resetZoomFlag, setResetZoomFlag] = useState(false); // For controlling Leaflet map
   const isDraggingVertical = useRef(false);
@@ -211,12 +201,12 @@ function MainApp({ settings, templateFolder, onExit }) {
 
   // Persist labelScale to localStorage
   useEffect(() => {
-    localStorage.setItem("labelScale", labelScale.toString());
+    localStorage.setItem('labelScale', labelScale.toString());
   }, [labelScale]);
 
   // Persist showFrac to localStorage
   useEffect(() => {
-    localStorage.setItem("showFrac", showFrac.toString());
+    localStorage.setItem('showFrac', showFrac.toString());
   }, [showFrac]);
 
   useEffect(() => {
@@ -224,19 +214,19 @@ function MainApp({ settings, templateFolder, onExit }) {
 
     const initializeColls = async () => {
       // Load collections using the provided settings
-      console.log("Loading map collections...");
+      console.log('Loading map collections...');
 
       // Make sure we have the required settings
       if (!settings || !settings.templateFolder) {
-        console.error("Template folder setting is missing", settings);
-        throw new Error("Template folder setting is missing");
+        console.error('Template folder setting is missing', settings);
+        throw new Error('Template folder setting is missing');
       }
       try {
         // Use the template folder prop instead of settings to ensure consistency
         await collectionManager.initializeAllCollections(templateFolder);
         setIsInitialized(true);
       } catch (collectionError) {
-        console.error("Failed to initialize map collections:", collectionError);
+        console.error('Failed to initialize map collections:', collectionError);
       }
     };
     initializeColls();
@@ -250,20 +240,20 @@ function MainApp({ settings, templateFolder, onExit }) {
       try {
         const newTermRenderings = await electronAPI.loadTermRenderings(
           projectFolder,
-          settings.saveToDemo,
+          settings.saveToDemo
         );
         console.log(
-          "[IPC] Loaded term renderings:",
+          '[IPC] Loaded term renderings:',
           newTermRenderings,
-          "from folder:",
+          'from folder:',
           projectFolder,
-          "saveToDemo:",
-          settings.saveToDemo,
+          'saveToDemo:',
+          settings.saveToDemo
         );
         if (newTermRenderings && !newTermRenderings.error) {
           setTermRenderings(newTermRenderings);
           // Re-init locations from map and new termRenderings
-          const initialLocations = mapDef.labels.map((loc) => {
+          const initialLocations = mapDef.labels.map(loc => {
             if (!loc.vernLabel) {
               loc.vernLabel = getMapForm(newTermRenderings, loc.termId);
             }
@@ -282,14 +272,13 @@ function MainApp({ settings, templateFolder, onExit }) {
           }
         } else {
           alert(
-            "Failed to load term-renderings.json: " +
-              (newTermRenderings && newTermRenderings.error),
+            'Failed to load term-renderings.json: ' + (newTermRenderings && newTermRenderings.error)
           );
         }
       } catch (e) {
         console.log(
           `Failed to load term-renderings.json from project folder <${projectFolder}>.`,
-          e,
+          e
         );
       }
     };
@@ -308,29 +297,22 @@ function MainApp({ settings, templateFolder, onExit }) {
       return;
     }
 
-    electronAPI.getFilteredVerses(projectFolder, refs).then((verses) => {
-      console.log(
-        "[IPC] getFilteredVerses:",
-        projectFolder,
-        "for refs:",
-        refs.length,
-      );
+    electronAPI.getFilteredVerses(projectFolder, refs).then(verses => {
+      console.log('[IPC] getFilteredVerses:', projectFolder, 'for refs:', refs.length);
       if (verses && !verses.error) {
         setExtractedVerses(verses);
         // console.log('[IPC] getFilteredVerses:', Object.keys(verses).length, 'for refs:', refs.length);
       } else {
         setExtractedVerses({});
-        alert(
-          "Failed to requested filtered verses " + (verses && verses.error),
-        );
+        alert('Failed to requested filtered verses ' + (verses && verses.error));
       }
     });
   }, [projectFolder, mapDef.labels, mapDef.template, isInitialized]);
 
   // Handler to set the selected location (e.g. Label clicked)
   const handleSelectLocation = useCallback(
-    (location) => {
-      console.log("Selected location:", location);
+    location => {
+      console.log('Selected location:', location);
       if (!location) return;
       setSelLocation(location.idx);
       const entry = termRenderings[location.termId];
@@ -338,12 +320,12 @@ function MainApp({ settings, templateFolder, onExit }) {
         setRenderings(entry.renderings);
         setIsApproved(!entry.isGuessed);
       } else {
-        setRenderings("");
+        setRenderings('');
         setIsApproved(false);
         //console.warn(`No term renderings entry for termId: ${location.termId}`);
       }
     },
-    [termRenderings, setRenderings, setIsApproved, setSelLocation],
+    [termRenderings, setRenderings, setIsApproved, setSelLocation]
   );
 
   // Handler to update label of selected location with new vernacular and status
@@ -352,8 +334,8 @@ function MainApp({ settings, templateFolder, onExit }) {
       // Create a copy of the current state to ensure we're using the latest data
       const currentTermRenderings = { ...termRenderings };
 
-      setLocations((prevLocations) =>
-        prevLocations.map((loc) => {
+      setLocations(prevLocations =>
+        prevLocations.map(loc => {
           if (loc.termId === termId) {
             const status = getStatus(
               currentTermRenderings,
@@ -365,91 +347,91 @@ function MainApp({ settings, templateFolder, onExit }) {
             return { ...loc, vernLabel: newVernacular, status };
           }
           return loc;
-        }),
+        })
       );
     },
-    [termRenderings, extractedVerses, mapDef.template],  ); // is just renderings enough here?
+    [termRenderings, extractedVerses, mapDef.template]
+  ); // is just renderings enough here?
 
   // Handler to cycle forward or backward through locations
   const handleNextLocation = useCallback(
-    (fwd) => {
+    fwd => {
       // Find all visible location indices
       const visibleIndices = locations
         .map((loc, idx) => ({ loc, idx }))
         .filter(({ loc }) => isLocationVisible(loc, selectedVariant))
         .map(({ idx }) => idx);
-      
+
       if (visibleIndices.length === 0) return; // No visible locations
-      
+
       const currentVisibleIndex = visibleIndices.indexOf(selLocation);
       let nextVisibleIndex;
-      
+
       if (fwd) {
         nextVisibleIndex = (currentVisibleIndex + 1) % visibleIndices.length;
       } else {
-        nextVisibleIndex = (currentVisibleIndex - 1 + visibleIndices.length) % visibleIndices.length;
+        nextVisibleIndex =
+          (currentVisibleIndex - 1 + visibleIndices.length) % visibleIndices.length;
       }
-      
+
       const nextLocationIndex = visibleIndices[nextVisibleIndex];
       const nextLocation = locations[nextLocationIndex];
       setSelLocation(nextLocationIndex);
       handleSelectLocation(nextLocation);
     },
-    [locations, selLocation, handleSelectLocation, selectedVariant],
+    [locations, selLocation, handleSelectLocation, selectedVariant]
   );
 
   // Handlers for resizing panes
-  const handleVerticalDragStart = (e) => {
+  const handleVerticalDragStart = e => {
     e.preventDefault();
-    console.log("Vertical drag start");
+    console.log('Vertical drag start');
     isDraggingVertical.current = true;
-    document.addEventListener("mousemove", handleVerticalDrag);
-    document.addEventListener("mouseup", handleDragEnd);
+    document.addEventListener('mousemove', handleVerticalDrag);
+    document.addEventListener('mouseup', handleDragEnd);
   };
-  const handleHorizontalDragStart = (e) => {
+  const handleHorizontalDragStart = e => {
     e.preventDefault();
-    console.log("Horizontal drag start");
+    console.log('Horizontal drag start');
     isDraggingHorizontal.current = true;
-    document.addEventListener("mousemove", handleHorizontalDrag);
-    document.addEventListener("mouseup", handleDragEnd);
+    document.addEventListener('mousemove', handleHorizontalDrag);
+    document.addEventListener('mouseup', handleDragEnd);
   };
-  const handleVerticalDrag = (e) => {
+  const handleVerticalDrag = e => {
     if (!isDraggingVertical.current) return;
-    console.log("Vertical dragging:", e.clientX);
-    const container = document.querySelector(".top-section");
+    console.log('Vertical dragging:', e.clientX);
+    const container = document.querySelector('.top-section');
     if (!container) {
-      console.error("Top section not found");
+      console.error('Top section not found');
       return;
     }
     const containerRect = container.getBoundingClientRect();
-    const newWidth =
-      ((e.clientX - containerRect.left) / containerRect.width) * 100;
+    const newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
     setMapWidth(Math.max(20, Math.min(80, newWidth)));
   };
-  const handleHorizontalDrag = (e) => {
+  const handleHorizontalDrag = e => {
     if (!isDraggingHorizontal.current) return;
-    console.log("Horizontal dragging:", e.clientY);
-    const container = document.querySelector(".app-container");
+    console.log('Horizontal dragging:', e.clientY);
+    const container = document.querySelector('.app-container');
     if (!container) {
-      console.error("App container not found");
+      console.error('App container not found');
       return;
     }
     const containerRect = container.getBoundingClientRect();
-    const newHeight =
-      ((e.clientY - containerRect.top) / containerRect.height) * 100;
+    const newHeight = ((e.clientY - containerRect.top) / containerRect.height) * 100;
     setTopHeight(Math.max(50, Math.min(90, newHeight)));
   };
   const handleDragEnd = () => {
-    console.log("Drag ended");
+    console.log('Drag ended');
     isDraggingVertical.current = false;
     isDraggingHorizontal.current = false;
-    document.removeEventListener("mousemove", handleVerticalDrag);
-    document.removeEventListener("mousemove", handleHorizontalDrag);
-    document.removeEventListener("mouseup", handleDragEnd);
+    document.removeEventListener('mousemove', handleVerticalDrag);
+    document.removeEventListener('mousemove', handleHorizontalDrag);
+    document.removeEventListener('mouseup', handleDragEnd);
   };
 
   // Handler for change in renderings textarea
-  const handleRenderingsChange = (e) => {
+  const handleRenderingsChange = e => {
     const newRenderings = e.target.value;
     const termId = locations[selLocation].termId;
 
@@ -477,24 +459,27 @@ function MainApp({ settings, templateFolder, onExit }) {
     const status = getStatus(
       updatedData,
       termId,
-      locations[selLocation].vernLabel || "",
-      collectionManager.getRefs(locations[selLocation].mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+      locations[selLocation].vernLabel || '',
+      collectionManager.getRefs(
+        locations[selLocation].mergeKey,
+        getCollectionIdFromTemplate(mapDef.template)
+      ),
       extractedVerses
     );
 
     // Update the status of the affected location
-    setLocations((prevLocations) =>
-      prevLocations.map((loc) => {
+    setLocations(prevLocations =>
+      prevLocations.map(loc => {
         if (loc.termId === termId) {
           return { ...loc, status };
         }
         return loc;
-      }),
+      })
     );
   };
 
   // Handler for change in approved status.
-  const handleApprovedChange = (e) => {
+  const handleApprovedChange = e => {
     const approved = e.target.checked;
     const termId = locations[selLocation].termId;
 
@@ -506,7 +491,7 @@ function MainApp({ settings, templateFolder, onExit }) {
 
     // Create entry if it doesn't exist
     if (!updatedData[termId]) {
-      updatedData[termId] = { renderings: "", isGuessed: !approved };
+      updatedData[termId] = { renderings: '', isGuessed: !approved };
     } else {
       updatedData[termId] = {
         ...updatedData[termId],
@@ -521,17 +506,20 @@ function MainApp({ settings, templateFolder, onExit }) {
     const status = getStatus(
       updatedData,
       termId,
-      locations[selLocation].vernLabel || "",
-      collectionManager.getRefs(locations[selLocation].mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+      locations[selLocation].vernLabel || '',
+      collectionManager.getRefs(
+        locations[selLocation].mergeKey,
+        getCollectionIdFromTemplate(mapDef.template)
+      ),
       extractedVerses
     );
-    setLocations((prevLocations) =>
-      prevLocations.map((loc) => {
+    setLocations(prevLocations =>
+      prevLocations.map(loc => {
         if (loc.termId === termId) {
           return { ...loc, status };
         }
         return loc;
-      }),
+      })
     );
   };
 
@@ -541,28 +529,28 @@ function MainApp({ settings, templateFolder, onExit }) {
       const [fileHandle] = await window.showOpenFilePicker({
         types: [
           {
-            description: "Sample Map Images",
-            accept: { "image/jpeg": [".jpg"] },
+            description: 'Sample Map Images',
+            accept: { 'image/jpeg': ['.jpg'] },
           },
           {
-            description: "Data Merge Files",
-            accept: { "text/plain": [".txt"] },
+            description: 'Data Merge Files',
+            accept: { 'text/plain': ['.txt'] },
           },
         ],
         multiple: false,
       });
-      let figFilename = "";
+      let figFilename = '';
       if (fileHandle) {
         // Extract template name from filename and log the process
         // console.log("Original file name:", fileHandle.name);
-        let newTemplateBase = fileHandle.name.replace(/\..*$/, ""); // Remove file extension
+        let newTemplateBase = fileHandle.name.replace(/\..*$/, ''); // Remove file extension
         // console.log("After removing extension:", newTemplateBase);
         newTemplateBase = newTemplateBase.trim();
         // console.log("After trim:", newTemplateBase);
-        newTemplateBase = newTemplateBase.replace(/\s*[@(].*/, ""); // Remove anything after @ or (
+        newTemplateBase = newTemplateBase.replace(/\s*[@(].*/, ''); // Remove anything after @ or (
         // console.log("Final template base name:", newTemplateBase);
         const labels = {};
-        if (fileHandle.name.endsWith(".txt")) {
+        if (fileHandle.name.endsWith('.txt')) {
           // Handle data merge file
           const file = await fileHandle.getFile();
           // console.log("Reading data merge file:", file.name);
@@ -573,9 +561,9 @@ function MainApp({ settings, templateFolder, onExit }) {
           //   ">" + fileText + "<",
           // );
           // For now, assume it's an IDML data merge file //TODO: Handle mapx merge
-          const lines = fileText.split("\n");
-          const mergeKeys = lines[0].split("\t");
-          const verns = lines[1].split("\t");
+          const lines = fileText.split('\n');
+          const mergeKeys = lines[0].split('\t');
+          const verns = lines[1].split('\t');
           if (verns.length === mergeKeys.length) {
             // Create labels from merge keys and vernaculars
             for (let i = 0; i < mergeKeys.length; i++) {
@@ -586,10 +574,7 @@ function MainApp({ settings, templateFolder, onExit }) {
             alert(inLang(uiStr.invalidDataMerge, lang));
             return;
           }
-        } else if (
-          fileHandle.name.endsWith(".jpg") ||
-          fileHandle.name.endsWith(".jpeg")
-        ) {
+        } else if (fileHandle.name.endsWith('.jpg') || fileHandle.name.endsWith('.jpeg')) {
           // Handle map image file
           figFilename = fileHandle.name;
         } else {
@@ -597,7 +582,7 @@ function MainApp({ settings, templateFolder, onExit }) {
         }
         if (!figFilename) {
           // If no figFilename, use the template base name as figFilename
-          figFilename = newTemplateBase + ".jpg"; // Default to .jpg
+          figFilename = newTemplateBase + '.jpg'; // Default to .jpg
         }
         // Add diagnostic logs to see what's happening
         // console.log("Template base name:", newTemplateBase);
@@ -615,21 +600,19 @@ function MainApp({ settings, templateFolder, onExit }) {
 
         if (!foundTemplate) {
           console.error(
-            "Template not found. Looking for:",
+            'Template not found. Looking for:',
             newTemplateBase,
-            "in collection:",
-            collectionId,
+            'in collection:',
+            collectionId
           );
 
           // Examine available templates for debugging
-          const availableTemplates = Object.keys(
-            collectionManager.getMapDefs(collectionId),
-          );
-          console.log("Available templates in collection:", availableTemplates);
+          const availableTemplates = Object.keys(collectionManager.getMapDefs(collectionId));
+          console.log('Available templates in collection:', availableTemplates);
 
-          alert(inLang(uiStr.noTemplate, lang) + ": " + newTemplateBase);
+          alert(inLang(uiStr.noTemplate, lang) + ': ' + newTemplateBase);
           return;
-        }        // Set mapDef and locations
+        } // Set mapDef and locations
         setMapDef({
           template: newTemplateBase,
           fig: '\\fig | src="' + figFilename + '" size="span" ref=""\\fig*',
@@ -640,22 +623,24 @@ function MainApp({ settings, templateFolder, onExit }) {
           labels: foundTemplate.labels,
           variants: foundTemplate.variants, // Include variants if they exist
         });
-        
+
         // Initialize selectedVariant based on whether variants exist
-        setSelectedVariant(foundTemplate.variants && Object.keys(foundTemplate.variants).length > 0 ? 1 : 0);// Make a local copy to ensure we're using the latest state
+        setSelectedVariant(
+          foundTemplate.variants && Object.keys(foundTemplate.variants).length > 0 ? 1 : 0
+        ); // Make a local copy to ensure we're using the latest state
         const currentTermRenderings = { ...termRenderings };
 
-        const newLocations = foundTemplate.labels.map((loc) => {
+        const newLocations = foundTemplate.labels.map(loc => {
           const status = getStatus(
             currentTermRenderings,
             loc.termId,
-            loc.vernLabel || "",
+            loc.vernLabel || '',
             collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
             extractedVerses
           );
-          return { ...loc, vernLabel: loc.vernLabel || "", status };
+          return { ...loc, vernLabel: loc.vernLabel || '', status };
         });
-        const initialLocations = newLocations.map((loc) => {
+        const initialLocations = newLocations.map(loc => {
           if (labels[loc.mergeKey]) {
             loc.vernLabel = labels[loc.mergeKey]; // Use label from data merge if available
           } else if (!loc.vernLabel) {
@@ -670,12 +655,16 @@ function MainApp({ settings, templateFolder, onExit }) {
             extractedVerses
           );
           return { ...loc, status };
-        });        console.log("Initial locations:", initialLocations);
+        });
+        console.log('Initial locations:', initialLocations);
         setLocations(initialLocations);
-        
+
         // Find first visible location for initial selection
-        const firstVisibleIndex = initialLocations.findIndex(loc => 
-          isLocationVisible(loc, foundTemplate.variants && Object.keys(foundTemplate.variants).length > 0 ? 1 : 0)
+        const firstVisibleIndex = initialLocations.findIndex(loc =>
+          isLocationVisible(
+            loc,
+            foundTemplate.variants && Object.keys(foundTemplate.variants).length > 0 ? 1 : 0
+          )
         );
         if (firstVisibleIndex !== -1) {
           handleSelectLocation(initialLocations[firstVisibleIndex]); // Auto-select first visible location
@@ -685,11 +674,19 @@ function MainApp({ settings, templateFolder, onExit }) {
       }
     } catch (e) {
       // User cancelled or not supported
-      console.log("Map template browse cancelled or not supported:", e);
+      console.log('Map template browse cancelled or not supported:', e);
     }
-  }, [setMapDef, setLocations, termRenderings, lang, handleSelectLocation, extractedVerses, mapDef.template]);
+  }, [
+    setMapDef,
+    setLocations,
+    termRenderings,
+    lang,
+    handleSelectLocation,
+    extractedVerses,
+    mapDef.template,
+  ]);
 
-  // Store the function in a ref for stable reference 
+  // Store the function in a ref for stable reference
   useEffect(() => {
     handleBrowseMapTemplateRef.current = handleBrowseMapTemplate;
   }, [handleBrowseMapTemplate]);
@@ -699,18 +696,20 @@ function MainApp({ settings, templateFolder, onExit }) {
     if (!isInitialized) return; // Don't initialize map until collections are loaded
     const initializeMap = async () => {
       try {
-        if (!settings.usfm) throw new Error("No USFM provided in settings");
+        if (!settings.usfm) throw new Error('No USFM provided in settings');
         // console.log("Initializing map from USFM:", settings.usfm);
         const initialMap = await mapFromUsfm(settings.usfm);
-        console.log("Initial Map loaded (based on usfm):", initialMap);
+        console.log('Initial Map loaded (based on usfm):', initialMap);
         setMapDef(initialMap);
-        
+
         // Initialize selectedVariant based on whether variants exist
-        setSelectedVariant(initialMap.variants && Object.keys(initialMap.variants).length > 0 ? 1 : 0);
-        
+        setSelectedVariant(
+          initialMap.variants && Object.keys(initialMap.variants).length > 0 ? 1 : 0
+        );
+
         setMapPaneView(initialMap.mapView ? MAP_VIEW : TABLE_VIEW);
       } catch (error) {
-        console.log("Unable to initialize map:", error);
+        console.log('Unable to initialize map:', error);
         // browse for a map template if no map
         await handleBrowseMapTemplateRef.current();
       }
@@ -724,7 +723,7 @@ function MainApp({ settings, templateFolder, onExit }) {
     return (
       <textarea
         ref={usfmTextareaRef}
-        style={{ width: "100%", height: "100%", minHeight: 300 }}
+        style={{ width: '100%', height: '100%', minHeight: 300 }}
         defaultValue={usfmText}
         spellCheck={false}
       />
@@ -733,7 +732,7 @@ function MainApp({ settings, templateFolder, onExit }) {
 
   // --- USFM state for editing ---
   const [usfmText, setUsfmText] = useState(() =>
-    usfmFromMap({ ...mapDef, labels: locations }, lang),
+    usfmFromMap({ ...mapDef, labels: locations }, lang)
   );
 
   // Only update USFM text when switching TO USFM view (not on every locations change)
@@ -752,11 +751,11 @@ function MainApp({ settings, templateFolder, onExit }) {
     const text = usfmTextareaRef.current.value;
     try {
       const newMap = await mapFromUsfm(text);
-      console.log("Parsed map from USFM:", newMap);
+      console.log('Parsed map from USFM:', newMap);
       // Re-init locations and selection      // Create a local copy of termRenderings to ensure we're using the latest state
       const currentTermRenderings = { ...termRenderings };
 
-      const initialLocations = newMap.labels.map((loc) => {
+      const initialLocations = newMap.labels.map(loc => {
         if (!loc.vernLabel) {
           loc.vernLabel = getMapForm(currentTermRenderings, loc.termId);
         }
@@ -786,7 +785,7 @@ function MainApp({ settings, templateFolder, onExit }) {
 
       return true; // Indicate success
     } catch (e) {
-      console.error("Error parsing USFM:", e);
+      console.error('Error parsing USFM:', e);
       alert(inLang(uiStr.invalidUsfm, lang));
       return false; // Indicate failure
     }
@@ -796,7 +795,7 @@ function MainApp({ settings, templateFolder, onExit }) {
     if (mapPaneView === USFM_VIEW) {
       await updateMapFromUsfm();
     }
-    setMapPaneView((prev) => {
+    setMapPaneView(prev => {
       if (!mapDef.mapView) {
         // Only cycle between Table (1) and USFM (2)
         return prev === TABLE_VIEW ? USFM_VIEW : TABLE_VIEW;
@@ -823,10 +822,10 @@ function MainApp({ settings, templateFolder, onExit }) {
 
   // Add rendering from bottom pane selection
   const handleAddRendering = useCallback(
-    (text) => {
+    text => {
       if (!locations[selLocation]) return;
       const termId = locations[selLocation].termId;
-      let currentRenderings = renderings || "";
+      let currentRenderings = renderings || '';
       let newRenderings = currentRenderings.trim()
         ? `${currentRenderings.trim()}\n${text.trim()}`
         : text.trim();
@@ -839,28 +838,31 @@ function MainApp({ settings, templateFolder, onExit }) {
       };
       setTermRenderings(updatedData);
       setIsApproved(true);
-      setLocations((prevLocations) =>
-        prevLocations.map((loc) => {
+      setLocations(prevLocations =>
+        prevLocations.map(loc => {
           if (loc.termId === termId) {
-            const status = getStatus(updatedData, loc.termId, loc.vernLabel,
+            const status = getStatus(
+              updatedData,
+              loc.termId,
+              loc.vernLabel,
               collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
-              extractedVerses);
+              extractedVerses
+            );
             return { ...loc, status };
           }
           return loc;
-        }),
+        })
       );
       setTimeout(() => {
-        if (renderingsTextareaRef.current)
-          renderingsTextareaRef.current.focus();
+        if (renderingsTextareaRef.current) renderingsTextareaRef.current.focus();
       }, 0);
     },
-    [renderings, selLocation, locations, termRenderings, extractedVerses, mapDef.template],
+    [renderings, selLocation, locations, termRenderings, extractedVerses, mapDef.template]
   );
 
   // Replace all renderings with selected text (from bottom pane) or create new rendering (from details pane)
   const handleReplaceRendering = useCallback(
-    (text) => {
+    text => {
       if (!locations[selLocation]) return;
       const termId = locations[selLocation].termId;
       const newRenderings = text.trim();
@@ -873,24 +875,27 @@ function MainApp({ settings, templateFolder, onExit }) {
       };
       setTermRenderings(updatedData);
       setIsApproved(true);
-      setLocations((prevLocations) =>
-        prevLocations.map((loc) => {
+      setLocations(prevLocations =>
+        prevLocations.map(loc => {
           if (loc.termId === termId) {
             const vernLabel = newRenderings;
-            const status = getStatus(updatedData, loc.termId, vernLabel,
+            const status = getStatus(
+              updatedData,
+              loc.termId,
+              vernLabel,
               collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
-              extractedVerses);
+              extractedVerses
+            );
             return { ...loc, status, vernLabel };
           }
           return loc;
-        }),
+        })
       );
       setTimeout(() => {
-        if (renderingsTextareaRef.current)
-          renderingsTextareaRef.current.focus();
+        if (renderingsTextareaRef.current) renderingsTextareaRef.current.focus();
       }, 0);
     },
-    [selLocation, locations, termRenderings, extractedVerses, mapDef.template],
+    [selLocation, locations, termRenderings, extractedVerses, mapDef.template]
   );
 
   // Add global PageUp/PageDown navigation for Map and Table views
@@ -898,30 +903,28 @@ function MainApp({ settings, templateFolder, onExit }) {
     function handleGlobalKeyDown(e) {
       if (mapPaneView === USFM_VIEW) return; // Do not trigger in USFM view
       // Ctrl+9 triggers zoom reset
-      if (e.ctrlKey && (e.key === "9" || e.code === "Digit9")) {
-        console.log("Resetting zoom");
+      if (e.ctrlKey && (e.key === '9' || e.code === 'Digit9')) {
+        console.log('Resetting zoom');
         setResetZoomFlag(true);
         e.preventDefault();
         return;
       }
-      if (e.key === "PageDown") {
+      if (e.key === 'PageDown') {
         handleNextLocation(true);
         e.preventDefault();
-      } else if (e.key === "PageUp") {
+      } else if (e.key === 'PageUp') {
         handleNextLocation(false);
         e.preventDefault();
       }
     }
-    window.addEventListener("keydown", handleGlobalKeyDown);
-    return () => window.removeEventListener("keydown", handleGlobalKeyDown);
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
   }, [mapPaneView, handleNextLocation]); // Remove mapDef, mapRef from deps
 
   // Memoize locations and mapDef to prevent MapPane remounts
   const memoizedLocations = useMemo(() => locations, [locations]);
   const memoizedMapDef = useMemo(() => mapDef, [mapDef]);
-  const memoizedHandleSelectLocation = useCallback(handleSelectLocation, [
-    handleSelectLocation,
-  ]);
+  const memoizedHandleSelectLocation = useCallback(handleSelectLocation, [handleSelectLocation]);
 
   // Extract the current collection ID from the template name
   const currentCollectionId = useMemo(() => {
@@ -933,17 +936,17 @@ function MainApp({ settings, templateFolder, onExit }) {
     // Make sure we're using the latest term renderings state
     const currentTermRenderings = { ...termRenderings };
 
-    setLocations((prevLocations) =>
-      prevLocations.map((loc) => {
+    setLocations(prevLocations =>
+      prevLocations.map(loc => {
         const status = getStatus(
           currentTermRenderings,
           loc.termId,
-          loc.vernLabel || "",
+          loc.vernLabel || '',
           collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
           extractedVerses
         );
         return { ...loc, status };
-      }),
+      })
     );
   }, [termRenderings, extractedVerses, mapDef.template]);
 
@@ -953,16 +956,12 @@ function MainApp({ settings, templateFolder, onExit }) {
     if (!termRenderings) return;
 
     const handler = setTimeout(() => {
-      electronAPI.saveTermRenderings(
-        projectFolder,
-        settings.saveToDemo,
-        termRenderings,
-      );
+      electronAPI.saveTermRenderings(projectFolder, settings.saveToDemo, termRenderings);
       console.log(
-        "[IPC] Auto-saved termRenderings to disk:",
+        '[IPC] Auto-saved termRenderings to disk:',
         projectFolder,
-        "saveToDemo:",
-        settings.saveToDemo,
+        'saveToDemo:',
+        settings.saveToDemo
       );
       // Optionally: show a "saved" indicator here
       // console.log('Auto-saved termRenderings to disk');
@@ -983,8 +982,8 @@ function MainApp({ settings, templateFolder, onExit }) {
     if (!isInitialized) return;
     settingsService
       .updateLanguage(lang) // Save the language to settings
-      .then(() => console.log("Auto-saved language to settings:", lang))
-      .catch((err) => console.error("Error saving language to settings:", err));
+      .then(() => console.log('Auto-saved language to settings:', lang))
+      .catch(err => console.error('Error saving language to settings:', err));
   }, [lang, isInitialized]);
 
   // State for storing the loaded image data URL
@@ -1005,47 +1004,34 @@ function MainApp({ settings, templateFolder, onExit }) {
     // This ensures we always use the latest version that's in memory
     const folderPath = templateFolder || settings.templateFolder;
     // Normalize path separators for Windows
-    const imagePath =
-      folderPath.replace(/[/\\]$/, "") + "\\" + memoizedMapDef.imgFilename;
-    console.log(
-      "Loading image from path:",
-      imagePath,
-      "templatefolder",
-      templateFolder,
-    );
+    const imagePath = folderPath.replace(/[/\\]$/, '') + '\\' + memoizedMapDef.imgFilename;
+    console.log('Loading image from path:', imagePath, 'templatefolder', templateFolder);
 
     // Use the IPC function to load the image
     if (window.electronAPI) {
       window.electronAPI
         .loadImage(imagePath)
-        .then((data) => {
+        .then(data => {
           if (data) {
             setImageData(data);
-            console.log("Image loaded successfully through IPC");
+            console.log('Image loaded successfully through IPC');
           } else {
-            console.error(
-              `Failed to load image through IPC from path: ${imagePath}`,
-            );
+            console.error(`Failed to load image through IPC from path: ${imagePath}`);
             setImageData(null); // null indicates error
             setImageError(
-              `Could not load map image from template folder. Please check that the template folder contains the required image: ${memoizedMapDef.imgFilename}`,
+              `Could not load map image from template folder. Please check that the template folder contains the required image: ${memoizedMapDef.imgFilename}`
             );
           }
         })
-        .catch((err) => {
-          console.error(
-            `Error loading image through IPC from path: ${imagePath}`,
-            err,
-          );
+        .catch(err => {
+          console.error(`Error loading image through IPC from path: ${imagePath}`, err);
           setImageData(null); // null indicates error
-          setImageError(
-            `Error loading map image: ${err.message || "Unknown error"}`,
-          );
+          setImageError(`Error loading map image: ${err.message || 'Unknown error'}`);
         });
     } else {
-      console.error("electronAPI not available");
+      console.error('electronAPI not available');
       setImageData(null); // null indicates error
-      setImageError("Electron API not available. Cannot load images.");
+      setImageError('Electron API not available. Cannot load images.');
     }
   }, [memoizedMapDef.imgFilename, isInitialized, settings, templateFolder]);
   // For debugging - keep track of the original path with proper Windows path separators
@@ -1055,17 +1041,17 @@ function MainApp({ settings, templateFolder, onExit }) {
 
   // Add cleanup effect to handle unmounting gracefully
   useEffect(() => {
-    console.log("MainApp mounted - initializing");
+    console.log('MainApp mounted - initializing');
 
     // Return a cleanup function that will run when MainApp is unmounted
     return () => {
       // Cancel any timers, requests or operations that could cause errors when unmounted
-      console.log("MainApp is unmounting - performing cleanup");
+      console.log('MainApp is unmounting - performing cleanup');
 
       // Create a dummy element to replace any map references
       // This helps prevent Leaflet errors during unmounting
       if (!window._mapCleanupDummy) {
-        window._mapCleanupDummy = document.createElement("div");
+        window._mapCleanupDummy = document.createElement('div');
       }
 
       // Create a global flag to prevent any Leaflet operations during unmounting
@@ -1078,17 +1064,16 @@ function MainApp({ settings, templateFolder, onExit }) {
           window.L.DomEvent._globalEventHandlers = {};
 
           // Manually clear any Leaflet references still in the DOM
-          const leafletContainers =
-            document.querySelectorAll(".leaflet-container");
-          leafletContainers.forEach((container) => {
+          const leafletContainers = document.querySelectorAll('.leaflet-container');
+          leafletContainers.forEach(container => {
             try {
-              container.outerHTML = "";
+              container.outerHTML = '';
             } catch (e) {
               // Ignore errors
             }
           });
         } catch (e) {
-          console.log("Error cleaning up Leaflet:", e);
+          console.log('Error cleaning up Leaflet:', e);
         }
       }
 
@@ -1100,43 +1085,44 @@ function MainApp({ settings, templateFolder, onExit }) {
   }, []);
 
   // Handle variant selection changes
-  const handleVariantChange = useCallback((newVariantId) => {
-    setSelectedVariant(newVariantId);
-    
-    // Check if current selection is still visible
-    const currentLocation = locations[selLocation];
-    if (!currentLocation || !isLocationVisible(currentLocation, newVariantId)) {
-      // Find first visible location
-      const firstVisibleIndex = locations.findIndex(loc => 
-        isLocationVisible(loc, newVariantId)
-      );
-      if (firstVisibleIndex !== -1) {
-        setSelLocation(firstVisibleIndex);
+  const handleVariantChange = useCallback(
+    newVariantId => {
+      setSelectedVariant(newVariantId);
+
+      // Check if current selection is still visible
+      const currentLocation = locations[selLocation];
+      if (!currentLocation || !isLocationVisible(currentLocation, newVariantId)) {
+        // Find first visible location
+        const firstVisibleIndex = locations.findIndex(loc => isLocationVisible(loc, newVariantId));
+        if (firstVisibleIndex !== -1) {
+          setSelLocation(firstVisibleIndex);
+        }
       }
-    }
-  }, [locations, selLocation]);
+    },
+    [locations, selLocation]
+  );
 
   return (
     <div className="app-container">
-      {" "}
+      {' '}
       <div className="top-section" style={{ flex: `0 0 ${topHeight}%` }}>
-        {" "}
+        {' '}
         <div className="map-pane" style={{ flex: `0 0 ${mapWidth}%` }}>
-          {" "}
+          {' '}
           {mapPaneView === MAP_VIEW && mapDef.mapView && (
             <>
               {imageData === undefined && (
                 <div
                   style={{
-                    position: "absolute",
-                    top: "10px",
-                    right: "10px",
-                    background: "rgba(255,255,0,0.8)",
-                    color: "black",
-                    padding: "5px 10px",
-                    borderRadius: "5px",
+                    position: 'absolute',
+                    top: '10px',
+                    right: '10px',
+                    background: 'rgba(255,255,0,0.8)',
+                    color: 'black',
+                    padding: '5px 10px',
+                    borderRadius: '5px',
                     zIndex: 1001,
-                    fontSize: "12px",
+                    fontSize: '12px',
                   }}
                 >
                   Loading image...
@@ -1145,21 +1131,22 @@ function MainApp({ settings, templateFolder, onExit }) {
               {imageData === null && imageError && (
                 <div
                   style={{
-                    position: "absolute",
-                    top: "10px",
-                    right: "10px",
-                    background: "rgba(255,100,100,0.9)",
-                    color: "white",
-                    padding: "5px 10px",
-                    borderRadius: "5px",
+                    position: 'absolute',
+                    top: '10px',
+                    right: '10px',
+                    background: 'rgba(255,100,100,0.9)',
+                    color: 'white',
+                    padding: '5px 10px',
+                    borderRadius: '5px',
                     zIndex: 1001,
-                    fontSize: "12px",
-                    maxWidth: "80%",
+                    fontSize: '12px',
+                    maxWidth: '80%',
                   }}
                 >
                   {imageError}
                 </div>
-              )}              <MapPane
+              )}{' '}
+              <MapPane
                 imageUrl={imageData}
                 locations={memoizedLocations}
                 onSelectLocation={memoizedHandleSelectLocation}
@@ -1176,8 +1163,9 @@ function MainApp({ settings, templateFolder, onExit }) {
                 selectedVariant={selectedVariant} // Pass selected variant
               />
             </>
-          )}{" "}
-          {mapPaneView === TABLE_VIEW && (            <TableView
+          )}{' '}
+          {mapPaneView === TABLE_VIEW && (
+            <TableView
               locations={locations}
               selLocation={selLocation}
               onSelectLocation={handleSelectLocation}
@@ -1195,12 +1183,11 @@ function MainApp({ settings, templateFolder, onExit }) {
         <div
           className="vertical-divider"
           onMouseDown={handleVerticalDragStart}
-          dangerouslySetInnerHTML={{ __html: "‖<br />‖" }}
+          dangerouslySetInnerHTML={{ __html: '‖<br />‖' }}
         />
-        <div
-          className="details-pane"
-          style={{ flex: `0 0 ${100 - mapWidth}%` }}
-        >          <DetailsPane
+        <div className="details-pane" style={{ flex: `0 0 ${100 - mapWidth}%` }}>
+          {' '}
+          <DetailsPane
             selLocation={selLocation}
             onUpdateVernacular={handleUpdateVernacular}
             onNextLocation={handleNextLocation}
@@ -1212,7 +1199,7 @@ function MainApp({ settings, templateFolder, onExit }) {
             locations={locations}
             onSwitchView={handleSwitchViewWithUsfm}
             mapPaneView={mapPaneView}
-            onSetView={async (viewIdx) => {
+            onSetView={async viewIdx => {
               if (viewIdx === MAP_VIEW && !mapDef.mapView) return;
               if (mapPaneView === USFM_VIEW) await updateMapFromUsfm();
               setMapPaneView(viewIdx);
@@ -1231,12 +1218,9 @@ function MainApp({ settings, templateFolder, onExit }) {
           />
         </div>
       </div>
-      <div
-        className="horizontal-divider"
-        onMouseDown={handleHorizontalDragStart}
-      >
+      <div className="horizontal-divider" onMouseDown={handleHorizontalDragStart}>
         ═════
-      </div>{" "}
+      </div>{' '}
       <div className="bottom-pane" style={{ flex: `0 0 ${100 - topHeight}%` }}>
         <BottomPane
           termId={locations[selLocation]?.termId}
@@ -1252,7 +1236,7 @@ function MainApp({ settings, templateFolder, onExit }) {
           setTermRenderings={setTermRenderings}
           collectionId={currentCollectionId} // Pass the collection ID
         />
-      </div>{" "}
+      </div>{' '}
       <SettingsModal
         open={showSettings}
         onClose={() => setShowSettings(false)}
@@ -1261,8 +1245,8 @@ function MainApp({ settings, templateFolder, onExit }) {
         lang={lang}
         setLang={setLang}
         showFrac={showFrac}
-        setShowFrac={setShowFrac} 
-      />{" "}
+        setShowFrac={setShowFrac}
+      />{' '}
     </div>
   );
 }

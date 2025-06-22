@@ -38,17 +38,17 @@ function MapController({
     }, 50); // Small delay to ensure map is ready
 
     return () => clearTimeout(timeoutId);
-  }, [resetZoomFlag, setResetZoomFlag, map, imageHeight, imageWidth]);  // Effect for smart panning to selected location
-
+  }, [resetZoomFlag, setResetZoomFlag, map, imageHeight, imageWidth]); // Effect for smart panning to selected location
 
   useEffect(() => {
-    if (selLocation === null || selLocation === undefined || !map || !transformedLocations.length) return;
+    if (selLocation === null || selLocation === undefined || !map || !transformedLocations.length)
+      return;
 
     const timeoutId = setTimeout(() => {
       try {
         // console.log('Looking for selLocation index:', selLocation);
         // console.log('Available transformedLocations length:', transformedLocations.length);
-        
+
         // selLocation is an index into the transformedLocations array
         const selectedLoc = transformedLocations[selLocation];
         if (!selectedLoc) {
@@ -89,65 +89,65 @@ function MapController({
         const angle = selectedLoc.angle || 0;
         const align = selectedLoc.align || 'center';
         let startPoint, endPoint;
-        
+
         // Calculate start and end points based on alignment and angle.
         const labelLengthPixels = mapSize.x * 0.2; // Approximate label length as 20% of horizontal viewable area
         startPoint = endPoint = locationPixel;
         if (!angle) {
           if (align === 'center') {
             startPoint.x -= labelLengthPixels / 2;
-            endPoint.x += labelLengthPixels / 2;    
+            endPoint.x += labelLengthPixels / 2;
           } else if (align === 'left') {
-            endPoint.x += labelLengthPixels;  
+            endPoint.x += labelLengthPixels;
           } else if (align === 'right') {
             startPoint.x -= labelLengthPixels;
           }
           // console.log('Non-rotated label has endpoints:', { startPoint, endPoint } );
         } else {
-          
           // Convert angle to radians (0° = horizontal right, negative or 270-360° = down-right)
-          const angleRad = angle * Math.PI / 180;
-          
+          const angleRad = (angle * Math.PI) / 180;
+
           // Calculate label direction vector (unit vector)
           const labelDirX = Math.cos(angleRad);
           const labelDirY = Math.sin(angleRad);
-          
-          // console.log('Label calculation:', { 
-          //   angle, 
-          //   align, 
-          //   labelLengthPixels, 
-          //   labelDirX, 
-          //   labelDirY 
+
+          // console.log('Label calculation:', {
+          //   angle,
+          //   align,
+          //   labelLengthPixels,
+          //   labelDirX,
+          //   labelDirY
           // });
-          
+
           // Calculate start and end points based on alignment
           if (align === 'left') {
             // Label extends rightward from anchor
             startPoint = locationPixel;
             endPoint = {
               x: locationPixel.x + labelLengthPixels * labelDirX,
-              y: locationPixel.y + labelLengthPixels * labelDirY
+              y: locationPixel.y + labelLengthPixels * labelDirY,
             };
           } else if (align === 'right') {
-            // Label extends leftward from anchor  
+            // Label extends leftward from anchor
             endPoint = locationPixel;
             startPoint = {
               x: locationPixel.x - labelLengthPixels * labelDirX,
-              y: locationPixel.y - labelLengthPixels * labelDirY
+              y: locationPixel.y - labelLengthPixels * labelDirY,
             };
-          } else { // center
+          } else {
+            // center
             // Label extends both ways from anchor
             const halfLength = labelLengthPixels / 2;
             startPoint = {
               x: locationPixel.x - halfLength * labelDirX,
-              y: locationPixel.y - halfLength * labelDirY
+              y: locationPixel.y - halfLength * labelDirY,
             };
             endPoint = {
               x: locationPixel.x + halfLength * labelDirX,
-              y: locationPixel.y + halfLength * labelDirY
+              y: locationPixel.y + halfLength * labelDirY,
             };
           }
-          
+
           // console.log('Label endpoints:', { startPoint, endPoint });
         }
 
@@ -156,26 +156,26 @@ function MapController({
           left: startPoint.x < comfortableLeft,
           right: startPoint.x > comfortableRight,
           top: startPoint.y < comfortableTop,
-          bottom: startPoint.y > comfortableBottom
+          bottom: startPoint.y > comfortableBottom,
         };
 
         const endViolations = {
           left: endPoint.x < comfortableLeft,
           right: endPoint.x > comfortableRight,
           top: endPoint.y < comfortableTop,
-          bottom: endPoint.y > comfortableBottom
+          bottom: endPoint.y > comfortableBottom,
         };
 
-        const anyViolation = Object.values(startViolations).some(v => v) || 
-                           Object.values(endViolations).some(v => v);
-        
-        // console.log('Buffer violations:', { 
-        //   startViolations, 
-        //   endViolations, 
-        //   anyViolation 
-        // });        
+        const anyViolation =
+          Object.values(startViolations).some(v => v) || Object.values(endViolations).some(v => v);
+
+        // console.log('Buffer violations:', {
+        //   startViolations,
+        //   endViolations,
+        //   anyViolation
+        // });
         const needsPanning = anyViolation;
-        // console.log('Needs panning:', needsPanning);        
+        // console.log('Needs panning:', needsPanning);
         if (needsPanning) {
           // Calculate minimum adjustments needed to bring label within buffer zone
           // Priority: keep anchor point visible
@@ -215,7 +215,7 @@ function MapController({
           const centerPixel = map.latLngToContainerPoint(currentCenter);
           const newCenterPixel = {
             x: centerPixel.x - adjustmentX,
-            y: centerPixel.y - adjustmentY
+            y: centerPixel.y - adjustmentY,
           };
           const newCenter = map.containerPointToLatLng(newCenterPixel);
 
@@ -247,7 +247,7 @@ export default function MapPane({
   extractedVerses,
   collectionId = 'SMR',
   showFrac,
-  selectedVariant = 0
+  selectedVariant = 0,
 }) {
   const { MapContainer, ImageOverlay, Marker, ZoomControl } = require('react-leaflet');
   const imageHeight = mapDef.height;
@@ -258,7 +258,8 @@ export default function MapPane({
       [imageHeight, imageWidth],
     ],
     [imageHeight, imageWidth]
-  );  const crs = Leaf.CRS.Simple;
+  );
+  const crs = Leaf.CRS.Simple;
   const transformedLocations = locations
     .filter(loc => isLocationVisible(loc, selectedVariant))
     .map(loc => {
@@ -331,14 +332,16 @@ export default function MapPane({
                 loc.status,
                 selLocation === loc.idx,
                 labelScale,
-                showFrac ? frac(
-                  getMatchTally(
-                    termRenderings[loc.termId],
-                    collectionManager.getRefs(loc.mergeKey, collectionId),
-                    extractedVerses
-                  ),
-                  true
-                ) : ''
+                showFrac
+                  ? frac(
+                      getMatchTally(
+                        termRenderings[loc.termId],
+                        collectionManager.getRefs(loc.mergeKey, collectionId),
+                        extractedVerses
+                      ),
+                      true
+                    )
+                  : ''
               )}
               eventHandlers={{ click: () => onSelectLocation(loc) }}
               tabIndex={0}

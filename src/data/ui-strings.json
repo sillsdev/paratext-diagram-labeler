@@ -116,6 +116,5 @@
   "templateInfo": { "en": "Template info", "es": "Información de la plantilla", "fr": "Infos du modèle", "ne": "टेम्प्लेट जानकारी" },
   "termRenderings": { "en": "Term Renderings", "es": "Renderizaciones de Términos", "fr": "Rendus des Termes", "ne": "शब्द अनुवादहरू" },  "usageRules": { "en": "Usage and Attribution Rules", "es": "Reglas de uso y atribución", "fr": "Règles d'utilisation et d'attribution", "ne": "प्रयोग र श्रेय नियमहरू" },
   "usfmView": { "en": "USFM View", "es": "Vista USFM", "fr": "Vue USFM", "ne": "USFM दृश्य" },
-  "variant": { "en": "Variant", "es": "Variante", "fr": "Variante", "ne": "भिन्नता" },
   "invalidDataMerge": { "en": "Invalid data merge file format", "es": "Formato de archivo de fusión de datos no válido", "fr": "Format de fichier de fusion de données invalide", "ne": "अमान्य डाटा मर्ज फाइल ढाँचा" }
 }

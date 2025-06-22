@@ -444,8 +444,8 @@ export default function DetailsPane({
           </button>
         </div>
       )}
-
-      {/* Template info/browse group */}      <div
+      {/* Template info/browse group */}{' '}
+      <div
         className="details-group-frame"
         style={{
           border: '1px solid #ccc',
@@ -478,86 +478,86 @@ export default function DetailsPane({
           )}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-        <button
-          title={inLang(uiStr.templateInfo, lang)}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: 0,
-            marginLeft: 1,
-          }}
-          onClick={() => setShowTemplateInfo(true)}
-        >
-          <span role="img" aria-label="info" style={{ fontSize: '1.2em', color: '#6cf' }}>
-            ℹ️
-          </span>
-        </button>
-        <button
-          title={inLang(uiStr.browseTemplate, lang)}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: 0,
-            marginLeft: 1,
-          }}
-          onClick={onBrowseMapTemplate}
-        >
-          <span role="img" aria-label="browse" style={{ fontSize: '1.2em', color: '#fc6' }}>
-            📂
-          </span>
-        </button>
-        <button
-          onClick={handleExportDataMerge}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: 0,
-            marginLeft: 1,
-          }}
-          title={inLang(uiStr.export, lang)}
-        >
-          {/* Export icon: two stacked files with a down arrow */}
-          <svg
-            width="22"
-            height="22"
-            viewBox="0 0 22 22"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+          <button
+            title={inLang(uiStr.templateInfo, lang)}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 0,
+              marginLeft: 1,
+            }}
+            onClick={() => setShowTemplateInfo(true)}
           >
-            <rect
-              x="4"
-              y="4"
-              width="10"
-              height="14"
-              rx="2"
-              fill="#fff"
-              stroke="#1976d2"
-              strokeWidth="1.2"
-            />
-            <rect
-              x="8"
-              y="2"
-              width="10"
-              height="14"
-              rx="2"
-              fill="#e3f2fd"
-              stroke="#1976d2"
-              strokeWidth="1.2"
-            />
-            <path
-              d="M13 10v5m0 0l-2-2m2 2l2-2"
-              stroke="#1976d2"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />          </svg>
-        </button>
+            <span role="img" aria-label="info" style={{ fontSize: '1.2em', color: '#6cf' }}>
+              ℹ️
+            </span>
+          </button>
+          <button
+            title={inLang(uiStr.browseTemplate, lang)}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 0,
+              marginLeft: 1,
+            }}
+            onClick={onBrowseMapTemplate}
+          >
+            <span role="img" aria-label="browse" style={{ fontSize: '1.2em', color: '#fc6' }}>
+              📂
+            </span>
+          </button>
+          <button
+            onClick={handleExportDataMerge}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 0,
+              marginLeft: 1,
+            }}
+            title={inLang(uiStr.export, lang)}
+          >
+            {/* Export icon: two stacked files with a down arrow */}
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 22 22"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                x="4"
+                y="4"
+                width="10"
+                height="14"
+                rx="2"
+                fill="#fff"
+                stroke="#1976d2"
+                strokeWidth="1.2"
+              />
+              <rect
+                x="8"
+                y="2"
+                width="10"
+                height="14"
+                rx="2"
+                fill="#e3f2fd"
+                stroke="#1976d2"
+                strokeWidth="1.2"
+              />
+              <path
+                d="M13 10v5m0 0l-2-2m2 2l2-2"
+                stroke="#1976d2"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />{' '}
+            </svg>
+          </button>
         </div>
       </div>
-
       {/* Modal dialog for template info */}
       {showTemplateInfo && (
         <div
@@ -636,7 +636,6 @@ export default function DetailsPane({
           </div>
         </div>
       )}
-
       {/* Status Tally Table */}
       <div
         style={{
