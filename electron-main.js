@@ -471,100 +471,87 @@ ipcMain.handle('stat-path', async (event, filePath) => {
 });
 
 // Handle IDML data merge export
-ipcMain.handle('export-data-merge', async (event, { locations, templateName, format, projectFolder }) => {
-  try {
-    // Determine default output folder
-    const localFiguresPath = path.join(projectFolder, 'local', 'figures');
-    let defaultPath;
-    
+ipcMain.handle(
+  'export-data-merge',
+  async (event, { locations, templateName, format, projectFolder }) => {
     try {
-      await fs.promises.access(localFiguresPath);
-      defaultPath = localFiguresPath;
-    } catch {
-      defaultPath = projectFolder;
-    }
-    
-    let data;
-    if (format === 'idml') {
-      // Prepare IDML data merge content 
-      const dataMergeHeader = locations.map(loc => loc.mergeKey).join('\t');
-      const dataMergeContent = locations.map(loc => loc.vernLabel || '').join('\t');
-      data = dataMergeHeader + '\n' + dataMergeContent + '\n';
-    } else {
-      // Prepare MAPX data merge content  
-      // For each location, create a line with the merge key and vernacular label, separated by a tab.
-      data = locations
-        .map(loc => {
-          const mergeKey = loc.mergeKey || '';
-          const vernacularLabel = loc.vernLabel || '';
-          return `${mergeKey}\t${vernacularLabel}`;
-        })
-        .join('\n');  
-    }
-    
-    // Generate suggested filename
-    const projectName = path.basename(projectFolder);
-    const suggestedFilename = `${templateName} @${projectName}.${format}.txt`;
-    const suggestedPath = path.join(defaultPath, suggestedFilename);
-    
-    // Show save dialog
-    const fmtUpper = format.toUpperCase();
-    const result = await dialog.showSaveDialog({
-      title: `Export ${fmtUpper} Data Merge`,
-      defaultPath: suggestedPath,
-      filters: [
-        {
-          name: `${fmtUpper} Data Merge Files`,
-          extensions: [`${format}.txt`]
-        }
-      ]
-    });
-    
-    if (result.canceled) {
+      // Determine default output folder
+      const localFiguresPath = path.join(projectFolder, 'local', 'figures');
+      let defaultPath;
+
+      try {
+        await fs.promises.access(localFiguresPath);
+        defaultPath = localFiguresPath;
+      } catch {
+        defaultPath = projectFolder;
+      }
+
+      let data;
+      if (format === 'idml') {
+        // Prepare IDML data merge content
+        const dataMergeHeader = locations.map(loc => loc.mergeKey).join('\t');
+        const dataMergeContent = locations.map(loc => loc.vernLabel || '').join('\t');
+        data = dataMergeHeader + '\n' + dataMergeContent + '\n';
+      } else {
+        // Prepare MAPX data merge content
+        // For each location, create a line with the merge key and vernacular label, separated by a tab.
+        data = locations
+          .map(loc => {
+            const mergeKey = loc.mergeKey || '';
+            const vernacularLabel = loc.vernLabel || '';
+            return `${mergeKey}\t${vernacularLabel}`;
+          })
+          .join('\n');
+      }
+
+      // Generate suggested filename
+      const projectName = path.basename(projectFolder);
+      const suggestedFilename = `${templateName} @${projectName}.${format}.txt`;
+      const suggestedPath = path.join(defaultPath, suggestedFilename);
+
+      // Show save dialog
+      const fmtUpper = format.toUpperCase();
+      const result = await dialog.showSaveDialog({
+        title: `Export ${fmtUpper} Data Merge`,
+        defaultPath: suggestedPath,
+        filters: [
+          {
+            name: `${fmtUpper} Data Merge Files`,
+            extensions: [`${format}.txt`],
+          },
+        ],
+      });
+
+      if (result.canceled) {
+        return {
+          success: false,
+          canceled: true,
+          message: 'Export canceled by user',
+        };
+      }
+
+      if (format === 'idml') {
+        // Write idml.txt file with BOM and UTF-16 LE encoding.
+        await fs.promises.writeFile(result.filePath, '\uFEFF' + data, { encoding: 'utf16le' });
+      } else {
+        // Write mapx.txt file with UTF-8 encoding
+        await fs.promises.writeFile(result.filePath, data, 'utf8');
+      }
+
+      return {
+        success: true,
+        filePath: result.filePath,
+        message: `Data merge exported successfully to ${path.basename(result.filePath)}`,
+      };
+    } catch (error) {
+      console.error('Export data merge error:', error);
       return {
         success: false,
-        canceled: true,
-        message: 'Export canceled by user'
+        error: error.message,
       };
     }
-    
-    // Encode to UTF-16 LE with BOM
-    const encodeUTF16LE = (str, bom = false) => {
-      if (bom) {
-        str = '\uFEFF' + str; // Add BOM if requested
-      }
-      const buf = new Uint8Array(str.length * 2);
-      for (let i = 0; i < str.length; i++) {
-        const code = str.charCodeAt(i);
-        buf[i * 2] = code & 0xff;
-        buf[i * 2 + 1] = code >> 8;
-      }
-      return buf;
-    };
-    
-    if (format === 'idml') {
-      // Write file with UTF-16 LE encoding
-      const encodedData = encodeUTF16LE(data, true); //TODO: Do we still need the function to write utf16 le here as we did on the front end?
-      await fs.promises.writeFile(result.filePath, encodedData);
-    } else {  
-      // Write file with UTF-8 encoding
-      await fs.promises.writeFile(result.filePath, data, 'utf8');
-    }
-
-    return {
-      success: true,
-      filePath: result.filePath,
-      message: `IDML data merge exported successfully to ${path.basename(result.filePath)}`
-    };
-    
-  } catch (error) {
-    console.error('Export data merge error:', error);
-    return {
-      success: false,
-      error: error.message
-    };
   }
-});
+);
 
 app.whenReady().then(createWindow);
 
