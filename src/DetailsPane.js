@@ -40,9 +40,10 @@ export default function DetailsPane({
 }) {
   const [vernacular, setVernacular] = useState(locations[selLocation]?.vernLabel || '');
   const [localIsApproved, setLocalIsApproved] = useState(isApproved);
-  const [localRenderings, setLocalRenderings] = useState(renderings);
-  const [showTemplateInfo, setShowTemplateInfo] = useState(false);
+  const [localRenderings, setLocalRenderings] = useState(renderings);  const [showTemplateInfo, setShowTemplateInfo] = useState(false);
   const [templateData, setTemplateData] = useState({});
+  const [showExportDialog, setShowExportDialog] = useState(false);
+  const [selectedExportFormat, setSelectedExportFormat] = useState('idml');
 
   // Load template data when mapDef.template changes
   useEffect(() => {
@@ -147,27 +148,42 @@ export default function DetailsPane({
 
   // --- Template info/browse group ---
   // Access the template name from the global map object
-  const templateName = mapDef.template || '(' + inLang(uiStr.noTemplate, lang) + ')'; // Export to data merge file handler
+  const templateName = mapDef.template || '(' + inLang(uiStr.noTemplate, lang) + ')'; 
+  
+  // Export to data merge file handler
   const handleExportDataMerge = async () => {
+    let outputFormat = templateData.formats;
+    console.log('Exporting data merge with format:', outputFormat);
+    if (outputFormat === 'idml, mapx') { 
+      // Prompt user to select output format. Return if user cancels.
+      console.log('Prompting user to select export format');
+      setShowExportDialog(true);
+      return; // Exit here, the dialog will handle the rest
+    }
+
+    // Use the helper function for direct export
+    await handleExportWithFormat(outputFormat);
+  };
+
+  // Handle export after format selection
+  const handleExportWithFormat = async (format) => {
     try {
       const result = await window.electronAPI.exportDataMerge({
         locations: locations,
         templateName: templateName,
+        format: format,
         projectFolder: settingsService.getProjectFolder(),
       });
 
-      if (result.success) {
-        // Success - no alert needed as file was saved successfully
-        console.log('Export successful:', result.message);
-      } else if (result.canceled) {
-        // User cancelled - no error message needed
-        console.log('Export cancelled by user');
+      if (result.success || result.canceled) {
+        console.log('Export successful or cancelled:', result.message);
       } else {
-        alert(`Export failed: ${result.error}`);
+        // Show error message
+        alert(`Export cancelled: ${result.message}`);
       }
     } catch (error) {
       console.error('Export error:', error);
-      alert(`Export failed: ${error.message}`);
+      alert(`Not exported: ${error.message}`);
     }
   };
 
@@ -632,10 +648,97 @@ export default function DetailsPane({
                   {templateData.ownerRules}
                 </a>
               </div>
-            )}
+            )}          </div>
+        </div>
+      )}
+      
+      {/* Modal dialog for export format selection */}
+      {showExportDialog && (
+        <div
+          style={{
+            position: 'fixed',
+            left: 0,
+            top: 0,
+            width: '100vw',
+            height: '100vh',
+            zIndex: 1000,
+            background: 'rgba(0,0,0,0.4)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <div
+            style={{
+              background: 'white',
+              borderRadius: 10,
+              padding: 24,
+              minWidth: 400,
+              maxWidth: 500,
+              boxShadow: '0 4px 24px #0008',
+              position: 'relative',
+            }}
+          >
+            <h4 style={{ marginTop: 0 }}>Export to data merge file</h4>
+            <div style={{ marginBottom: 16 }}>
+              <p style={{ marginBottom: 12 }}>Select output format:</p>
+              <label style={{ display: 'block', marginBottom: 8, cursor: 'pointer' }}>
+                <input
+                  type="radio"
+                  name="exportFormat"
+                  value="idml"
+                  checked={selectedExportFormat === 'idml'}
+                  onChange={(e) => setSelectedExportFormat(e.target.value)}
+                  style={{ marginRight: 8 }}
+                />
+                InDesign (IDML)
+              </label>
+              <label style={{ display: 'block', cursor: 'pointer' }}>
+                <input
+                  type="radio"
+                  name="exportFormat"
+                  value="mapx"
+                  checked={selectedExportFormat === 'mapx'}
+                  onChange={(e) => setSelectedExportFormat(e.target.value)}
+                  style={{ marginRight: 8 }}
+                />
+                Map Creator (MAPX)
+              </label>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+              <button
+                onClick={() => setShowExportDialog(false)}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: 4,
+                  border: '1px solid #ccc',
+                  background: '#f5f5f5',
+                  cursor: 'pointer',
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  setShowExportDialog(false);
+                  await handleExportWithFormat(selectedExportFormat);
+                }}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: 4,
+                  border: '1px solid #1976d2',
+                  background: '#1976d2',
+                  color: 'white',
+                  cursor: 'pointer',
+                }}
+              >
+                OK
+              </button>
+            </div>
           </div>
         </div>
       )}
+      
       {/* Status Tally Table */}
       <div
         style={{
