@@ -534,8 +534,8 @@ ipcMain.handle(
         // Write idml.txt file with BOM and UTF-16 LE encoding.
         await fs.promises.writeFile(result.filePath, '\uFEFF' + data, { encoding: 'utf16le' });
       } else {
-        // Write mapx.txt file with UTF-8 encoding
-        await fs.promises.writeFile(result.filePath, data, 'utf8');
+        // Write mapx.txt file with BOM and UTF-8 encoding
+        await fs.promises.writeFile(result.filePath, '\uFEFF' + data, 'utf8');
       }
 
       return {
