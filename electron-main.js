@@ -492,14 +492,13 @@ ipcMain.handle(
         const dataMergeHeader = locations.map(loc => loc.mergeKey).join('\t');
         const dataMergeContent = locations.map(loc => loc.vernLabel || '').join('\t');
         data = dataMergeHeader + '\n' + dataMergeContent + '\n';
-      } else {
-        // Prepare MAPX data merge content
-        // For each location, create a line with the merge key and vernacular label, separated by a tab.
+      } else {        // Prepare MAPX data merge content
+        // For each location, use the provided mapxKey and vernacular label, separated by a tab.
         data = locations
           .map(loc => {
-            const mergeKey = loc.mergeKey || '';
+            const mapxKey = loc.mapxKey;
             const vernacularLabel = loc.vernLabel || '';
-            return `${mergeKey}\t${vernacularLabel}`;
+            return `${mapxKey}\t${vernacularLabel}`;
           })
           .join('\n');
       }

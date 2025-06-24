@@ -172,6 +172,7 @@ class CollectionManager {
     const normalizedId = (collectionId || '').toUpperCase();
     return !!this.collectionsData[normalizedId]?.isLoaded;
   }
+
   getPlacenames(collectionId) {
     // Ensure uppercase collection ID for consistency
     const normalizedId = (collectionId || '').toUpperCase();
@@ -183,6 +184,7 @@ class CollectionManager {
     const normalizedId = (collectionId || '').toUpperCase();
     return this.collectionsData[normalizedId]?.mapDefs || {};
   } // Get map definition with case-insensitive lookup
+
   getMapDef(templateName, collectionId) {
     // Add diagnostics
     console.log('getMapDef called with templateName:', templateName, 'collectionId:', collectionId);
@@ -268,6 +270,16 @@ class CollectionManager {
     return entry.gloss || '';
   }
 
+  getMapxKey(mergeKey, collectionId = 'SMR') {
+    const placenames = this.getPlacenames(collectionId);
+    const entry = placenames[mergeKey];
+    if (!entry) {
+      console.error(`mergeKey "${mergeKey}" not found in ${collectionId} collection placenames!`);
+      return mergeKey;
+    }
+    return entry.mapxKey || entry.gloss.en || mergeKey;
+  }
+
   getTermId(mergeKey, collectionId = 'SMR') {
     const placenames = this.getPlacenames(collectionId);
     const entry = placenames[mergeKey];
@@ -307,6 +319,7 @@ class CollectionManager {
     }
     return entry.refs || [];
   }
+
   // Helper method to check if a folder exists
   async checkFolderExists(folderPath) {
     if (!folderPath) return false;

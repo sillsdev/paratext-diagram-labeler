@@ -78,6 +78,18 @@ export default function DetailsPane({
     }
   }, [selLocation, mapPaneView, vernacularInputRef]);
 
+  // Use the status from the location object which is already calculated in App.js
+  // This is more reliable than recalculating it here
+  const status = locations[selLocation]?.status || 0;
+  const collectionId = getCollectionIdFromTemplate(mapDef.template);
+  let transliteration = collectionManager.getTransliteration(
+    locations[selLocation]?.mergeKey,
+    collectionId
+  );
+  if (transliteration) {
+    transliteration = ` /${transliteration}/`;
+  }
+
   const handleVernChange = e => {
     const newVernacular = e.target.value;
     setVernacular(newVernacular); // Update state immediately
@@ -164,12 +176,20 @@ export default function DetailsPane({
     // Use the helper function for direct export
     await handleExportWithFormat(outputFormat);
   };
-
   // Handle export after format selection
   const handleExportWithFormat = async (format) => {
     try {
+      // Prepare locations with mapxKey computed for each location
+      const locationsWithMapxKey = locations.map(location => {
+        const mapxKey = collectionManager.getMapxKey(location.mergeKey, collectionId);
+        return {
+          ...location,
+          mapxKey: mapxKey
+        };
+      });
+
       const result = await window.electronAPI.exportDataMerge({
-        locations: locations,
+        locations: locationsWithMapxKey,
         templateName: templateName,
         format: format,
         projectFolder: settingsService.getProjectFolder(),
@@ -282,18 +302,6 @@ export default function DetailsPane({
       </div>
     );
   }
-  // Use the status from the location object which is already calculated in App.js
-  // This is more reliable than recalculating it here
-  const status = locations[selLocation]?.status || 0;
-  const collectionId = getCollectionIdFromTemplate(mapDef.template);
-  let transliteration = collectionManager.getTransliteration(
-    locations[selLocation]?.mergeKey,
-    collectionId
-  );
-  if (transliteration) {
-    transliteration = ` /${transliteration}/`;
-  }
-
   return (
     <div>
       {/* Button Row */}
