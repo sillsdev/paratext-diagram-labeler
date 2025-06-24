@@ -819,16 +819,30 @@ export default function DetailsPane({
             border: '1px solid black',
             borderRadius: '0.7em',
           }}
-        >
-          <input
+        >          <textarea
             ref={vernacularInputRef}
-            type="text"
             value={vernacular}
             onChange={handleVernChange}
+            onKeyDown={(e) => {
+              // Prevent line breaks but allow other keys
+              if (e.key === 'Enter') {
+                e.preventDefault();
+              }
+            }}
             placeholder={inLang(uiStr.enterLabel, lang)}
             className="form-control mb-2"
-            style={{ width: '100%', border: '1px solid black' }}
+            style={{ 
+              width: '100%', 
+              border: '1px solid black',
+              minHeight: '32px',
+              resize: 'vertical',
+              whiteSpace: 'pre-wrap',
+              overflowWrap: 'break-word',
+              fontFamily: 'inherit',
+              fontSize: 'inherit'
+            }}
             spellCheck={false}
+            rows={1}
           />
           <span style={{ color: statusValue[status].textColor, fontSize: '0.8em' }}>
             <span style={{ fontWeight: 'bold' }}>
