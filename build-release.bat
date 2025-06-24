@@ -1,12 +1,25 @@
 @echo off
 echo Building Scripture Map Labeler Release...
 
+:: Verify icon files exist before building
+echo Verifying icon files...
+powershell -ExecutionPolicy Bypass -File verify-icon.ps1
+
 :: Clean previous builds
 echo Cleaning up old builds...
 rmdir /s /q dist 2>nul
 
 :: Set NODE_ENV to production explicitly
 set NODE_ENV=production
+
+:: Ensure icon is in public folder for React build
+echo Ensuring icon is in public folder...
+if not exist "public\icon.ico" (
+    echo Copying icon from buildResources to public...
+    copy /Y "buildResources\icon.ico" "public\icon.ico"
+) else (
+    echo Icon already exists in public folder.
+)
 
 :: Build and Package
 echo Building and packaging app...
@@ -28,6 +41,8 @@ call npx electron-builder --win --publish never --config.npmRebuild=false
 echo Verifying build files...
 if exist "dist\win-unpacked\Scripture Map Labeler.exe" (
     echo [SUCCESS] Unpacked application created successfully.
+    echo Checking if icon is embedded in executable...
+    powershell -Command "if ((Get-ItemProperty 'dist\win-unpacked\Scripture Map Labeler.exe').VersionInfo.FileDescription) { Write-Host '[OK] Executable has metadata' } else { Write-Host '[WARNING] Executable may not have icon' }"
 ) else (
     echo [WARNING] Unpacked application missing!
 )

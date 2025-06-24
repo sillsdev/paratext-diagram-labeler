@@ -7,6 +7,17 @@ const xml2js = require('xml2js');
 
 initialize();
 
+// Helper function to get the correct icon path
+function getIconPath() {
+  if (app.isPackaged) {
+    // In production, icon is in resources
+    return path.join(process.resourcesPath, 'icon.ico');
+  } else {
+    // In development, icon is in buildResources
+    return path.join(__dirname, 'buildResources', 'icon.ico');
+  }
+}
+
 // Add IPC handler for loading images
 ipcMain.handle('load-image', async (event, imagePath) => {
   try {
@@ -81,7 +92,7 @@ function createWindow() {
   const win = new BrowserWindow({
     width: 1200,
     height: 900,
-    icon: path.join(__dirname, 'buildResources', 'icon.ico'),
+    icon: getIconPath(),
     webPreferences: {
       nodeIntegration: false, // more secure
       contextIsolation: true,
