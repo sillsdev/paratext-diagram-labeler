@@ -1,6 +1,7 @@
 // filepath: c:\git\mapLabelerExt\biblical-map-app\src\services\SettingsService.js
 // src/services/SettingsService.js
-class SettingsService {  constructor() {
+class SettingsService {
+  constructor() {
     this.settings = null;
     this.isLoaded = false;
     this.loadError = null;
@@ -9,72 +10,43 @@ class SettingsService {  constructor() {
   async loadSettings() {
     try {
       // Try to load settings file
-      const settings = await window.electronAPI.loadFromJson(null, "MapLabelerSettings.json");
-      
+      const settings = await window.electronAPI.loadFromJson(null, 'MapLabelerSettings.json');
+
       // If settings were loaded successfully
       if (settings && Object.keys(settings).length > 0) {
         this.settings = settings;
-        console.log("Settings loaded:", settings);
+        console.log('Settings loaded:', settings);
       } else {
+        // Unable to load settings or file is empty
         this.settings = {
-          language: "en",
+          language: 'en',
           projectFolder: null,
           usfm: null,
-          templateFolder: null
+          templateFolder: null,
+          saveToDemo: true,
         };
-        
-        // Save the default settings
-        await this.saveSettings();
-        console.log("Created default settings:", this.settings);
-      }        
-/*       // Validate the template folder exists
-      const templatePath = this.getTemplateFolder(); // Use the getter for proper path construction
-      const folderExists = await this.folderExists(templatePath);
-      
-      if (!folderExists) {
-        this.loadError = `Template folder not found: ${templatePath}`;
-        console.warn(this.loadError);
-        
-        // Prompt user to select the template folder
-        alert("Please identify the location of the templates folder.\n\nThis folder should contain the map template collection(s) you wish to use.");
-        const selectedFolder = await window.electronAPI.selectProjectFolder();
-        if (selectedFolder && await this.folderExists(selectedFolder)) {
-          this.settings.templateFolder = selectedFolder;
-          await this.saveSettings();
-          console.log("Updated template folder:", this.settings.templateFolder);
-        } else {
-          throw new Error("Invalid template folder selected.");
-        }
+        await this.saveSettings(); // Save the default settings
+        console.log('Created default settings:', this.settings);
       }
-      
-        // Validate the specific project folder exists
-      if (this.settings.projectFolder) {
-        const projectExists = await this.folderExists(this.settings.projectFolder);
-        if (!projectExists) {
-          console.warn(`project folder not found: ${this.settings.projectFolder}`);
-          this.settings.projectFolder = null;
-          await this.saveSettings();
-        }
-      }
- */      
       this.isLoaded = true;
       return this.settings;
     } catch (error) {
-      this.loadError = error.message || "Failed to load settings";
-      console.error("Error loading settings:", error);
+      this.loadError = error.message || 'Failed to load settings';
+      console.error('Error loading settings:', error);
       this.isLoaded = false;
       throw error;
-    }  }
-  
+    }
+  }
+
   // Helper to check if a folder exists
   async folderExists(path) {
     if (!path) return false;
-    
+
     try {
       // Normalize path by replacing forward slashes with backslashes for Windows
       const normalizedPath = path.replace(/\//g, '\\');
       console.log('Checking folder exists:', normalizedPath);
-      
+
       const stat = await window.electronAPI.statPath(normalizedPath);
       // The stat object has isDirectory as a property, not a function
       return stat && stat.isDirectory === true;
@@ -86,12 +58,12 @@ class SettingsService {  constructor() {
 
   async saveSettings() {
     if (!this.settings) return false;
-    
+
     try {
-      await window.electronAPI.saveToJson(null, "MapLabelerSettings.json", this.settings);
+      await window.electronAPI.saveToJson(null, 'MapLabelerSettings.json', this.settings);
       return true;
     } catch (error) {
-      console.error("Error saving settings:", error);
+      console.error('Error saving settings:', error);
       return false;
     }
   }
@@ -104,19 +76,19 @@ class SettingsService {  constructor() {
     return this.settings;
   }
 
-  getLastProjectFolder() {
+  getProjectFolder() {
     return this.settings?.projectFolder || null;
   }
   // Enhanced getter for templateFolder with proper path normalization
   getTemplateFolder() {
     return this.settings?.templateFolder || null;
   }
-  
+
   // Get language setting (defaults to 'en')
   getLanguage() {
     return this.settings?.language || 'en';
   }
-  
+
   // Get last USFM
   getUsfm() {
     return this.settings?.usfm || null;
@@ -140,7 +112,17 @@ class SettingsService {  constructor() {
     }
     return false;
   }
-  
+
+  async updateSaveToDemo(saveToDemo) {
+    console.log('Updating saveToDemo to:', saveToDemo);
+    if (this.settings) {
+      this.settings.saveToDemo = saveToDemo;
+      await this.saveSettings();
+      return true;
+    }
+    return false;
+  }
+
   async updateUsfm(usfm) {
     if (this.settings) {
       this.settings.usfm = usfm;
@@ -149,16 +131,16 @@ class SettingsService {  constructor() {
     }
     return false;
   }
-    // Enhanced setter for templateFolder with proper path normalization
+  // Enhanced setter for templateFolder with proper path normalization
   async updateTemplateFolder(folder) {
     if (!this.settings) return false;
-    
+
     try {
       if (folder) {
         // Normalize path to ensure consistent Windows backslashes
         const normalizedFolder = folder.replace(/\//g, '\\');
         console.log('Setting template folder to:', normalizedFolder);
-        
+
         // Check if folder exists before saving it
         const exists = await this.folderExists(normalizedFolder);
         if (exists) {
@@ -185,10 +167,10 @@ class SettingsService {  constructor() {
 
   async updateSettings(newSettings) {
     if (!newSettings) return false;
-    
+
     // Update the internal settings
     this.settings = { ...newSettings };
-    
+
     // Save to disk
     return await this.saveSettings();
   }

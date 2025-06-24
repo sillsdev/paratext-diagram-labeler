@@ -1,12 +1,26 @@
 .pre-launch-screen {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem;
+  /* transform: scale(0.80);  */
+  transform-origin: top center; /* Keep the top centered when scaling */
+  margin: 0 auto; /* Center horizontally */
+  width: 117.65%; /* Compensate for the scaling (100/0.85 = 117.65) */
+  max-width: 940px; /* Adjusted from 800px to compensate for scaling */
+  /* padding: 30px; */
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+   /* margin: 20px 0; */
+  border-top: 1px solid #eaeaea;
+  /* padding-top: 20px; */
+  max-height: 120vh; /* 60% of viewport height */
+  overflow-y: auto; /* Enable vertical scrolling */
+  overflow-x: hidden; /* Hide horizontal scrolling */
+
 }
 
+
 .pre-launch-header {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.75rem; /* Reduced from 1.5rem to 0.75rem */
 }
 
 .header-content {
@@ -17,6 +31,7 @@
 .logo-container {
   flex: 0 0 auto;
   margin-right: 20px;
+  margin-left: 200px
 }
 
 .app-logo {
@@ -53,6 +68,7 @@
   padding: 1.5rem;
   margin-bottom: 2rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  overflow-y: auto;
 }
 
 .settings-container h3 {
@@ -64,14 +80,15 @@
 }
 
 .setting-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 30px 1fr;
+  gap: 10px;
   margin-bottom: 1.5rem;
   align-items: flex-start;
 }
 
 .setting-status {
   width: 30px;
-  margin-right: 10px;
   padding-top: 4px;
 }
 
@@ -96,26 +113,52 @@
 }
 
 .setting-content {
-  flex: 1;
+  width: 100%;
+}
+
+/* Style for the first three settings that need to be aligned */
+.setting-row:nth-child(-n+3) .setting-content .setting-input-group {
+  display: grid;
+  grid-template-columns: 160px 1fr auto;
+  align-items: center;
+  gap: 10px;
+}
+
+/* For USFM and other settings, keep normal layout */
+.setting-row:nth-child(n+4) .setting-content .setting-input-group {
+  display: flex;
 }
 
 .setting-content label {
-  display: block;
-  margin-bottom: 6px;
+  margin-right: 10px;
   font-weight: 500;
   color: #2c3e50;
+  white-space: nowrap;
+  text-align: right;
 }
 
-.setting-input-group {
-  display: flex;
+/* Position input elements in grid */
+.setting-row:nth-child(-n+2) .setting-content .setting-input-group input {
+  grid-column: 2;
+}
+
+/* Position browse buttons in grid */
+.setting-row:nth-child(-n+2) .setting-content .setting-input-group button {
+  grid-column: 3;
+}
+
+/* Special case for the Save Renderings To select */
+.setting-row:nth-child(3) .setting-content .setting-input-group select {
+  grid-column: 2 / span 2; /* Span across columns 2 and 3 */
 }
 
 .setting-input-group input {
   flex: 1;
   padding: 8px 12px;
   border: 1px solid #ddd;
-  border-radius: 4px 0 0 4px;
+  border-radius: 4px;
   font-size: 14px;
+  min-width: 0; /* Prevents input from overflowing grid cell */
 }
 
 .setting-input-group input.error {
@@ -127,11 +170,12 @@
   background-color: #4b5a28;
   color: white;
   border: none;
-  border-radius: 0 4px 4px 0;
+  border-radius: 4px;
   padding: 0 15px;
   cursor: pointer;
   font-size: 14px;
   transition: background-color 0.3s;
+  white-space: nowrap;
 }
 
 .setting-input-group button:hover {
@@ -188,13 +232,14 @@ textarea {
 
 .launch-container {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-top: 0.25rem; /* Add a small top margin */
+  margin-bottom: 1rem;
 }
 
 .launch-button {
   background-color: #b8d533;
   color: #4b5a28;
-  border: none;
+  border: solid 3px #4b5a28;
   border-radius: 4px;
   padding: 12px 30px;
   font-size: 16px;
