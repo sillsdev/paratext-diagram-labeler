@@ -204,7 +204,7 @@ function BottomPane({
                 fontSize: 13,
                 padding: '1px 6px',
                 borderRadius: 4,
-                background: '#ffe0e0',
+                background: 'gold',
                 border: '1px solid #dfb2b2',
                 cursor: 'pointer',
                 height: 22,
@@ -230,16 +230,25 @@ function BottomPane({
                 <td colSpan={2} style={{ color: '#888', textAlign: 'center', padding: 4 }}>
                   {inLang(uiStr.noReferences, lang)}
                 </td>
-              </tr>
-            ) : (
-              refs.map((refId, i) => {
-                // Reference denialToggle to force re-render
-                void denialToggle;
-                const verse = extractedVerses[refId] || '';
-                const hasMatch = matchResults[i];
-                const isDenied = deniedRefs.includes(refId);
-                // Handler must be in this scope
-                const handleToggleDenied = () => {
+              </tr>            ) : (
+              refs
+                .map((refId, i) => {
+                  // Reference denialToggle to force re-render
+                  void denialToggle;
+                  const verse = extractedVerses[refId] || '';
+                  const hasMatch = matchResults[i];
+                  const isDenied = deniedRefs.includes(refId);
+                  
+                  // Apply filtering logic
+                  if (showOnlyMissing) {
+                    // Only show if verse exists, no match, and not denied
+                    if (!(verse && !hasMatch && !isDenied)) {
+                      return null; // Skip this row
+                    }
+                  }
+                  
+                  // Handler must be in this scope
+                  const handleToggleDenied = () => {
                   const data = termRenderings;
                   let denials = Array.isArray(data[termId]?.denials)
                     ? [...data[termId].denials]
@@ -322,9 +331,9 @@ function BottomPane({
                         ? highlightMatch(verse, renderingList)
                         : verse || <span style={{ color: '#888' }}>[No verse text yet]</span>}
                     </td>
-                  </tr>
-                );
-              })
+                  </tr>                  );
+                })
+                .filter(Boolean) // Remove null values from filtered results
             )}
           </tbody>
         </table>
