@@ -164,23 +164,45 @@ function BottomPane({
       >
         <span>
           {inLang(uiStr.found, lang)}: {matchCount}/{nonEmptyRefCt}
-        </span>
+        </span>{' '}
         <button
           style={{
             marginLeft: 8,
             fontSize: 13,
-            padding: '1px 6px',
+            padding: '4px 4px',
             borderRadius: 4,
-            background: 'silver',
-            border: '1px solid #b2dfdb',
+            background: showOnlyMissing ? '#d0eaff' : undefined,
+            border: showOnlyMissing ? '2px inset #2196f3' : '1px solid #b2dfdb',
             cursor: 'pointer',
             height: 22,
+            minWidth: 22,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
           onClick={() => setShowOnlyMissing(!showOnlyMissing)}
+          title={
+            showOnlyMissing
+              ? inLang(uiStr.showAllVerses, lang)
+              : inLang(uiStr.showOnlyMissing, lang)
+          }
         >
-          {showOnlyMissing ? inLang(uiStr.showAllVerses, lang) : inLang(uiStr.showOnlyMissing, lang)}
+          {/* Filter icon (SVG) */}
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 6h14l-4 4v6l-2-2v-4L3 6z"
+              fill={showOnlyMissing ? '#1976d2' : '#666'}
+              stroke={showOnlyMissing ? '#1976d2' : '#666'}
+              strokeWidth="1"
+            />
+          </svg>
         </button>
-
         {selectedText && (
           <>
             <button
@@ -230,7 +252,8 @@ function BottomPane({
                 <td colSpan={2} style={{ color: '#888', textAlign: 'center', padding: 4 }}>
                   {inLang(uiStr.noReferences, lang)}
                 </td>
-              </tr>            ) : (
+              </tr>
+            ) : (
               refs
                 .map((refId, i) => {
                   // Reference denialToggle to force re-render
@@ -238,7 +261,7 @@ function BottomPane({
                   const verse = extractedVerses[refId] || '';
                   const hasMatch = matchResults[i];
                   const isDenied = deniedRefs.includes(refId);
-                  
+
                   // Apply filtering logic
                   if (showOnlyMissing) {
                     // Only show if verse exists, no match, and not denied
@@ -246,92 +269,96 @@ function BottomPane({
                       return null; // Skip this row
                     }
                   }
-                  
+
                   // Handler must be in this scope
                   const handleToggleDenied = () => {
-                  const data = termRenderings;
-                  let denials = Array.isArray(data[termId]?.denials)
-                    ? [...data[termId].denials]
-                    : [];
-                  if (isDenied) {
-                    denials = denials.filter(r => r !== refId);
-                  } else {
-                    if (!denials.includes(refId)) denials.push(refId);
-                  }
-                  if (!data[termId]) data[termId] = {};
-                  data[termId].denials = denials;
-                  const updatedData = { ...data };
-                  setTermRenderings(updatedData);
-                  if (typeof setRenderings === 'function') setRenderings(r => r + '');
-                  setDenialToggle(t => !t);
-                  if (typeof onDenialsChanged === 'function') onDenialsChanged(); // <-- update locations in App
-                };
-                return (
-                  <tr key={refId} style={{ borderBottom: '1px solid #eee', verticalAlign: 'top' }}>
-                    <td
-                      style={{
-                        width: 38,
-                        textAlign: 'center',
-                        padding: '2px 0',
-                        verticalAlign: 'top',
-                        whiteSpace: 'nowrap',
-                      }}
+                    const data = termRenderings;
+                    let denials = Array.isArray(data[termId]?.denials)
+                      ? [...data[termId].denials]
+                      : [];
+                    if (isDenied) {
+                      denials = denials.filter(r => r !== refId);
+                    } else {
+                      if (!denials.includes(refId)) denials.push(refId);
+                    }
+                    if (!data[termId]) data[termId] = {};
+                    data[termId].denials = denials;
+                    const updatedData = { ...data };
+                    setTermRenderings(updatedData);
+                    if (typeof setRenderings === 'function') setRenderings(r => r + '');
+                    setDenialToggle(t => !t);
+                    if (typeof onDenialsChanged === 'function') onDenialsChanged(); // <-- update locations in App
+                  };
+                  return (
+                    <tr
+                      key={refId}
+                      style={{ borderBottom: '1px solid #eee', verticalAlign: 'top' }}
                     >
-                      {!verse ? (
-                        <NoneIcon title="No verse text yet" />
-                      ) : hasMatch ? (
-                        <CheckmarkIcon title="Match found" />
-                      ) : (
-                        <span
-                          style={{ cursor: 'pointer', display: 'inline-block' }}
-                          onClick={handleToggleDenied}
-                          title={isDenied ? 'Remove denial' : 'Mark as denied'}
-                        >
-                          {isDenied ? (
-                            <DeniedCheckmarkIcon />
-                          ) : (
-                            <CrossIcon title="No match (Click to deny)" />
-                          )}
-                        </span>
-                      )}
-                      <button
+                      <td
                         style={{
-                          background: 'none',
-                          border: 'none',
-                          padding: 0,
-                          marginLeft: 4,
-                          cursor: 'pointer',
-                          color: '#888',
-                          fontSize: 14,
-                          display: 'inline-flex',
-                          alignItems: 'center',
+                          width: 38,
+                          textAlign: 'center',
+                          padding: '2px 0',
                           verticalAlign: 'top',
+                          whiteSpace: 'nowrap',
                         }}
-                        title="Edit"
-                        aria-label="Edit"
-                        onClick={() =>
-                          alert(`Edit ${prettyRef(refId)} directly in Paratext.`, 'Edit Verse')
-                        }
                       >
-                        <FaPencilAlt />
-                      </button>
-                    </td>
-                    <td
-                      style={{
-                        padding: '2px 0 2px 8px',
-                        verticalAlign: 'top',
-                        wordBreak: 'break-word',
-                        whiteSpace: 'normal',
-                      }}
-                    >
-                      <span style={{ fontWeight: 'bold', marginRight: 4 }}>
-                        {prettyRef(refId)}{' '}
-                      </span>
-                      {hasMatch
-                        ? highlightMatch(verse, renderingList)
-                        : verse || <span style={{ color: '#888' }}>[No verse text yet]</span>}
-                    </td>
-                  </tr>                  );
+                        {!verse ? (
+                          <NoneIcon title="No verse text yet" />
+                        ) : hasMatch ? (
+                          <CheckmarkIcon title="Match found" />
+                        ) : (
+                          <span
+                            style={{ cursor: 'pointer', display: 'inline-block' }}
+                            onClick={handleToggleDenied}
+                            title={isDenied ? 'Remove denial' : 'Mark as denied'}
+                          >
+                            {isDenied ? (
+                              <DeniedCheckmarkIcon />
+                            ) : (
+                              <CrossIcon title="No match (Click to deny)" />
+                            )}
+                          </span>
+                        )}
+                        <button
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            padding: 0,
+                            marginLeft: 4,
+                            cursor: 'pointer',
+                            color: '#888',
+                            fontSize: 14,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            verticalAlign: 'top',
+                          }}
+                          title="Edit"
+                          aria-label="Edit"
+                          onClick={() =>
+                            alert(`Edit ${prettyRef(refId)} directly in Paratext.`, 'Edit Verse')
+                          }
+                        >
+                          <FaPencilAlt />
+                        </button>
+                      </td>
+                      <td
+                        style={{
+                          padding: '2px 0 2px 8px',
+                          verticalAlign: 'top',
+                          wordBreak: 'break-word',
+                          whiteSpace: 'normal',
+                        }}
+                      >
+                        <span style={{ fontWeight: 'bold', marginRight: 4 }}>
+                          {prettyRef(refId)}{' '}
+                        </span>
+                        {hasMatch
+                          ? highlightMatch(verse, renderingList)
+                          : verse || <span style={{ color: '#888' }}>[No verse text yet]</span>}
+                      </td>
+                    </tr>
+                  );
                 })
                 .filter(Boolean) // Remove null values from filtered results
             )}
