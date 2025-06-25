@@ -25,6 +25,7 @@ function BottomPane({
   const [selectedText, setSelectedText] = React.useState('');
   // Add a local state to force re-render on denial toggle
   const [denialToggle, setDenialToggle] = React.useState(false);
+  const [showOnlyMissing, setShowOnlyMissing] = React.useState(false);
 
   React.useEffect(() => {
     function handleSelectionChange() {
@@ -164,6 +165,22 @@ function BottomPane({
         <span>
           {inLang(uiStr.found, lang)}: {matchCount}/{nonEmptyRefCt}
         </span>
+        <button
+          style={{
+            marginLeft: 8,
+            fontSize: 13,
+            padding: '1px 6px',
+            borderRadius: 4,
+            background: 'silver',
+            border: '1px solid #b2dfdb',
+            cursor: 'pointer',
+            height: 22,
+          }}
+          onClick={() => setShowOnlyMissing(!showOnlyMissing)}
+        >
+          {showOnlyMissing ? inLang(uiStr.showAllVerses, lang) : inLang(uiStr.showOnlyMissing, lang)}
+        </button>
+
         {selectedText && (
           <>
             <button
