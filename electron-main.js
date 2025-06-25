@@ -7,6 +7,43 @@ const xml2js = require('xml2js');
 
 initialize();
 
+// File logging setup for production debugging
+const logToFile = (message) => {
+  const logPath = path.join(app.getPath('userData'), 'electron-main.log');
+  const timestamp = new Date().toISOString();
+  const logEntry = `[${timestamp}] ${message}\n`;
+  
+  try {
+    fs.appendFileSync(logPath, logEntry, 'utf8');
+  } catch (error) {
+    // Fallback - at least try to show in any available console
+    console.error('Failed to write to log file:', error);
+  }
+};
+
+// Override console methods to also log to file
+const originalConsoleLog = console.log;
+const originalConsoleError = console.error;
+const originalConsoleWarn = console.warn;
+
+console.log = (...args) => {
+  const message = args.join(' ');
+  originalConsoleLog(...args);
+  logToFile(`LOG: ${message}`);
+};
+
+console.error = (...args) => {
+  const message = args.join(' ');
+  originalConsoleError(...args);
+  logToFile(`ERROR: ${message}`);
+};
+
+console.warn = (...args) => {
+  const message = args.join(' ');
+  originalConsoleWarn(...args);
+  logToFile(`WARN: ${message}`);
+};
+
 // Helper function to get the correct icon path
 function getIconPath() {
   if (app.isPackaged) {
@@ -564,7 +601,75 @@ ipcMain.handle(
   }
 );
 
-app.whenReady().then(createWindow);
+// Handler to get default template folder
+ipcMain.handle('getDefaultTemplateFolder', async (event) => {
+  const debugInfo = [];
+  
+  try {
+    const workingDir = process.cwd();
+    debugInfo.push(`Working directory: ${workingDir}`);
+    
+    // Check if working directory exists and is readable
+    try {
+      const workingStats = fs.statSync(workingDir);
+      debugInfo.push(`Working dir exists: ${workingStats.isDirectory()}`);
+    } catch (err) {
+      debugInfo.push(`Working dir error: ${err.message}`);
+    }
+    
+    // List contents of working directory
+    try {
+      const contents = fs.readdirSync(workingDir);
+      debugInfo.push(`Working dir contents (${contents.length} items): ${contents.slice(0, 10).join(', ')}${contents.length > 10 ? '...' : ''}`);
+      
+      // Specifically check for _MapLabelerTemplates in the list
+      const hasTemplateFolder = contents.includes('_MapLabelerTemplates');
+      debugInfo.push(`_MapLabelerTemplates in directory listing: ${hasTemplateFolder}`);
+    } catch (err) {
+      debugInfo.push(`Failed to read working dir: ${err.message}`);
+    }
+    
+    const templateFolderPath = path.join(workingDir, '_MapLabelerTemplates');
+    debugInfo.push(`Template folder path: ${templateFolderPath}`);
+    
+    try {
+      const stats = fs.statSync(templateFolderPath);
+      if (stats.isDirectory()) {
+        const normalizedPath = path.resolve(templateFolderPath);
+        debugInfo.push(`SUCCESS: Template folder found: ${normalizedPath}`);
+        console.log('getDefaultTemplateFolder DEBUG:\n' + debugInfo.join('\n'));
+        return normalizedPath;
+      } else {
+        debugInfo.push('Template path exists but is not a directory');
+      }
+    } catch (error) {
+      debugInfo.push(`Template folder not found: ${error.code} - ${error.message}`);
+    }
+    
+    console.log('getDefaultTemplateFolder DEBUG:\n' + debugInfo.join('\n'));
+    return '';
+    
+  } catch (error) {
+    debugInfo.push(`Unexpected error: ${error.message}`);
+    console.error('getDefaultTemplateFolder DEBUG:\n' + debugInfo.join('\n'));
+    return '';
+  }
+});
+
+app.whenReady().then(() => {
+  console.log('=== Scripture Map Labeler Starting ===');
+  console.log(`App version: ${app.getVersion()}`);
+  console.log(`Electron version: ${process.versions.electron}`);
+  console.log(`Node version: ${process.versions.node}`);
+  console.log(`Platform: ${process.platform}`);
+  console.log(`Working directory: ${process.cwd()}`);
+  console.log(`App path: ${app.getAppPath()}`);
+  console.log(`User data path: ${app.getPath('userData')}`);
+  console.log(`Log file location: ${path.join(app.getPath('userData'), 'electron-main.log')}`);
+  console.log('=====================================');
+  
+  createWindow();
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();

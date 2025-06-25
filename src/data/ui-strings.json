@@ -10,7 +10,7 @@
       }
     },  
     { 
-      "text": { "en": "Multiple", "es": "Múltiples", "fr": "Multiples", "ne": "धेरै" }, 
+      "text": { "en": "Multiple Options",  "es": "Múltiples opciones", "fr": "Plusieurs options", "ne": "धेरै विकल्पहरू" }, 
       "help": { 
         "en": "Multiple options have been provided for you to select from. Ensure that you don't have any bad renderings, and then edit the label to remove unwanted options.", 
         "es": "Se han proporcionado múltiples opciones para que seleccione. Asegúrese de que no haya renderizaciones incorrectas y luego edite la etiqueta para eliminar las opciones no deseadas.", 
@@ -30,10 +30,10 @@
     { 
       "text": { "en": "Unmatched label", "es": "Etiqueta no coincidente", "fr": "Étiquette non correspondante", "ne": "मिल्दो लेबल छैन" }, 
       "help": { 
-        "en": "The label is not matched by the rendering(s).", 
-        "es": "La etiqueta no coincide con la(s) renderización(es).", 
-        "fr": "L'étiquette n'est pas couverte par la(les) traduction(s).",
-        "ne": "यो लेबल कुनै अनुवादसँग मेल खाँदैन।"
+        "en": "The label above is not matched by the renderings below.", 
+        "es": "La etiqueta anterior no coincide con las renderizaciones a continuación.",
+        "fr": "L'étiquette ci-dessus ne correspond à aucune des traductions ci-dessous.",
+        "ne": "माथिको लेबल तलका अनुवादहरूसँग मेल खाँदैन।"
       } 
     },  
     { 
@@ -55,12 +55,12 @@
       } 
     }, 
     { 
-      "text": { "en": "Rendering shorter than label", "es": "Renderización más corta que la etiqueta", "fr": "Traduction plus courte que l'étiquette", "ne": "लेबलभन्दा छोटो अनुवाद" }, 
+      "text": { "en": "Label cannot be derived from rendering",  "es": "La etiqueta no puede derivarse de la renderización", "fr": "L'étiquette ne peut pas être dérivée de la traduction", "ne": "लेबल अनुवादबाट व्युत्पन्न गर्न सकिँदैन" }, 
       "help": { 
-        "en": "First ensure that the rendering contains everything it should. If it does, you may need to specify an explicit map form for this term.", 
-        "es": "Primero asegúrese de que la renderización contenga todo lo necesario. Si es así, puede que deba especificar una forma explícita del término para el mapa.", 
-        "fr": "Assurez-vous d'abord que la traduction contient tout ce qu'elle doit. Si c'est le cas, vous devrez peut-être spécifier une forme explicite pour ce terme sur la carte.",
-        "ne": "पहिले अनुवादमा सबै कुरा समावेश छ कि छैन सुनिश्चित गर्नुहोस्। भएन भने, यो शब्दका लागि स्पष्ट नक्सा रूप निर्दिष्ट गर्न आवश्यक पर्न सक्छ।"
+        "en": "The rendering below does not have enough information to produce this label for other maps. If the rendering is correct, ", 
+        "es": "La renderización a continuación no tiene suficiente información para producir esta etiqueta para otros mapas. Si la renderización es correcta, ",
+        "fr": "La traduction ci-dessous ne contient pas suffisamment d'informations pour produire cette étiquette pour d'autres cartes. Si la traduction est correcte, ",
+        "ne": "तलको अनुवादले अन्य नक्साहरूका लागि यो लेबल उत्पादन गर्न पर्याप्त जानकारी छैन। यदि अनुवाद सही छ भने, "
       } 
     }, 
     { 
@@ -75,13 +75,25 @@
     {
       "text": { "en": "Incomplete", "es": "Incompleto", "fr": "Incomplet", "ne": "अधूरो" },
       "help": {
-        "en": "There are verses where we would expect this rendering to be used, but it is not present there.",
-        "es": "Hay versículos donde esperaríamos que se usara esta renderización, pero no está presente.",
-        "fr": "Il y a des versets où nous nous attendons à ce que cette traduction soit utilisée, mais elle n'est pas présente.",
-        "ne": "त्यहाँ केही पदहरू छन् जहाँ यो अनुवाद प्रयोग हुने अपेक्षा गरिएको छ, तर त्यो त्यहाँ उपस्थित छैन।"
+        "en": "There are verses where we would expect this rendering to be used, but it is not present there. Adjust the renderings to include more renderings, or mark those verses as denied.",
+        "es": "Hay versículos donde esperaríamos que se usara esta renderización, pero no está presente allí. Ajuste las renderizaciones para incluir más renderizaciones o marque esos versículos como denegados.",
+        "fr": "Il y a des versets où nous nous attendons à ce que cette traduction soit utilisée, mais elle n'est pas présente. Ajustez les traductions pour en inclure davantage, ou marquez ces versets comme refusés.",
+        "ne": "त्यहाँ केही पदहरू छन् जहाँ यो अनुवाद प्रयोग हुने अपे क्षा गरिएको छ, तर त्यो त्यहाँ उपस्थित छैन। अनुवादहरूलाई थप अनुवादहरू समावेश गर्न समायोजन गर्नुहोस्, वा ती पदहरूलाई अस्वीकृत रूपमा चिन्ह लगाउनुहोस्।"
+      }
+    },
+    {
+      "text": { "en": "Multiple renderings", "es": "Múltiples renderizaciones", "fr": "Plusieurs traductions", "ne": "धेरै अनुवादहरू" }, 
+      "help": { 
+        "en": "The renderings list below contains multiple renderings, and does not explicitly specify which is the map form. If multiple rendering are necessary, ", 
+        "es": "La lista de renderizaciones a continuación contiene múltiples renderizaciones y no especifica explícitamente cuál es la forma del mapa. Si son necesarias múltiples renderizacio nes, ",
+        "fr": "La liste des traductions ci-dessous contient plusieurs traductions et ne spécifie pas explicitement quelle est la forme de la carte. Si plusieurs traductions sont nécessaires, ",
+        "ne": "तलको अनुवाद सूचीमा धेरै अनुवादहरू छन्, र यसले स्पष्ट रूपमा नक्सा रूप निर्दिष्ट गर्दैन। यदि धेरै अनुवादहरू आवश्यक छन् भने, "
       }
     } 
+ 
   ],
+ 
+  "addMapForm": { "en": "add an explicit map form.", "es": "agregue una forma explícita del mapa.", "fr": "ajoutez une forme explicite pour la carte.", "ne": "स्पष्ट नक्सा रूप थप्नुहोस्।"   },
   "addRendering": { "en": "Add rendering", "es": "Agregar rendering", "fr": "Ajouter un rendu", "ne": "अनुवाद थप्नुहोस्" },
   "addToRenderings": { "en": "Add to renderings", "es": "Agregar a renderings", "fr": "Ajouter aux rendus", "ne": "अनुवादहरूमा थप्नुहोस्" },
   "approveRendering": { "en": "Approve Rendering", "es": "Aprobar Renderización", "fr": "Approuver le Rendu", "ne": "अनुमोदन गर्नुहोस्" },
@@ -106,6 +118,7 @@
   "noReferences": { "en": "No references found for this term.", "es": "No se encontraron referencias para este término.", "fr": "Aucune référence trouvée pour ce terme.", "ne": "यो शब्दका लागि कुनै सन्दर्भ फेला परेन।" },
   "ok": { "en": "OK", "es": "OK", "fr": "OK", "ne": "ठीक छ" },
   "owner": { "en": "Owner", "es": "Propietario", "fr": "Propriétaire", "ne": "मालिक" },
+  "refreshLabel": { "en": "Refresh label", "es": "Actualizar etiqueta", "fr": "Actualiser l'étiquette", "ne": "लेबल रिफ्रेश गर्नुहोस्" },
   "replaceRenderings": { "en": "Replace renderings and label", "es": "Reemplazar", "fr": "Remplacer", "ne": "प्रतिस्थापन गर्नुहोस्" },
   "settings": { "en": "Settings", "es": "Configuración", "fr": "Paramètres", "ne": "सेटिङहरू" },
   "status": { "en": "Status", "es": "Estado", "fr": "Statut", "ne": "स्थिति" },

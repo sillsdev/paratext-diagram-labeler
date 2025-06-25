@@ -12,6 +12,7 @@ import {
   STATUS_RENDERING_SHORT,
   STATUS_BAD_EXPLICIT_FORM,
   STATUS_INCOMPLETE,
+  STATUS_MULTIPLE_RENDERINGS
 } from './constants.js';
 
 export const statusValue = [
@@ -24,6 +25,7 @@ export const statusValue = [
   { bkColor: 'crimson', textColor: 'white', sort: 6 }, // 6 - Rendering shorter than label
   { bkColor: 'magenta', textColor: 'black', sort: 7 }, // 7 - Bad explicit form
   { bkColor: '#80FF00', textColor: 'black', sort: 8 }, // 8 - Incomplete : #80FF00
+  { bkColor: 'purple', textColor: 'white', sort: 9 }, // 9 - Multiple renderings
 ];
 
 export function prettyRef(ref) {
@@ -150,8 +152,8 @@ export function getStatus(termRenderings, termId, vernLabel, refs, extractedVers
 
   // vernLabel !== mapForm
   return wordMatchesRenderings(vernLabel, entry.renderings, false)
-    ? STATUS_RENDERING_SHORT
-    : STATUS_UNMATCHED; // "insufficient"
+    ? (/\S\s*\n\s*\S/.test(entry.renderings) ? STATUS_MULTIPLE_RENDERINGS : STATUS_RENDERING_SHORT)
+    : STATUS_UNMATCHED; 
 }
 
 export function getMapForm(termRenderings, termId) {

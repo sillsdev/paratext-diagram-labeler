@@ -7,10 +7,13 @@ import {
   USFM_VIEW,
   STATUS_NO_RENDERINGS,
   STATUS_GUESSED,
+  STATUS_RENDERING_SHORT,
+  STATUS_MULTIPLE_RENDERINGS,
+  STATUS_UNMATCHED,
 } from './constants.js';
 import { collectionManager, getCollectionIdFromTemplate } from './CollectionManager';
 import { getMapDef } from './MapData';
-import { inLang, statusValue } from './Utils.js';
+import { inLang, statusValue, getMapForm } from './Utils.js';
 import { settingsService } from './services/SettingsService.js';
 
 export default function DetailsPane({
@@ -114,6 +117,34 @@ export default function DetailsPane({
   const handleCancel = () => {
     onExit();
   };
+
+  const onAddMapForm = () => {
+    // This function is called when the user clicks the "Add Map" button
+    // Append the contents of the vernacular input to the renderings textarea
+    if (vernacularInputRef && vernacularInputRef.current) { 
+      const vernacularText = vernacularInputRef.current.value.trim();
+      // Append the vernacular text to the renderings textarea
+      if (renderingsTextareaRef && renderingsTextareaRef.current) {
+        const currentRenderings = renderingsTextareaRef.current.value;
+        renderingsTextareaRef.current.value = `${currentRenderings} (@${vernacularText})`;
+        onRenderingsChange({ target: { value: renderingsTextareaRef.current.value } });
+      }
+    }
+  }
+
+  const onRefreshLabel = () => {
+    // This function is called when the user clicks the "Refresh Labels" button.
+    // Update the vernacular input using getMapForm
+    if (selLocation >= 0 && selLocation < locations.length) {
+      const currentLocation = locations[selLocation];
+      const mapForm = getMapForm(termRenderings, currentLocation.termId);
+      if (vernacularInputRef && vernacularInputRef.current) {
+        vernacularInputRef.current.value = mapForm;
+        setVernacular(mapForm); // Update state to reflect the new value
+        onUpdateVernacular(currentLocation.termId, mapForm);
+      }
+    }
+  }
 
   // Helper function to generate USFM from the current map state // TODO: compare with usfmFromMap(). Could probably be consolidated.
   const generateUsfm = () => {
@@ -843,12 +874,27 @@ export default function DetailsPane({
             }}
             spellCheck={false}
             rows={1}
-          />
-          <span style={{ color: statusValue[status].textColor, fontSize: '0.8em' }}>
+          />          <span style={{ 
+            color: statusValue[status].textColor, 
+            fontSize: '0.8em', 
+            lineHeight: '1.2',
+            display: 'block',
+            marginTop: '4px'
+          }}>
             <span style={{ fontWeight: 'bold' }}>
               {inLang(uiStr.statusValue[status].text, lang) + ': '}
             </span>
             {inLang(uiStr.statusValue[status].help, lang)}
+            {(status === STATUS_RENDERING_SHORT || status === STATUS_MULTIPLE_RENDERINGS) && ( // If status is "short", show Add Map Form button
+              <button style={{ marginLeft: 8 }} onClick={() => onAddMapForm(vernacular)}>
+                {inLang(uiStr.addMapForm, lang)}
+              </button>
+            )}
+            {status === STATUS_UNMATCHED && ( 
+              <button style={{ marginLeft: 8 }} onClick={() => onRefreshLabel()}>
+                {inLang(uiStr.refreshLabel, lang)}
+              </button>
+            )}
             {status === STATUS_NO_RENDERINGS && ( // If status is "no renderings", show Add to renderings button
               <button style={{ marginLeft: 8 }} onClick={() => onCreateRendering(vernacular)}>
                 {inLang(uiStr.addToRenderings, lang)}

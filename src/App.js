@@ -17,7 +17,7 @@ function App() {
 
       // Validate settings
       if (!newSettings.templateFolder) {
-        newSettings.templateFolder = './_MapLabelerTemplates';
+        newSettings.templateFolder = await window.electronAPI.getDefaultTemplateFolder();
       }
       const errors = await validateSettings(newSettings);
       setSettingsErrors(errors);
