@@ -16,6 +16,9 @@ function App() {
       const newSettings = await settingsService.loadSettings();
 
       // Validate settings
+      if (!newSettings.templateFolder) {
+        newSettings.templateFolder = './_MapLabelerTemplates';
+      }
       const errors = await validateSettings(newSettings);
       setSettingsErrors(errors);
       setIsLoadingSettings(false);
