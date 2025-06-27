@@ -5,6 +5,59 @@ const fs = require('fs');
 const path = require('path');
 const xml2js = require('xml2js');
 
+// Settings relating to Settings.xml
+let curProjectFolder = '';
+let settings = {};
+
+// Function to load settings from Settings.xml, if not already loaded
+async function loadSettings(projectFolder) {
+  if (projectFolder === curProjectFolder) {
+    console.log(`[Settings] Settings already loaded for project: ${curProjectFolder}`);
+    return;
+  }
+  curProjectFolder = projectFolder;
+  const settingsPath = path.join(curProjectFolder, 'Settings.xml');
+  settings = { 
+    language: path.basename(curProjectFolder),
+    pre: '',
+    post: path.basename(curProjectFolder) + '.sfm',
+    use41: true,
+    useMAT: true,
+    versification: '4',
+    name: path.basename(curProjectFolder),
+  }
+
+  try {
+    const rawContents = await fs.promises.readFile(settingsPath, 'utf8');
+    // extract the Naming attributes
+    const match = rawContents.match(/<Naming PrePart="(.*)" PostPart="(.*)" BookNameForm="(.*)"/);
+    if (match) {
+      settings.pre = match[1];
+      settings.post = match[2];
+      settings.useMAT = match[3].includes('MAT');
+      settings.use41 = match[3].includes('41');
+    }
+    // if rawContents contains <Versification> tag, extract it
+    const versificationMatch = rawContents.match(/<Versification>(\d+)<\/Versification>/);
+    if (versificationMatch) {
+      settings.versification = versificationMatch[1];
+    } 
+    // if rawContents contains <Language> tag, extract it
+    const languageMatch = rawContents.match(/<Language>(.*?)<\/Language>/);
+    if (languageMatch) {
+      settings.language = languageMatch[1];
+    }   
+    // if rawContents contains <Name> tag, extract it
+    const nameMatch = rawContents.match(/<Name>(.*?)<\/Name>/);
+    if (nameMatch) {
+      settings.name = nameMatch[1];
+    }
+    console.log(`[Settings] Loaded settings from ${settingsPath}`, settings);
+  } catch (error) {
+    console.error(`[Settings] Failed to load settings from ${settingsPath}:`, error);
+  }
+}
+
 initialize();
 
 // File logging setup for production debugging
@@ -186,12 +239,14 @@ function BCV(ref) {
   return [bookNum, chapter, verse];
 }
 
-function bookName(bookNum, projectFolder) {
-  const bookPrefixes =
+function bookName(bookNum) {
+  const bookSchemes =
     '01GEN,02EXO,03LEV,04NUM,05DEU,06JOS,07JDG,08RUT,091SA,102SA,111KI,122KI,131CH,142CH,15EZR,16NEH,17EST,18JOB,19PSA,20PRO,21ECC,22SNG,23ISA,24JER,25LAM,26EZK,27DAN,28HOS,29JOL,30AMO,31OBA,32JON,33MIC,34NAM,35HAB,36ZEP,37HAG,38ZEC,39MAL,41MAT,42MRK,43LUK,44JHN,45ACT,46ROM,471CO,482CO,49GAL,50EPH,51PHP,52COL,531TH,542TH,551TI,562TI,57TIT,58PHM,59HEB,60JAS,611PE,622PE,631JN,642JN,653JN,66JUD,67REV,68TOB,69JDT,70ESG,71WIS,72SIR,73BAR,74LJE,75S3Y,76SUS,77BEL,781MA,792MA,803MA,814MA,821ES,832ES,84MAN,85PS2,86ODA,87PSS,A4EZA,A55EZ,A66EZ,B2DAG,B3PS3,B42BA,B5LBA,B6JUB,B7ENO,B81MQ,B92MQ,C03MQ,C1REP,C24BA,C3LAO,A0FRT,A1BAK,A2OTH,A7INT,A8CNC,A9GLO,B0TDX,B1NDX,94XXA,95XXB,96XXC,97XXD,98XXE,99XXF';
-  const bookPrefix = bookPrefixes.slice(bookNum * 6, bookNum * 6 + 5);
-  const folderName = path.basename(projectFolder);
-  return path.join(projectFolder, bookPrefix + folderName + '.sfm');
+  let start = (bookNum * 6) + (settings.use41 ? 0 : 2);
+  let length = (settings.useMAT ? 3 : 0) + (settings.use41 ? 2 : 0);
+  const bookScheme = bookSchemes.slice(start, start + length);
+  console.log(`[BookName] Book number: ${bookNum}, Start: ${start}, Length: ${length}, Use MAT: ${settings.useMAT}, Use 41: ${settings.use41}, Book scheme: ${bookScheme}, pre: ${settings.pre}, post: ${settings.post}`);
+  return path.join(curProjectFolder, settings.pre + bookScheme + settings.post);
 }
 
 async function termsXmlToObject(xmlString) {
@@ -382,10 +437,11 @@ ipcMain.handle('get-filtered-verses', async (event, projectFolder, curRefs) => {
   try {
     const requestedVerses = {};
     const chapterVersePerBook = {};
+    await loadSettings(projectFolder);
     // For each reference, push chapter and verse onto the array for that book
     curRefs.forEach(ref => {
       const [bookNum, chapter, verse] = BCV(ref);
-      const bName = bookName(bookNum, projectFolder);
+      const bName = bookName(bookNum);
       if (!chapterVersePerBook[bName]) {
         chapterVersePerBook[bName] = [];
       }
@@ -523,6 +579,7 @@ ipcMain.handle('stat-path', async (event, filePath) => {
 ipcMain.handle(
   'export-data-merge',
   async (event, { locations, templateName, format, projectFolder }) => {
+    await loadSettings(projectFolder);
     try {
       // Determine default output folder
       const localFiguresPath = path.join(projectFolder, 'local', 'figures');
@@ -553,7 +610,7 @@ ipcMain.handle(
       }
 
       // Generate suggested filename
-      const projectName = path.basename(projectFolder);
+      const projectName = settings.name;
       const suggestedFilename = `${templateName} @${projectName}.${format}.txt`;
       const suggestedPath = path.join(defaultPath, suggestedFilename);
 
