@@ -17,8 +17,8 @@ export const STATUS_MULTIPLE_RENDERINGS = 9;
 // export const MATCH_POST_B = '\\b';
 // export const MATCH_W = '\\w';
 
-export const MATCH_PRE_B = '(?<=[^\\p{L}|\\p{M}|\\p{Cf}-])'; //TODO: handle cases where \b is ^
-export const MATCH_POST_B = '(?=[^\\p{L}|\\p{M}|\\p{Cf}-])'; // TOOD: handle cases where \b is $
+export const MATCH_PRE_B = '(?<=[^\\p{L}|\\p{M}|\\p{Cf}-]|^)'; //TODO: handle cases where \b is ^
+export const MATCH_POST_B = '(?=$|[^\\p{L}|\\p{M}|\\p{Cf}-])'; // TOOD: handle cases where \b is $
 export const MATCH_W = '[\\p{L}|\\p{M}|\\p{Cf}-]';
 
 // export const INITIAL_USFM = String.raw`\fig |src="smr_185wbt - Philips Travels [sm] (fcr) @en.jpg" size="span" loc="paw" copy="WBT" ref="8:5-40"\fig*`;
