@@ -252,22 +252,38 @@ function MainApp({ settings, templateFolder, onExit }) {
         );
         if (newTermRenderings && !newTermRenderings.error) {
           setTermRenderings(newTermRenderings);
-          // Re-init locations from map and new termRenderings
-          const initialLocations = mapDef.labels.map(loc => {
-            if (!loc.vernLabel) {
-              loc.vernLabel = getMapForm(newTermRenderings, loc.termId);
+          // Update existing locations with new termRenderings, preserving vernLabel values
+          setLocations(prevLocations => {
+            if (prevLocations.length === 0) {
+              // If no previous locations, initialize from mapDef
+              return mapDef.labels.map(loc => {
+                if (!loc.vernLabel) {
+                  loc.vernLabel = getMapForm(newTermRenderings, loc.termId);
+                }
+                const status = getStatus(
+                  newTermRenderings,
+                  loc.termId,
+                  loc.vernLabel,
+                  collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+                  extractedVerses
+                );
+                return { ...loc, status };
+              });
+            } else {
+              // Update existing locations, preserving vernLabel values
+              return prevLocations.map(loc => {
+                const status = getStatus(
+                  newTermRenderings,
+                  loc.termId,
+                  loc.vernLabel || '', // Use existing vernLabel or empty string
+                  collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+                  extractedVerses
+                );
+                return { ...loc, status };
+              });
             }
-            const status = getStatus(
-              newTermRenderings,
-              loc.termId,
-              loc.vernLabel,
-              collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
-              extractedVerses
-            );
-            return { ...loc, status };
           });
-          setLocations(initialLocations);
-          if (initialLocations.length > 0) {
+          if (mapDef.labels && mapDef.labels.length > 0) {
             setSelLocation(0); // Select first location directly
           }
         } else {
@@ -595,7 +611,7 @@ function MainApp({ settings, templateFolder, onExit }) {
         // );
 
         // Try to get the map definition
-        const foundTemplate = getMapDef(newTemplateBase, collectionId);
+        const foundTemplate = await getMapDef(newTemplateBase, collectionId);
         // console.log("Found template:", foundTemplate);
 
         if (!foundTemplate) {

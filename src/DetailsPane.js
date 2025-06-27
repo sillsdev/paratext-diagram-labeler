@@ -58,12 +58,13 @@ export default function DetailsPane({
       }
 
       try {
+        console.log(`Loading template data for: ${mapDef.template}`);
         const collectionId = getCollectionIdFromTemplate(mapDef.template);
         const data = await getMapDef(mapDef.template, collectionId);
-        setTemplateData(data || {});
+        setTemplateData({ ...data, templateName: mapDef.template });
       } catch (error) {
         console.error(`Error loading template data for ${mapDef.template}:`, error);
-        setTemplateData({});
+        setTemplateData({ templateName: mapDef.template });
       }
     };
 
