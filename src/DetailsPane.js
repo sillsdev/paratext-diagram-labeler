@@ -13,7 +13,7 @@ import {
 } from './constants.js';
 import { collectionManager, getCollectionIdFromTemplate } from './CollectionManager';
 import { getMapDef } from './MapData';
-import { inLang, statusValue, getMapForm } from './Utils.js';
+import { inLang, statusValue, getMapForm, wordMatchesRenderings } from './Utils.js';
 import { settingsService } from './services/SettingsService.js';
 
 export default function DetailsPane({
@@ -43,7 +43,8 @@ export default function DetailsPane({
 }) {
   const [vernacular, setVernacular] = useState(locations[selLocation]?.vernLabel || '');
   const [localIsApproved, setLocalIsApproved] = useState(isApproved);
-  const [localRenderings, setLocalRenderings] = useState(renderings);  const [showTemplateInfo, setShowTemplateInfo] = useState(false);
+  const [localRenderings, setLocalRenderings] = useState(renderings);
+  const [showTemplateInfo, setShowTemplateInfo] = useState(false);
   const [templateData, setTemplateData] = useState({});
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [selectedExportFormat, setSelectedExportFormat] = useState('idml');
@@ -121,16 +122,32 @@ export default function DetailsPane({
   const onAddMapForm = () => {
     // This function is called when the user clicks the "Add Map" button
     // Append the contents of the vernacular input to the renderings textarea
-    if (vernacularInputRef && vernacularInputRef.current) { 
+    if (vernacularInputRef && vernacularInputRef.current) {
       const vernacularText = vernacularInputRef.current.value.trim();
       // Append the vernacular text to the renderings textarea
       if (renderingsTextareaRef && renderingsTextareaRef.current) {
-        const currentRenderings = renderingsTextareaRef.current.value;
-        renderingsTextareaRef.current.value = `${currentRenderings} (@${vernacularText})`;
+        const currentRenderings = renderingsTextareaRef.current.value
+          .split('\n')
+          .map(line => line.trim())
+          .filter(line => line.length > 0)
+          .join('\n');
+        console.log(`Current renderings: "${currentRenderings}"`);
+
+        const whichRendering = wordMatchesRenderings(vernacularText, currentRenderings, true);
+        console.log(`Matched rendering index: ${whichRendering}`);
+        const mapForm = ` (@${vernacularText})`;
+        try {
+          // insert mapForm into renderingsTextareaRef.current.value at the end of the rendering whose 1-based index is whichRendering
+          const lines = currentRenderings.split('\n');
+          lines[whichRendering - 1] += mapForm;
+          renderingsTextareaRef.current.value = lines.join('\n');
+        } catch (e) {
+          renderingsTextareaRef.current.value = currentRenderings + mapForm;
+        }
         onRenderingsChange({ target: { value: renderingsTextareaRef.current.value } });
       }
     }
-  }
+  };
 
   const onRefreshLabel = () => {
     // This function is called when the user clicks the "Refresh Labels" button.
@@ -144,7 +161,7 @@ export default function DetailsPane({
         onUpdateVernacular(currentLocation.termId, mapForm);
       }
     }
-  }
+  };
 
   // Helper function to generate USFM from the current map state // TODO: compare with usfmFromMap(). Could probably be consolidated.
   const generateUsfm = () => {
@@ -191,13 +208,13 @@ export default function DetailsPane({
 
   // --- Template info/browse group ---
   // Access the template name from the global map object
-  const templateName = mapDef.template || '(' + inLang(uiStr.noTemplate, lang) + ')'; 
-  
+  const templateName = mapDef.template || '(' + inLang(uiStr.noTemplate, lang) + ')';
+
   // Export to data merge file handler
   const handleExportDataMerge = async () => {
     let outputFormat = templateData.formats;
     console.log('Exporting data merge with format:', outputFormat);
-    if (outputFormat === 'idml, mapx') { 
+    if (outputFormat === 'idml, mapx') {
       // Prompt user to select output format. Return if user cancels.
       console.log('Prompting user to select export format');
       setShowExportDialog(true);
@@ -208,14 +225,14 @@ export default function DetailsPane({
     await handleExportWithFormat(outputFormat);
   };
   // Handle export after format selection
-  const handleExportWithFormat = async (format) => {
+  const handleExportWithFormat = async format => {
     try {
       // Prepare locations with mapxKey computed for each location
       const locationsWithMapxKey = locations.map(location => {
         const mapxKey = collectionManager.getMapxKey(location.mergeKey, collectionId);
         return {
           ...location,
-          mapxKey: mapxKey
+          mapxKey: mapxKey,
         };
       });
 
@@ -687,10 +704,10 @@ export default function DetailsPane({
                   {templateData.ownerRules}
                 </a>
               </div>
-            )}          </div>
+            )}{' '}
+          </div>
         </div>
       )}
-      
       {/* Modal dialog for export format selection */}
       {showExportDialog && (
         <div
@@ -727,7 +744,7 @@ export default function DetailsPane({
                   name="exportFormat"
                   value="idml"
                   checked={selectedExportFormat === 'idml'}
-                  onChange={(e) => setSelectedExportFormat(e.target.value)}
+                  onChange={e => setSelectedExportFormat(e.target.value)}
                   style={{ marginRight: 8 }}
                 />
                 InDesign (IDML)
@@ -738,7 +755,7 @@ export default function DetailsPane({
                   name="exportFormat"
                   value="mapx"
                   checked={selectedExportFormat === 'mapx'}
-                  onChange={(e) => setSelectedExportFormat(e.target.value)}
+                  onChange={e => setSelectedExportFormat(e.target.value)}
                   style={{ marginRight: 8 }}
                 />
                 Map Creator (MAPX)
@@ -777,7 +794,6 @@ export default function DetailsPane({
           </div>
         </div>
       )}
-      
       {/* Status Tally Table */}
       <div
         style={{
@@ -850,11 +866,13 @@ export default function DetailsPane({
             border: '1px solid black',
             borderRadius: '0.7em',
           }}
-        >          <textarea
+        >
+          {' '}
+          <textarea
             ref={vernacularInputRef}
             value={vernacular}
             onChange={handleVernChange}
-            onKeyDown={(e) => {
+            onKeyDown={e => {
               // Prevent line breaks but allow other keys
               if (e.key === 'Enter') {
                 e.preventDefault();
@@ -862,25 +880,28 @@ export default function DetailsPane({
             }}
             placeholder={inLang(uiStr.enterLabel, lang)}
             className="form-control mb-2"
-            style={{ 
-              width: '100%', 
+            style={{
+              width: '100%',
               border: '1px solid black',
               minHeight: '32px',
               resize: 'vertical',
               whiteSpace: 'pre-wrap',
               overflowWrap: 'break-word',
               fontFamily: 'inherit',
-              fontSize: 'inherit'
+              fontSize: 'inherit',
             }}
             spellCheck={false}
             rows={1}
-          />          <span style={{ 
-            color: statusValue[status].textColor, 
-            fontSize: '0.8em', 
-            lineHeight: '1.2',
-            display: 'block',
-            marginTop: '4px'
-          }}>
+          />{' '}
+          <span
+            style={{
+              color: statusValue[status].textColor,
+              fontSize: '0.8em',
+              lineHeight: '1.2',
+              display: 'block',
+              marginTop: '4px',
+            }}
+          >
             <span style={{ fontWeight: 'bold' }}>
               {inLang(uiStr.statusValue[status].text, lang) + ': '}
             </span>
@@ -890,7 +911,7 @@ export default function DetailsPane({
                 {inLang(uiStr.addMapForm, lang)}
               </button>
             )}
-            {status === STATUS_UNMATCHED && ( 
+            {status === STATUS_UNMATCHED && (
               <button style={{ marginLeft: 8 }} onClick={() => onRefreshLabel()}>
                 {inLang(uiStr.refreshLabel, lang)}
               </button>

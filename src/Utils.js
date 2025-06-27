@@ -186,6 +186,7 @@ export function getMapForm(termRenderings, termId) {
   return processedItems.join('—');
 }
 
+// Check if a word matches any of the renderings, returning a 1-based index of the match.
 export function wordMatchesRenderings(word, renderings, anchored = true) {
   let renderingList = [];
   renderingList = renderings
@@ -194,9 +195,10 @@ export function wordMatchesRenderings(word, renderings, anchored = true) {
     .map(r => r.replace(/\(.*/g, '').replace(/.*\)/g, '')) // Remove content in parentheses (comments), even if only partially enclosed. (The user may be typing a comment.)
     .map(r => r.trim())
     .filter(r => r.length > 0)
-    .map(r => r.replace(/\*/g, MATCH_W + '*')); // TODO: 1. implement better \w.   2. Handle isoolated * better.
+    .map(r => r.replace(/\*/g, MATCH_W + '*')); // TODO: Handle isolated * better.
 
-  for (let rendering of renderingList) {
+  for (let i = 0; i < renderingList.length; i++) {
+    const rendering = renderingList[i];
     try {
       const pattern = anchored ? '^' + rendering + '$' : rendering;
       console.log(
@@ -205,7 +207,7 @@ export function wordMatchesRenderings(word, renderings, anchored = true) {
       const regex = new RegExp(pattern, 'iu');
       if (regex.test(word)) {
         // console.log(`Word "${word}" matches rendering "${rendering}"`);
-        return true;
+        return i+1; // Return 1-based index
       } else {
         // console.log(`Word "${word}" doesn't match rendering "${rendering}" with pattern "${pattern}"`);
       }
@@ -214,7 +216,7 @@ export function wordMatchesRenderings(word, renderings, anchored = true) {
       continue;
     }
   }
-  return false;
+  return 0; // No match found
 }
 
 // Utility function to determine if a location is visible based on selected variant
