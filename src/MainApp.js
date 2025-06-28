@@ -198,6 +198,7 @@ function MainApp({ settings, templateFolder, onExit }) {
   const handleBrowseMapTemplateRef = useRef();
   const [extractedVerses, setExtractedVerses] = useState({});
   const [termRenderings, setTermRenderings] = useState(); // Initialize map from USFM
+  const [termRenderingsLoading, setTermRenderingsLoading] = useState(false); // Guard against multiple loads
 
   // Persist labelScale to localStorage
   useEffect(() => {
@@ -234,9 +235,18 @@ function MainApp({ settings, templateFolder, onExit }) {
 
   // Load term renderings from new project folder
   useEffect(() => {
-    if (!electronAPI || !projectFolder || !isInitialized || !mapDef) return;
+    if (!electronAPI || !projectFolder || !isInitialized || !mapDef || termRenderingsLoading) return;
 
     const loadData = async () => {
+      // Prevent multiple simultaneous loads
+      if (termRenderingsLoading) {
+        console.log('Term renderings already loading, skipping...');
+        return;
+      }
+      
+      setTermRenderingsLoading(true);
+      console.log('Starting term renderings load...');
+      
       try {
         const newTermRenderings = await electronAPI.loadTermRenderings(
           projectFolder,
@@ -296,6 +306,9 @@ function MainApp({ settings, templateFolder, onExit }) {
           `Failed to load term-renderings.json from project folder <${projectFolder}>.`,
           e
         );
+      } finally {
+        setTermRenderingsLoading(false);
+        console.log('Term renderings load completed.');
       }
     };
 
