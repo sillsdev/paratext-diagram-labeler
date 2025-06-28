@@ -61,13 +61,15 @@ export function getMatchTally(entry, refs, extractedVerses) {
         .map(r => r.trim())
         .filter(r => r.length > 0)
         .map(r => {
-          let pattern = r;
-          // Insert word boundary at start if not starting with *
-          if (!pattern.startsWith('*')) pattern = MATCH_PRE_B + pattern;
-          // Insert word boundary at end if not ending with *
-          if (!pattern.endsWith('*')) pattern = pattern + MATCH_POST_B;
-          // Replace * [with [\w-]* (word chars + dash)
-          pattern = pattern.replace(/\*/g, MATCH_W + '*');
+          let pattern = convertParatextWildcardsToRegex(r);
+          // Insert word boundary at start if not starting with word character pattern
+          if (!pattern.startsWith('(?:' + MATCH_W) && !pattern.startsWith(MATCH_W)) {
+            pattern = MATCH_PRE_B + pattern;
+          }
+          // Insert word boundary at end if not ending with word character pattern
+          if (!pattern.endsWith('*)') && !pattern.endsWith('*')) {
+            pattern = pattern + MATCH_POST_B;
+          }
           // console.log(`Creating regex for rendering "${r}" with pattern "${pattern}"`);
           try {
             return new RegExp(pattern, 'iu');
@@ -195,7 +197,7 @@ export function wordMatchesRenderings(word, renderings, anchored = true) {
     .map(r => r.replace(/\(.*/g, '').replace(/.*\)/g, '')) // Remove content in parentheses (comments), even if only partially enclosed. (The user may be typing a comment.)
     .map(r => r.trim())
     .filter(r => r.length > 0)
-    .map(r => r.replace(/\*/g, MATCH_W + '*')); // TODO: Handle isolated * better.
+    .map(r => convertParatextWildcardsToRegex(r));
 
   for (let i = 0; i < renderingList.length; i++) {
     const rendering = renderingList[i];
@@ -217,6 +219,38 @@ export function wordMatchesRenderings(word, renderings, anchored = true) {
     }
   }
   return 0; // No match found
+}
+
+// Convert Paratext wildcard patterns to regex patterns
+function convertParatextWildcardsToRegex(rendering) {
+  // Split the rendering into tokens (words and asterisks)
+  const tokens = rendering.split(/(\s+|\*+)/);
+  let regexParts = [];
+  
+  for (let i = 0; i < tokens.length; i++) {
+    const token = tokens[i];
+    
+    if (token.match(/^\s+$/)) {
+      // Whitespace - preserve as is
+      regexParts.push(token.replace(/\s/g, '\\s'));
+    } else if (token === '**') {
+      // Two consecutive asterisks - matches any number of optional words
+      regexParts.push('(?:' + MATCH_W + '+(?:\\s+' + MATCH_W + '+)*)?');
+    } else if (token === '*') {
+      // Single isolated asterisk - matches up to one optional word
+      regexParts.push('(?:' + MATCH_W + '+)?');
+    } else if (token.includes('*')) {
+      // Word containing asterisks (prefix, suffix, infix patterns)
+      let wordPattern = token.replace(/[.+?^${}()|[\]\\]/g, '\\$&'); // Escape regex metacharacters
+      wordPattern = wordPattern.replace(/\*/g, MATCH_W + '*'); // Replace * with word character pattern
+      regexParts.push(wordPattern);
+    } else if (token.length > 0) {
+      // Regular word - escape regex metacharacters
+      regexParts.push(token.replace(/[.+?^${}()|[\]\\]/g, '\\$&'));
+    }
+  }
+  
+  return regexParts.join('');
 }
 
 // Utility function to determine if a location is visible based on selected variant

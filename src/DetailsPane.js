@@ -96,7 +96,7 @@ export default function DetailsPane({
   }
 
   const handleVernChange = e => {
-    const newVernacular = e.target.value;
+    const newVernacular = e.target.value.replace(/\(/g, '❪').replace(/\)/g, '❫'); // Replace parentheses with escaped versions
     setVernacular(newVernacular); // Update state immediately
     onUpdateVernacular(locations[selLocation].termId, newVernacular);
   };
@@ -134,7 +134,7 @@ export default function DetailsPane({
           .join('\n');
         console.log(`Current renderings: "${currentRenderings}"`);
 
-        const whichRendering = wordMatchesRenderings(vernacularText, currentRenderings, true);
+        const whichRendering = wordMatchesRenderings(vernacularText, currentRenderings, false);
         console.log(`Matched rendering index: ${whichRendering}`);
         const mapForm = ` (@${vernacularText})`;
         try {
@@ -234,6 +234,7 @@ export default function DetailsPane({
         return {
           ...location,
           mapxKey: mapxKey,
+          vernLabel: location.vernLabel.replace(/[❪\{]/g, '(').replace(/[❫\}]/g, ')'), // Replace { and } with ( and )
         };
       });
 
