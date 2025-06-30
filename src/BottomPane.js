@@ -20,6 +20,7 @@ function BottomPane({
   extractedVerses,
   setTermRenderings,
   collectionId = 'SMR',
+  onReloadExtractedVerses,
 }) {
   const paneRef = React.useRef();
   const [selectedText, setSelectedText] = React.useState('');
@@ -348,6 +349,12 @@ function BottomPane({
                               console.error('Error broadcasting reference:', error);
                               alert(`Error sending reference to Paratext: ${error.message}`);
                             }
+                            alert(`Please go edit ${prettyRef(refId)} in Paratext, and then click "OK" refresh the verse text here.`);
+                            // Reload the extracted verses to reflect changes
+                            if (onReloadExtractedVerses) {
+                              await onReloadExtractedVerses(termId, mergeKey);
+                            }
+
                           }}
                         >
                           <FaPencilAlt />

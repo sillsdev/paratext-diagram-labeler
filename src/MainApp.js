@@ -953,6 +953,68 @@ function MainApp({ settings, templateFolder, onExit }) {
     [selLocation, locations, termRenderings, extractedVerses, mapDef.template]
   );
 
+  // Reload extracted verses for a specific term
+  const handleReloadExtractedVerses = useCallback(async (termId, mergeKey) => {
+    if (!projectFolder || !isInitialized) return;
+
+    const collectionId = getCollectionIdFromTemplate(mapDef.template);
+    const refs = collectionManager.getRefs(mergeKey, collectionId);
+    
+    if (!refs.length) return;
+
+    try {
+      const verses = await electronAPI.getFilteredVerses(projectFolder, refs);
+      if (verses && !verses.error) {
+        // Update only the verses for the specified references
+        setExtractedVerses(prevVerses => ({
+          ...prevVerses,
+          ...verses
+        }));
+        console.log(`Reloaded ${Object.keys(verses).length} verses for term: ${termId}`);
+      } else {
+        console.warn('Failed to reload extracted verses:', verses?.error);
+      }
+    } catch (error) {
+      console.error('Error reloading extracted verses:', error);
+    }
+  }, [projectFolder, isInitialized, mapDef.template]);
+
+  const handleCreateRendering = useCallback(
+    (text, isGuessed) => {
+      if (!locations[selLocation]) return;
+      const termId = locations[selLocation].termId;
+      const newRenderings = text.trim();
+      setRenderings(newRenderings);
+      const updatedData = { ...termRenderings };
+      updatedData[termId] = {
+        ...updatedData[termId],
+        renderings: newRenderings,
+        isGuessed,
+      };
+      setTermRenderings(updatedData);
+      setIsApproved(!isGuessed);
+      setLocations(prevLocations =>
+        prevLocations.map(loc => {
+          if (loc.termId === termId) {
+            const status = getStatus(
+              updatedData,
+              loc.termId,
+              loc.vernLabel,
+              collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+              extractedVerses
+            );
+            return { ...loc, status };
+          }
+          return loc;
+        })
+      );
+      setTimeout(() => {
+        if (renderingsTextareaRef.current) renderingsTextareaRef.current.focus();
+      }, 0);
+    },
+    [selLocation, locations, termRenderings, extractedVerses, mapDef.template]
+  );
+
   // Add global PageUp/PageDown navigation for Map and Table views
   useEffect(() => {
     function handleGlobalKeyDown(e) {
@@ -1290,6 +1352,7 @@ function MainApp({ settings, templateFolder, onExit }) {
           extractedVerses={extractedVerses}
           setTermRenderings={setTermRenderings}
           collectionId={currentCollectionId} // Pass the collection ID
+          onReloadExtractedVerses={handleReloadExtractedVerses}
         />
       </div>{' '}
       <SettingsModal
