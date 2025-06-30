@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import './MainApp.css';
 import uiStr from './data/ui-strings.json';
 import {
@@ -82,6 +82,8 @@ export default function DetailsPane({
     loadTemplateData();
   }, [mapDef.template]);
 
+  const prevSelLocationRef = useRef(selLocation);
+  
   useEffect(() => {
     setVernacular(locations[selLocation]?.vernLabel || '');
     setLocalIsApproved(isApproved);
@@ -89,8 +91,14 @@ export default function DetailsPane({
   }, [selLocation, isApproved, renderings, locations, setVernacular]);
 
   useEffect(() => {
-    if (vernacularInputRef && vernacularInputRef.current && mapPaneView === MAP_VIEW) {
-      vernacularInputRef.current.focus();
+    // Only focus when selLocation actually changes and we're in MAP_VIEW
+    if (prevSelLocationRef.current !== selLocation && mapPaneView === MAP_VIEW) {
+      prevSelLocationRef.current = selLocation;
+      if (vernacularInputRef && vernacularInputRef.current) {
+        vernacularInputRef.current.focus();
+      }
+    } else if (prevSelLocationRef.current !== selLocation) {
+      prevSelLocationRef.current = selLocation;
     }
   }, [selLocation, mapPaneView, vernacularInputRef]);
 

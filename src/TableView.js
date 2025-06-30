@@ -23,13 +23,20 @@ export default function TableView({
   selectedVariant = 0,
 }) {
   const inputRefs = useRef([]);
+  const prevSelLocationRef = useRef(selLocation);
+  
   useEffect(() => {
-    // Focus the input for the selected row
-    const idx = selLocation;
-    if (idx >= 0 && inputRefs.current[idx]) {
-      inputRefs.current[idx].focus();
+    // Only focus when selLocation actually changes, not when locations array is updated
+    if (prevSelLocationRef.current !== selLocation) {
+      prevSelLocationRef.current = selLocation;
+      
+      // Focus the input for the selected row
+      const idx = selLocation;
+      if (idx >= 0 && inputRefs.current[idx]) {
+        inputRefs.current[idx].focus();
+      }
     }
-  }, [selLocation, locations]);
+  }, [selLocation]);
   return (
     <div className="table-view-scroll-wrapper">
       <table className="table-view" style={{ borderCollapse: 'collapse' }}>
