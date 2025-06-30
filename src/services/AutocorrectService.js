@@ -14,12 +14,18 @@ class AutocorrectService {
     } catch (error) {
       console.log('No autocorrect.txt file found or error loading:', error);
       this.rules = [];
+      // Even if no file is found, add built-in rules
+      this.addBuiltInRules();
       this.isLoaded = true;
     }
   }
 
   parseRules(content) {
     this.rules = [];
+    
+    // Add built-in rules for parentheses replacement
+    this.addBuiltInRules();
+    
     const lines = content.split(/\r?\n/);
     
     for (let line of lines) {
@@ -47,6 +53,22 @@ class AutocorrectService {
     
     // Sort by pattern length (longest first) to handle overlapping patterns correctly
     this.rules.sort((a, b) => b.length - a.length);
+  }
+
+  addBuiltInRules() {
+    // Built-in rules that are always applied regardless of autocorrect.txt
+    const builtInRules = [
+      { pattern: '(', replacement: '❪' },
+      { pattern: ')', replacement: '❫' }
+    ];
+    
+    for (const rule of builtInRules) {
+      this.rules.push({
+        pattern: rule.pattern,
+        replacement: rule.replacement,
+        length: rule.pattern.length
+      });
+    }
   }
 
   processUnicodeEscapes(text) {

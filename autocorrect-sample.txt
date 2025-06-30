@@ -1,0 +1,16 @@
+# Sample autocorrect rules for testing
+# Fix common spelling errors
+teh-->the
+adn-->and
+
+# Add diacritics
+:a-->ä
+:o-->ö
+%n-->ñ
+
+# Convert double hyphens to em dash
+---->—
+
+# Unicode examples
+<<-->\u00AB
+>>-->\u00BB

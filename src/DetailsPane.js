@@ -49,7 +49,7 @@ export default function DetailsPane({
     handleChange: handleVernacularChange,
     inputRef: autocorrectInputRef
   } = useAutocorrect(locations[selLocation]?.vernLabel || '', (e) => {
-    const newVernacular = e.target.value.replace(/\(/g, '❪').replace(/\)/g, '❫');
+    const newVernacular = e.target.value; // Remove manual parentheses replacement
     onUpdateVernacular(locations[selLocation].termId, newVernacular);
   });
   const [localIsApproved, setLocalIsApproved] = useState(isApproved);
