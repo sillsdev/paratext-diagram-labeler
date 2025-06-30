@@ -12,6 +12,7 @@ import DetailsPane from './DetailsPane.js';
 import SettingsModal from './SettingsModal.js';
 // import { useInitialization, InitializationProvider } from './InitializationProvider';
 import { settingsService } from './services/SettingsService';
+import { autocorrectService } from './services/AutocorrectService';
 
 const electronAPI = window.electronAPI;
 
@@ -313,7 +314,8 @@ function MainApp({ settings, templateFolder, onExit }) {
     };
 
     loadData();
-  }, [projectFolder, mapDef, isInitialized, settings.saveToDemo, extractedVerses]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectFolder, mapDef, isInitialized, settings.saveToDemo, extractedVerses]); // termRenderingsLoading intentionally omitted to prevent infinite loop
 
   // setExtractedVerses when projectFolder or mapDef.labels change
   useEffect(() => {
@@ -337,6 +339,13 @@ function MainApp({ settings, templateFolder, onExit }) {
       }
     });
   }, [projectFolder, mapDef.labels, mapDef.template, isInitialized]);
+
+  // Load autocorrect file when project folder or initialization state changes
+  useEffect(() => {
+    if (projectFolder && isInitialized) {
+      autocorrectService.loadAutocorrectFile(projectFolder);
+    }
+  }, [projectFolder, isInitialized]);
 
   // Handler to set the selected location (e.g. Label clicked)
   const handleSelectLocation = useCallback(

@@ -25,4 +25,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   exportDataMerge: (data) => ipcRenderer.invoke('export-data-merge', data),
 
   getDefaultTemplateFolder: () => ipcRenderer.invoke('getDefaultTemplateFolder'),
+
+  readFile: (filePath) => ipcRenderer.invoke('read-file', filePath),
 });

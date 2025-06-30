@@ -7,6 +7,7 @@ import { CheckmarkIcon, DeniedCheckmarkIcon, WarningIcon } from './TermIcons';
 // import TermRenderings from './TermRenderings';
 import { collectionManager } from './CollectionManager';
 import { inLang, statusValue, getMatchTally, isLocationVisible } from './Utils.js';
+import { AutocorrectInput } from './components/AutocorrectInput';
 
 // Table View component
 export default function TableView({
@@ -66,7 +67,7 @@ export default function TableView({
                     {inLang(loc.gloss, lang)}
                   </td>
                   <td style={isSelected ? { paddingTop: 4, paddingBottom: 4 } : {}}>
-                    <input
+                    <AutocorrectInput
                       ref={el => (inputRefs.current[i] = el)}
                       type="text"
                       value={loc.vernLabel || ''}

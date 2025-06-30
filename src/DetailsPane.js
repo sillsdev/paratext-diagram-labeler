@@ -15,6 +15,7 @@ import { collectionManager, getCollectionIdFromTemplate } from './CollectionMana
 import { getMapDef } from './MapData';
 import { inLang, statusValue, getMapForm, wordMatchesRenderings } from './Utils.js';
 import { settingsService } from './services/SettingsService.js';
+import { useAutocorrect } from './hooks/useAutocorrect';
 
 export default function DetailsPane({
   selLocation,
@@ -41,7 +42,16 @@ export default function DetailsPane({
   selectedVariant = 0,
   onVariantChange,
 }) {
-  const [vernacular, setVernacular] = useState(locations[selLocation]?.vernLabel || '');
+  // Use autocorrect hook for vernacular input
+  const {
+    value: vernacular,
+    setValue: setVernacular,
+    handleChange: handleVernacularChange,
+    inputRef: autocorrectInputRef
+  } = useAutocorrect(locations[selLocation]?.vernLabel || '', (e) => {
+    const newVernacular = e.target.value.replace(/\(/g, '❪').replace(/\)/g, '❫');
+    onUpdateVernacular(locations[selLocation].termId, newVernacular);
+  });
   const [localIsApproved, setLocalIsApproved] = useState(isApproved);
   const [localRenderings, setLocalRenderings] = useState(renderings);
   const [showTemplateInfo, setShowTemplateInfo] = useState(false);
@@ -75,7 +85,7 @@ export default function DetailsPane({
     setVernacular(locations[selLocation]?.vernLabel || '');
     setLocalIsApproved(isApproved);
     setLocalRenderings(renderings);
-  }, [selLocation, isApproved, renderings, locations]);
+  }, [selLocation, isApproved, renderings, locations, setVernacular]);
 
   useEffect(() => {
     if (vernacularInputRef && vernacularInputRef.current && mapPaneView === MAP_VIEW) {
@@ -94,12 +104,6 @@ export default function DetailsPane({
   if (transliteration) {
     transliteration = ` /${transliteration}/`;
   }
-
-  const handleVernChange = e => {
-    const newVernacular = e.target.value.replace(/\(/g, '❪').replace(/\)/g, '❫'); // Replace parentheses with escaped versions
-    setVernacular(newVernacular); // Update state immediately
-    onUpdateVernacular(locations[selLocation].termId, newVernacular);
-  };
 
   // Tally status counts for all locations
   const statusTallies = useMemo(() => {
@@ -234,7 +238,7 @@ export default function DetailsPane({
         return {
           ...location,
           mapxKey: mapxKey,
-          vernLabel: location.vernLabel.replace(/[❪\{]/g, '(').replace(/[❫\}]/g, ')'), // Replace { and } with ( and )
+          vernLabel: location.vernLabel.replace(/[❪{]/g, '(').replace(/[❫}]/g, ')'), // Replace { and } with ( and )
         };
       });
 
@@ -871,9 +875,13 @@ export default function DetailsPane({
         >
           {' '}
           <textarea
-            ref={vernacularInputRef}
+            ref={(el) => {
+              // Assign to both refs
+              if (vernacularInputRef) vernacularInputRef.current = el;
+              if (autocorrectInputRef) autocorrectInputRef.current = el;
+            }}
             value={vernacular}
-            onChange={handleVernChange}
+            onChange={handleVernacularChange}
             onKeyDown={e => {
               // Prevent line breaks but allow other keys
               if (e.key === 'Enter') {

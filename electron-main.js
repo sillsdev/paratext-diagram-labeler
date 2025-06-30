@@ -713,6 +713,16 @@ ipcMain.handle('getDefaultTemplateFolder', async (event) => {
   }
 });
 
+// Handler to read text files (for autocorrect.txt)
+ipcMain.handle('read-file', async (event, filePath) => {
+  try {
+    const content = await fs.promises.readFile(filePath, 'utf8');
+    return content;
+  } catch (error) {
+    throw error;
+  }
+});
+
 app.whenReady().then(() => {
   console.log('=== Scripture Map Labeler Starting ===');
   console.log(`App version: ${app.getVersion()}`);
