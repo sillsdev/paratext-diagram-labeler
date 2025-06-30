@@ -14,17 +14,12 @@ class AutocorrectService {
     } catch (error) {
       console.log('No autocorrect.txt file found or error loading:', error);
       this.rules = [];
-      // Even if no file is found, add built-in rules
-      this.addBuiltInRules();
       this.isLoaded = true;
     }
   }
 
   parseRules(content) {
     this.rules = [];
-    
-    // Add built-in rules for parentheses replacement
-    this.addBuiltInRules();
     
     const lines = content.split(/\r?\n/);
     
@@ -55,20 +50,12 @@ class AutocorrectService {
     this.rules.sort((a, b) => b.length - a.length);
   }
 
-  addBuiltInRules() {
-    // Built-in rules that are always applied regardless of autocorrect.txt
-    const builtInRules = [
-      { pattern: '(', replacement: '❪' },
-      { pattern: ')', replacement: '❫' }
+  getBuiltInRules() {
+    // Built-in rules for parentheses escaping (for vernacular inputs only)
+    return [
+      { pattern: '(', replacement: '❪', length: 1 },
+      { pattern: ')', replacement: '❫', length: 1 }
     ];
-    
-    for (const rule of builtInRules) {
-      this.rules.push({
-        pattern: rule.pattern,
-        replacement: rule.replacement,
-        length: rule.pattern.length
-      });
-    }
   }
 
   processUnicodeEscapes(text) {
@@ -77,15 +64,26 @@ class AutocorrectService {
     });
   }
 
-  applyAutocorrect(text, cursorPosition) {
-    if (!this.isLoaded || this.rules.length === 0) return { text, cursorPosition };
+  applyAutocorrect(text, cursorPosition, includeBuiltInRules = true) {
+    if (!this.isLoaded) return { text, cursorPosition };
+    
+    let rulesToApply = [...this.rules];
+    
+    // Add built-in rules if requested (for vernacular inputs only)
+    if (includeBuiltInRules) {
+      const builtInRules = this.getBuiltInRules();
+      // Add built-in rules at the beginning (higher priority)
+      rulesToApply = [...builtInRules, ...rulesToApply];
+    }
+    
+    if (rulesToApply.length === 0) return { text, cursorPosition };
     
     let modified = false;
     let newText = text;
     let newCursorPosition = cursorPosition;
     
     // Check each rule against the text around cursor position
-    for (const rule of this.rules) {
+    for (const rule of rulesToApply) {
       const startPos = Math.max(0, cursorPosition - rule.length);
       const checkText = newText.substring(startPos, cursorPosition);
       

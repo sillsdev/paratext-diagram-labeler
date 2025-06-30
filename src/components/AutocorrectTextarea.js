@@ -1,22 +1,22 @@
 import React, { useRef, useCallback, forwardRef } from 'react';
 import { autocorrectService } from '../services/AutocorrectService';
 
-// A simple input component that applies autocorrect on change
-export const AutocorrectInput = forwardRef(({ value, onChange, ...props }, externalRef) => {
-  const inputRef = useRef(null);
+// A textarea component that applies autocorrect on change
+export const AutocorrectTextarea = forwardRef(({ value, onChange, ...props }, externalRef) => {
+  const textareaRef = useRef(null);
 
   const handleChange = useCallback((e) => {
-    const input = e.target;
-    const newValue = input.value;
-    const cursorPosition = input.selectionStart;
+    const textarea = e.target;
+    const newValue = textarea.value;
+    const cursorPosition = textarea.selectionStart;
     
-    // Apply autocorrect with built-in rules (parentheses escaping for vernacular)
-    const result = autocorrectService.applyAutocorrect(newValue, cursorPosition, true);
+    // Apply autocorrect without built-in rules (no parentheses escaping for renderings)
+    const result = autocorrectService.applyAutocorrect(newValue, cursorPosition, false);
     
     if (result.modified) {
       // Update cursor position after React re-renders
       setTimeout(() => {
-        const targetRef = externalRef || inputRef;
+        const targetRef = externalRef || textareaRef;
         if (targetRef && targetRef.current) {
           targetRef.current.setSelectionRange(result.cursorPosition, result.cursorPosition);
         }
@@ -34,8 +34,8 @@ export const AutocorrectInput = forwardRef(({ value, onChange, ...props }, exter
   }, [onChange, externalRef]);
 
   return (
-    <input
-      ref={externalRef || inputRef}
+    <textarea
+      ref={externalRef || textareaRef}
       value={value}
       onChange={handleChange}
       {...props}

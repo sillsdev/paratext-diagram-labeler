@@ -16,6 +16,7 @@ import { getMapDef } from './MapData';
 import { inLang, statusValue, getMapForm, wordMatchesRenderings } from './Utils.js';
 import { settingsService } from './services/SettingsService.js';
 import { useAutocorrect } from './hooks/useAutocorrect';
+import { AutocorrectTextarea } from './components/AutocorrectTextarea';
 
 export default function DetailsPane({
   selLocation,
@@ -963,7 +964,7 @@ export default function DetailsPane({
         </h5>
         <div className="term-renderings" style={{ margin: '8px' }}>
           {' '}
-          <textarea
+          <AutocorrectTextarea
             ref={renderingsTextareaRef}
             value={localRenderings}
             onChange={e => {

@@ -10,8 +10,8 @@ export function useAutocorrect(initialValue = '', onChange) {
     const newValue = input.value;
     const cursorPosition = input.selectionStart;
     
-    // Apply autocorrect
-    const result = autocorrectService.applyAutocorrect(newValue, cursorPosition);
+    // Apply autocorrect with built-in rules (parentheses escaping for vernacular)
+    const result = autocorrectService.applyAutocorrect(newValue, cursorPosition, true);
     
     if (result.modified) {
       // Set the corrected value
