@@ -68,3 +68,25 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+# Biblical Map Labeler
+
+This is an Electron-based application for labeling biblical maps with scripture references.
+
+## Features
+
+- **Map Labeling**: Interactive map labeling with scripture references
+- **Paratext Integration**: Send scripture references directly to Paratext (Windows only)
+  - Click the pencil icon next to any verse reference to send it to Paratext
+  - Sets the registry key and broadcasts a Windows message for immediate scrolling
+  - Uses a precompiled helper executable (no .NET runtime required)
+- **Template Management**: Load and manage map labeling templates
+
+## Paratext Integration
+
+The "Send reference to Paratext" feature works by:
+1. Setting the registry key `HKCU\Software\SantaFe\Focus\ScriptureReference`
+2. Broadcasting a "SantaFeFocus" Windows message to notify Paratext
+3. Paratext automatically scrolls to the specified reference
+
+This matches the exact behavior used by PTXprint and other SIL tools.

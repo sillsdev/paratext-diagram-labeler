@@ -858,128 +858,46 @@ public static extern uint GetLastError();
         }
       }
       
-      // Additional fallback: Create and execute a temporary C# program
+      // Additional fallback: Use precompiled helper
       if (!broadcastStdout?.includes('SUCCESS') && !simpleStdout?.includes('Result:True')) {
-        console.log('Previous PowerShell approaches unclear, trying C# executable fallback...');
+        console.log('Previous PowerShell approaches unclear, trying precompiled helper...');
         
         try {
-          const fs = require('fs');
           const path = require('path');
-          const os = require('os');
           
-          const tempDir = os.tmpdir();
-          const csFile = path.join(tempDir, 'SantaFeBroadcast.cs');
-          
-          // Create a simple C# program
-          const csCode = `
-using System;
-using System.Runtime.InteropServices;
-
-class Program
-{
-    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-    static extern uint RegisterWindowMessage(string lpString);
-    
-    [DllImport("user32.dll")]
-    static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
-    
-    static void Main()
-    {
-        try
-        {
-            Console.WriteLine("Registering SantaFeFocus message...");
-            uint msgId = RegisterWindowMessage("SantaFeFocus");
-            Console.WriteLine($"Message ID: {msgId}");
-            
-            if (msgId == 0)
-            {
-                Console.WriteLine("ERROR: RegisterWindowMessage failed");
-                Environment.Exit(1);
-            }
-            
-            Console.WriteLine("Broadcasting message...");
-            bool result = PostMessage((IntPtr)0xFFFF, msgId, (IntPtr)1, IntPtr.Zero);
-            Console.WriteLine($"PostMessage result: {result}");
-            
-            if (result)
-            {
-                Console.WriteLine("SUCCESS: C# SantaFeFocus broadcast completed");
-            }
-            else
-            {
-                Console.WriteLine("ERROR: PostMessage failed");
-                Environment.Exit(1);
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"EXCEPTION: {ex.Message}");
-            Environment.Exit(1);
-        }
-    }
-}`;
-          
-          // Write the C# file
-          fs.writeFileSync(csFile, csCode);
-          console.log('Created temporary C# file:', csFile);
-          
-          // Try to compile and run it using dotnet
-          console.log('Attempting to compile and run C# program using dotnet...');
-          
-          try {
-            // First, we need to create a proper .NET project structure
-            const projDir = path.join(tempDir, 'SantaFeBroadcastApp');
-            const projFile = path.join(projDir, 'SantaFeBroadcastApp.csproj');
-            const programFile = path.join(projDir, 'Program.cs');
-            
-            // Create project directory
-            if (!fs.existsSync(projDir)) {
-              fs.mkdirSync(projDir, { recursive: true });
-            }
-            
-            // Create project file
-            const csprojContent = `<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-</Project>`;
-            
-            fs.writeFileSync(projFile, csprojContent);
-            fs.writeFileSync(programFile, csCode);
-            
-            console.log('Created .NET project structure');
-            
-            // Run the program using dotnet run
-            const { stdout: runOut, stderr: runErr } = await execAsync(`dotnet run --project "${projDir}"`, { 
-              timeout: 10000,
-              cwd: projDir 
-            });
-            
-            console.log('C# program output:', runOut || '(no execution output)');
-            if (runErr && runErr.trim()) {
-              console.log('C# program stderr:', runErr);
-            }
-            
-            // Clean up project directory
+          // Try to use the precompiled helper
+          const precompiledHelper = path.join(__dirname, 'helpers', 'SantaFeBroadcast.exe');
+          if (fs.existsSync(precompiledHelper)) {
+            console.log('Using precompiled SantaFeBroadcast helper...');
             try {
-              fs.rmSync(projDir, { recursive: true, force: true });
-            } catch (cleanupError) {
-              console.log('Project cleanup error (non-critical):', cleanupError.message);
+              const { stdout: helperOut, stderr: helperErr } = await execAsync(`"${precompiledHelper}"`, { timeout: 5000 });
+              console.log('Precompiled helper output:', helperOut || '(no output)');
+              if (helperErr && helperErr.trim()) {
+                console.log('Precompiled helper stderr:', helperErr);
+              }
+            } catch (helperError) {
+              console.log('Precompiled helper failed:', helperError.message);
             }
-            
-          } catch (compileError) {
-            console.log('C# compilation/execution failed:', compileError.message);
+          } else {
+            console.log('Precompiled helper not found at:', precompiledHelper);
+            console.log('Windows message broadcasting will rely on PowerShell approaches only.');
           }
           
         } catch (csError) {
-          console.log('C# fallback error:', csError.message);
+          console.log('Helper execution error:', csError.message);
         }
       }
       
       console.log('All SantaFeFocus message broadcast attempts completed.');
+      
+      // Final status message for the user
+      if (!broadcastStdout?.includes('SUCCESS') && !simpleStdout?.includes('Result:True')) {
+        console.log('Windows message broadcasting was attempted but may not have succeeded.');
+        console.log('However, the registry key has been set correctly, so Paratext should still receive the update.');
+        console.log('If Paratext does not scroll to the reference, try restarting Paratext or manually navigating to the reference.');
+      } else {
+        console.log('Windows message broadcast appears to have succeeded.');
+      }
       
     } catch (broadcastError) {
       console.warn('Warning: SantaFeFocus message broadcast failed:', broadcastError.message);
