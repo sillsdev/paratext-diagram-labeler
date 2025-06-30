@@ -20,6 +20,7 @@
     "react-scripts": "5.0.1",
     "usfm-js": "^3.4.3",
     "web-vitals": "^2.1.4",
+    "winreg": "^1.2.5",
     "xml2js": "^0.6.2"
   },
   "main": "build/electron-main.js",

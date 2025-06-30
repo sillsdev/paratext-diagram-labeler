@@ -333,11 +333,22 @@ function BottomPane({
                             alignItems: 'center',
                             verticalAlign: 'top',
                           }}
-                          title="Edit"
-                          aria-label="Edit"
-                          onClick={() =>
-                            alert(`Edit ${prettyRef(refId)} directly in Paratext.`, 'Edit Verse')
-                          }
+                          title="Send reference to Paratext"
+                          aria-label="Send reference to Paratext"
+                          onClick={async () => {
+                            try {
+                              const result = await window.electronAPI.broadcastReference(prettyRef(refId));
+                              if (result.success) {
+                                console.log(`Successfully sent reference to Paratext: ${result.reference}`);
+                              } else {
+                                console.warn(`Failed to send reference to Paratext: ${result.error}`);
+                                alert(`Could not send reference to Paratext: ${result.error}`);
+                              }
+                            } catch (error) {
+                              console.error('Error broadcasting reference:', error);
+                              alert(`Error sending reference to Paratext: ${error.message}`);
+                            }
+                          }}
                         >
                           <FaPencilAlt />
                         </button>

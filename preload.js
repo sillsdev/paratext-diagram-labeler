@@ -27,4 +27,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getDefaultTemplateFolder: () => ipcRenderer.invoke('getDefaultTemplateFolder'),
 
   readFile: (filePath) => ipcRenderer.invoke('read-file', filePath),
+
+  broadcastReference: (reference) => ipcRenderer.invoke('broadcast-reference', reference),
 });

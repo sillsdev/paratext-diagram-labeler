@@ -723,6 +723,303 @@ ipcMain.handle('read-file', async (event, filePath) => {
   }
 });
 
+// Handler to broadcast scripture reference to Paratext
+ipcMain.handle('broadcast-reference', async (event, reference) => {
+  // Only works on Windows
+  if (process.platform !== 'win32') {
+    console.log('Reference broadcasting only supported on Windows');
+    return { success: false, error: 'Only supported on Windows' };
+  }
+
+  try {
+    const { exec } = require('child_process');
+    const { promisify } = require('util');
+    const execAsync = promisify(exec);
+    
+    // Clean the reference format (similar to cleanRef in Python)
+    const cleanedRef = cleanReference(reference);
+    
+    // Step 1: Set the registry value
+    const regKey = 'HKCU\\Software\\SantaFe\\Focus\\ScriptureReference';
+    const regCommand = `reg add "${regKey}" /ve /t REG_SZ /d "${cleanedRef}" /f`;
+    
+    console.log(`Executing registry command: ${regCommand}`);
+    
+    const { stdout, stderr } = await execAsync(regCommand);
+    
+    if (stderr && stderr.trim() !== '') {
+      console.error('Registry command stderr:', stderr);
+      // Don't fail if there's just a warning
+      if (!stderr.toLowerCase().includes('error')) {
+        console.log('Registry command completed with warnings');
+      } else {
+        throw new Error(`Registry command failed: ${stderr}`);
+      }
+    }
+    
+    console.log('Registry command stdout:', stdout);
+    console.log(`Successfully set reference in registry: ${cleanedRef}`);
+    
+    // Verify the registry value was set correctly
+    try {
+      const verifyCommand = `reg query "${regKey}" /ve`;
+      const { stdout: verifyOutput } = await execAsync(verifyCommand);
+      console.log('Registry verification:', verifyOutput);
+    } catch (verifyError) {
+      console.warn('Could not verify registry value:', verifyError.message);
+    }
+    
+    // Step 2: Broadcast Windows message to notify Paratext
+    // This matches the Python ptxprint implementation exactly
+    console.log('Broadcasting SantaFeFocus message to Paratext...');
+    
+    try {
+      // Try a more robust PowerShell approach with verbose output and error handling
+      const broadcastCmd = `powershell -ExecutionPolicy Bypass -NoProfile -Command "
+        \\$VerbosePreference = 'Continue'
+        \\$ErrorActionPreference = 'Stop'
+        
+        Write-Output 'Starting SantaFeFocus broadcast...'
+        
+        try {
+          # Define the Win32 API functions
+          \\$signature = @'
+[DllImport(\\"user32.dll\\", SetLastError = true, CharSet = CharSet.Unicode)]
+public static extern uint RegisterWindowMessage(string lpString);
+
+[DllImport(\\"user32.dll\\", SetLastError = true)]
+public static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+[DllImport(\\"kernel32.dll\\")]
+public static extern uint GetLastError();
+'@
+          
+          Write-Output 'Adding Win32 API type...'
+          Add-Type -MemberDefinition \\$signature -Name 'Win32' -Namespace 'SantaFe'
+          Write-Output 'Win32 API type added successfully'
+          
+          # Register the custom message
+          Write-Output 'Registering SantaFeFocus message...'
+          \\$messageId = [SantaFe.Win32]::RegisterWindowMessage('SantaFeFocus')
+          \\$lastError = [SantaFe.Win32]::GetLastError()
+          Write-Output \\"RegisterWindowMessage returned: \\$messageId (LastError: \\$lastError)\\"
+          
+          if (\\$messageId -eq 0) {
+            throw \\"RegisterWindowMessage failed with error: \\$lastError\\"
+          }
+          
+          # Broadcast the message to all top-level windows (HWND_BROADCAST = 0xFFFF)
+          Write-Output 'Broadcasting message to all windows...'
+          \\$result = [SantaFe.Win32]::PostMessage([IntPtr]0xFFFF, \\$messageId, [IntPtr]1, [IntPtr]0)
+          \\$lastError = [SantaFe.Win32]::GetLastError()
+          Write-Output \\"PostMessage returned: \\$result (LastError: \\$lastError)\\"
+          
+          if (\\$result) {
+            Write-Output 'SUCCESS: SantaFeFocus message broadcast completed'
+          } else {
+            Write-Output \\"WARNING: PostMessage returned false (Error: \\$lastError)\\"
+          }
+          
+          Write-Output \\"Final result: MessageID=\\$messageId, Broadcast=\\$result\\"
+          
+        } catch {
+          Write-Error \\"Exception occurred: \\$(\\_)\\"
+          Write-Error \\"Exception type: \\$(\\_)?.GetType()?.FullName\\"
+          Write-Error \\"Stack trace: \\$(\\_)?.ScriptStackTrace\\"
+          exit 1
+        }
+      "`;
+      
+      console.log('Executing enhanced PowerShell broadcast command...');
+      const { stdout: broadcastStdout, stderr: broadcastStderr } = await execAsync(broadcastCmd, { timeout: 20000 });
+      
+      console.log('Enhanced broadcast stdout:', broadcastStdout || '(no stdout)');
+      if (broadcastStderr && broadcastStderr.trim()) {
+        console.log('Enhanced broadcast stderr:', broadcastStderr);
+      }
+      
+      // Try a simpler fallback approach
+      let simpleStdout = '';
+      if (!broadcastStdout || !broadcastStdout.includes('SUCCESS')) {
+        console.log('Enhanced approach did not show success, trying simple fallback...');
+        
+        const simpleCmd = `powershell -Command "
+          Add-Type -TypeDefinition 'using System; using System.Runtime.InteropServices; public class MsgAPI { [DllImport(\\"user32.dll\\")] public static extern uint RegisterWindowMessage(string s); [DllImport(\\"user32.dll\\")] public static extern bool PostMessage(IntPtr h, uint m, IntPtr w, IntPtr l); }'
+          \\$m = [MsgAPI]::RegisterWindowMessage('SantaFeFocus')
+          \\$r = [MsgAPI]::PostMessage([IntPtr]0xFFFF, \\$m, [IntPtr]1, [IntPtr]0)
+          'MsgID:' + \\$m + ' Result:' + \\$r
+        "`;
+        
+        const { stdout: simpleStdoutResult, stderr: simpleStderr } = await execAsync(simpleCmd, { timeout: 10000 });
+        simpleStdout = simpleStdoutResult || '';
+        console.log('Simple fallback result:', simpleStdout || '(no stdout)');
+        if (simpleStderr && simpleStderr.trim()) {
+          console.log('Simple fallback stderr:', simpleStderr);
+        }
+      }
+      
+      // Additional fallback: Create and execute a temporary C# program
+      if (!broadcastStdout?.includes('SUCCESS') && !simpleStdout?.includes('Result:True')) {
+        console.log('Previous PowerShell approaches unclear, trying C# executable fallback...');
+        
+        try {
+          const fs = require('fs');
+          const path = require('path');
+          const os = require('os');
+          
+          const tempDir = os.tmpdir();
+          const csFile = path.join(tempDir, 'SantaFeBroadcast.cs');
+          
+          // Create a simple C# program
+          const csCode = `
+using System;
+using System.Runtime.InteropServices;
+
+class Program
+{
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+    static extern uint RegisterWindowMessage(string lpString);
+    
+    [DllImport("user32.dll")]
+    static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+    
+    static void Main()
+    {
+        try
+        {
+            Console.WriteLine("Registering SantaFeFocus message...");
+            uint msgId = RegisterWindowMessage("SantaFeFocus");
+            Console.WriteLine($"Message ID: {msgId}");
+            
+            if (msgId == 0)
+            {
+                Console.WriteLine("ERROR: RegisterWindowMessage failed");
+                Environment.Exit(1);
+            }
+            
+            Console.WriteLine("Broadcasting message...");
+            bool result = PostMessage((IntPtr)0xFFFF, msgId, (IntPtr)1, IntPtr.Zero);
+            Console.WriteLine($"PostMessage result: {result}");
+            
+            if (result)
+            {
+                Console.WriteLine("SUCCESS: C# SantaFeFocus broadcast completed");
+            }
+            else
+            {
+                Console.WriteLine("ERROR: PostMessage failed");
+                Environment.Exit(1);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"EXCEPTION: {ex.Message}");
+            Environment.Exit(1);
+        }
+    }
+}`;
+          
+          // Write the C# file
+          fs.writeFileSync(csFile, csCode);
+          console.log('Created temporary C# file:', csFile);
+          
+          // Try to compile and run it using dotnet
+          console.log('Attempting to compile and run C# program using dotnet...');
+          
+          try {
+            // First, we need to create a proper .NET project structure
+            const projDir = path.join(tempDir, 'SantaFeBroadcastApp');
+            const projFile = path.join(projDir, 'SantaFeBroadcastApp.csproj');
+            const programFile = path.join(projDir, 'Program.cs');
+            
+            // Create project directory
+            if (!fs.existsSync(projDir)) {
+              fs.mkdirSync(projDir, { recursive: true });
+            }
+            
+            // Create project file
+            const csprojContent = `<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+</Project>`;
+            
+            fs.writeFileSync(projFile, csprojContent);
+            fs.writeFileSync(programFile, csCode);
+            
+            console.log('Created .NET project structure');
+            
+            // Run the program using dotnet run
+            const { stdout: runOut, stderr: runErr } = await execAsync(`dotnet run --project "${projDir}"`, { 
+              timeout: 10000,
+              cwd: projDir 
+            });
+            
+            console.log('C# program output:', runOut || '(no execution output)');
+            if (runErr && runErr.trim()) {
+              console.log('C# program stderr:', runErr);
+            }
+            
+            // Clean up project directory
+            try {
+              fs.rmSync(projDir, { recursive: true, force: true });
+            } catch (cleanupError) {
+              console.log('Project cleanup error (non-critical):', cleanupError.message);
+            }
+            
+          } catch (compileError) {
+            console.log('C# compilation/execution failed:', compileError.message);
+          }
+          
+        } catch (csError) {
+          console.log('C# fallback error:', csError.message);
+        }
+      }
+      
+      console.log('All SantaFeFocus message broadcast attempts completed.');
+      
+    } catch (broadcastError) {
+      console.warn('Warning: SantaFeFocus message broadcast failed:', broadcastError.message);
+      console.log('Registry key has been set. Paratext may need to be restarted or manually refreshed.');
+      
+      // Final fallback: Try a direct Windows command
+      try {
+        console.log('Attempting direct Windows message using msg command...');
+        const msgCmd = `msg * "SantaFeFocus registry update: ${cleanedRef}"`;
+        await execAsync(msgCmd, { timeout: 5000 });
+        console.log('Direct message command executed');
+      } catch (msgError) {
+        console.warn('Direct message command also failed:', msgError.message);
+      }
+    }
+    
+    return { success: true, reference: cleanedRef };
+  } catch (error) {
+    console.error('Error broadcasting reference:', error);
+    return { success: false, error: error.message };
+  }
+});
+
+// Helper function to clean reference format
+function cleanReference(reference) {
+  // Convert formats like "JHN1.4" to "JHN 1:4" or "MRKL12.14" to "MRK 12:14"
+  const pattern = /([123A-Z]{3})\s?(?:[LRA-G]?)(\d+)\.(\d+)/;
+  const match = reference.match(pattern);
+  if (match) {
+    const [, book, chapter, verse] = match;
+    // Remove any suffix letters from book name (like MRKL -> MRK)
+    const cleanBook = book.replace(/[LRA-G]$/, '');
+    const cleaned = `${cleanBook} ${chapter}:${verse}`;
+    console.log(`Cleaned reference: "${reference}" -> "${cleaned}"`);
+    return cleaned;
+  }
+  console.log(`Reference passed through unchanged: "${reference}"`);
+  return reference; // Return as-is if no match
+}
+
 app.whenReady().then(() => {
   console.log('=== Scripture Map Labeler Starting ===');
   console.log(`App version: ${app.getVersion()}`);
