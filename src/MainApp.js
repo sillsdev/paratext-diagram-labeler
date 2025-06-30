@@ -956,7 +956,9 @@ function MainApp({ settings, templateFolder, onExit }) {
   // Reload extracted verses for a specific term
   const handleReloadExtractedVerses = useCallback(async (termId, mergeKey) => {
     if (!projectFolder || !isInitialized) return;
-
+    
+    console.log(`Reloading extracted verses for term: ${termId}, mergeKey: ${mergeKey}`);
+    const currentSelection = selLocation; // Capture current selection at start
     const collectionId = getCollectionIdFromTemplate(mapDef.template);
     const refs = collectionManager.getRefs(mergeKey, collectionId);
     
@@ -971,49 +973,55 @@ function MainApp({ settings, templateFolder, onExit }) {
           ...verses
         }));
         console.log(`Reloaded ${Object.keys(verses).length} verses for term: ${termId}`);
+        
+        // Restore selection after a short delay to ensure state updates have completed
+        setTimeout(() => {
+          setSelLocation(currentSelection);
+          console.log(`Restored selection to index: ${currentSelection}`);
+        }, 400);
       } else {
         console.warn('Failed to reload extracted verses:', verses?.error);
       }
     } catch (error) {
       console.error('Error reloading extracted verses:', error);
     }
-  }, [projectFolder, isInitialized, mapDef.template]);
+  }, [projectFolder, isInitialized, mapDef.template, selLocation]);
 
-  const handleCreateRendering = useCallback(
-    (text, isGuessed) => {
-      if (!locations[selLocation]) return;
-      const termId = locations[selLocation].termId;
-      const newRenderings = text.trim();
-      setRenderings(newRenderings);
-      const updatedData = { ...termRenderings };
-      updatedData[termId] = {
-        ...updatedData[termId],
-        renderings: newRenderings,
-        isGuessed,
-      };
-      setTermRenderings(updatedData);
-      setIsApproved(!isGuessed);
-      setLocations(prevLocations =>
-        prevLocations.map(loc => {
-          if (loc.termId === termId) {
-            const status = getStatus(
-              updatedData,
-              loc.termId,
-              loc.vernLabel,
-              collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
-              extractedVerses
-            );
-            return { ...loc, status };
-          }
-          return loc;
-        })
-      );
-      setTimeout(() => {
-        if (renderingsTextareaRef.current) renderingsTextareaRef.current.focus();
-      }, 0);
-    },
-    [selLocation, locations, termRenderings, extractedVerses, mapDef.template]
-  );
+  // const handleCreateRendering = useCallback(
+  //   (text, isGuessed) => {
+  //     if (!locations[selLocation]) return;
+  //     const termId = locations[selLocation].termId;
+  //     const newRenderings = text.trim();
+  //     setRenderings(newRenderings);
+  //     const updatedData = { ...termRenderings };
+  //     updatedData[termId] = {
+  //       ...updatedData[termId],
+  //       renderings: newRenderings,
+  //       isGuessed,
+  //     };
+  //     setTermRenderings(updatedData);
+  //     setIsApproved(!isGuessed);
+  //     setLocations(prevLocations =>
+  //       prevLocations.map(loc => {
+  //         if (loc.termId === termId) {
+  //           const status = getStatus(
+  //             updatedData,
+  //             loc.termId,
+  //             loc.vernLabel,
+  //             collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+  //             extractedVerses
+  //           );
+  //           return { ...loc, status };
+  //         }
+  //         return loc;
+  //       })
+  //     );
+  //     setTimeout(() => {
+  //       if (renderingsTextareaRef.current) renderingsTextareaRef.current.focus();
+  //     }, 0);
+  //   },
+  //   [selLocation, locations, termRenderings, extractedVerses, mapDef.template]
+  // );
 
   // Add global PageUp/PageDown navigation for Map and Table views
   useEffect(() => {
