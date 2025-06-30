@@ -41,9 +41,8 @@ export default function TableView({
             <th style={{ textAlign: 'left' }}>{inLang(uiStr.found, lang)}</th>
             <th>{inLang(uiStr.status, lang)}</th>
           </tr>
-        </thead>{' '}
+        </thead>
         <tbody>
-          {' '}
           {locations
             .filter(loc => isLocationVisible(loc, selectedVariant))
             .map((loc, i) => {

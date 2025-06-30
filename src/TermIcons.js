@@ -56,10 +56,10 @@ export function WarningIcon() {
         <text
           x="50%"
           y="60%"
-          text-anchor="middle"
+          textAnchor="middle"
           fill="#FFFFFF"
-          font-size="12"
-          font-weight="bold"
+          fontSize="12"
+          fontWeight="bold"
           dy=".3em"
         >
           !
