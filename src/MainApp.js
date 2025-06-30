@@ -347,6 +347,23 @@ function MainApp({ settings, templateFolder, onExit }) {
     }
   }, [projectFolder, isInitialized]);
 
+  // Update renderings and approval status when selected location or term renderings change
+  useEffect(() => {
+    if (!termRenderings || !locations.length || selLocation >= locations.length) return;
+    
+    const currentLocation = locations[selLocation];
+    if (!currentLocation) return;
+    
+    const entry = termRenderings[currentLocation.termId];
+    if (entry) {
+      setRenderings(entry.renderings);
+      setIsApproved(!entry.isGuessed);
+    } else {
+      setRenderings('');
+      setIsApproved(false);
+    }
+  }, [selLocation, termRenderings, locations]);
+
   // Handler to set the selected location (e.g. Label clicked)
   const handleSelectLocation = useCallback(
     location => {
