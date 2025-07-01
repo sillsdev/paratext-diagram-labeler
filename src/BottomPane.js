@@ -349,7 +349,7 @@ function BottomPane({
                               console.error('Error broadcasting reference:', error);
                               alert(`Error sending reference to Paratext: ${error.message}`);
                             }
-                            alert(`Please go edit ${prettyRef(refId)} in Paratext, and then click "OK" refresh the verse text here.`);
+                            alert(`1. Go to Paratext and edit ${prettyRef(refId)}.\n2. Save your changes in Paratext.\n3. Come back here and click "OK" to refresh the verse text from Paratext.`);
                             // Reload the extracted verses to reflect changes
                             if (onReloadExtractedVerses) {
                               await onReloadExtractedVerses(termId, mergeKey);
