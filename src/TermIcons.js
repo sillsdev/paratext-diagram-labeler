@@ -80,3 +80,35 @@ export function NoneIcon() {
     </svg>
   );
 }
+
+// ShowAllIcon: Gray filter with black diagonal slash
+export function ShowAllIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" style={{ verticalAlign: 'middle' }}>
+      <path d="M3 6h14l-4 4v6l-2-2v-4L3 6z" fill="#666" stroke="#666" strokeWidth="1"/>
+      <path d="M4 4 L16 16" stroke="#000" strokeWidth="2" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+// ShowMissingIcon: Gray filter with red X at base
+export function ShowMissingIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" style={{ verticalAlign: 'middle' }}>
+      <path d="M3 6h14l-4 4v6l-2-2v-4L3 6z" fill="#666" stroke="#666" strokeWidth="1"/>
+      <g transform="translate(10, 14) scale(0.3)">
+        <path d="M-3 -3 L3 3 M3 -3 L-3 3" stroke="#e70000" strokeWidth="2" strokeLinecap="round"/>
+      </g>
+    </svg>
+  );
+}
+
+// ShowUniqueIcon: Gray filter with green "1" at base
+export function ShowUniqueIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" style={{ verticalAlign: 'middle' }}>
+      <path d="M3 6h14l-4 4v6l-2-2v-4L3 6z" fill="#666" stroke="#666" strokeWidth="1"/>
+      <text x="10" y="17" textAnchor="middle" fill="#00a000" fontSize="8" fontWeight="bold">1</text>
+    </svg>
+  );
+}

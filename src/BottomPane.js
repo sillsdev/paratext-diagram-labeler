@@ -1,10 +1,15 @@
 import React from 'react';
 import { FaPencilAlt } from 'react-icons/fa';
 import uiStr from './data/ui-strings.json';
-import { CheckmarkIcon, DeniedCheckmarkIcon, CrossIcon, NoneIcon } from './TermIcons';
+import { CheckmarkIcon, DeniedCheckmarkIcon, CrossIcon, NoneIcon, ShowAllIcon, ShowMissingIcon, ShowUniqueIcon } from './TermIcons';
 import { MATCH_PRE_B, MATCH_POST_B, MATCH_W } from './constants.js';
 import { collectionManager } from './CollectionManager';
 import { inLang, prettyRef } from './Utils.js';
+
+// Filter mode constants
+const FILTER_SHOW_ALL = 'all';
+const FILTER_SHOW_MISSING = 'missing';
+const FILTER_SHOW_UNIQUE = 'unique';
 
 // Bottom Pane component to display a scrollable list of verses referencing the termId
 function BottomPane({
@@ -26,7 +31,7 @@ function BottomPane({
   const [selectedText, setSelectedText] = React.useState('');
   // Add a local state to force re-render on denial toggle
   const [denialToggle, setDenialToggle] = React.useState(false);
-  const [showOnlyMissing, setShowOnlyMissing] = React.useState(false);
+  const [filterMode, setFilterMode] = React.useState(FILTER_SHOW_ALL);
 
   React.useEffect(() => {
     function handleSelectionChange() {
@@ -166,44 +171,73 @@ function BottomPane({
         <span>
           {inLang(uiStr.found, lang)}: {matchCount}/{nonEmptyRefCt}
         </span>{' '}
-        <button
-          style={{
-            marginLeft: 8,
-            fontSize: 13,
-            padding: '4px 4px',
-            borderRadius: 4,
-            background: showOnlyMissing ? '#d0eaff' : undefined,
-            border: showOnlyMissing ? '2px inset #2196f3' : '1px solid #b2dfdb',
-            cursor: 'pointer',
-            height: 22,
-            minWidth: 22,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-          onClick={() => setShowOnlyMissing(!showOnlyMissing)}
-          title={
-            showOnlyMissing
-              ? inLang(uiStr.showAllVerses, lang)
-              : inLang(uiStr.showOnlyMissing, lang)
-          }
-        >
-          {/* Filter icon (SVG) */}
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 20 20"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+        <div style={{ display: 'flex', marginLeft: 8 }}>
+          {/* Show All Button */}
+          <button
+            style={{
+              fontSize: 13,
+              padding: '4px 4px',
+              borderRadius: '4px 0 0 4px',
+              background: filterMode === FILTER_SHOW_ALL ? '#d0eaff' : undefined,
+              border: filterMode === FILTER_SHOW_ALL ? '2px inset #2196f3' : '1px solid #b2dfdb',
+              cursor: 'pointer',
+              height: 22,
+              minWidth: 22,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            onClick={() => setFilterMode(FILTER_SHOW_ALL)}
+            title={inLang(uiStr.showAllVerses, lang)}
           >
-            <path
-              d="M3 6h14l-4 4v6l-2-2v-4L3 6z"
-              fill={showOnlyMissing ? '#1976d2' : '#666'}
-              stroke={showOnlyMissing ? '#1976d2' : '#666'}
-              strokeWidth="1"
-            />
-          </svg>
-        </button>
+            <ShowAllIcon />
+          </button>
+          
+          {/* Show Missing Button */}
+          <button
+            style={{
+              fontSize: 13,
+              padding: '4px 4px',
+              borderRadius: 0,
+              background: filterMode === FILTER_SHOW_MISSING ? '#d0eaff' : undefined,
+              border: filterMode === FILTER_SHOW_MISSING ? '2px inset #2196f3' : '1px solid #b2dfdb',
+              cursor: 'pointer',
+              height: 22,
+              minWidth: 22,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            onClick={() => setFilterMode(FILTER_SHOW_MISSING)}
+            title={inLang(uiStr.showOnlyMissing, lang)}
+          >
+            <ShowMissingIcon />
+          </button>
+          
+          {/* Show Unique Button */}
+          <button
+            style={{
+              fontSize: 13,
+              padding: '4px 4px',
+              borderRadius: '0 4px 4px 0',
+              background: filterMode === FILTER_SHOW_UNIQUE ? '#d0eaff' : undefined,
+              border: filterMode === FILTER_SHOW_UNIQUE ? '2px inset #2196f3' : '1px solid #b2dfdb',
+              cursor: 'pointer',
+              height: 22,
+              minWidth: 22,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            onClick={() => {
+              setFilterMode(FILTER_SHOW_UNIQUE);
+              // Note: unique forms are now calculated per-render, no state reset needed
+            }}
+            title={inLang(uiStr.showUniqueForms, lang)}
+          >
+            <ShowUniqueIcon />
+          </button>
+        </div>
         {selectedText && (
           <>
             <button
@@ -255,8 +289,12 @@ function BottomPane({
                 </td>
               </tr>
             ) : (
-              refs
-                .map((refId, i) => {
+              (() => {
+                // Pre-calculate unique forms for FILTER_SHOW_UNIQUE mode
+                const currentSeenForms = new Set();
+                const filteredRefs = [];
+                
+                refs.forEach((refId, i) => {
                   // Reference denialToggle to force re-render
                   void denialToggle;
                   const verse = extractedVerses[refId] || '';
@@ -264,12 +302,39 @@ function BottomPane({
                   const isDenied = deniedRefs.includes(refId);
 
                   // Apply filtering logic
-                  if (showOnlyMissing) {
-                    // Only show if verse exists, no match, and not denied
-                    if (!(verse && !hasMatch && !isDenied)) {
-                      return null; // Skip this row
+                  let shouldShow = true;
+                  
+                  if (filterMode === FILTER_SHOW_MISSING) {
+                    shouldShow = verse && !hasMatch && !isDenied;
+                  } else if (filterMode === FILTER_SHOW_UNIQUE) {
+                    if (!hasMatch || !verse) {
+                      shouldShow = false;
+                    } else {
+                      // Extract matched text (case-insensitive, preserve diacritics/punctuation)
+                      let matchedText = null;
+                      for (const regex of renderingList) {
+                        const match = verse.match(regex);
+                        if (match) {
+                          matchedText = match[0].toLowerCase();
+                          break;
+                        }
+                      }
+                      
+                      if (!matchedText || currentSeenForms.has(matchedText)) {
+                        shouldShow = false;
+                      } else {
+                        currentSeenForms.add(matchedText);
+                      }
                     }
                   }
+                  // FILTER_SHOW_ALL shows everything (existing behavior)
+                  
+                  if (shouldShow) {
+                    filteredRefs.push({ refId, i, verse, hasMatch, isDenied });
+                  }
+                });
+
+                return filteredRefs.map(({ refId, i, verse, hasMatch, isDenied }) => {
 
                   // Handler must be in this scope
                   const handleToggleDenied = () => {
@@ -377,8 +442,8 @@ function BottomPane({
                       </td>
                     </tr>
                   );
-                })
-                .filter(Boolean) // Remove null values from filtered results
+                });
+              })() // Close the IIFE
             )}
           </tbody>
         </table>

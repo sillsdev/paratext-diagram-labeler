@@ -127,6 +127,7 @@
   "tally": { "en": "Tally", "es": "Conteo", "fr": "Total", "ne": "गणना" },
   "showOnlyMissing": { "en": "Show only verses without matching renderings", "es": "Mostrar solo versículos sin renderizaciones coincidentes", "fr": "Afficher uniquement les versets sans traductions correspondantes", "ne": "मिल्दो अनुवाद नभएका पदहरू मात्र देखाउनुहोस्" },
   "showAllVerses": { "en": "Show all verses", "es": "Mostrar todos los versículos", "fr": "Afficher tous les versets", "ne": "सबै पदहरू देखाउनुहोस्" },
+  "showUniqueForms": { "en": "Show unique forms", "es": "Mostrar formas únicas", "fr": "Afficher les formes uniques", "ne": "अनूठो रूपहरू देखाउनुहोस्" },
   "showTallyFractions": { "en": "Show tally fractions", "es": "Mostrar fracciones del conteo", "fr": "Afficher les fractions du total", "ne": "गणना भिन्नहरू देखाउनुहोस्" },
   "templateInfo": { "en": "Template info", "es": "Información de la plantilla", "fr": "Infos du modèle", "ne": "टेम्प्लेट जानकारी" },
   "termRenderings": { "en": "Term Renderings", "es": "Renderizaciones de Términos", "fr": "Rendus des Termes", "ne": "शब्द अनुवादहरू" },  "usageRules": { "en": "Usage and Attribution Rules", "es": "Reglas de uso y atribución", "fr": "Règles d'utilisation et d'attribution", "ne": "प्रयोग र श्रेय नियमहरू" },
