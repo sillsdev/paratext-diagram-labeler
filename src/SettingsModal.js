@@ -1,6 +1,7 @@
 import supportedLanguages from './data/ui-languages.json';
 import { inLang } from './Utils.js';
 import uiStr from './data/ui-strings.json';
+import packageInfo from '../package.json';
 
 // Settings Modal Dialog
 export default function SettingsModal({ open, onClose, labelScale, setLabelScale, lang, setLang, showFrac, setShowFrac }) {
@@ -86,6 +87,19 @@ export default function SettingsModal({ open, onClose, labelScale, setLabelScale
             {inLang(uiStr.showTallyFractions, lang)}
           </label>
         </div>
+        
+        {/* Version information */}
+        <div style={{ 
+          marginTop: 20, 
+          paddingTop: 16, 
+          borderTop: '1px solid #eee',
+          fontSize: '0.85em',
+          color: '#666',
+          textAlign: 'center'
+        }}>
+          Scripture Map Labeler v{packageInfo.version}
+        </div>
+        
         <div style={{ textAlign: 'center' }}>
           <button onClick={onClose} style={{ fontSize: 15, padding: '4px 16px', borderRadius: 4 }}>
             {inLang(uiStr.close, lang)}
