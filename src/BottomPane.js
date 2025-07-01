@@ -116,15 +116,13 @@ function BottomPane({
     return text;
   }
 
-  // Compute match tally
+  // Compute match tally and filter-specific counts
   let deniedRefs = termRenderings[termId]?.denials || [];
-  // if (deniedRefs.length !== 0) {
-  //   console.log(`Term "${termId}" has denied references:`, deniedRefs);
-  // } else {
-  //   console.log(`compute match tally for ${termId}`, termRenderings);
-  // }
   let matchCount = 0;
   let nonEmptyRefCt = 0; // Count of non-empty references
+  let missingCount = 0; // Count of missing (non-matching, non-denied) verses
+  let uniqueCount = 0; // Count of unique forms (calculated separately)
+  
   const matchResults = refs.map(refId => {
     const verse = extractedVerses[refId] || '';
     if (!verse) {
@@ -133,9 +131,40 @@ function BottomPane({
     }
     nonEmptyRefCt++;
     const hasMatch = renderingList.some(r => r.test(verse));
-    if (hasMatch || deniedRefs.includes(refId)) matchCount++;
+    const isDenied = deniedRefs.includes(refId);
+    
+    if (hasMatch || isDenied) {
+      matchCount++;
+    } else {
+      missingCount++;
+    }
+    
     return hasMatch;
   });
+
+  // Calculate unique forms count for Show Unique mode
+  if (filterMode === FILTER_SHOW_UNIQUE) {
+    const seenForms = new Set();
+    refs.forEach((refId, i) => {
+      const verse = extractedVerses[refId] || '';
+      const hasMatch = matchResults[i];
+      
+      if (hasMatch && verse) {
+        // Extract matched text (case-insensitive, preserve diacritics/punctuation)
+        for (const regex of renderingList) {
+          const match = verse.match(regex);
+          if (match) {
+            const matchedText = match[0].toLowerCase();
+            if (!seenForms.has(matchedText)) {
+              seenForms.add(matchedText);
+              uniqueCount++;
+            }
+            break;
+          }
+        }
+      }
+    });
+  }
 
   return (
     <div
@@ -168,10 +197,7 @@ function BottomPane({
           minHeight: 28,
         }}
       >
-        <span>
-          {inLang(uiStr.found, lang)}: {matchCount}/{nonEmptyRefCt}
-        </span>{' '}
-        <div style={{ display: 'flex', marginLeft: 8 }}>
+        <div style={{ display: 'flex' }}>
           {/* Show All Button */}
           <button
             style={{
@@ -238,11 +264,16 @@ function BottomPane({
             <ShowUniqueIcon />
           </button>
         </div>
+        <span style={{ marginLeft: 8 }}>
+          {filterMode === FILTER_SHOW_ALL && `${inLang(uiStr.found, lang)}: ${matchCount}/${nonEmptyRefCt}`}
+          {filterMode === FILTER_SHOW_MISSING && `${inLang(uiStr.missing, lang)}: ${missingCount}/${nonEmptyRefCt}`}
+          {filterMode === FILTER_SHOW_UNIQUE && `${inLang(uiStr.unique, lang)}: ${uniqueCount}`}
+        </span>
         {selectedText && (
           <>
             <button
               style={{
-                marginLeft: 8,
+                marginLeft: 16,
                 fontSize: 13,
                 padding: '1px 6px',
                 borderRadius: 4,
