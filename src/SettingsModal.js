@@ -92,12 +92,13 @@ export default function SettingsModal({ open, onClose, labelScale, setLabelScale
         <div style={{ 
           marginTop: 20, 
           paddingTop: 16, 
+          paddingBottom: 16,
           borderTop: '1px solid #eee',
           fontSize: '0.85em',
           color: '#666',
           textAlign: 'center'
         }}>
-          Scripture Map Labeler v{packageInfo.version}
+          Scripture Map Labeler: React app v. {packageInfo.version}-alpha
         </div>
         
         <div style={{ textAlign: 'center' }}>
