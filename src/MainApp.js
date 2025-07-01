@@ -294,8 +294,9 @@ function MainApp({ settings, templateFolder, onExit }) {
               });
             }
           });
-          if (mapDef.labels && mapDef.labels.length > 0) {
-            setSelLocation(0); // Select first location directly
+          // Only set selection to 0 if no valid selection exists
+          if (mapDef.labels && mapDef.labels.length > 0 && (selLocation >= mapDef.labels.length || selLocation < 0)) {
+            setSelLocation(0); // Select first location only if current selection is invalid
           }
         } else {
           alert(
@@ -953,39 +954,32 @@ function MainApp({ settings, templateFolder, onExit }) {
     [selLocation, locations, termRenderings, extractedVerses, mapDef.template]
   );
 
-  // Reload extracted verses for a specific term
+  // Reload extracted verses for all terms (after Paratext edits)
   const handleReloadExtractedVerses = useCallback(async (termId, mergeKey) => {
     if (!projectFolder || !isInitialized) return;
     
-    console.log(`Reloading extracted verses for term: ${termId}, mergeKey: ${mergeKey}`);
-    const currentSelection = selLocation; // Capture current selection at start
-    const collectionId = getCollectionIdFromTemplate(mapDef.template);
-    const refs = collectionManager.getRefs(mergeKey, collectionId);
+    console.log(`Reloading all extracted verses after editing term: ${termId}, mergeKey: ${mergeKey}`);
     
-    if (!refs.length) return;
+    // Get all refs for the entire map (not just the specific term)
+    const collectionId = getCollectionIdFromTemplate(mapDef.template);
+    const allRefs = getRefList(mapDef.labels, collectionId);
+    
+    if (!allRefs.length) return;
 
     try {
-      const verses = await electronAPI.getFilteredVerses(projectFolder, refs);
+      const verses = await electronAPI.getFilteredVerses(projectFolder, allRefs);
       if (verses && !verses.error) {
-        // Update only the verses for the specified references
-        setExtractedVerses(prevVerses => ({
-          ...prevVerses,
-          ...verses
-        }));
-        console.log(`Reloaded ${Object.keys(verses).length} verses for term: ${termId}`);
+        // Only update extracted verses state - the useEffect will handle location status updates
+        setExtractedVerses(verses);
         
-        // Restore selection after a short delay to ensure state updates have completed
-        setTimeout(() => {
-          setSelLocation(currentSelection);
-          console.log(`Restored selection to index: ${currentSelection}`);
-        }, 400);
+        console.log(`Reloaded ${Object.keys(verses).length} verses for entire map`);
       } else {
         console.warn('Failed to reload extracted verses:', verses?.error);
       }
     } catch (error) {
       console.error('Error reloading extracted verses:', error);
     }
-  }, [projectFolder, isInitialized, mapDef.template, selLocation]);
+  }, [projectFolder, isInitialized, mapDef.template, mapDef.labels]);
 
   // const handleCreateRendering = useCallback(
   //   (text, isGuessed) => {
@@ -1226,6 +1220,27 @@ function MainApp({ settings, templateFolder, onExit }) {
     },
     [locations, selLocation]
   );
+
+  // Update location statuses when extractedVerses change (without affecting selection)
+  useEffect(() => {
+    if (!termRenderings || !locations.length || !mapDef.template) return;
+    
+    // Update all location statuses based on the current extractedVerses
+    setLocations(prevLocations => {
+      return prevLocations.map(loc => {
+        const status = getStatus(
+          termRenderings,
+          loc.termId,
+          loc.vernLabel || '',
+          collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+          extractedVerses
+        );
+        return { ...loc, status };
+      });
+    });
+    
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [extractedVerses, termRenderings, mapDef.template]); // locations intentionally omitted to prevent infinite loop
 
   return (
     <div className="app-container">

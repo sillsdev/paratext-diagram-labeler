@@ -14,6 +14,7 @@ export const AutocorrectTextarea = forwardRef(({ value, onChange, ...props }, ex
     const result = autocorrectService.applyAutocorrect(newValue, cursorPosition, false);
     
     if (result.modified) {
+      console.log('AutocorrectTextarea: text was modified by autocorrect');
       // Update cursor position after React re-renders
       setTimeout(() => {
         const targetRef = externalRef || textareaRef;
@@ -27,6 +28,7 @@ export const AutocorrectTextarea = forwardRef(({ value, onChange, ...props }, ex
         onChange({ target: { value: result.text } });
       }
     } else {
+      console.log('AutocorrectTextarea: text not modified, calling parent onChange');
       if (onChange) {
         onChange(e);
       }
@@ -38,6 +40,9 @@ export const AutocorrectTextarea = forwardRef(({ value, onChange, ...props }, ex
       ref={externalRef || textareaRef}
       value={value}
       onChange={handleChange}
+      onFocus={() => console.log('AutocorrectTextarea FOCUS event')}
+      onBlur={() => console.log('AutocorrectTextarea BLUR event')}
+      onKeyDown={(e) => console.log('AutocorrectTextarea KEYDOWN:', e.key)}
       {...props}
     />
   );
