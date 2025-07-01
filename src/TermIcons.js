@@ -81,12 +81,13 @@ export function NoneIcon() {
   );
 }
 
-// ShowAllIcon: Gray filter with black diagonal slash
+// ShowAllIcon: Gray filter with diagonal slash inside a circle
 export function ShowAllIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" style={{ verticalAlign: 'middle' }}>
       <path d="M3 6h14l-4 4v6l-2-2v-4L3 6z" fill="#666" stroke="#666" strokeWidth="1"/>
-      <path d="M4 4 L16 16" stroke="#000" strokeWidth="2" strokeLinecap="round"/>
+      <circle cx="10" cy="10" r="9" fill="none" stroke="#000" strokeWidth="1.5"/>
+      <path d="M16 4 L4 16" stroke="#000" strokeWidth="2" strokeLinecap="round"/>
     </svg>
   );
 }
@@ -96,19 +97,19 @@ export function ShowMissingIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" style={{ verticalAlign: 'middle' }}>
       <path d="M3 6h14l-4 4v6l-2-2v-4L3 6z" fill="#666" stroke="#666" strokeWidth="1"/>
-      <g transform="translate(10, 14) scale(0.3)">
+      <g transform="translate(4, 14) scale(0.9)">
         <path d="M-3 -3 L3 3 M3 -3 L-3 3" stroke="#e70000" strokeWidth="2" strokeLinecap="round"/>
       </g>
     </svg>
   );
 }
 
-// ShowUniqueIcon: Gray filter with green "1" at base
+// ShowUniqueIcon: Gray filter with green "1" at base (larger and moved left)
 export function ShowUniqueIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" style={{ verticalAlign: 'middle' }}>
       <path d="M3 6h14l-4 4v6l-2-2v-4L3 6z" fill="#666" stroke="#666" strokeWidth="1"/>
-      <text x="10" y="17" textAnchor="middle" fill="#00a000" fontSize="8" fontWeight="bold">1</text>
+      <text x="4  " y="17" textAnchor="middle" fill="#00a000" fontSize="11" fontWeight="bold">1</text>
     </svg>
   );
 }
