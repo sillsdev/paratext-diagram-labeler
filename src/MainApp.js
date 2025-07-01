@@ -270,7 +270,8 @@ function MainApp({ settings, templateFolder, onExit }) {
               // If no previous locations, initialize from mapDef
               return mapDef.labels.map(loc => {
                 if (!loc.vernLabel) {
-                  loc.vernLabel = getMapForm(newTermRenderings, loc.termId);
+                  const altTermIds = collectionManager.getAltTermIds(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template));
+                  loc.vernLabel = getMapForm(newTermRenderings, loc.termId, altTermIds);
                 }
                 const status = getStatus(
                   newTermRenderings,
@@ -711,7 +712,8 @@ function MainApp({ settings, templateFolder, onExit }) {
           if (labels[loc.mergeKey]) {
             loc.vernLabel = labels[loc.mergeKey]; // Use label from data merge if available
           } else if (!loc.vernLabel) {
-            loc.vernLabel = getMapForm(currentTermRenderings, loc.termId);
+            const altTermIds = collectionManager.getAltTermIds(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template));
+            loc.vernLabel = getMapForm(currentTermRenderings, loc.termId, altTermIds);
           }
 
           const status = getStatus(
@@ -824,7 +826,8 @@ function MainApp({ settings, templateFolder, onExit }) {
 
       const initialLocations = newMap.labels.map(loc => {
         if (!loc.vernLabel) {
-          loc.vernLabel = getMapForm(currentTermRenderings, loc.termId);
+          const altTermIds = collectionManager.getAltTermIds(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template));
+          loc.vernLabel = getMapForm(currentTermRenderings, loc.termId, altTermIds);
         }
         const status = getStatus(
           currentTermRenderings,

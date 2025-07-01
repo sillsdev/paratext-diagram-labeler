@@ -260,7 +260,7 @@ class CollectionManager {
   }
 
   // Placenames access methods with collection ID parameter
-  getGloss(mergeKey, collectionId = 'SMR') {
+  getGloss(mergeKey, collectionId) {
     const placenames = this.getPlacenames(collectionId);
     const entry = placenames[mergeKey];
     if (!entry) {
@@ -298,6 +298,15 @@ class CollectionManager {
       return '';
     }
     return entry.context || '';
+  }
+
+  getAltTermIds(mergeKey, collectionId = 'SMR') {
+    const placenames = this.getPlacenames(collectionId);
+    const entry = placenames[mergeKey];
+    if (!entry || !entry.altTermIds) {
+      return '';
+    }
+    return entry.altTermIds;
   }
 
   getTransliteration(mergeKey, collectionId = 'SMR') {

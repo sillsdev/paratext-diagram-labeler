@@ -20,35 +20,35 @@ class TermRenderings {
     this.data = data;
   }
 
-  getMapForm(termId) {
-    const entry = this.data[termId];
-    if (!entry) {
-      //console.warn(`TermId "${termId}" not found in term renderings`);
-      return '';
-    }
-    let renderingsStr = entry.renderings;
-    // Eliminate all asterisks
-    renderingsStr = renderingsStr.replace(/\*/g, '');
+  // getMapForm(termId) {
+  //   const entry = this.data[termId];
+  //   if (!entry) {
+  //     //console.warn(`TermId "${termId}" not found in term renderings`);
+  //     return '';
+  //   }
+  //   let renderingsStr = entry.renderings;
+  //   // Eliminate all asterisks
+  //   renderingsStr = renderingsStr.replace(/\*/g, '');
 
-    // Check for explicit map form (e.g., (@misradesh) or (map: misradesh))
-    const match = renderingsStr.match(/\((?:@|map:\s*)([^)]+)\)/);
-    if (match) {
-      return match[1];
-    }
+  //   // Check for explicit map form (e.g., (@misradesh) or (map: misradesh))
+  //   const match = renderingsStr.match(/\((?:@|map:\s*)([^)]+)\)/);
+  //   if (match) {
+  //     return match[1];
+  //   }
 
-    // Split into separate rendering items
-    const items = renderingsStr.replace(/\|\|/g, '\n').split(/(\r?\n)/);
-    // console.log(`Split renderings for termId "${termId}":`, items);
-    // Process each item: remove parentheses and their contents, trim space
-    const processedItems = items
-      .map(item => {
-        return item.replace(/\([^)]*\)/g, '').trim();
-      })
-      .filter(item => item.length > 0);
+  //   // Split into separate rendering items
+  //   const items = renderingsStr.replace(/\|\|/g, '\n').split(/(\r?\n)/);
+  //   // console.log(`Split renderings for termId "${termId}":`, items);
+  //   // Process each item: remove parentheses and their contents, trim space
+  //   const processedItems = items
+  //     .map(item => {
+  //       return item.replace(/\([^)]*\)/g, '').trim();
+  //     })
+  //     .filter(item => item.length > 0);
 
-    // Join with em-dash and return
-    return processedItems.join('—');
-  }
+  //   // Join with em-dash and return
+  //   return processedItems.join('—');
+  // }
 
   /* getStatusX(termId, vernLabel, refs=[], extractedVerses=[]) {
     // if (termId === "philipstravels_title") {

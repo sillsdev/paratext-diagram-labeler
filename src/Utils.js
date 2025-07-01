@@ -128,7 +128,7 @@ export function getStatus(termRenderings, termId, vernLabel, refs, extractedVers
     return STATUS_NO_RENDERINGS; // { status: "No renderings", color: "indianred" };
   }
 
-  const mapForm = getMapForm(termRenderings, termId);
+  const mapForm = getMapFormStrict(termRenderings, termId);
   if (!mapForm) {
     return STATUS_NO_RENDERINGS; // { status: "No renderings", color: "indianred" };
   }
@@ -158,10 +158,27 @@ export function getStatus(termRenderings, termId, vernLabel, refs, extractedVers
     : STATUS_UNMATCHED; 
 }
 
-export function getMapForm(termRenderings, termId) {
+export function getMapForm(termRenderings, termId, altTermIds) {
+  const strictForm = getMapFormStrict(termRenderings, termId);
+  if (strictForm) {
+    return strictForm;
+  }
+  if (!altTermIds) {
+    return '';
+  }
+  const altTermIdList = altTermIds.split(/\s*,\s*/);
+  for (const altTermId of altTermIdList) {
+    const altForm = getMapFormStrict(termRenderings, altTermId);
+    if (altForm) {
+      return altForm;
+    }
+  }
+  return '';
+}
+
+function getMapFormStrict(termRenderings, termId) {
   const entry = termRenderings[termId];
   if (!entry) {
-    //console.warn(`TermId "${termId}" not found in term renderings`);
     return '';
   }
   let renderingsStr = entry.renderings || '';

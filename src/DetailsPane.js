@@ -184,7 +184,8 @@ export default function DetailsPane({
     // Update the vernacular input using getMapForm
     if (selLocation >= 0 && selLocation < locations.length) {
       const currentLocation = locations[selLocation];
-      const mapForm = getMapForm(termRenderings, currentLocation.termId);
+      const altTermIds = collectionManager.getAltTermIds(locations[selLocation]?.mergeKey, getCollectionIdFromTemplate(mapDef.template));
+      const mapForm = getMapForm(termRenderings, currentLocation.termId, altTermIds);
       setVernacularValue(mapForm);
       onUpdateVernacular(currentLocation.termId, mapForm);
     }
