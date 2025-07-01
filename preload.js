@@ -29,4 +29,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   readFile: (filePath) => ipcRenderer.invoke('read-file', filePath),
 
   broadcastReference: (reference) => ipcRenderer.invoke('broadcast-reference', reference),
+
+  restoreWindowFocus: () => ipcRenderer.invoke('restore-window-focus'),
 });

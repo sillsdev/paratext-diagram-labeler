@@ -15,8 +15,8 @@ import { collectionManager, getCollectionIdFromTemplate } from './CollectionMana
 import { getMapDef } from './MapData';
 import { inLang, statusValue, getMapForm, wordMatchesRenderings } from './Utils.js';
 import { settingsService } from './services/SettingsService.js';
-import { useAutocorrect } from './hooks/useAutocorrect';
 import { AutocorrectTextarea } from './components/AutocorrectTextarea';
+import { useAutocorrect } from './hooks/useAutocorrect';
 
 export default function DetailsPane({
   selLocation,
@@ -43,16 +43,6 @@ export default function DetailsPane({
   selectedVariant = 0,
   onVariantChange,
 }) {
-  // Use autocorrect hook for vernacular input
-  const {
-    value: vernacular,
-    setValue: setVernacular,
-    handleChange: handleVernacularChange,
-    inputRef: autocorrectInputRef
-  } = useAutocorrect(locations[selLocation]?.vernLabel || '', (e) => {
-    const newVernacular = e.target.value; // Remove manual parentheses replacement
-    onUpdateVernacular(locations[selLocation].termId, newVernacular);
-  });
   const [localIsApproved, setLocalIsApproved] = useState(isApproved);
   const [localRenderings, setLocalRenderings] = useState(renderings);
   const [showTemplateInfo, setShowTemplateInfo] = useState(false);
@@ -82,25 +72,51 @@ export default function DetailsPane({
     loadTemplateData();
   }, [mapDef.template]);
 
+  // Simplified vernacular state management for debugging
+  // const [localVernacular, setLocalVernacular] = useState(locations[selLocation]?.vernLabel || '');
+
+  // Re-enable autocorrect hook for vernacular input
+  const {
+    value: vernacularValue,
+    setValue: setVernacularValue,
+    handleChange: handleVernacularChange,
+    textareaRef: vernacularAutocorrectRef,
+  } = useAutocorrect(locations[selLocation]?.vernLabel || '', text => {
+    console.log('DetailsPane: Vernacular changing to', text);
+    onUpdateVernacular(locations[selLocation].termId, text);
+  });
+
+  // const vernacularAutocorrectRef = useRef(null);
+
   const prevSelLocationRef = useRef(selLocation);
   
+  // Forward the ref from useAutocorrect to the external vernacularInputRef
   useEffect(() => {
-    setVernacular(locations[selLocation]?.vernLabel || '');
+    if (vernacularInputRef && vernacularAutocorrectRef.current) {
+      vernacularInputRef.current = vernacularAutocorrectRef.current;
+    }
+  }, [vernacularInputRef, vernacularAutocorrectRef]);
+  
+  useEffect(() => {
+    // Sync local vernacular when selection changes
+    const newVernacular = locations[selLocation]?.vernLabel || '';
+    setVernacularValue(newVernacular);
     setLocalIsApproved(isApproved);
     setLocalRenderings(renderings);
-  }, [selLocation, isApproved, renderings, locations, setVernacular]);
+  }, [selLocation, isApproved, renderings, locations, setVernacularValue]);
 
   useEffect(() => {
     // Only focus when selLocation actually changes and we're in MAP_VIEW
     if (prevSelLocationRef.current !== selLocation && mapPaneView === MAP_VIEW) {
       prevSelLocationRef.current = selLocation;
-      if (vernacularInputRef && vernacularInputRef.current) {
-        vernacularInputRef.current.focus();
+      if (vernacularAutocorrectRef && vernacularAutocorrectRef.current) {
+        console.log('Focusing vernacular input for location:', selLocation);
+        vernacularAutocorrectRef.current.focus();
       }
     } else if (prevSelLocationRef.current !== selLocation) {
       prevSelLocationRef.current = selLocation;
     }
-  }, [selLocation, mapPaneView, vernacularInputRef]);
+  }, [selLocation, mapPaneView, vernacularAutocorrectRef]);
 
   // Use the status from the location object which is already calculated in App.js
   // This is more reliable than recalculating it here
@@ -136,8 +152,8 @@ export default function DetailsPane({
   const onAddMapForm = () => {
     // This function is called when the user clicks the "Add Map" button
     // Append the contents of the vernacular input to the renderings textarea
-    if (vernacularInputRef && vernacularInputRef.current) {
-      const vernacularText = vernacularInputRef.current.value.trim();
+    if (vernacularAutocorrectRef && vernacularAutocorrectRef.current) {
+      const vernacularText = vernacularValue.trim();
       // Append the vernacular text to the renderings textarea
       if (renderingsTextareaRef && renderingsTextareaRef.current) {
         const currentRenderings = renderingsTextareaRef.current.value
@@ -169,11 +185,8 @@ export default function DetailsPane({
     if (selLocation >= 0 && selLocation < locations.length) {
       const currentLocation = locations[selLocation];
       const mapForm = getMapForm(termRenderings, currentLocation.termId);
-      if (vernacularInputRef && vernacularInputRef.current) {
-        vernacularInputRef.current.value = mapForm;
-        setVernacular(mapForm); // Update state to reflect the new value
-        onUpdateVernacular(currentLocation.termId, mapForm);
-      }
+      setVernacularValue(mapForm);
+      onUpdateVernacular(currentLocation.termId, mapForm);
     }
   };
 
@@ -884,18 +897,15 @@ export default function DetailsPane({
         >
           {' '}
           <textarea
-            ref={(el) => {
-              // Assign to both refs
-              if (vernacularInputRef) vernacularInputRef.current = el;
-              if (autocorrectInputRef) autocorrectInputRef.current = el;
-            }}
-            value={vernacular}
+            ref={vernacularAutocorrectRef}
+            value={vernacularValue}
             onChange={handleVernacularChange}
             onKeyDown={e => {
               // Prevent line breaks but allow other keys
               if (e.key === 'Enter') {
                 e.preventDefault();
               }
+              console.log('Vernacular textarea KEYDOWN:', e.key);
             }}
             placeholder={inLang(uiStr.enterLabel, lang)}
             className="form-control mb-2"
@@ -926,7 +936,7 @@ export default function DetailsPane({
             </span>
             {inLang(uiStr.statusValue[status].help, lang)}
             {(status === STATUS_RENDERING_SHORT || status === STATUS_MULTIPLE_RENDERINGS) && ( // If status is "short", show Add Map Form button
-              <button style={{ marginLeft: 8 }} onClick={() => onAddMapForm(vernacular)}>
+              <button style={{ marginLeft: 8 }} onClick={() => onAddMapForm()}>
                 {inLang(uiStr.addMapForm, lang)}
               </button>
             )}
@@ -936,7 +946,7 @@ export default function DetailsPane({
               </button>
             )}
             {status === STATUS_NO_RENDERINGS && ( // If status is "no renderings", show Add to renderings button
-              <button style={{ marginLeft: 8 }} onClick={() => onCreateRendering(vernacular)}>
+              <button style={{ marginLeft: 8 }} onClick={() => onCreateRendering(vernacularValue || '')}>
                 {inLang(uiStr.addToRenderings, lang)}
               </button>
             )}
@@ -976,6 +986,7 @@ export default function DetailsPane({
             ref={renderingsTextareaRef}
             value={localRenderings}
             onChange={e => {
+              console.log('Renderings onChange called with:', e.target.value);
               const termId = locations[selLocation].termId;
               const newValue = e.target.value;
 

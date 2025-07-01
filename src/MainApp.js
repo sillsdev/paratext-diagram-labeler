@@ -236,7 +236,8 @@ function MainApp({ settings, templateFolder, onExit }) {
 
   // Load term renderings from new project folder
   useEffect(() => {
-    if (!electronAPI || !projectFolder || !isInitialized || !mapDef || termRenderingsLoading) return;
+    if (!electronAPI || !projectFolder || !isInitialized || !mapDef || termRenderingsLoading)
+      return;
 
     const loadData = async () => {
       // Prevent multiple simultaneous loads
@@ -244,10 +245,10 @@ function MainApp({ settings, templateFolder, onExit }) {
         console.log('Term renderings already loading, skipping...');
         return;
       }
-      
+
       setTermRenderingsLoading(true);
       console.log('Starting term renderings load...');
-      
+
       try {
         const newTermRenderings = await electronAPI.loadTermRenderings(
           projectFolder,
@@ -275,7 +276,10 @@ function MainApp({ settings, templateFolder, onExit }) {
                   newTermRenderings,
                   loc.termId,
                   loc.vernLabel,
-                  collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+                  collectionManager.getRefs(
+                    loc.mergeKey,
+                    getCollectionIdFromTemplate(mapDef.template)
+                  ),
                   extractedVerses
                 );
                 return { ...loc, status };
@@ -287,7 +291,10 @@ function MainApp({ settings, templateFolder, onExit }) {
                   newTermRenderings,
                   loc.termId,
                   loc.vernLabel || '', // Use existing vernLabel or empty string
-                  collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+                  collectionManager.getRefs(
+                    loc.mergeKey,
+                    getCollectionIdFromTemplate(mapDef.template)
+                  ),
                   extractedVerses
                 );
                 return { ...loc, status };
@@ -295,7 +302,11 @@ function MainApp({ settings, templateFolder, onExit }) {
             }
           });
           // Only set selection to 0 if no valid selection exists
-          if (mapDef.labels && mapDef.labels.length > 0 && (selLocation >= mapDef.labels.length || selLocation < 0)) {
+          if (
+            mapDef.labels &&
+            mapDef.labels.length > 0 &&
+            (selLocation >= mapDef.labels.length || selLocation < 0)
+          ) {
             setSelLocation(0); // Select first location only if current selection is invalid
           }
         } else {
@@ -351,10 +362,10 @@ function MainApp({ settings, templateFolder, onExit }) {
   // Update renderings and approval status when selected location or term renderings change
   useEffect(() => {
     if (!termRenderings || !locations.length || selLocation >= locations.length) return;
-    
+
     const currentLocation = locations[selLocation];
     if (!currentLocation) return;
-    
+
     const entry = termRenderings[currentLocation.termId];
     if (entry) {
       setRenderings(entry.renderings);
@@ -910,7 +921,10 @@ function MainApp({ settings, templateFolder, onExit }) {
         })
       );
       setTimeout(() => {
-        if (renderingsTextareaRef.current) renderingsTextareaRef.current.focus();
+        if (renderingsTextareaRef.current) {
+          renderingsTextareaRef.current.focus();
+          console.log('Focus set on renderings textarea');
+        }
       }, 0);
     },
     [renderings, selLocation, locations, termRenderings, extractedVerses, mapDef.template]
@@ -948,38 +962,87 @@ function MainApp({ settings, templateFolder, onExit }) {
         })
       );
       setTimeout(() => {
-        if (renderingsTextareaRef.current) renderingsTextareaRef.current.focus();
+        if (renderingsTextareaRef.current) {
+          renderingsTextareaRef.current.focus();
+          console.log('Focus set on renderings textarea');
+        }
       }, 0);
     },
     [selLocation, locations, termRenderings, extractedVerses, mapDef.template]
   );
 
   // Reload extracted verses for all terms (after Paratext edits)
-  const handleReloadExtractedVerses = useCallback(async (termId, mergeKey) => {
-    if (!projectFolder || !isInitialized) return;
-    
-    console.log(`Reloading all extracted verses after editing term: ${termId}, mergeKey: ${mergeKey}`);
-    
-    // Get all refs for the entire map (not just the specific term)
-    const collectionId = getCollectionIdFromTemplate(mapDef.template);
-    const allRefs = getRefList(mapDef.labels, collectionId);
-    
-    if (!allRefs.length) return;
+  const handleReloadExtractedVerses = useCallback(
+    async (termId, mergeKey) => {
+      if (!projectFolder || !isInitialized) return;
 
-    try {
-      const verses = await electronAPI.getFilteredVerses(projectFolder, allRefs);
-      if (verses && !verses.error) {
-        // Only update extracted verses state - the useEffect will handle location status updates
-        setExtractedVerses(verses);
-        
-        console.log(`Reloaded ${Object.keys(verses).length} verses for entire map`);
-      } else {
-        console.warn('Failed to reload extracted verses:', verses?.error);
+      console.log(
+        `Reloading all extracted verses after editing term: ${termId}, mergeKey: ${mergeKey}`
+      );
+
+      // Capture focus state before reload to restore it afterwards
+      const activeElement = document.activeElement;
+      const focusInfo = {
+        isVernacularActive: vernacularInputRef.current === activeElement,
+        isRenderingsActive: renderingsTextareaRef.current === activeElement,
+        cursorPos: activeElement?.selectionStart,
+        scrollPos: activeElement?.scrollTop
+      };
+
+      // Get all refs for the entire map (not just the specific term)
+      const collectionId = getCollectionIdFromTemplate(mapDef.template);
+      const allRefs = getRefList(mapDef.labels, collectionId);
+
+      if (!allRefs.length) return;
+
+      try {
+        const verses = await electronAPI.getFilteredVerses(projectFolder, allRefs);
+        if (verses && !verses.error) {
+          // Update extracted verses state - the useEffect will handle location status updates
+          setExtractedVerses(verses);
+
+          console.log(`Reloaded ${Object.keys(verses).length} verses for entire map`);
+          
+          // Force Electron window focus restoration to fix input handling after reload
+          // This mimics the effect of Alt+Tab which restores input functionality
+          if (window.electronAPI && window.electronAPI.restoreWindowFocus) {
+            await window.electronAPI.restoreWindowFocus();
+          } else {
+            // Fallback: trigger blur/focus events to reset input state
+            window.blur();
+            setTimeout(() => window.focus(), 10);
+          }
+          
+          // Restore focus and cursor position after React state update
+          setTimeout(() => {
+            if (focusInfo.isVernacularActive && vernacularInputRef.current) {
+              vernacularInputRef.current.focus();
+              if (typeof focusInfo.cursorPos === 'number') {
+                vernacularInputRef.current.setSelectionRange(focusInfo.cursorPos, focusInfo.cursorPos);
+              }
+              if (typeof focusInfo.scrollPos === 'number') {
+                vernacularInputRef.current.scrollTop = focusInfo.scrollPos;
+              }
+            } else if (focusInfo.isRenderingsActive && renderingsTextareaRef.current) {
+              renderingsTextareaRef.current.focus();
+              if (typeof focusInfo.cursorPos === 'number') {
+                renderingsTextareaRef.current.setSelectionRange(focusInfo.cursorPos, focusInfo.cursorPos);
+              }
+              if (typeof focusInfo.scrollPos === 'number') {
+                renderingsTextareaRef.current.scrollTop = focusInfo.scrollPos;
+              }
+            }
+          }, 0);
+          
+        } else {
+          console.warn('Failed to reload extracted verses:', verses?.error);
+        }
+      } catch (error) {
+        console.error('Error reloading extracted verses:', error);
       }
-    } catch (error) {
-      console.error('Error reloading extracted verses:', error);
-    }
-  }, [projectFolder, isInitialized, mapDef.template, mapDef.labels]);
+    },
+    [projectFolder, isInitialized, mapDef.template, mapDef.labels]
+  );
 
   // const handleCreateRendering = useCallback(
   //   (text, isGuessed) => {
@@ -1224,7 +1287,7 @@ function MainApp({ settings, templateFolder, onExit }) {
   // Update location statuses when extractedVerses change (without affecting selection)
   useEffect(() => {
     if (!termRenderings || !locations.length || !mapDef.template) return;
-    
+
     // Update all location statuses based on the current extractedVerses
     setLocations(prevLocations => {
       return prevLocations.map(loc => {
@@ -1238,7 +1301,7 @@ function MainApp({ settings, templateFolder, onExit }) {
         return { ...loc, status };
       });
     });
-    
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [extractedVerses, termRenderings, mapDef.template]); // locations intentionally omitted to prevent infinite loop
 

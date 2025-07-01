@@ -37,12 +37,19 @@ export const AutocorrectTextarea = forwardRef(({ value, onChange, ...props }, ex
 
   return (
     <textarea
-      ref={externalRef || textareaRef}
+      ref={(el) => {
+        // Set both internal and external refs
+        textareaRef.current = el;
+        if (externalRef) {
+          if (typeof externalRef === 'function') {
+            externalRef(el);
+          } else {
+            externalRef.current = el;
+          }
+        }
+      }}
       value={value}
       onChange={handleChange}
-      onFocus={() => console.log('AutocorrectTextarea FOCUS event')}
-      onBlur={() => console.log('AutocorrectTextarea BLUR event')}
-      onKeyDown={(e) => console.log('AutocorrectTextarea KEYDOWN:', e.key)}
       {...props}
     />
   );

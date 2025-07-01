@@ -34,6 +34,7 @@ export default function TableView({
       const idx = selLocation;
       if (idx >= 0 && inputRefs.current[idx]) {
         inputRefs.current[idx].focus();
+        console.log('TableView: Focus set on input for location:', selLocation);  
       }
     }
   }, [selLocation]);

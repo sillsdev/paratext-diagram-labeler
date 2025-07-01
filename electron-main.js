@@ -9,6 +9,9 @@ const xml2js = require('xml2js');
 let curProjectFolder = '';
 let settings = {};
 
+// Reference to the main window for focus restoration
+let mainWindow = null;
+
 // Function to load settings from Settings.xml, if not already loaded
 async function loadSettings(projectFolder) {
   if (projectFolder === curProjectFolder) {
@@ -189,6 +192,10 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js'),
     },
   });
+  
+  // Store reference to main window for focus restoration
+  mainWindow = win;
+  
   enable(win.webContents);
   // Check if we're in development or production
   const isDev = process.env.NODE_ENV === 'development';
@@ -917,6 +924,38 @@ public static extern uint GetLastError();
     return { success: true, reference: cleanedRef };
   } catch (error) {
     console.error('Error broadcasting reference:', error);
+    return { success: false, error: error.message };
+  }
+});
+
+// Handler to restore window focus after operations that disrupt input
+ipcMain.handle('restore-window-focus', async (event) => {
+  try {
+    if (!mainWindow || mainWindow.isDestroyed()) {
+      console.log('No main window available for focus restoration');
+      return { success: false, error: 'Main window not available' };
+    }
+
+    console.log('Attempting to restore window focus...');
+    
+    // Force the window to lose and regain focus to reset Electron's input routing
+    if (mainWindow.isFocused()) {
+      console.log('Window is focused, blurring and refocusing...');
+      mainWindow.blur();
+      // Small delay to ensure the blur takes effect
+      await new Promise(resolve => setTimeout(resolve, 50));
+    }
+    
+    // Bring window to front and focus
+    mainWindow.show();
+    mainWindow.focus();
+    mainWindow.focusOnWebView();
+    
+    console.log('Window focus restoration completed');
+    return { success: true };
+    
+  } catch (error) {
+    console.error('Error restoring window focus:', error);
     return { success: false, error: error.message };
   }
 });
