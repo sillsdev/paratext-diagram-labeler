@@ -9,7 +9,7 @@ export function useAutocorrect(initialValue = '', onChange) {
   // Sync internal state when external initialValue changes
   useEffect(() => {
     if (initialValue !== prevInitialValueRef.current) {
-      console.log('useAutocorrect: syncing value from', prevInitialValueRef.current, 'to', initialValue);
+      // console.log('useAutocorrect: syncing value from', prevInitialValueRef.current, 'to', initialValue);
       setValue(initialValue);
       prevInitialValueRef.current = initialValue;
     }
@@ -20,14 +20,14 @@ export function useAutocorrect(initialValue = '', onChange) {
     const newValue = input.value;
     const cursorPosition = input.selectionStart;
     
-    console.log('useAutocorrect: handleChange called with value:', newValue, 'current state:', value);
+    // console.log('useAutocorrect: handleChange called with value:', newValue, 'current state:', value);
     
     // Apply autocorrect with built-in rules (parentheses escaping for vernacular)
     const result = autocorrectService.applyAutocorrect(newValue, cursorPosition, true);
     
     if (result.modified) {
       // Set the corrected value
-      console.log('useAutocorrect: setting corrected value:', result.text);
+      // console.log('useAutocorrect: setting corrected value:', result.text);
       setValue(result.text);
       
       // Update cursor position after React re-renders
@@ -39,14 +39,14 @@ export function useAutocorrect(initialValue = '', onChange) {
       
       // Call parent onChange with corrected value
       if (onChange) {
-        console.log('useAutocorrect: calling parent onChange with corrected value:', result.text);
+        // console.log('useAutocorrect: calling parent onChange with corrected value:', result.text);
         onChange(result.text);
       }
     } else {
-      console.log('useAutocorrect: setting original value:', newValue);
+      // console.log('useAutocorrect: setting original value:', newValue);
       setValue(newValue);
       if (onChange) {
-        console.log('useAutocorrect: calling parent onChange with original value:', newValue);
+        // console.log('useAutocorrect: calling parent onChange with original value:', newValue);
         onChange(newValue);
       }
     }

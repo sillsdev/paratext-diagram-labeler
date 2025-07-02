@@ -87,19 +87,21 @@ class CollectionManager {
           placenames: null,
           mapDefs: null,
         };
-      } // Use templateFolderPath if provided, otherwise fall back to the old method
+      } 
+      
+      // Use templateFolderPath if provided, otherwise fall back to the old method
       // Ensure consistent path separator (backslash for Windows)
       const templatePath = this.templateFolderPath;
 
       // Check if template path exists before trying to load from it
-      console.log(`Verifying template folder exists: ${templatePath}`);
+      // console.log(`Verifying template folder exists: ${templatePath}`);
       const folderExists = await this.checkFolderExists(templatePath);
 
       if (!folderExists) {
         throw new Error(`Template folder not found: ${templatePath}`);
       }
 
-      console.log(`Loading collection data from verified path: ${templatePath}`);
+      // console.log(`Loading collection data from verified path: ${templatePath}`);
 
       // Load placenames and map definitions in parallel
       const [placenames, mapDefs] = await Promise.all([
@@ -208,7 +210,7 @@ class CollectionManager {
     console.log('Collection is loaded:', collection.isLoaded);
 
     // Try direct lookup first
-    console.log('Attempting direct lookup with key:', templateName);
+    // console.log('Attempting direct lookup with key:', templateName);
     if (collection.mapDefs[templateName]) {
       console.log('Found template with exact match');
       const result = { ...collection.mapDefs[templateName] };
@@ -217,16 +219,16 @@ class CollectionManager {
     }
 
     // Try case-insensitive lookup
-    console.log('Attempting case-insensitive lookup with key:', templateName.toLowerCase());
-    console.log(
-      'Available normalized keys:',
-      Object.keys(collection.normalizedMapDefs).slice(0, 5),
-      '...'
-    );
+    // console.log('Attempting case-insensitive lookup with key:', templateName.toLowerCase());
+    // console.log(
+    //   'Available normalized keys:',
+    //   Object.keys(collection.normalizedMapDefs).slice(0, 5),
+    //   '...'
+    // );
 
     const normalizedKey = collection.normalizedMapDefs[templateName.toLowerCase()];
     if (normalizedKey) {
-      console.log('Found template with case-insensitive match:', normalizedKey);
+      // console.log('Found template with case-insensitive match:', normalizedKey);
       const result = { ...collection.mapDefs[normalizedKey] };
       result.template = templateName; // Use the requested template name
       return this.enrichMapDefWithGlosses(result, collectionId);

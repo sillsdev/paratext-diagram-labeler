@@ -12,7 +12,7 @@ import {
   STATUS_RENDERING_SHORT,
   STATUS_BAD_EXPLICIT_FORM,
   STATUS_INCOMPLETE,
-  STATUS_MULTIPLE_RENDERINGS
+  STATUS_MULTIPLE_RENDERINGS,
 } from './constants.js';
 
 export const statusValue = [
@@ -154,8 +154,10 @@ export function getStatus(termRenderings, termId, vernLabel, refs, extractedVers
 
   // vernLabel !== mapForm
   return wordMatchesRenderings(vernLabel, entry.renderings, false)
-    ? (/\S\s*\n\s*\S/.test(entry.renderings) ? STATUS_MULTIPLE_RENDERINGS : STATUS_RENDERING_SHORT)
-    : STATUS_UNMATCHED; 
+    ? /\S\s*\n\s*\S/.test(entry.renderings)
+      ? STATUS_MULTIPLE_RENDERINGS
+      : STATUS_RENDERING_SHORT
+    : STATUS_UNMATCHED;
 }
 
 export function getMapForm(termRenderings, termId, altTermIds) {
@@ -220,13 +222,13 @@ export function wordMatchesRenderings(word, renderings, anchored = true) {
     const rendering = renderingList[i];
     try {
       const pattern = anchored ? '^' + rendering + '$' : rendering;
-      console.log(
-        `Checking word "${word}" against rendering "${rendering}" with pattern "${pattern}"`
-      );
+      // console.log(
+      //   `Checking word "${word}" against rendering "${rendering}" with pattern "${pattern}"`
+      // );
       const regex = new RegExp(pattern, 'iu');
       if (regex.test(word)) {
         // console.log(`Word "${word}" matches rendering "${rendering}"`);
-        return i+1; // Return 1-based index
+        return i + 1; // Return 1-based index
       } else {
         // console.log(`Word "${word}" doesn't match rendering "${rendering}" with pattern "${pattern}"`);
       }
@@ -243,10 +245,10 @@ function convertParatextWildcardsToRegex(rendering) {
   // Split the rendering into tokens (words and asterisks)
   const tokens = rendering.split(/(\s+|\*+)/);
   let regexParts = [];
-  
+
   for (let i = 0; i < tokens.length; i++) {
     const token = tokens[i];
-    
+
     if (token.match(/^\s+$/)) {
       // Whitespace - preserve as is
       regexParts.push(token.replace(/\s/g, '\\s'));
@@ -266,7 +268,7 @@ function convertParatextWildcardsToRegex(rendering) {
       regexParts.push(token.replace(/[.+?^${}()|[\]\\]/g, '\\$&'));
     }
   }
-  
+
   return regexParts.join('');
 }
 

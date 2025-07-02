@@ -29,7 +29,7 @@ const emptyInitialMap = {
   height: 1000,
   labels: [],
 };
-console.log('Creating empty initial map state');
+// console.log('Creating empty initial map state');
 
 // return a list of all refs used by all the labels in the map definition
 function getRefList(labels, collectionId = 'SMR') {
@@ -234,102 +234,65 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
     initializeColls();
   }, [settings, templateFolder]);
 
-  // // Load term renderings from new project folder
-  // useEffect(() => {
-  //   if (!electronAPI || !projectFolder || !isInitialized || !mapDef || termRenderingsLoading)
-  //     return;
+  // Set initial locations
+  useEffect(() => {
+    if (!electronAPI || !projectFolder || !isInitialized || !mapDef )
+      return;
 
-  //   const loadData = async () => {
-  //     // Prevent multiple simultaneous loads
-  //     if (termRenderingsLoading) {
-  //       console.log('Term renderings already loading, skipping...');
-  //       return;
-  //     }
+    try {
+      // Update existing locations with termRenderings, preserving vernLabel values
+      setLocations(prevLocations => {
+        if (prevLocations.length === 0) {
+          // If no previous locations, initialize from mapDef
+          console.log('No previous locations found, initializing from mapDef');
+          return mapDef.labels.map(loc => {
+            if (!loc.vernLabel) {
+              const altTermIds = collectionManager.getAltTermIds(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template));
+              loc.vernLabel = getMapForm(termRenderings, loc.termId, altTermIds);
+            }
+            const status = getStatus(
+              termRenderings,
+              loc.termId,
+              loc.vernLabel,
+              collectionManager.getRefs(
+                loc.mergeKey,
+                getCollectionIdFromTemplate(mapDef.template)
+              ),
+              extractedVerses
+            );
+            return { ...loc, status };
+          });
+        } else {
+          // Update existing locations, preserving vernLabel values
+          return prevLocations.map(loc => {
+            const status = getStatus(
+              termRenderings,
+              loc.termId,
+              loc.vernLabel || '', // Use existing vernLabel or empty string
+              collectionManager.getRefs(
+                loc.mergeKey,
+                getCollectionIdFromTemplate(mapDef.template)
+              ),
+              extractedVerses
+            );
+            return { ...loc, status };
+          });
+        }
+      });
+      // Only set selection to 0 if no valid selection exists
+      if (
+        mapDef.labels &&
+        mapDef.labels.length > 0 &&
+        (selLocation >= mapDef.labels.length || selLocation < 0)
+      ) {
+        setSelLocation(0); // Select first location only if current selection is invalid
+      }
+    } catch (e) {
+      console.log(`Error updating locations:`, e);
+    }
 
-  //     setTermRenderingsLoading(true);
-  //     console.log('Starting term renderings load...');
-
-  //     try {
-  //       const newTermRenderings = await electronAPI.loadTermRenderings(
-  //         projectFolder,
-  //         settings.saveToDemo
-  //       );
-  //       console.log(
-  //         '[IPC] Loaded term renderings:',
-  //         newTermRenderings,
-  //         'from folder:',
-  //         projectFolder,
-  //         'saveToDemo:',
-  //         settings.saveToDemo
-  //       );
-  //       if (newTermRenderings && !newTermRenderings.error) {
-  //         setTermRenderings(newTermRenderings);
-  //         // Update existing locations with new termRenderings, preserving vernLabel values
-  //         setLocations(prevLocations => {
-  //           if (prevLocations.length === 0) {
-  //             // If no previous locations, initialize from mapDef
-  //             console.log('No previous locations found, initializing from mapDef');
-  //             return mapDef.labels.map(loc => {
-  //               if (!loc.vernLabel) {
-  //                 const altTermIds = collectionManager.getAltTermIds(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template));
-  //                 loc.vernLabel = getMapForm(newTermRenderings, loc.termId, altTermIds);
-  //               }
-  //               const status = getStatus(
-  //                 newTermRenderings,
-  //                 loc.termId,
-  //                 loc.vernLabel,
-  //                 collectionManager.getRefs(
-  //                   loc.mergeKey,
-  //                   getCollectionIdFromTemplate(mapDef.template)
-  //                 ),
-  //                 extractedVerses
-  //               );
-  //               return { ...loc, status };
-  //             });
-  //           } else {
-  //             // Update existing locations, preserving vernLabel values
-  //             return prevLocations.map(loc => {
-  //               const status = getStatus(
-  //                 newTermRenderings,
-  //                 loc.termId,
-  //                 loc.vernLabel || '', // Use existing vernLabel or empty string
-  //                 collectionManager.getRefs(
-  //                   loc.mergeKey,
-  //                   getCollectionIdFromTemplate(mapDef.template)
-  //                 ),
-  //                 extractedVerses
-  //               );
-  //               return { ...loc, status };
-  //             });
-  //           }
-  //         });
-  //         // Only set selection to 0 if no valid selection exists
-  //         if (
-  //           mapDef.labels &&
-  //           mapDef.labels.length > 0 &&
-  //           (selLocation >= mapDef.labels.length || selLocation < 0)
-  //         ) {
-  //           setSelLocation(0); // Select first location only if current selection is invalid
-  //         }
-  //       } else {
-  //         alert(
-  //           inLang(uiStr.failedToLoadTermRenderings, lang) + ': ' + (newTermRenderings && newTermRenderings.error)
-  //         );
-  //       }
-  //     } catch (e) {
-  //       console.log(
-  //         `Failed to load term-renderings.json from project folder <${projectFolder}>.`,
-  //         e
-  //       );
-  //     } finally {
-  //       setTermRenderingsLoading(false);
-  //       console.log('Term renderings load completed.');
-  //     }
-  //   };
-
-  //   loadData();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [projectFolder, mapDef, isInitialized, settings.saveToDemo, extractedVerses]); // termRenderingsLoading intentionally omitted to prevent infinite loop
+    
+  }, [projectFolder, mapDef, isInitialized,  extractedVerses, selLocation, termRenderings]); 
 
   // setExtractedVerses when projectFolder or mapDef.labels change
   useEffect(() => {
@@ -773,18 +736,18 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
     if (!isInitialized) return; // Don't initialize map until collections are loaded
     const initializeMap = async () => {
       try {
-        if (!settings.usfm) throw new Error('No USFM provided in settings');
-        // console.log("Initializing map from USFM:", settings.usfm);
-        const initialMap = await mapFromUsfm(settings.usfm);
-        console.log('Initial Map loaded (based on usfm):', initialMap);
-        setMapDef(initialMap);
+        if (!settings.usfm) {
+          await handleBrowseMapTemplateRef.current();
+        } else {
+          // console.log("Initializing map from USFM:", settings.usfm);
+          const initialMap = await mapFromUsfm(settings.usfm);
+          console.log('Initial Map loaded (based on usfm):', initialMap);
+          setMapDef(initialMap);
 
-        // Initialize selectedVariant based on whether variants exist
-        setSelectedVariant(
-          initialMap.variants && Object.keys(initialMap.variants).length > 0 ? 1 : 0
-        );
-
-        setMapPaneView(initialMap.mapView ? MAP_VIEW : TABLE_VIEW);
+          // Initialize selectedVariant based on whether variants exist
+          setSelectedVariant(initialMap.variants && Object.keys(initialMap.variants).length > 0 ? 1 : 0);
+          setMapPaneView(initialMap.mapView ? MAP_VIEW : TABLE_VIEW);
+        }
       } catch (error) {
         console.log('Unable to initialize map:', error);
         // browse for a map template if no map

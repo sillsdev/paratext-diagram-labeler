@@ -82,7 +82,7 @@ export default function DetailsPane({
     handleChange: handleVernacularChange,
     textareaRef: vernacularAutocorrectRef,
   } = useAutocorrect(locations[selLocation]?.vernLabel || '', text => {
-    console.log('DetailsPane: Vernacular changing to', text);
+    // console.log('DetailsPane: Vernacular changing to', text);
     onUpdateVernacular(locations[selLocation].termId, text);
   });
 
@@ -221,7 +221,7 @@ export default function DetailsPane({
   const handleOk = () => {
     // Save current USFM to settings.usfm
     const currentUsfm = generateUsfm();
-    console.log('OK! Generated USFM:', currentUsfm);
+    // console.log('OK! Generated USFM:', currentUsfm);
     settingsService
       .updateUsfm(currentUsfm)
       // .then(() => {settingsService.saveSettings();})
@@ -907,7 +907,7 @@ export default function DetailsPane({
               if (e.key === 'Enter') {
                 e.preventDefault();
               }
-              console.log('Vernacular textarea KEYDOWN:', e.key);
+              // console.log('Vernacular textarea KEYDOWN:', e.key);
             }}
             placeholder={inLang(uiStr.enterLabel, lang)}
             className="form-control mb-2"

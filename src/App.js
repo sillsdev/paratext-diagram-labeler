@@ -16,7 +16,7 @@ function App() {
   // Load settings when component mounts
   useEffect(() => {
     async function initialize() {
-      console.log('Loading application settings...');
+      // console.log('Loading application settings...');
       const newSettings = await settingsService.loadSettings();
 
       // Set the current language from settings
@@ -66,7 +66,7 @@ function App() {
             'Project folder not found. Please specify the location of your Paratext project folder.';
             setTermRenderings(null); // Reset term renderings if no valid project folder
         } else {
-          console.log('Starting term renderings load...');
+          // console.log('[IPC] Starting term renderings load...');
 
           const newTermRenderings = await window.electronAPI.loadTermRenderings(
             settingsToValidate.projectFolder,
@@ -77,7 +77,7 @@ function App() {
             errors.projectFolder = 'Failed to load term renderings from project folder. Please check the folder and try again.';
           }
           console.log(
-            '[IPC] Loaded term renderings:',
+            'Term renderings loaded:',
             newTermRenderings,
             'from folder:',
             settingsToValidate.projectFolder,
@@ -136,9 +136,8 @@ function App() {
   // Handle launching the app
   const handleLaunch = async updatedSettings => {
     // Final validation
-    const errors = await validateSettings(updatedSettings);
-    if (Object.keys(errors).length > 0) {
-      console.error('Cannot launch with validation errors:', errors);
+    if (Object.keys(settingsErrors).length > 0 || !termRenderings) {
+      console.error('Cannot launch with validation errors:', settingsErrors);
       return;
     }
     // Update settings
