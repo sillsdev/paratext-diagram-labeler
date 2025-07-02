@@ -164,7 +164,7 @@ function usfmFromMap(map, lang) {
   return usfm.replace(/\\/g, '\\');
 }
 
-function MainApp({ settings, templateFolder, onExit }) {
+function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRenderings }) {
   //   console.log('MainApp initialized with templateFolder prop:', templateFolder);
 
   const [isInitialized, setIsInitialized] = useState(false);
@@ -198,8 +198,8 @@ function MainApp({ settings, templateFolder, onExit }) {
   const renderingsTextareaRef = useRef();
   const handleBrowseMapTemplateRef = useRef();
   const [extractedVerses, setExtractedVerses] = useState({});
-  const [termRenderings, setTermRenderings] = useState(); // Initialize map from USFM
-  const [termRenderingsLoading, setTermRenderingsLoading] = useState(false); // Guard against multiple loads
+  // const [termRenderings, setTermRenderings] = useState(); 
+  // const [termRenderingsLoading, setTermRenderingsLoading] = useState(false); // Guard against multiple loads
 
   // Persist labelScale to localStorage
   useEffect(() => {
@@ -234,102 +234,102 @@ function MainApp({ settings, templateFolder, onExit }) {
     initializeColls();
   }, [settings, templateFolder]);
 
-  // Load term renderings from new project folder
-  useEffect(() => {
-    if (!electronAPI || !projectFolder || !isInitialized || !mapDef || termRenderingsLoading)
-      return;
+  // // Load term renderings from new project folder
+  // useEffect(() => {
+  //   if (!electronAPI || !projectFolder || !isInitialized || !mapDef || termRenderingsLoading)
+  //     return;
 
-    const loadData = async () => {
-      // Prevent multiple simultaneous loads
-      if (termRenderingsLoading) {
-        console.log('Term renderings already loading, skipping...');
-        return;
-      }
+  //   const loadData = async () => {
+  //     // Prevent multiple simultaneous loads
+  //     if (termRenderingsLoading) {
+  //       console.log('Term renderings already loading, skipping...');
+  //       return;
+  //     }
 
-      setTermRenderingsLoading(true);
-      console.log('Starting term renderings load...');
+  //     setTermRenderingsLoading(true);
+  //     console.log('Starting term renderings load...');
 
-      try {
-        const newTermRenderings = await electronAPI.loadTermRenderings(
-          projectFolder,
-          settings.saveToDemo
-        );
-        console.log(
-          '[IPC] Loaded term renderings:',
-          newTermRenderings,
-          'from folder:',
-          projectFolder,
-          'saveToDemo:',
-          settings.saveToDemo
-        );
-        if (newTermRenderings && !newTermRenderings.error) {
-          setTermRenderings(newTermRenderings);
-          // Update existing locations with new termRenderings, preserving vernLabel values
-          setLocations(prevLocations => {
-            if (prevLocations.length === 0) {
-              // If no previous locations, initialize from mapDef
-              console.log('No previous locations found, initializing from mapDef');
-              return mapDef.labels.map(loc => {
-                if (!loc.vernLabel) {
-                  const altTermIds = collectionManager.getAltTermIds(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template));
-                  loc.vernLabel = getMapForm(newTermRenderings, loc.termId, altTermIds);
-                }
-                const status = getStatus(
-                  newTermRenderings,
-                  loc.termId,
-                  loc.vernLabel,
-                  collectionManager.getRefs(
-                    loc.mergeKey,
-                    getCollectionIdFromTemplate(mapDef.template)
-                  ),
-                  extractedVerses
-                );
-                return { ...loc, status };
-              });
-            } else {
-              // Update existing locations, preserving vernLabel values
-              return prevLocations.map(loc => {
-                const status = getStatus(
-                  newTermRenderings,
-                  loc.termId,
-                  loc.vernLabel || '', // Use existing vernLabel or empty string
-                  collectionManager.getRefs(
-                    loc.mergeKey,
-                    getCollectionIdFromTemplate(mapDef.template)
-                  ),
-                  extractedVerses
-                );
-                return { ...loc, status };
-              });
-            }
-          });
-          // Only set selection to 0 if no valid selection exists
-          if (
-            mapDef.labels &&
-            mapDef.labels.length > 0 &&
-            (selLocation >= mapDef.labels.length || selLocation < 0)
-          ) {
-            setSelLocation(0); // Select first location only if current selection is invalid
-          }
-        } else {
-          alert(
-            inLang(uiStr.failedToLoadTermRenderings, lang) + ': ' + (newTermRenderings && newTermRenderings.error)
-          );
-        }
-      } catch (e) {
-        console.log(
-          `Failed to load term-renderings.json from project folder <${projectFolder}>.`,
-          e
-        );
-      } finally {
-        setTermRenderingsLoading(false);
-        console.log('Term renderings load completed.');
-      }
-    };
+  //     try {
+  //       const newTermRenderings = await electronAPI.loadTermRenderings(
+  //         projectFolder,
+  //         settings.saveToDemo
+  //       );
+  //       console.log(
+  //         '[IPC] Loaded term renderings:',
+  //         newTermRenderings,
+  //         'from folder:',
+  //         projectFolder,
+  //         'saveToDemo:',
+  //         settings.saveToDemo
+  //       );
+  //       if (newTermRenderings && !newTermRenderings.error) {
+  //         setTermRenderings(newTermRenderings);
+  //         // Update existing locations with new termRenderings, preserving vernLabel values
+  //         setLocations(prevLocations => {
+  //           if (prevLocations.length === 0) {
+  //             // If no previous locations, initialize from mapDef
+  //             console.log('No previous locations found, initializing from mapDef');
+  //             return mapDef.labels.map(loc => {
+  //               if (!loc.vernLabel) {
+  //                 const altTermIds = collectionManager.getAltTermIds(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template));
+  //                 loc.vernLabel = getMapForm(newTermRenderings, loc.termId, altTermIds);
+  //               }
+  //               const status = getStatus(
+  //                 newTermRenderings,
+  //                 loc.termId,
+  //                 loc.vernLabel,
+  //                 collectionManager.getRefs(
+  //                   loc.mergeKey,
+  //                   getCollectionIdFromTemplate(mapDef.template)
+  //                 ),
+  //                 extractedVerses
+  //               );
+  //               return { ...loc, status };
+  //             });
+  //           } else {
+  //             // Update existing locations, preserving vernLabel values
+  //             return prevLocations.map(loc => {
+  //               const status = getStatus(
+  //                 newTermRenderings,
+  //                 loc.termId,
+  //                 loc.vernLabel || '', // Use existing vernLabel or empty string
+  //                 collectionManager.getRefs(
+  //                   loc.mergeKey,
+  //                   getCollectionIdFromTemplate(mapDef.template)
+  //                 ),
+  //                 extractedVerses
+  //               );
+  //               return { ...loc, status };
+  //             });
+  //           }
+  //         });
+  //         // Only set selection to 0 if no valid selection exists
+  //         if (
+  //           mapDef.labels &&
+  //           mapDef.labels.length > 0 &&
+  //           (selLocation >= mapDef.labels.length || selLocation < 0)
+  //         ) {
+  //           setSelLocation(0); // Select first location only if current selection is invalid
+  //         }
+  //       } else {
+  //         alert(
+  //           inLang(uiStr.failedToLoadTermRenderings, lang) + ': ' + (newTermRenderings && newTermRenderings.error)
+  //         );
+  //       }
+  //     } catch (e) {
+  //       console.log(
+  //         `Failed to load term-renderings.json from project folder <${projectFolder}>.`,
+  //         e
+  //       );
+  //     } finally {
+  //       setTermRenderingsLoading(false);
+  //       console.log('Term renderings load completed.');
+  //     }
+  //   };
 
-    loadData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectFolder, mapDef, isInitialized, settings.saveToDemo, extractedVerses]); // termRenderingsLoading intentionally omitted to prevent infinite loop
+  //   loadData();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [projectFolder, mapDef, isInitialized, settings.saveToDemo, extractedVerses]); // termRenderingsLoading intentionally omitted to prevent infinite loop
 
   // setExtractedVerses when projectFolder or mapDef.labels change
   useEffect(() => {

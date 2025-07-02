@@ -357,7 +357,7 @@ ipcMain.handle('load-term-renderings', async (event, projectFolder, saveToDemo) 
   } catch (e) {
     console.log('error loading term renderings:', e);
   }
-  return {};
+  return null;
 });
 
 ipcMain.handle('save-term-renderings', async (event, projectFolder, saveToDemo, data) => {

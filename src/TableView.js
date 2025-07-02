@@ -2,9 +2,6 @@ import React, { useEffect, useRef } from 'react';
 import './MainApp.css';
 import uiStr from './data/ui-strings.json';
 import { CheckmarkIcon, DeniedCheckmarkIcon, WarningIcon } from './TermIcons';
-// import { MAP_VIEW, TABLE_VIEW, USFM_VIEW, STATUS_NO_RENDERINGS, STATUS_GUESSED } from './constants.js';
-// Status values not yet used: STATUS_BLANK, STATUS_MULTIPLE,  STATUS_UNMATCHED, STATUS_MATCHED, STATUS_RENDERING_SHORT, STATUS_BAD_EXPLICIT_FORM
-// import TermRenderings from './TermRenderings';
 import { collectionManager } from './CollectionManager';
 import { inLang, statusValue, getMatchTally, isLocationVisible } from './Utils.js';
 import { AutocorrectInput } from './components/AutocorrectInput';

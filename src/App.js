@@ -11,13 +11,14 @@ function App() {
   const [launched, setLaunched] = useState(false);
   const [settingsErrors, setSettingsErrors] = useState({});
   const [currentLanguage, setCurrentLanguage] = useState('en'); // Default to English
+  const [termRenderings, setTermRenderings] = useState(null);
 
   // Load settings when component mounts
   useEffect(() => {
     async function initialize() {
       console.log('Loading application settings...');
       const newSettings = await settingsService.loadSettings();
-      
+
       // Set the current language from settings
       setCurrentLanguage(newSettings.language || 'en');
 
@@ -56,12 +57,33 @@ function App() {
     // Check projectFolder exists
     if (!settingsToValidate.projectFolder) {
       errors.projectFolder = 'Please specify the location of your Paratext project folder';
+      setTermRenderings(null); // Reset term renderings if no project folder
     } else {
       try {
         const exists = await window.electronAPI.statPath(settingsToValidate.projectFolder);
         if (!exists || !exists.isDirectory) {
           errors.projectFolder =
             'Project folder not found. Please specify the location of your Paratext project folder.';
+            setTermRenderings(null); // Reset term renderings if no valid project folder
+        } else {
+          console.log('Starting term renderings load...');
+
+          const newTermRenderings = await window.electronAPI.loadTermRenderings(
+            settingsToValidate.projectFolder,
+            settingsToValidate.saveToDemo
+          );
+          setTermRenderings(newTermRenderings);
+          if (!newTermRenderings) {
+            errors.projectFolder = 'Failed to load term renderings from project folder. Please check the folder and try again.';
+          }
+          console.log(
+            '[IPC] Loaded term renderings:',
+            newTermRenderings,
+            'from folder:',
+            settingsToValidate.projectFolder,
+            'saveToDemo:',
+            settingsToValidate.saveToDemo
+          );
         }
       } catch (error) {
         errors.projectFolder = `Error checking project folder: ${error.message}`;
@@ -150,6 +172,8 @@ function App() {
             settings={settingsService.getSettings()}
             templateFolder={settingsService.getSettings().templateFolder}
             onExit={handleExit}
+            termRenderings={termRenderings}
+            setTermRenderings={setTermRenderings} // Pass setter to allow MainApp to update term renderings
           />
         </div>
       )}
