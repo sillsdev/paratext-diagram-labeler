@@ -98,7 +98,7 @@ export default function SettingsModal({ open, onClose, labelScale, setLabelScale
           color: '#666',
           textAlign: 'center'
         }}>
-          Scripture Map Labeler: React app v. {packageInfo.version}-alpha
+          Paratext Diagram Labeler: React app v. {packageInfo.version}-alpha
         </div>
         
         <div style={{ textAlign: 'center' }}>

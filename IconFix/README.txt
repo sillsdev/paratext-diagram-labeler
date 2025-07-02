@@ -5,7 +5,7 @@ This tool helps fix icon issues with the Scripture Map App executable.
 
 Instructions:
 
-1. Make sure the Scripture Map Labeler.exe has been built
+1. Make sure the Paratext Diagram Labeler.exe has been built
 2. Run "Run-Icon-Fix.bat" by right-clicking and selecting "Run as administrator"
 3. Follow the on-screen instructions
 

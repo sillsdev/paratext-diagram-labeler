@@ -276,11 +276,11 @@ export default function DetailsPane({
         console.log('Export successful or cancelled:', result.message);
       } else {
         // Show error message
-        alert(`Export cancelled: ${result.message}`);
+        alert(inLang(uiStr.exportCancelled, lang) + (result.message ? ': ' + result.message : ''));
       }
     } catch (error) {
       console.error('Export error:', error);
-      alert(`Not exported: ${error.message}`);
+      alert(inLang(uiStr.notExported, lang) + (error.message ? ': ' + error.message : ''));
     }
   };
 
@@ -764,9 +764,9 @@ export default function DetailsPane({
               position: 'relative',
             }}
           >
-            <h4 style={{ marginTop: 0 }}>Export to data merge file</h4>
+            <h4 style={{ marginTop: 0 }}>{inLang(uiStr.exportToDataMergeFile, lang)}</h4>
             <div style={{ marginBottom: 16 }}>
-              <p style={{ marginBottom: 12 }}>Select output format:</p>
+              <p style={{ marginBottom: 12 }}>{inLang(uiStr.selectOutputFormat, lang)}</p>
               <label style={{ display: 'block', marginBottom: 8, cursor: 'pointer' }}>
                 <input
                   type="radio"
@@ -801,7 +801,7 @@ export default function DetailsPane({
                   cursor: 'pointer',
                 }}
               >
-                Cancel
+                {inLang(uiStr.cancel, lang)}
               </button>
               <button
                 onClick={async () => {
@@ -817,7 +817,7 @@ export default function DetailsPane({
                   cursor: 'pointer',
                 }}
               >
-                OK
+                {inLang(uiStr.ok, lang)}
               </button>
             </div>
           </div>

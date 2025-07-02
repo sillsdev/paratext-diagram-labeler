@@ -761,14 +761,14 @@ ipcMain.handle('getDefaultTemplateFolder', async (event) => {
       const contents = fs.readdirSync(workingDir);
       debugInfo.push(`Working dir contents (${contents.length} items): ${contents.slice(0, 10).join(', ')}${contents.length > 10 ? '...' : ''}`);
       
-      // Specifically check for _MapLabelerTemplates in the list
-      const hasTemplateFolder = contents.includes('_MapLabelerTemplates');
-      debugInfo.push(`_MapLabelerTemplates in directory listing: ${hasTemplateFolder}`);
+      // Specifically check for _LabelerTemplates in the list
+      const hasTemplateFolder = contents.includes('_LabelerTemplates');
+      debugInfo.push(`_LabelerTemplates in directory listing: ${hasTemplateFolder}`);
     } catch (err) {
       debugInfo.push(`Failed to read working dir: ${err.message}`);
     }
     
-    const templateFolderPath = path.join(workingDir, '_MapLabelerTemplates');
+    const templateFolderPath = path.join(workingDir, '_LabelerTemplates');
     debugInfo.push(`Template folder path: ${templateFolderPath}`);
     
     try {
@@ -1053,7 +1053,7 @@ function cleanReference(reference) {
 }
 
 app.whenReady().then(() => {
-  console.log('=== Scripture Map Labeler Starting ===');
+  console.log('=== Paratext Diagram Labeler Starting ===');
   console.log(`App version: ${app.getVersion()}`);
   console.log(`Electron version: ${process.versions.electron}`);
   console.log(`Node version: ${process.versions.node}`);

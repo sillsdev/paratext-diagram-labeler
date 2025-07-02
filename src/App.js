@@ -3,17 +3,23 @@ import { settingsService } from './services/SettingsService';
 import MainApp from './MainApp';
 import PreLaunchScreen from './PreLaunchScreen';
 import './App.css';
+import uiStr from './data/ui-strings.json';
+import { inLang } from './Utils.js';
 
 function App() {
   const [isLoadingSettings, setIsLoadingSettings] = useState(true);
   const [launched, setLaunched] = useState(false);
   const [settingsErrors, setSettingsErrors] = useState({});
+  const [currentLanguage, setCurrentLanguage] = useState('en'); // Default to English
 
   // Load settings when component mounts
   useEffect(() => {
     async function initialize() {
       console.log('Loading application settings...');
       const newSettings = await settingsService.loadSettings();
+      
+      // Set the current language from settings
+      setCurrentLanguage(newSettings.language || 'en');
 
       // Validate settings
       if (!newSettings.templateFolder) {
@@ -123,7 +129,7 @@ function App() {
     return (
       <div className="loading-screen">
         <div className="loading-spinner"></div>
-        <p>Loading settings...</p>
+        <p>{inLang(uiStr.loadingSettings, currentLanguage)}</p>
       </div>
     );
   }
@@ -135,6 +141,7 @@ function App() {
           errors={settingsErrors}
           onSettingsChange={handleSettingsChange}
           onLaunch={handleLaunch}
+          language={currentLanguage}
         />
       ) : (
         <div className="main-content">

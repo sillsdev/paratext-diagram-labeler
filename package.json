@@ -1,9 +1,9 @@
 {
-  "name": "scripture-map-labeler",
+  "name": "paratext-diagram-labeler",
   "version": "0.0.3",
   "private": true,
-  "author": "Map Labeler Team",
-  "description": "Scripture Map Labeler",
+  "author": "SIL Scripture Publishing Services",
+  "description": "Paratext Diagram Labeler",
   "dependencies": {
     "@electron/remote": "^2.1.2",
     "@testing-library/dom": "^10.4.0",
@@ -62,8 +62,8 @@
     "electron-builder": "^26.0.12",
     "fs-extra": "^11.3.0"
   },  "build": {
-    "appId": "org.sil.scripture-map-labeler",
-    "productName": "Scripture Map Labeler",
+    "appId": "org.sil.paratext-diagram-labeler",
+    "productName": "Paratext Diagram Labeler",
     "files": [
       "build/**/*",
       "node_modules/**/*",
@@ -101,7 +101,7 @@
       "installerHeaderIcon": "buildResources/icon.ico",
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Scripture Map Labeler"
+      "shortcutName": "Paratext Diagram Labeler"
     },
     "mac": {
       "target": "dmg",

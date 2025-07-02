@@ -312,7 +312,7 @@ function MainApp({ settings, templateFolder, onExit }) {
           }
         } else {
           alert(
-            'Failed to load term-renderings.json: ' + (newTermRenderings && newTermRenderings.error)
+            inLang(uiStr.failedToLoadTermRenderings, lang) + ': ' + (newTermRenderings && newTermRenderings.error)
           );
         }
       } catch (e) {
@@ -348,10 +348,10 @@ function MainApp({ settings, templateFolder, onExit }) {
         // console.log('[IPC] getFilteredVerses:', Object.keys(verses).length, 'for refs:', refs.length);
       } else {
         setExtractedVerses({});
-        alert('Failed to requested filtered verses ' + (verses && verses.error));
+        alert(inLang(uiStr.failedToRequestVerses, lang) + (verses && verses.error ? ' ' + verses.error : ''));
       }
     });
-  }, [projectFolder, mapDef.labels, mapDef.template, isInitialized]);
+  }, [projectFolder, mapDef.labels, mapDef.template, isInitialized, lang]);
 
   // Load autocorrect file when project folder or initialization state changes
   useEffect(() => {
@@ -600,7 +600,7 @@ function MainApp({ settings, templateFolder, onExit }) {
       if (result.canceled || !result.success) {
         if (result.error) {
           console.error('File selection error:', result.error);
-          alert(`Error selecting file: ${result.error}`);
+          alert(inLang(uiStr.errorSelectingFile, lang) + ': ' + result.error);
         }
         return;
       }
@@ -623,7 +623,7 @@ function MainApp({ settings, templateFolder, onExit }) {
           // Handle data merge file
           const fileContent = result.fileContent;
           if (!fileContent) {
-            alert('Failed to read file content');
+            alert(inLang(uiStr.failedToReadFile, lang));
             return;
           }
           
@@ -1338,7 +1338,7 @@ function MainApp({ settings, templateFolder, onExit }) {
                     fontSize: '12px',
                   }}
                 >
-                  Loading image...
+                  {inLang(uiStr.loadingImage, lang)}
                 </div>
               )}
               {imageData === null && imageError && (

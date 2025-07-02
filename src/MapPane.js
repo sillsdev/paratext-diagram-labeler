@@ -3,6 +3,7 @@ import Leaf from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { inLang, statusValue, getMatchTally, isLocationVisible } from './Utils.js';
 import { collectionManager } from './CollectionManager';
+import uiStr from './data/ui-strings.json';
 
 // Component that handles map zoom and pan logic
 function MapController({
@@ -315,8 +316,8 @@ export default function MapPane({
           }}
         >
           {imageUrl === undefined
-            ? 'Loading map image...'
-            : 'Image loading failed. Please check the installation.'}
+            ? inLang(uiStr.loadingMapImage, lang)
+            : inLang(uiStr.imageLoadingFailed, lang)}
         </div>
       )}
       {transformedLocations.length > 0

@@ -2,7 +2,7 @@
 echo Manual Icon Fix Script
 echo ======================
 
-if not exist "dist\win-unpacked\Scripture Map Labeler.exe" (
+if not exist "dist\win-unpacked\Paratext Diagram Labeler.exe" (
     echo ERROR: Built executable not found!
     echo Please run build-release.bat first.
     pause

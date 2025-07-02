@@ -439,13 +439,13 @@ function BottomPane({
                                 console.log(`Successfully sent reference to Paratext: ${result.reference}`);
                               } else {
                                 console.warn(`Failed to send reference to Paratext: ${result.error}`);
-                                alert(`Could not send reference to Paratext: ${result.error}`);
+                                alert(inLang(uiStr.couldNotSendToParatext, lang) + (result.error ? ': ' + result.error : ''));
                               }
                             } catch (error) {
                               console.error('Error broadcasting reference:', error);
-                              alert(`Error sending reference to Paratext: ${error.message}`);
+                              alert(inLang(uiStr.errorSendingToParatext, lang) + (error.message ? ': ' + error.message : ''));
                             }
-                            alert(`1. Go to Paratext and edit ${prettyRef(refId)}.\n2. Save your changes in Paratext.\n3. Come back here and click "OK" to refresh the verse text from Paratext.`);
+                            alert(inLang(uiStr.paratextInstructions, lang).replace('{reference}', prettyRef(refId)));
                             // Reload the extracted verses to reflect changes
                             if (onReloadExtractedVerses) {
                               await onReloadExtractedVerses(termId, mergeKey);

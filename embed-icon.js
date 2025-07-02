@@ -5,7 +5,7 @@ const { execSync } = require('child_process');
 console.log('Running post-build icon embedding...');
 
 // Path to the built executable
-const exePath = path.join(__dirname, 'dist', 'win-unpacked', 'Scripture Map Labeler.exe');
+const exePath = path.join(__dirname, 'dist', 'win-unpacked', 'Paratext Diagram Labeler.exe');
 const iconPath = path.join(__dirname, 'buildResources', 'icon.ico');
 const rceditPath = path.join(__dirname, 'IconFix', 'rcedit.exe');
 
@@ -40,7 +40,7 @@ try {
   
   // Also set version info while we're at it
   try {
-    const versionCommand = `"${rceditPath}" "${exePath}" --set-version-string "CompanyName" "SIL International" --set-version-string "FileDescription" "Scripture Map Labeler" --set-version-string "ProductName" "Scripture Map Labeler"`;
+    const versionCommand = `"${rceditPath}" "${exePath}" --set-version-string "CompanyName" "SIL International" --set-version-string "FileDescription" "Paratext Diagram Labeler" --set-version-string "ProductName" "Paratext Diagram Labeler"`;
     execSync(versionCommand, { stdio: 'inherit' });
     console.log('Version info updated successfully!');
   } catch (versionError) {

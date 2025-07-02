@@ -14,9 +14,9 @@ if (-not $isAdmin) {
 
 # Look for the EXE in common locations
 $possibleLocations = @(
-    ".\dist\win-unpacked\Scripture Map Labeler.exe",
-    "..\dist\win-unpacked\Scripture Map Labeler.exe",
-    "..\Scripture Map Labeler.exe"
+    ".\dist\win-unpacked\Paratext Diagram Labeler.exe",
+    "..\dist\win-unpacked\Paratext Diagram Labeler.exe",
+    "..\Paratext Diagram Labeler.exe"
 )
 
 $exePath = $null
@@ -33,8 +33,8 @@ foreach ($location in $possibleLocations) {
 
 # If exe not found, ask user
 if ($null -eq $exePath) {
-    Write-Host "Could not automatically find the Scripture Map Labeler.exe file." -ForegroundColor Yellow
-    $userPath = Read-Host "Please enter the full path to the Scripture Map Labeler.exe file"
+    Write-Host "Could not automatically find the Paratext Diagram Labeler.exe file." -ForegroundColor Yellow
+    $userPath = Read-Host "Please enter the full path to the Paratext Diagram Labeler.exe file"
     
     if (Test-Path $userPath) {
         $exePath = (Get-Item $userPath).FullName

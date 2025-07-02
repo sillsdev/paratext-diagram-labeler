@@ -1,5 +1,5 @@
 @echo off
-echo Building Scripture Map Labeler Release...
+echo Building Paratext Diagram Labeler Release...
 
 :: Verify icon files exist before building
 echo Verifying icon files...
@@ -47,21 +47,21 @@ REM powershell -ExecutionPolicy Bypass -File clear-icon-cache.ps1
 
 :: Verify the build
 echo Verifying build files...
-if exist "dist\win-unpacked\Scripture Map Labeler.exe" (
+if exist "dist\win-unpacked\Paratext Diagram Labeler.exe" (
     echo [SUCCESS] Unpacked application created successfully.
     echo Checking if icon is embedded in executable...
-    powershell -Command "if ((Get-ItemProperty 'dist\win-unpacked\Scripture Map Labeler.exe').VersionInfo.FileDescription) { Write-Host '[OK] Executable has metadata' } else { Write-Host '[WARNING] Executable may not have icon' }"
+    powershell -Command "if ((Get-ItemProperty 'dist\win-unpacked\Paratext Diagram Labeler.exe').VersionInfo.FileDescription) { Write-Host '[OK] Executable has metadata' } else { Write-Host '[WARNING] Executable may not have icon' }"
 ) else (
     echo [WARNING] Unpacked application missing!
 )
 
-REM if exist "dist\Scripture Map Labeler Setup*.exe" (
+REM if exist "dist\Paratext Diagram Labeler Setup*.exe" (
     REM echo [SUCCESS] Installer created successfully.
 REM ) else (
     REM echo [WARNING] Installer not found!
 REM )
 
-REM if exist "dist\Scripture Map Labeler*.exe" (
+REM if exist "dist\Paratext Diagram Labeler*.exe" (
     REM echo [SUCCESS] Portable version created successfully.
 REM ) else (
     REM echo [WARNING] Portable version not found!
