@@ -242,7 +242,7 @@ export default function DetailsPane({
   const handleExportDataMerge = async () => {
     let outputFormat = templateData.formats;
     console.log('Exporting data merge with format:', outputFormat);
-    if (outputFormat === 'idml, mapx') {
+    if (outputFormat.includes('mapx')) {  // Even a mapx-only template can be exported to idml.txt so that it can be reloaded here later.
       // Prompt user to select output format. Return if user cancels.
       console.log('Prompting user to select export format');
       setShowExportDialog(true);

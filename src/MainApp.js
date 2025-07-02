@@ -594,38 +594,44 @@ function MainApp({ settings, templateFolder, onExit }) {
   // Handler for map image browse
   const handleBrowseMapTemplate = useCallback(async () => {
     try {
-      const [fileHandle] = await window.showOpenFilePicker({
-        types: [
-          {
-            description: 'Sample Map Images',
-            accept: { 'image/jpeg': ['.jpg'] },
-          },
-          {
-            description: 'Data Merge Files',
-            accept: { 'text/plain': ['.txt'] },
-          },
-        ],
-        multiple: false,
-      });
+      // Use Electron's file picker instead of web API
+      const result = await electronAPI.selectTemplateFile();
+      
+      if (result.canceled || !result.success) {
+        if (result.error) {
+          console.error('File selection error:', result.error);
+          alert(`Error selecting file: ${result.error}`);
+        }
+        return;
+      }
+
+      const fileName = result.fileName;
       let figFilename = '';
-      if (fileHandle) {
+      const labels = {};
+
+      if (fileName) {
         // Extract template name from filename and log the process
-        // console.log("Original file name:", fileHandle.name);
-        let newTemplateBase = fileHandle.name.replace(/\..*$/, ''); // Remove file extension
+        // console.log("Original file name:", fileName);
+        let newTemplateBase = fileName.replace(/\..*$/, ''); // Remove file extension
         // console.log("After removing extension:", newTemplateBase);
         newTemplateBase = newTemplateBase.trim();
         // console.log("After trim:", newTemplateBase);
         newTemplateBase = newTemplateBase.replace(/\s*[@(].*/, ''); // Remove anything after @ or (
         // console.log("Final template base name:", newTemplateBase);
-        const labels = {};
-        if (fileHandle.name.endsWith('.txt')) {
+
+        if (fileName.toLowerCase().endsWith('.txt')) {
           // Handle data merge file
-          const file = await fileHandle.getFile();
-          // console.log("Reading data merge file:", file.name);
-          const fileText = decodeFileAsString(await file.arrayBuffer());
+          const fileContent = result.fileContent;
+          if (!fileContent) {
+            alert('Failed to read file content');
+            return;
+          }
+          
+          // console.log("Reading data merge file:", fileName);
+          const fileText = decodeFileAsString(fileContent);
           // console.log(
           //   "Imported data merge file:",
-          //   file.name,
+          //   fileName,
           //   ">" + fileText + "<",
           // );
           // For now, assume it's an IDML data merge file //TODO: Handle mapx merge
@@ -642,12 +648,13 @@ function MainApp({ settings, templateFolder, onExit }) {
             alert(inLang(uiStr.invalidDataMerge, lang));
             return;
           }
-        } else if (fileHandle.name.endsWith('.jpg') || fileHandle.name.endsWith('.jpeg')) {
+        } else if (fileName.toLowerCase().endsWith('.jpg') || fileName.toLowerCase().endsWith('.jpeg')) {
           // Handle map image file
-          figFilename = fileHandle.name;
+          figFilename = fileName;
         } else {
           return;
         }
+
         if (!figFilename) {
           // If no figFilename, use the template base name as figFilename
           figFilename = newTemplateBase + '.jpg'; // Default to .jpg

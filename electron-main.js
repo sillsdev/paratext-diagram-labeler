@@ -385,6 +385,69 @@ ipcMain.handle('select-project-folder', async event => {
   return result.filePaths[0];
 });
 
+// Handler for selecting template files (images or IDML merge files)
+ipcMain.handle('select-template-file', async (event) => {
+  try {
+    const result = await dialog.showOpenDialog({
+      title: 'Select a template image or an IDML merge file',
+      properties: ['openFile'],
+      filters: [
+        {
+          name: 'All Template Files',
+          extensions: ['jpg', 'jpeg', 'idml.txt']
+        },
+        {
+          name: 'JPEG Images',
+          extensions: ['jpg', 'jpeg']
+        },
+        {
+          name: 'IDML Merge Files',
+          extensions: ['idml.txt']
+        },
+        {
+          name: 'All Files',
+          extensions: ['*']
+        }
+      ]
+    });
+
+    if (result.canceled || !result.filePaths.length) {
+      return { canceled: true };
+    }
+
+    const filePath = result.filePaths[0];
+    const fileName = path.basename(filePath);
+    
+    // Read file content if it's a text file
+    let fileContent = null;
+    if (fileName.toLowerCase().endsWith('.txt')) {
+      try {
+        const buffer = await fs.promises.readFile(filePath);
+        fileContent = buffer;
+      } catch (error) {
+        console.error('Error reading file content:', error);
+        return { 
+          success: false, 
+          error: `Failed to read file: ${error.message}` 
+        };
+      }
+    }
+
+    return {
+      success: true,
+      filePath,
+      fileName,
+      fileContent // Will be null for non-text files
+    };
+  } catch (error) {
+    console.error('Error in select-template-file:', error);
+    return { 
+      success: false, 
+      error: error.message 
+    };
+  }
+});
+
 function getVerseText(usfmChapterText, verseNum) {
   // Regular expression to match verse markers (single or bridged, e.g., \v 12 or \v 11-14)
   const verseRegex = /\\v (\d+(?:\u200f?-\d+)?)(.*?)(?=(?:\\v \d+(?:\u200f?-\d+)?|$))/gs;
@@ -582,22 +645,34 @@ ipcMain.handle('stat-path', async (event, filePath) => {
   }
 });
 
-// Handle IDML data merge export
+// Handle IDML/MAPX data merge export
 ipcMain.handle(
   'export-data-merge',
   async (event, { locations, templateName, format, projectFolder }) => {
     await loadSettings(projectFolder);
     try {
-      // Determine default output folder
-      const localFiguresPath = path.join(projectFolder, 'local', 'figures');
-      let defaultPath;
-
+      // Automatically create shared/labeler folder structure
+      const sharedPath = path.join(projectFolder, 'shared');
+      const sharedLabelerPath = path.join(sharedPath, 'labeler');
+      
+      // Create 'shared' folder if it doesn't exist
       try {
-        await fs.promises.access(localFiguresPath);
-        defaultPath = localFiguresPath;
+        await fs.promises.access(sharedPath);
       } catch {
-        defaultPath = projectFolder;
+        console.log(`Creating shared folder: ${sharedPath}`);
+        await fs.promises.mkdir(sharedPath, { recursive: true });
       }
+      
+      // Create 'labeler' folder if it doesn't exist
+      try {
+        await fs.promises.access(sharedLabelerPath);
+      } catch {
+        console.log(`Creating labeler folder: ${sharedLabelerPath}`);
+        await fs.promises.mkdir(sharedLabelerPath, { recursive: true });
+      }
+      
+      // Use the shared/labeler path as default
+      const defaultPath = sharedLabelerPath;
 
       let data;
       if (format === 'idml') {
