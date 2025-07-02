@@ -236,7 +236,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
 
   // Set initial locations
   useEffect(() => {
-    if (!electronAPI || !projectFolder || !isInitialized || !mapDef )
+    if (!electronAPI || !projectFolder || !isInitialized || !mapDef || !mapDef.labels?.length)
       return;
 
     try {
@@ -741,6 +741,11 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
         } else {
           // console.log("Initializing map from USFM:", settings.usfm);
           const initialMap = await mapFromUsfm(settings.usfm);
+          if (!initialMap.template) {
+            console.log('No template specified in USFM, browsing for template instead.');  
+            await handleBrowseMapTemplateRef.current();
+            return;
+          }
           console.log('Initial Map loaded (based on usfm):', initialMap);
           setMapDef(initialMap);
 

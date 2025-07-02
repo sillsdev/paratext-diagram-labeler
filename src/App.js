@@ -68,8 +68,8 @@ function App() {
   validateSettingsRef.current = validateSettings;
 
   // Function to load term renderings and re-validate
-  const loadTermRenderingsAndRevalidate = useCallback(async () => {
-    const settings = settingsService.getSettings();
+  const loadTermRenderingsAndRevalidate = useCallback(async (settingsParam = null) => {
+    const settings = settingsParam || settingsService.getSettings();
     
     // Only load if we have a valid project folder
     if (!settings.projectFolder) {
@@ -98,7 +98,7 @@ function App() {
         return;
       }
 
-      console.log('[IPC] Loading term renderings...');
+      // console.log('[IPC] Loading term renderings...');
       
       const newTermRenderings = await window.electronAPI.loadTermRenderings(
         settings.projectFolder,
@@ -160,7 +160,8 @@ function App() {
   useEffect(() => {
     // Only run after initial settings load is complete
     if (!isLoadingSettings) {
-      loadTermRenderingsAndRevalidate();
+      // Pass the already-loaded settings to avoid double settings load
+      loadTermRenderingsAndRevalidate(settingsService.getSettings());
     }
   }, [isLoadingSettings, loadTermRenderingsAndRevalidate]);
 
