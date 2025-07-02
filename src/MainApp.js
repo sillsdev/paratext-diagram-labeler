@@ -268,6 +268,7 @@ function MainApp({ settings, templateFolder, onExit }) {
           setLocations(prevLocations => {
             if (prevLocations.length === 0) {
               // If no previous locations, initialize from mapDef
+              console.log('No previous locations found, initializing from mapDef');
               return mapDef.labels.map(loc => {
                 if (!loc.vernLabel) {
                   const altTermIds = collectionManager.getAltTermIds(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template));
@@ -845,6 +846,7 @@ function MainApp({ settings, templateFolder, onExit }) {
         );
         return { ...loc, status };
       });
+      console.log('Initial locations from USFM:', initialLocations);
       setSelLocation(0);
       setLocations(initialLocations);
       //  update map object      // Update map data in state

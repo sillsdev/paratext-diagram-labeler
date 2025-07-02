@@ -8,13 +8,6 @@ export const COLLECTIONS = {
     mapDefsFile: 'smr-map-defs.json',
     description: 'SIL Map Repository collection',
   },
-  BFBS: {
-    id: 'BFBS',
-    name: 'BFBS Map Collection',
-    placeNamesFile: 'BFBS_PlaceNames&Refs.json',
-    mapDefsFile: 'bfbs-map-defs.json',
-    description: 'British and Foreign Bible Society maps',
-  },
   // Additional collections as needed
 };
 
