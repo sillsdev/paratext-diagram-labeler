@@ -907,7 +907,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
         }
       }, 0);
     },
-    [renderings, selLocation, locations, termRenderings, extractedVerses, mapDef.template]
+    [renderings, selLocation, locations, termRenderings, extractedVerses, mapDef.template, setTermRenderings]
   );
 
   // Replace all renderings with selected text (from bottom pane) or create new rendering (from details pane)
@@ -948,7 +948,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
         }
       }, 0);
     },
-    [selLocation, locations, termRenderings, extractedVerses, mapDef.template]
+    [selLocation, locations, termRenderings, extractedVerses, mapDef.template, setTermRenderings]
   );
 
   // Reload extracted verses for all terms (after Paratext edits)

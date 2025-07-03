@@ -98,7 +98,7 @@ export default function SettingsModal({ open, onClose, labelScale, setLabelScale
           color: '#666',
           textAlign: 'center'
         }}>
-          Paratext Diagram Labeler: React app v. {packageInfo.version}-alpha
+          {inLang(uiStr.paratextDiagramLabeler, lang)} (PT9 standalone edition) v. {packageInfo.version}-alpha
         </div>
         
         <div style={{ textAlign: 'center' }}>

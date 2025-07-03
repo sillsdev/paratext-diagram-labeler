@@ -48,15 +48,7 @@ const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch, languag
     onLaunch(editedSettings);
   }, [editedSettings, onLaunch]);
 
-  // Trigger validation when component mounts to ensure errors are displayed correctly
-  // useEffect(() => {
-  //   // Only trigger if we have settings and onSettingsChange handler
-  //   if (settings && onSettingsChange) {
-  //     // Re-validate the settings by notifying the parent
-  //     onSettingsChange({...settings});
-  //   }
-  // }, []); // Empty dependency array runs only on mount
-
+  
   return (
     <div className="pre-launch-screen">
       <div className="pre-launch-header">
@@ -65,9 +57,13 @@ const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch, languag
             <img src="./assets/logo.svg" alt="Paratext Diagram Labeler Logo" className="app-logo" />
           </div>
           <div className="header-text">
-            <h2>Paratext 9 standalone UX preview of the</h2>
             <h1>{inLang(uiStr.paratextDiagramLabeler, language)} </h1>
-            <h2>extension for Paratext 10</h2>
+            <h2>Paratext 9 standalone edition</h2>
+            <p>
+              <a href="https://tiny.cc/labeler" target="_blank" rel="noopener noreferrer">
+                tiny.cc/labeler
+              </a>
+            </p>
           </div>
         </div>
       </div>

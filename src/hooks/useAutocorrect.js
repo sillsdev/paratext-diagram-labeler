@@ -50,7 +50,7 @@ export function useAutocorrect(initialValue = '', onChange) {
         onChange(newValue);
       }
     }
-  }, [onChange, value]);
+  }, [onChange]);
 
   return {
     value,
