@@ -1,6 +1,6 @@
 import { collectionManager, getCollectionIdFromTemplate } from './CollectionManager';
 
-// Cache to prevent duplicate getMapDef calls
+// Cache to prevent duplicate getMapDef calls  //TODO: Check if this is still needed
 const mapDefCache = new Map();
 const pendingRequests = new Map();
 
@@ -23,11 +23,11 @@ async function getMapDef(templateName, collectionId = null) {
 
   const cacheKey = `${templateName}|${collectionId}`;
 
-  // Check if we have a cached result
-  if (mapDefCache.has(cacheKey)) {
-    console.log(`Using cached map definition for: ${templateName}`);
-    return mapDefCache.get(cacheKey);
-  }
+  // Check if we have a cached result   //TODO: Get rid of this cache elsewhere in code. It results in stale data.
+  // if (mapDefCache.has(cacheKey)) {
+  //   console.log(`Using cached map definition for: ${templateName}`);
+  //   return mapDefCache.get(cacheKey);
+  // }
 
   // Check if there's already a pending request for this template
   if (pendingRequests.has(cacheKey)) {

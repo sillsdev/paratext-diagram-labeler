@@ -116,11 +116,12 @@ async function mapFromUsfm(usfm) {
   mapDefData.fig = figMatch ? figMatch[0] : '';
   let maxIdx = mapDefData.labels.length;
   const regex =
-    /\\zlabel\s+\|key="([^"]+)"\s+termid="([^"]+)"\s+gloss="([^"]+)"\s+label="([^"]*)"/g;
+    /\\zlabel-s\s+\|key="([^"]+)"\s+termid="([^"]+)"\s+gloss="([^"]+)"\s*\\\*\s*([^\\]*)/g;
   let match;
   while ((match = regex.exec(usfm)) !== null) {
     // eslint-disable-next-line
     const [_, mergeKey, termId, gloss, vernLabel] = match;
+    console.log(`Parsed label: mergeKey=${mergeKey}, termId=${termId}, gloss=${gloss}, vernLabel=${vernLabel}`);
     // If mapDefData already has a label with this mergeKey, add vernLabel to it.
     const existingLabel = mapDefData.labels.find(label => label.mergeKey === mergeKey);
     if (existingLabel) {
@@ -129,6 +130,7 @@ async function mapFromUsfm(usfm) {
       }
     } else {
       // If not, create a new label object
+      console.log(`Creating new label for mergeKey: ${mergeKey}`);
       const label = {
         mergeKey,
         termId,
@@ -154,10 +156,10 @@ function usfmFromMap(map, lang) {
     usfm += `${map.fig}\n`;
   }
   map.labels.forEach(label => {
-    usfm += `\\zlabel |key="${label.mergeKey}" termid="${label.termId}" gloss="${inLang(
+    usfm += `\\zlabel-s |key="${label.mergeKey}" termid="${label.termId}" gloss="${inLang(
       label.gloss,
       lang
-    )}" label="${label.vernLabel || ''}"\\*\n`;
+    )}"\\*${label.vernLabel || ''}\\zlabel-e\\*\n`;
   });
   usfm += '\\zdiagram-e \\*';
   // Remove unnecessary escaping for output
@@ -654,7 +656,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
         } // Set mapDef and locations
         setMapDef({
           template: newTemplateBase,
-          fig: '\\fig | src="' + figFilename + '" size="span" ref=""\\fig*',
+          fig: '\\fig | src="' + figFilename + '" size="span" ref="-"\\fig*',
           mapView: true,
           imgFilename: foundTemplate.imgFilename,
           width: foundTemplate.width,

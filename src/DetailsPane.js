@@ -207,10 +207,10 @@ export default function DetailsPane({
 
     // Add each label as a \zlabel entry
     locations.forEach(label => {
-      usfm += `\\zlabel |key="${label.mergeKey}" termid="${label.termId}" gloss="${inLang(
+      usfm += `\\zlabel-s |key="${label.mergeKey}" termid="${label.termId}" gloss="${inLang(
         label.gloss,
         lang
-      )}" label="${label.vernLabel || ''}"\\*\n`;
+      )}"\\*${label.vernLabel || ''}\\zlabel-e\\*\n`;
     });
 
     usfm += '\\zdiagram-e \\*';
