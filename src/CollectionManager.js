@@ -8,6 +8,13 @@ export const COLLECTIONS = {
     mapDefsFile: 'smr-map-defs.json',
     description: 'SIL Map Repository collection',
   },
+  UBS: {
+    id: 'UBS',
+    name: 'United Bible Societies',
+    placeNamesFile: 'ubs-placenames-refs.json',
+    mapDefsFile: 'ubs-map-defs.json',
+    description: 'United Bible Societies collection',
+  },
   // Additional collections as needed
 };
 
