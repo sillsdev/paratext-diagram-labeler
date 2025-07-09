@@ -1035,6 +1035,63 @@ ipcMain.handle('restore-window-focus', async (event) => {
   }
 });
 
+// Handler to discover collections by scanning template folder
+ipcMain.handle('discover-collections', async (event, templateFolderPath) => {
+  try {
+    console.log(`Discovering collections in: ${templateFolderPath}`);
+    
+    if (!templateFolderPath) {
+      throw new Error('Template folder path is required');
+    }
+
+    // Check if template folder exists
+    try {
+      const stat = await fs.promises.stat(templateFolderPath);
+      if (!stat.isDirectory()) {
+        throw new Error('Template folder path is not a directory');
+      }
+    } catch (error) {
+      throw new Error(`Template folder not found: ${templateFolderPath}`);
+    }
+
+    // Read all subdirectories
+    const entries = await fs.promises.readdir(templateFolderPath, { withFileTypes: true });
+    const collections = [];
+    
+    for (const entry of entries) {
+      if (entry.isDirectory()) {
+        const collectionPath = path.join(templateFolderPath, entry.name);
+        const configPath = path.join(collectionPath, 'collection.json');
+        
+        try {
+          // Check if collection.json exists
+          await fs.promises.access(configPath);
+          
+          // Read and parse collection.json
+          const configData = await fs.promises.readFile(configPath, 'utf8');
+          const config = JSON.parse(configData);
+          
+          // Add the collection path and ensure ID is set
+          config.path = collectionPath;
+          config.id = config.id || entry.name.toUpperCase();
+          
+          console.log(`Found collection: ${config.name} (${config.id})`);
+          collections.push(config);
+        } catch (error) {
+          // Skip directories without valid collection.json
+          console.warn(`Skipping directory ${entry.name}: ${error.message}`);
+        }
+      }
+    }
+    
+    console.log(`Discovered ${collections.length} collections`);
+    return collections;
+  } catch (error) {
+    console.error('Error discovering collections:', error);
+    throw error;
+  }
+});
+
 // Helper function to clean reference format
 function cleanReference(reference) {
   // Convert formats like "JHN1.4" to "JHN 1:4" or "MRKL12.14" to "MRK 12:14"

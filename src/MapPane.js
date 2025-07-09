@@ -380,7 +380,7 @@ function createLabel(
     'white-space: nowrap;',
     `background: ${
       backgroundColor
-        ? `color-mix(in srgb, ${backgroundColor} 75%, transparent)`
+        ? `color-mix(in srgb, ${backgroundColor} 85%, transparent)`
         : 'rgba(0,0,0,0.75)'
     };`,
     'padding: 0 0.5em;', // 0px top/bottom, 0.5em left/right

@@ -1166,7 +1166,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
 
     // Use the template folder passed as prop instead of from settings service
     // This ensures we always use the latest version that's in memory
-    const folderPath = templateFolder || settings.templateFolder;
+    const folderPath = (templateFolder || settings.templateFolder) + '/' + currentCollectionId;
     // Normalize path separators for Windows
     const imagePath = folderPath.replace(/[/\\]$/, '') + '\\' + memoizedMapDef.imgFilename;
     console.log('Loading image from path:', imagePath, 'templatefolder', templateFolder);
@@ -1182,9 +1182,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
           } else {
             console.error(`Failed to load image through IPC from path: ${imagePath}`);
             setImageData(null); // null indicates error
-            setImageError(
-              `Could not load map image from template folder. Please check that the template folder contains the required image: ${memoizedMapDef.imgFilename}`
-            );
+            setImageError(`Could not load map image: ${imagePath}`);
           }
         })
         .catch(err => {
@@ -1197,7 +1195,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
       setImageData(null); // null indicates error
       setImageError('Electron API not available. Cannot load images.');
     }
-  }, [memoizedMapDef.imgFilename, isInitialized, settings, templateFolder]);
+  }, [memoizedMapDef.imgFilename, isInitialized, settings, templateFolder, currentCollectionId]);
   // For debugging - keep track of the original path with proper Windows path separators
   //   const imgPath = memoizedMapDef.imgFilename ?
   //   (settingsService.getTemplateFolder()) + '\\' + memoizedMapDef.imgFilename : '';
