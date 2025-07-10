@@ -1156,9 +1156,23 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
   // Add state to track specific image load error message
   const [imageError, setImageError] = useState(null);
 
-  // Load the image via IPC when the map definition or settings change
+  // Load the image via IPC when the map definition, settings, or selected variant change
   useEffect(() => {
     if (!memoizedMapDef.imgFilename || !settings || !isInitialized) return;
+
+    // Determine which image to use based on selected variant
+    let imageFilename = memoizedMapDef.imgFilename; // Default image
+    
+    // Check if current variant has a custom image
+    if (selectedVariant > 0 && memoizedMapDef.variants) {
+      const variantKeys = Object.keys(memoizedMapDef.variants);
+      const variantKey = variantKeys[selectedVariant - 1];
+      const variant = memoizedMapDef.variants[variantKey];
+      if (variant?.imgFilename) {
+        imageFilename = variant.imgFilename;
+        console.log(`Using variant image: ${imageFilename} for variant: ${variantKey}`);
+      }
+    }
 
     // Set to loading state
     setImageData(undefined);
@@ -1168,8 +1182,8 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
     // This ensures we always use the latest version that's in memory
     const folderPath = (templateFolder || settings.templateFolder) + '/' + currentCollectionId;
     // Normalize path separators for Windows
-    const imagePath = folderPath.replace(/[/\\]$/, '') + '\\' + memoizedMapDef.imgFilename;
-    console.log('Loading image from path:', imagePath, 'templatefolder', templateFolder);
+    const imagePath = folderPath.replace(/[/\\]$/, '') + '\\' + imageFilename;
+    console.log('Loading image from path:', imagePath, 'templatefolder', templateFolder, 'variant:', selectedVariant);
 
     // Use the IPC function to load the image
     if (window.electronAPI) {
@@ -1195,7 +1209,15 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
       setImageData(null); // null indicates error
       setImageError('Electron API not available. Cannot load images.');
     }
-  }, [memoizedMapDef.imgFilename, isInitialized, settings, templateFolder, currentCollectionId]);
+  }, [
+    memoizedMapDef.imgFilename, 
+    memoizedMapDef.variants,
+    selectedVariant,
+    isInitialized, 
+    settings, 
+    templateFolder, 
+    currentCollectionId
+  ]);
   // For debugging - keep track of the original path with proper Windows path separators
   //   const imgPath = memoizedMapDef.imgFilename ?
   //   (settingsService.getTemplateFolder()) + '\\' + memoizedMapDef.imgFilename : '';

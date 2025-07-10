@@ -72,6 +72,7 @@ class CollectionManager {
       // 3. Load core termlist (if it exists)
       try {
         this.coreTermlist = await window.electronAPI.loadFromJson(templateFolderPath, 'core-termlist.json');
+        console.log('Core termlist loaded successfully:', Object.keys(this.coreTermlist).length, 'terms');
       } catch (error) {
         console.warn('Core termlist not found or failed to load:', error.message);
         this.coreTermlist = {};
@@ -171,7 +172,7 @@ class CollectionManager {
         normalizedMapDefs,
       });
 
-      console.log(`Collection ${config.name} loaded: ${Object.keys(mergeKeys).length} merge keys, ${Object.keys(mapDefs).length} map definitions`);
+      console.log(`Collection ${config.name} loaded: ${Object.keys(mapDefs).length} map definitions, ${Object.keys(mergeKeys).length} merge keys, ${Object.keys(termlist).length} terms`);
       
     } catch (error) {
       console.error(`Failed to load collection ${config.name}:`, error);
