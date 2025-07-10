@@ -111,6 +111,7 @@
   "invalidUsfm": { "en": "Invalid USFM format. Changes not applied.", "es": "Formato USFM inválido. Cambios no aplicados.", "fr": "Format USFM invalide. Modifications non appliquées.", "ne": "अवैध USFM ढाँचा। परिवर्तनहरू लागू गरिएनन्।" },
   "label": { "en": "Label", "es": "Etiqueta", "fr": "Étiquette", "ne": "लेबल" },
   "labelSize": { "en": "Label Size", "es": "Tamaño de etiqueta", "fr": "Taille de l'étiquette", "ne": "लेबलको आकार" },
+  "labelOpacity": { "en": "Label Opacity", "es": "Opacidad de la etiqueta", "fr": "Opacité de l'étiquette", "ne": "लेबलको अपारदर्शिता" },
   "language": { "en": "Language", "es": "Idioma", "fr": "Langue", "ne": "भाषा" },
   "mapView": { "en": "Map View", "es": "Vista de mapa", "fr": "Vue de la carte", "ne": "नक्सा दृश्य" },
   "noLocations": { "en": "No locations to display", "es": "No hay ubicaciones para mostrar", "fr": "Aucun emplacement à afficher", "ne": "देखाउन स्थानहरू छैनन्" },

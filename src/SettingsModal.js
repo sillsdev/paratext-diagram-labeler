@@ -4,7 +4,7 @@ import uiStr from './data/ui-strings.json';
 import packageInfo from '../package.json';
 
 // Settings Modal Dialog
-export default function SettingsModal({ open, onClose, labelScale, setLabelScale, lang, setLang, showFrac, setShowFrac }) {
+export default function SettingsModal({ open, onClose, labelScale, setLabelScale, labelOpacity, setLabelOpacity, lang, setLang, showFrac, setShowFrac }) {
   if (!open) return null;
   return (
     <div
@@ -49,6 +49,21 @@ export default function SettingsModal({ open, onClose, labelScale, setLabelScale
             style={{ verticalAlign: 'middle', marginRight: 8 }}
           />
           <span>{labelScale.toFixed(2)}x</span>
+        </div>
+        <div style={{ marginBottom: 16, textAlign: 'center' }}>
+          <label style={{ fontWeight: 'bold', marginRight: 8, textAlign: 'center' }}>
+            {inLang(uiStr.labelOpacity, lang)}:
+          </label>
+          <input
+            type="range"
+            min={10}
+            max={100}
+            step={1}
+            value={labelOpacity}
+            onChange={e => setLabelOpacity(parseFloat(e.target.value))}
+            style={{ verticalAlign: 'middle', marginRight: 8 }}
+          />
+          <span>{labelOpacity.toFixed(0)}%</span>
         </div>
         <div style={{ marginBottom: 16, textAlign: 'center' }}>
           <label style={{ fontWeight: 'bold', marginRight: 8 }}>

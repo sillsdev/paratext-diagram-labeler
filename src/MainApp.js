@@ -187,6 +187,10 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
     const saved = localStorage.getItem('labelScale'); // Persist labelScale in localStorage
     return saved ? parseFloat(saved) : 1;
   });
+  const [labelOpacity, setLabelOpacity] = useState(() => {
+    const saved = localStorage.getItem('labelOpacity'); // Persist labelOpacity in localStorage
+    return saved ? parseFloat(saved) : 85;
+  });
   const [showFrac, setShowFrac] = useState(() => {
     const saved = localStorage.getItem('showFrac'); // Persist showFrac in localStorage
     return saved === 'true';
@@ -207,6 +211,11 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
   useEffect(() => {
     localStorage.setItem('labelScale', labelScale.toString());
   }, [labelScale]);
+
+  // Persist labelOpacity to localStorage
+  useEffect(() => {
+    localStorage.setItem('labelOpacity', labelOpacity.toString());
+  }, [labelOpacity]);
 
   // Persist showFrac to localStorage
   useEffect(() => {
@@ -1357,6 +1366,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
                 onSelectLocation={memoizedHandleSelectLocation}
                 selLocation={selLocation}
                 labelScale={labelScale}
+                labelOpacity={labelOpacity}
                 mapDef={memoizedMapDef}
                 termRenderings={termRenderings}
                 lang={lang}
@@ -1448,6 +1458,8 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
         onClose={() => setShowSettings(false)}
         labelScale={labelScale}
         setLabelScale={setLabelScale}
+        labelOpacity={labelOpacity}
+        setLabelOpacity={setLabelOpacity}
         lang={lang}
         setLang={setLang}
         showFrac={showFrac}

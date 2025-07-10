@@ -240,6 +240,7 @@ export default function MapPane({
   onSelectLocation,
   selLocation,
   labelScale,
+  labelOpacity = 85,
   mapDef,
   termRenderings,
   lang,
@@ -333,6 +334,7 @@ export default function MapPane({
                 loc.status,
                 selLocation === loc.idx,
                 labelScale,
+                labelOpacity,
                 showFrac
                   ? frac(
                       getMatchTally(
@@ -362,6 +364,7 @@ function createLabel(
   status,
   isSelected = false,
   labelScale = 1,
+  labelOpacity = 85,
   extra
 ) {
   const isLeft = align === 'left';
@@ -373,14 +376,15 @@ function createLabel(
   // Calculate scale factor for font size (matches previous logic)
   const fontSizePx = baseFontSize * (0.7 + 0.1 * (4 - size));
   // Use em units for all scalable properties
+  const textOpacity = Math.min(Math.round(labelOpacity * 1.2), 100);
   const baseStyle = [
-    `color: ${textColor};`,
+    `color: color-mix(in srgb, ${textColor} ${textOpacity}%, transparent);`,
     `font-size: ${fontSizePx}px;`,
     'font-weight: bold;',
     'white-space: nowrap;',
     `background: ${
       backgroundColor
-        ? `color-mix(in srgb, ${backgroundColor} 85%, transparent)`
+        ? `color-mix(in srgb, ${backgroundColor} ${labelOpacity}%, transparent)`
         : 'rgba(0,0,0,0.75)'
     };`,
     'padding: 0 0.5em;', // 0px top/bottom, 0.5em left/right
