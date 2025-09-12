@@ -27,6 +27,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+  "test-ci": "CI=true react-scripts test --watchAll=false --runInBand --passWithNoTests --json --outputFile=jest-results.json",
     "eject": "react-scripts eject",
     "electron": "electron .",
     "electron-debug": "electron --inspect-brk=9229 .",
