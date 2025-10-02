@@ -27,13 +27,14 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-  "test-ci": "react-scripts test --watchAll=false --runInBand --passWithNoTests --json --outputFile=jest-results.json",
+    "test-ci": "react-scripts test --watchAll=false --runInBand --passWithNoTests --json --outputFile=jest-results.json",
+    "dev-mode": "concurrently \"npm start\" \"wait-on http://localhost:3000 && npm run electron-dev\"",
     "eject": "react-scripts eject",
-    "electron": "electron .",
-    "electron-debug": "electron --inspect-brk=9229 .",
-    "electron-source": "set NODE_ENV=development && electron electron-main.js",
-    "electron-dev": "set NODE_ENV=development && electron .",
-    "electron-prod": "set NODE_ENV=production && electron .",
+    "electron": "cross-env NODE_ENV=development electron electron-main.js",
+    "electron-debug": "cross-env NODE_ENV=development electron --inspect-brk=9229 .",
+    "electron-source": "cross-env NODE_ENV=development electron electron-main.js",
+    "electron-dev": "cross-env NODE_ENV=development electron electron-main.js",
+    "electron-prod": "cross-env NODE_ENV=production electron .",
     "copy-resources": "node copy-resources.js",
     "package": "react-scripts build && node copy-resources.js && electron-builder build --win --publish never",
     "package-mac": "react-scripts build && node copy-resources.js && electron-builder build --mac --publish never",
@@ -58,9 +59,12 @@
     ]
   },
   "devDependencies": {
+    "concurrently": "^9.2.1",
+    "cross-env": "^10.1.0",
     "electron": "^36.3.1",
     "electron-builder": "^26.0.12",
-    "fs-extra": "^11.3.0"
+    "fs-extra": "^11.3.0",
+    "wait-on": "^9.0.1"
   },
   "build": {
     "appId": "org.sil.scripture-map-labeler",
@@ -72,12 +76,14 @@
     "directories": {
       "buildResources": "build",
       "output": "dist"
-    },    "extraResources": [
+    },
+    "extraResources": [
       {
         "from": "public/assets",
         "to": "assets"
       }
-    ],    "asar": false,
+    ],
+    "asar": false,
     "npmRebuild": false,
     "win": {
       "target": [
