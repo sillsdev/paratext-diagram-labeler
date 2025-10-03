@@ -1,10 +1,14 @@
 # Getting Started
 
-## Available Scripts
+Biblical map app should run cross-platform on Windows, Mac and Linux
 
-In the project directory, you can run:
+First do
 
-### `dev-mode.bat`
+`npm install`
+
+To run the app in development mode:
+
+`npm run dev-mode`
 
 Runs the app in the development mode.
 
