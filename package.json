@@ -1,6 +1,6 @@
 {
   "name": "paratext-diagram-labeler",
-  "version": "0.0.3",
+  "version": "0.0.7",
   "private": true,
   "author": "SIL Scripture Publishing Services",
   "description": "Paratext Diagram Labeler",
@@ -61,7 +61,8 @@
     "electron": "^36.3.1",
     "electron-builder": "^26.0.12",
     "fs-extra": "^11.3.0"
-  },  "build": {
+  },
+  "build": {
     "appId": "org.sil.paratext-diagram-labeler",
     "productName": "Paratext Diagram Labeler",
     "files": [

@@ -3,7 +3,7 @@ import './MainApp.css';
 import BottomPane from './BottomPane.js';
 import uiStr from './data/ui-strings.json';
 import { MAP_VIEW, TABLE_VIEW, USFM_VIEW } from './constants.js';
-import { collectionManager, getCollectionIdFromTemplate } from './CollectionManager';
+import { collectionManager, getCollectionIdFromTemplate, findCollectionIdAndTemplate } from './CollectionManager';
 import { getMapDef } from './MapData';
 import { inLang, getStatus, getMapForm, isLocationVisible } from './Utils.js';
 import MapPane from './MapPane.js';
@@ -581,7 +581,9 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
       }
 
       const fileName = result.fileName;
+      const filePath = result.filePath;
       let figFilename = '';
+      let isJpg = false;
       const labels = {};
 
       if (fileName) {
@@ -626,6 +628,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
         } else if (fileName.toLowerCase().endsWith('.jpg') || fileName.toLowerCase().endsWith('.jpeg')) {
           // Handle map image file
           figFilename = fileName;
+          isJpg = true;
         } else {
           return;
         }
@@ -636,7 +639,8 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
         }
         // Add diagnostic logs to see what's happening
         // console.log("Template base name:", newTemplateBase);
-        const collectionId = getCollectionIdFromTemplate(newTemplateBase);
+        const [collectionId, templateName] = findCollectionIdAndTemplate(newTemplateBase);
+        newTemplateBase = templateName; // Use the exact template name from the collection
         // console.log("Detected collection ID:", collectionId);
         // console.log("Collections loaded:", collectionManager.collectionsData);
         // console.log(
@@ -667,7 +671,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
           template: newTemplateBase,
           fig: '\\fig | src="' + figFilename + '" size="span" ref="-"\\fig*',
           mapView: true,
-          imgFilename: foundTemplate.imgFilename,
+          imgFilename: isJpg ? filePath : foundTemplate.imgFilename,
           width: foundTemplate.width,
           height: foundTemplate.height,
           labels: foundTemplate.labels,
@@ -1187,12 +1191,17 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
     setImageData(undefined);
     setImageError(null);
 
-    // Use the template folder passed as prop instead of from settings service
-    // This ensures we always use the latest version that's in memory
-    const folderPath = (templateFolder || settings.templateFolder) + '/' + currentCollectionId;
-    // Normalize path separators for Windows
-    const imagePath = folderPath.replace(/[/\\]$/, '') + '\\' + imageFilename;
-    console.log('Loading image from path:', imagePath, 'templatefolder', templateFolder, 'variant:', selectedVariant);
+    let imagePath;
+    if (imageFilename.includes('/') || imageFilename.includes('\\')) {
+      // If imageFilename is already an absolute path (contains a slash), use it directly
+      imagePath = imageFilename;
+    } else {
+      // Append filename to tempate folder path.
+      // Use the template folder passed as prop instead of from settings service
+      // This ensures we always use the latest version that's in memory
+      imagePath = (templateFolder || settings.templateFolder) + '/' + currentCollectionId + '/' + imageFilename;
+    }
+    console.log('Loading image from path:', imagePath, '; templatefolder:', templateFolder, '; variant:', selectedVariant);
 
     // Use the IPC function to load the image
     if (window.electronAPI) {

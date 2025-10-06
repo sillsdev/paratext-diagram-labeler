@@ -11,7 +11,7 @@ import {
   STATUS_MULTIPLE_RENDERINGS,
   STATUS_UNMATCHED,
 } from './constants.js';
-import { collectionManager, getCollectionIdFromTemplate } from './CollectionManager';
+import { collectionManager, getCollectionIdFromTemplate, findCollectionIdAndTemplate } from './CollectionManager';
 import { getMapDef } from './MapData';
 import { inLang, statusValue, getMapForm, wordMatchesRenderings } from './Utils.js';
 import { settingsService } from './services/SettingsService.js';
@@ -60,9 +60,9 @@ export default function DetailsPane({
 
       try {
         console.log(`Loading template data for: ${mapDef.template}`);
-        const collectionId = getCollectionIdFromTemplate(mapDef.template);
-        const data = await getMapDef(mapDef.template, collectionId);
-        setTemplateData({ ...data, templateName: mapDef.template });
+        const [collectionId, templateName] = findCollectionIdAndTemplate(mapDef.template);
+        const data = await getMapDef(templateName, collectionId);
+        setTemplateData({ ...data, templateName });
       } catch (error) {
         console.error(`Error loading template data for ${mapDef.template}:`, error);
         setTemplateData({ templateName: mapDef.template });

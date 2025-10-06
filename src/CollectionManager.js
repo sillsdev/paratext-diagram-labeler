@@ -4,12 +4,68 @@ const mergeKeysFile = "mergekeys.json";
 const termListFile = "termlist.json";
 const mapDefsFile = "map-defs.json";
 
-// Function to determine collection ID from template name
 export function getCollectionIdFromTemplate(templateName) {
   if (!templateName) return 'SMR'; // Default to SMR if no template
-  const match = templateName.match(/^([^_]+)_/);
+  const match = templateName.match(/^([a-z]{2,4})_/i);
   // Always uppercase the collection ID to match the COLLECTIONS object keys
-  return match ? match[1].toUpperCase() : 'SMR'; // Default to SMR if no match
+  if (match) return match[1].toUpperCase();
+  return 'SMR'; // Default to SMR if no pattern match
+}  
+
+
+// Function to determine collection ID and template name from rough template name
+export function findCollectionIdAndTemplate(templateName) {
+  if (!templateName) return ['SMR', '' ]; // Default to SMR if no template
+
+  const match = templateName.match(/^([a-z]{2,4})_/i);
+  // Always uppercase the collection ID to match the COLLECTIONS object keys
+  if (match) return [match[1].toUpperCase(), templateName];
+
+  // If no pattern match, search through all available collections
+  if (collectionManager.isInitialized) {
+    const allCollectionIds = collectionManager.getAllCollectionIds();
+    console.log(`Searching for template "${templateName}" in ${allCollectionIds.length} collections:`, allCollectionIds);
+    
+    for (const collectionId of allCollectionIds) {
+      // Only search in collections that are actually loaded
+      if (!collectionManager.isCollectionLoaded(collectionId)) {
+        console.log(`Skipping collection ${collectionId} - not loaded`);
+        continue;
+      }
+      
+      const mapDefs = collectionManager.getMapDefs(collectionId);
+      console.log(`Checking collection ${collectionId} with ${Object.keys(mapDefs).length} templates`);
+      
+      // Check for exact match first
+      if (mapDefs[templateName]) {
+        console.log(`Found template "${templateName}" in collection ${collectionId}`);
+        return [collectionId, templateName];
+      }
+      
+      // Check for match with collection prefix
+      const prefixedTemplateName = `${collectionId}_${templateName}`;
+      if (mapDefs[prefixedTemplateName]) {
+        console.log(`Found template "${templateName}" with prefix "${prefixedTemplateName}" in collection ${collectionId}`);
+        return [collectionId, prefixedTemplateName];
+      }
+      
+      // Check for case-insensitive match
+      const normalizedMapDefs = collectionManager.collectionsData.get(collectionId)?.normalizedMapDefs;
+      if (normalizedMapDefs && normalizedMapDefs[templateName.toLowerCase()]) {
+        console.log(`Found template "${templateName}" (case-insensitive) in collection ${collectionId}`);
+        return [collectionId, templateName];
+      }
+      
+      // Check for case-insensitive match with collection prefix
+      if (normalizedMapDefs && normalizedMapDefs[prefixedTemplateName.toLowerCase()]) {
+        console.log(`Found template "${templateName}" (case-insensitive with prefix) in collection ${collectionId}`);
+        return [collectionId, prefixedTemplateName];
+      }
+    }
+    console.warn(`Template "${templateName}" not found in any collection, defaulting to SMR`);
+  }
+
+  return ['SMR', templateName]; // Default to SMR if no match found anywhere
 }
 
 class CollectionManager {
