@@ -37,7 +37,7 @@
     "electron-dev": "cross-env NODE_ENV=development electron electron-main.js",
     "electron-prod": "cross-env NODE_ENV=production electron .",
     "copy-resources": "node copy-resources.js",
-    "package": "react-scripts build && node copy-resources.js && electron-builder build --win --publish never",
+    "package-windows": "react-scripts build && node copy-resources.js && electron-builder build --win --publish never",
     "package-mac": "react-scripts build && node copy-resources.js && electron-builder build --mac --publish never",
     "package-linux": "react-scripts build && node copy-resources.js && electron-builder build --linux --publish never"
   },
