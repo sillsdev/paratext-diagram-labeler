@@ -28,6 +28,13 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Sign installer
+        uses: sillsdev/codesign/trusted-signing-action@v3
+        with:
+          credentials: ${{ secrets.TRUSTED_SIGNING_CREDENTIALS }}
+          files-folder: dist
+          files-folder-filter: Paratext*.exe
+
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
         with:
