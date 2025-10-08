@@ -56,10 +56,10 @@ export function WarningIcon() {
         <text
           x="50%"
           y="60%"
-          text-anchor="middle"
+          textAnchor="middle"
           fill="#FFFFFF"
-          font-size="12"
-          font-weight="bold"
+          fontSize="12"
+          fontWeight="bold"
           dy=".3em"
         >
           !
@@ -77,6 +77,39 @@ export function NoneIcon() {
       <circle cx="4" cy="8" r="1.5" fill="#888888" />
       <circle cx="8" cy="8" r="1.5" fill="#888888" />
       <circle cx="12" cy="8" r="1.5" fill="#888888" />
+    </svg>
+  );
+}
+
+// ShowAllIcon: Gray filter with diagonal slash inside a circle
+export function ShowAllIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" style={{ verticalAlign: 'middle' }}>
+      <path d="M3 6h14l-4 4v6l-2-2v-4L3 6z" fill="#666" stroke="#666" strokeWidth="1"/>
+      <circle cx="10" cy="10" r="9" fill="none" stroke="#000" strokeWidth="1.5"/>
+      <path d="M16 4 L4 16" stroke="#000" strokeWidth="2" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+// ShowMissingIcon: Gray filter with red X at base
+export function ShowMissingIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" style={{ verticalAlign: 'middle' }}>
+      <path d="M3 6h14l-4 4v6l-2-2v-4L3 6z" fill="#666" stroke="#666" strokeWidth="1"/>
+      <g transform="translate(4, 14) scale(0.9)">
+        <path d="M-3 -3 L3 3 M3 -3 L-3 3" stroke="#e70000" strokeWidth="2" strokeLinecap="round"/>
+      </g>
+    </svg>
+  );
+}
+
+// ShowUniqueIcon: Gray filter with green "1" at base (larger and moved left)
+export function ShowUniqueIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" style={{ verticalAlign: 'middle' }}>
+      <path d="M3 6h14l-4 4v6l-2-2v-4L3 6z" fill="#666" stroke="#666" strokeWidth="1"/>
+      <text x="4" y="17" textAnchor="middle" fill="#00a000" fontSize="11" fontWeight="bold">1</text>
     </svg>
   );
 }

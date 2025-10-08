@@ -3,7 +3,7 @@ import './MainApp.css';
 import BottomPane from './BottomPane.js';
 import uiStr from './data/ui-strings.json';
 import { MAP_VIEW, TABLE_VIEW, USFM_VIEW } from './constants.js';
-import { collectionManager, getCollectionIdFromTemplate } from './CollectionManager';
+import { collectionManager, getCollectionIdFromTemplate, findCollectionIdAndTemplate } from './CollectionManager';
 import { getMapDef } from './MapData';
 import { inLang, getStatus, getMapForm, isLocationVisible } from './Utils.js';
 import MapPane from './MapPane.js';
@@ -12,6 +12,7 @@ import DetailsPane from './DetailsPane.js';
 import SettingsModal from './SettingsModal.js';
 // import { useInitialization, InitializationProvider } from './InitializationProvider';
 import { settingsService } from './services/SettingsService';
+import { autocorrectService } from './services/AutocorrectService';
 
 const electronAPI = window.electronAPI;
 
@@ -28,7 +29,7 @@ const emptyInitialMap = {
   height: 1000,
   labels: [],
 };
-console.log('Creating empty initial map state');
+// console.log('Creating empty initial map state');
 
 // return a list of all refs used by all the labels in the map definition
 function getRefList(labels, collectionId = 'SMR') {
@@ -115,11 +116,12 @@ async function mapFromUsfm(usfm) {
   mapDefData.fig = figMatch ? figMatch[0] : '';
   let maxIdx = mapDefData.labels.length;
   const regex =
-    /\\zlabel\s+\|key="([^"]+)"\s+termid="([^"]+)"\s+gloss="([^"]+)"\s+label="([^"]*)"/g;
+    /\\zlabel-s\s+\|key="([^"]+)"\s+termid="([^"]+)"\s+gloss="([^"]+)"\s*\\\*\s*([^\\]*)/g;
   let match;
   while ((match = regex.exec(usfm)) !== null) {
     // eslint-disable-next-line
     const [_, mergeKey, termId, gloss, vernLabel] = match;
+    console.log(`Parsed label: mergeKey=${mergeKey}, termId=${termId}, gloss=${gloss}, vernLabel=${vernLabel}`);
     // If mapDefData already has a label with this mergeKey, add vernLabel to it.
     const existingLabel = mapDefData.labels.find(label => label.mergeKey === mergeKey);
     if (existingLabel) {
@@ -128,6 +130,7 @@ async function mapFromUsfm(usfm) {
       }
     } else {
       // If not, create a new label object
+      console.log(`Creating new label for mergeKey: ${mergeKey}`);
       const label = {
         mergeKey,
         termId,
@@ -153,17 +156,17 @@ function usfmFromMap(map, lang) {
     usfm += `${map.fig}\n`;
   }
   map.labels.forEach(label => {
-    usfm += `\\zlabel |key="${label.mergeKey}" termid="${label.termId}" gloss="${inLang(
+    usfm += `\\zlabel-s |key="${label.mergeKey}" termid="${label.termId}" gloss="${inLang(
       label.gloss,
       lang
-    )}" label="${label.vernLabel || ''}"\\*\n`;
+    )}"\\*${label.vernLabel || ''}\\zlabel-e\\*\n`;
   });
   usfm += '\\zdiagram-e \\*';
   // Remove unnecessary escaping for output
   return usfm.replace(/\\/g, '\\');
 }
 
-function MainApp({ settings, templateFolder, onExit }) {
+function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRenderings }) {
   //   console.log('MainApp initialized with templateFolder prop:', templateFolder);
 
   const [isInitialized, setIsInitialized] = useState(false);
@@ -184,6 +187,10 @@ function MainApp({ settings, templateFolder, onExit }) {
     const saved = localStorage.getItem('labelScale'); // Persist labelScale in localStorage
     return saved ? parseFloat(saved) : 1;
   });
+  const [labelOpacity, setLabelOpacity] = useState(() => {
+    const saved = localStorage.getItem('labelOpacity'); // Persist labelOpacity in localStorage
+    return saved ? parseFloat(saved) : 85;
+  });
   const [showFrac, setShowFrac] = useState(() => {
     const saved = localStorage.getItem('showFrac'); // Persist showFrac in localStorage
     return saved === 'true';
@@ -197,12 +204,18 @@ function MainApp({ settings, templateFolder, onExit }) {
   const renderingsTextareaRef = useRef();
   const handleBrowseMapTemplateRef = useRef();
   const [extractedVerses, setExtractedVerses] = useState({});
-  const [termRenderings, setTermRenderings] = useState(); // Initialize map from USFM
+  // const [termRenderings, setTermRenderings] = useState(); 
+  // const [termRenderingsLoading, setTermRenderingsLoading] = useState(false); // Guard against multiple loads
 
   // Persist labelScale to localStorage
   useEffect(() => {
     localStorage.setItem('labelScale', labelScale.toString());
   }, [labelScale]);
+
+  // Persist labelOpacity to localStorage
+  useEffect(() => {
+    localStorage.setItem('labelOpacity', labelOpacity.toString());
+  }, [labelOpacity]);
 
   // Persist showFrac to localStorage
   useEffect(() => {
@@ -232,59 +245,65 @@ function MainApp({ settings, templateFolder, onExit }) {
     initializeColls();
   }, [settings, templateFolder]);
 
-  // Load term renderings from new project folder
+  // Set initial locations
   useEffect(() => {
-    if (!electronAPI || !projectFolder || !isInitialized || !mapDef) return;
+    if (!electronAPI || !projectFolder || !isInitialized || !mapDef || !mapDef.labels?.length)
+      return;
 
-    const loadData = async () => {
-      try {
-        const newTermRenderings = await electronAPI.loadTermRenderings(
-          projectFolder,
-          settings.saveToDemo
-        );
-        console.log(
-          '[IPC] Loaded term renderings:',
-          newTermRenderings,
-          'from folder:',
-          projectFolder,
-          'saveToDemo:',
-          settings.saveToDemo
-        );
-        if (newTermRenderings && !newTermRenderings.error) {
-          setTermRenderings(newTermRenderings);
-          // Re-init locations from map and new termRenderings
-          const initialLocations = mapDef.labels.map(loc => {
+    try {
+      // Update existing locations with termRenderings, preserving vernLabel values
+      setLocations(prevLocations => {
+        if (prevLocations.length === 0) {
+          // If no previous locations, initialize from mapDef
+          console.log('No previous locations found, initializing from mapDef');
+          return mapDef.labels.map(loc => {
             if (!loc.vernLabel) {
-              loc.vernLabel = getMapForm(newTermRenderings, loc.termId);
+              const altTermIds = collectionManager.getAltTermIds(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template));
+              loc.vernLabel = getMapForm(termRenderings, loc.termId, altTermIds);
             }
             const status = getStatus(
-              newTermRenderings,
+              termRenderings,
               loc.termId,
               loc.vernLabel,
-              collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+              collectionManager.getRefs(
+                loc.mergeKey,
+                getCollectionIdFromTemplate(mapDef.template)
+              ),
               extractedVerses
             );
             return { ...loc, status };
           });
-          setLocations(initialLocations);
-          if (initialLocations.length > 0) {
-            setSelLocation(0); // Select first location directly
-          }
         } else {
-          alert(
-            'Failed to load term-renderings.json: ' + (newTermRenderings && newTermRenderings.error)
-          );
+          // Update existing locations, preserving vernLabel values
+          return prevLocations.map(loc => {
+            const status = getStatus(
+              termRenderings,
+              loc.termId,
+              loc.vernLabel || '', // Use existing vernLabel or empty string
+              collectionManager.getRefs(
+                loc.mergeKey,
+                getCollectionIdFromTemplate(mapDef.template)
+              ),
+              extractedVerses
+            );
+            return { ...loc, status };
+          });
         }
-      } catch (e) {
-        console.log(
-          `Failed to load term-renderings.json from project folder <${projectFolder}>.`,
-          e
-        );
+      });
+      // Only set selection to 0 if no valid selection exists
+      if (
+        mapDef.labels &&
+        mapDef.labels.length > 0 &&
+        (selLocation >= mapDef.labels.length || selLocation < 0)
+      ) {
+        setSelLocation(0); // Select first location only if current selection is invalid
       }
-    };
+    } catch (e) {
+      console.log(`Error updating locations:`, e);
+    }
 
-    loadData();
-  }, [projectFolder, mapDef, isInitialized, settings.saveToDemo, extractedVerses]);
+    
+  }, [projectFolder, mapDef, isInitialized,  extractedVerses, selLocation, termRenderings]); 
 
   // setExtractedVerses when projectFolder or mapDef.labels change
   useEffect(() => {
@@ -304,10 +323,34 @@ function MainApp({ settings, templateFolder, onExit }) {
         // console.log('[IPC] getFilteredVerses:', Object.keys(verses).length, 'for refs:', refs.length);
       } else {
         setExtractedVerses({});
-        alert('Failed to requested filtered verses ' + (verses && verses.error));
+        alert(inLang(uiStr.failedToRequestVerses, lang) + (verses && verses.error ? ' ' + verses.error : ''));
       }
     });
-  }, [projectFolder, mapDef.labels, mapDef.template, isInitialized]);
+  }, [projectFolder, mapDef.labels, mapDef.template, isInitialized, lang]);
+
+  // Load autocorrect file when project folder or initialization state changes
+  useEffect(() => {
+    if (projectFolder && isInitialized) {
+      autocorrectService.loadAutocorrectFile(projectFolder);
+    }
+  }, [projectFolder, isInitialized]);
+
+  // Update renderings and approval status when selected location or term renderings change
+  useEffect(() => {
+    if (!termRenderings || !locations.length || selLocation >= locations.length) return;
+
+    const currentLocation = locations[selLocation];
+    if (!currentLocation) return;
+
+    const entry = termRenderings[currentLocation.termId];
+    if (entry) {
+      setRenderings(entry.renderings);
+      setIsApproved(!entry.isGuessed);
+    } else {
+      setRenderings('');
+      setIsApproved(false);
+    }
+  }, [selLocation, termRenderings, locations]);
 
   // Handler to set the selected location (e.g. Label clicked)
   const handleSelectLocation = useCallback(
@@ -526,38 +569,46 @@ function MainApp({ settings, templateFolder, onExit }) {
   // Handler for map image browse
   const handleBrowseMapTemplate = useCallback(async () => {
     try {
-      const [fileHandle] = await window.showOpenFilePicker({
-        types: [
-          {
-            description: 'Sample Map Images',
-            accept: { 'image/jpeg': ['.jpg'] },
-          },
-          {
-            description: 'Data Merge Files',
-            accept: { 'text/plain': ['.txt'] },
-          },
-        ],
-        multiple: false,
-      });
+      // Use Electron's file picker instead of web API
+      const result = await electronAPI.selectTemplateFile();
+      
+      if (result.canceled || !result.success) {
+        if (result.error) {
+          console.error('File selection error:', result.error);
+          alert(inLang(uiStr.errorSelectingFile, lang) + ': ' + result.error);
+        }
+        return;
+      }
+
+      const fileName = result.fileName;
+      const filePath = result.filePath;
       let figFilename = '';
-      if (fileHandle) {
+      let isJpg = false;
+      const labels = {};
+
+      if (fileName) {
         // Extract template name from filename and log the process
-        // console.log("Original file name:", fileHandle.name);
-        let newTemplateBase = fileHandle.name.replace(/\..*$/, ''); // Remove file extension
+        // console.log("Original file name:", fileName);
+        let newTemplateBase = fileName.replace(/\..*$/, ''); // Remove file extension
         // console.log("After removing extension:", newTemplateBase);
         newTemplateBase = newTemplateBase.trim();
         // console.log("After trim:", newTemplateBase);
         newTemplateBase = newTemplateBase.replace(/\s*[@(].*/, ''); // Remove anything after @ or (
         // console.log("Final template base name:", newTemplateBase);
-        const labels = {};
-        if (fileHandle.name.endsWith('.txt')) {
+
+        if (fileName.toLowerCase().endsWith('.txt')) {
           // Handle data merge file
-          const file = await fileHandle.getFile();
-          // console.log("Reading data merge file:", file.name);
-          const fileText = decodeFileAsString(await file.arrayBuffer());
+          const fileContent = result.fileContent;
+          if (!fileContent) {
+            alert(inLang(uiStr.failedToReadFile, lang));
+            return;
+          }
+          
+          // console.log("Reading data merge file:", fileName);
+          const fileText = decodeFileAsString(fileContent);
           // console.log(
           //   "Imported data merge file:",
-          //   file.name,
+          //   fileName,
           //   ">" + fileText + "<",
           // );
           // For now, assume it's an IDML data merge file //TODO: Handle mapx merge
@@ -574,19 +625,22 @@ function MainApp({ settings, templateFolder, onExit }) {
             alert(inLang(uiStr.invalidDataMerge, lang));
             return;
           }
-        } else if (fileHandle.name.endsWith('.jpg') || fileHandle.name.endsWith('.jpeg')) {
+        } else if (fileName.toLowerCase().endsWith('.jpg') || fileName.toLowerCase().endsWith('.jpeg')) {
           // Handle map image file
-          figFilename = fileHandle.name;
+          figFilename = fileName;
+          isJpg = true;
         } else {
           return;
         }
+
         if (!figFilename) {
           // If no figFilename, use the template base name as figFilename
           figFilename = newTemplateBase + '.jpg'; // Default to .jpg
         }
         // Add diagnostic logs to see what's happening
         // console.log("Template base name:", newTemplateBase);
-        const collectionId = getCollectionIdFromTemplate(newTemplateBase);
+        const [collectionId, templateName] = findCollectionIdAndTemplate(newTemplateBase);
+        newTemplateBase = templateName; // Use the exact template name from the collection
         // console.log("Detected collection ID:", collectionId);
         // console.log("Collections loaded:", collectionManager.collectionsData);
         // console.log(
@@ -595,7 +649,7 @@ function MainApp({ settings, templateFolder, onExit }) {
         // );
 
         // Try to get the map definition
-        const foundTemplate = getMapDef(newTemplateBase, collectionId);
+        const foundTemplate = await getMapDef(newTemplateBase, collectionId);
         // console.log("Found template:", foundTemplate);
 
         if (!foundTemplate) {
@@ -615,9 +669,9 @@ function MainApp({ settings, templateFolder, onExit }) {
         } // Set mapDef and locations
         setMapDef({
           template: newTemplateBase,
-          fig: '\\fig | src="' + figFilename + '" size="span" ref=""\\fig*',
+          fig: '\\fig | src="' + figFilename + '" size="span" ref="-"\\fig*',
           mapView: true,
-          imgFilename: foundTemplate.imgFilename,
+          imgFilename: isJpg ? filePath : foundTemplate.imgFilename,
           width: foundTemplate.width,
           height: foundTemplate.height,
           labels: foundTemplate.labels,
@@ -644,7 +698,8 @@ function MainApp({ settings, templateFolder, onExit }) {
           if (labels[loc.mergeKey]) {
             loc.vernLabel = labels[loc.mergeKey]; // Use label from data merge if available
           } else if (!loc.vernLabel) {
-            loc.vernLabel = getMapForm(currentTermRenderings, loc.termId);
+            const altTermIds = collectionManager.getAltTermIds(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template));
+            loc.vernLabel = getMapForm(currentTermRenderings, loc.termId, altTermIds);
           }
 
           const status = getStatus(
@@ -696,18 +751,23 @@ function MainApp({ settings, templateFolder, onExit }) {
     if (!isInitialized) return; // Don't initialize map until collections are loaded
     const initializeMap = async () => {
       try {
-        if (!settings.usfm) throw new Error('No USFM provided in settings');
-        // console.log("Initializing map from USFM:", settings.usfm);
-        const initialMap = await mapFromUsfm(settings.usfm);
-        console.log('Initial Map loaded (based on usfm):', initialMap);
-        setMapDef(initialMap);
+        if (!settings.usfm) {
+          await handleBrowseMapTemplateRef.current();
+        } else {
+          // console.log("Initializing map from USFM:", settings.usfm);
+          const initialMap = await mapFromUsfm(settings.usfm);
+          if (!initialMap.template) {
+            console.log('No template specified in USFM, browsing for template instead.');  
+            await handleBrowseMapTemplateRef.current();
+            return;
+          }
+          console.log('Initial Map loaded (based on usfm):', initialMap);
+          setMapDef(initialMap);
 
-        // Initialize selectedVariant based on whether variants exist
-        setSelectedVariant(
-          initialMap.variants && Object.keys(initialMap.variants).length > 0 ? 1 : 0
-        );
-
-        setMapPaneView(initialMap.mapView ? MAP_VIEW : TABLE_VIEW);
+          // Initialize selectedVariant based on whether variants exist
+          setSelectedVariant(initialMap.variants && Object.keys(initialMap.variants).length > 0 ? 1 : 0);
+          setMapPaneView(initialMap.mapView ? MAP_VIEW : TABLE_VIEW);
+        }
       } catch (error) {
         console.log('Unable to initialize map:', error);
         // browse for a map template if no map
@@ -757,7 +817,8 @@ function MainApp({ settings, templateFolder, onExit }) {
 
       const initialLocations = newMap.labels.map(loc => {
         if (!loc.vernLabel) {
-          loc.vernLabel = getMapForm(currentTermRenderings, loc.termId);
+          const altTermIds = collectionManager.getAltTermIds(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template));
+          loc.vernLabel = getMapForm(currentTermRenderings, loc.termId, altTermIds);
         }
         const status = getStatus(
           currentTermRenderings,
@@ -768,6 +829,7 @@ function MainApp({ settings, templateFolder, onExit }) {
         );
         return { ...loc, status };
       });
+      console.log('Initial locations from USFM:', initialLocations);
       setSelLocation(0);
       setLocations(initialLocations);
       //  update map object      // Update map data in state
@@ -854,10 +916,13 @@ function MainApp({ settings, templateFolder, onExit }) {
         })
       );
       setTimeout(() => {
-        if (renderingsTextareaRef.current) renderingsTextareaRef.current.focus();
+        if (renderingsTextareaRef.current) {
+          renderingsTextareaRef.current.focus();
+          console.log('Focus set on renderings textarea');
+        }
       }, 0);
     },
-    [renderings, selLocation, locations, termRenderings, extractedVerses, mapDef.template]
+    [renderings, selLocation, locations, termRenderings, extractedVerses, mapDef.template, setTermRenderings]
   );
 
   // Replace all renderings with selected text (from bottom pane) or create new rendering (from details pane)
@@ -892,11 +957,123 @@ function MainApp({ settings, templateFolder, onExit }) {
         })
       );
       setTimeout(() => {
-        if (renderingsTextareaRef.current) renderingsTextareaRef.current.focus();
+        if (renderingsTextareaRef.current) {
+          renderingsTextareaRef.current.focus();
+          console.log('Focus set on renderings textarea');
+        }
       }, 0);
     },
-    [selLocation, locations, termRenderings, extractedVerses, mapDef.template]
+    [selLocation, locations, termRenderings, extractedVerses, mapDef.template, setTermRenderings]
   );
+
+  // Reload extracted verses for all terms (after Paratext edits)
+  const handleReloadExtractedVerses = useCallback(
+    async (termId, mergeKey) => {
+      if (!projectFolder || !isInitialized) return;
+
+      console.log(
+        `Reloading all extracted verses after editing term: ${termId}, mergeKey: ${mergeKey}`
+      );
+
+      // Capture focus state before reload to restore it afterwards
+      const activeElement = document.activeElement;
+      const focusInfo = {
+        isVernacularActive: vernacularInputRef.current === activeElement,
+        isRenderingsActive: renderingsTextareaRef.current === activeElement,
+        cursorPos: activeElement?.selectionStart,
+        scrollPos: activeElement?.scrollTop
+      };
+
+      // Get all refs for the entire map (not just the specific term)
+      const collectionId = getCollectionIdFromTemplate(mapDef.template);
+      const allRefs = getRefList(mapDef.labels, collectionId);
+
+      if (!allRefs.length) return;
+
+      try {
+        const verses = await electronAPI.getFilteredVerses(projectFolder, allRefs);
+        if (verses && !verses.error) {
+          // Update extracted verses state - the useEffect will handle location status updates
+          setExtractedVerses(verses);
+
+          console.log(`Reloaded ${Object.keys(verses).length} verses for entire map`);
+          
+          // Force Electron window focus restoration to fix input handling after reload
+          // This mimics the effect of Alt+Tab which restores input functionality
+          if (window.electronAPI && window.electronAPI.restoreWindowFocus) {
+            await window.electronAPI.restoreWindowFocus();
+          } else {
+            // Fallback: trigger blur/focus events to reset input state
+            window.blur();
+            setTimeout(() => window.focus(), 10);
+          }
+          
+          // Restore focus and cursor position after React state update
+          setTimeout(() => {
+            if (focusInfo.isVernacularActive && vernacularInputRef.current) {
+              vernacularInputRef.current.focus();
+              if (typeof focusInfo.cursorPos === 'number') {
+                vernacularInputRef.current.setSelectionRange(focusInfo.cursorPos, focusInfo.cursorPos);
+              }
+              if (typeof focusInfo.scrollPos === 'number') {
+                vernacularInputRef.current.scrollTop = focusInfo.scrollPos;
+              }
+            } else if (focusInfo.isRenderingsActive && renderingsTextareaRef.current) {
+              renderingsTextareaRef.current.focus();
+              if (typeof focusInfo.cursorPos === 'number') {
+                renderingsTextareaRef.current.setSelectionRange(focusInfo.cursorPos, focusInfo.cursorPos);
+              }
+              if (typeof focusInfo.scrollPos === 'number') {
+                renderingsTextareaRef.current.scrollTop = focusInfo.scrollPos;
+              }
+            }
+          }, 0);
+          
+        } else {
+          console.warn('Failed to reload extracted verses:', verses?.error);
+        }
+      } catch (error) {
+        console.error('Error reloading extracted verses:', error);
+      }
+    },
+    [projectFolder, isInitialized, mapDef.template, mapDef.labels]
+  );
+
+  // const handleCreateRendering = useCallback(
+  //   (text, isGuessed) => {
+  //     if (!locations[selLocation]) return;
+  //     const termId = locations[selLocation].termId;
+  //     const newRenderings = text.trim();
+  //     setRenderings(newRenderings);
+  //     const updatedData = { ...termRenderings };
+  //     updatedData[termId] = {
+  //       ...updatedData[termId],
+  //       renderings: newRenderings,
+  //       isGuessed,
+  //     };
+  //     setTermRenderings(updatedData);
+  //     setIsApproved(!isGuessed);
+  //     setLocations(prevLocations =>
+  //       prevLocations.map(loc => {
+  //         if (loc.termId === termId) {
+  //           const status = getStatus(
+  //             updatedData,
+  //             loc.termId,
+  //             loc.vernLabel,
+  //             collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+  //             extractedVerses
+  //           );
+  //           return { ...loc, status };
+  //         }
+  //         return loc;
+  //       })
+  //     );
+  //     setTimeout(() => {
+  //       if (renderingsTextareaRef.current) renderingsTextareaRef.current.focus();
+  //     }, 0);
+  //   },
+  //   [selLocation, locations, termRenderings, extractedVerses, mapDef.template]
+  // );
 
   // Add global PageUp/PageDown navigation for Map and Table views
   useEffect(() => {
@@ -992,20 +1169,39 @@ function MainApp({ settings, templateFolder, onExit }) {
   // Add state to track specific image load error message
   const [imageError, setImageError] = useState(null);
 
-  // Load the image via IPC when the map definition or settings change
+  // Load the image via IPC when the map definition, settings, or selected variant change
   useEffect(() => {
     if (!memoizedMapDef.imgFilename || !settings || !isInitialized) return;
+
+    // Determine which image to use based on selected variant
+    let imageFilename = memoizedMapDef.imgFilename; // Default image
+    
+    // Check if current variant has a custom image
+    if (selectedVariant > 0 && memoizedMapDef.variants) {
+      const variantKeys = Object.keys(memoizedMapDef.variants);
+      const variantKey = variantKeys[selectedVariant - 1];
+      const variant = memoizedMapDef.variants[variantKey];
+      if (variant?.imgFilename) {
+        imageFilename = variant.imgFilename;
+        console.log(`Using variant image: ${imageFilename} for variant: ${variantKey}`);
+      }
+    }
 
     // Set to loading state
     setImageData(undefined);
     setImageError(null);
 
-    // Use the template folder passed as prop instead of from settings service
-    // This ensures we always use the latest version that's in memory
-    const folderPath = templateFolder || settings.templateFolder;
-    // Normalize path separators for Windows
-    const imagePath = folderPath.replace(/[/\\]$/, '') + '\\' + memoizedMapDef.imgFilename;
-    console.log('Loading image from path:', imagePath, 'templatefolder', templateFolder);
+    let imagePath;
+    if (imageFilename.includes('/') || imageFilename.includes('\\')) {
+      // If imageFilename is already an absolute path (contains a slash), use it directly
+      imagePath = imageFilename;
+    } else {
+      // Append filename to tempate folder path.
+      // Use the template folder passed as prop instead of from settings service
+      // This ensures we always use the latest version that's in memory
+      imagePath = (templateFolder || settings.templateFolder) + '/' + currentCollectionId + '/' + imageFilename;
+    }
+    console.log('Loading image from path:', imagePath, '; templatefolder:', templateFolder, '; variant:', selectedVariant);
 
     // Use the IPC function to load the image
     if (window.electronAPI) {
@@ -1018,9 +1214,7 @@ function MainApp({ settings, templateFolder, onExit }) {
           } else {
             console.error(`Failed to load image through IPC from path: ${imagePath}`);
             setImageData(null); // null indicates error
-            setImageError(
-              `Could not load map image from template folder. Please check that the template folder contains the required image: ${memoizedMapDef.imgFilename}`
-            );
+            setImageError(`Could not load map image: ${imagePath}`);
           }
         })
         .catch(err => {
@@ -1033,7 +1227,15 @@ function MainApp({ settings, templateFolder, onExit }) {
       setImageData(null); // null indicates error
       setImageError('Electron API not available. Cannot load images.');
     }
-  }, [memoizedMapDef.imgFilename, isInitialized, settings, templateFolder]);
+  }, [
+    memoizedMapDef.imgFilename, 
+    memoizedMapDef.variants,
+    selectedVariant,
+    isInitialized, 
+    settings, 
+    templateFolder, 
+    currentCollectionId
+  ]);
   // For debugging - keep track of the original path with proper Windows path separators
   //   const imgPath = memoizedMapDef.imgFilename ?
   //   (settingsService.getTemplateFolder()) + '\\' + memoizedMapDef.imgFilename : '';
@@ -1102,6 +1304,27 @@ function MainApp({ settings, templateFolder, onExit }) {
     [locations, selLocation]
   );
 
+  // Update location statuses when extractedVerses change (without affecting selection)
+  useEffect(() => {
+    if (!termRenderings || !locations.length || !mapDef.template) return;
+
+    // Update all location statuses based on the current extractedVerses
+    setLocations(prevLocations => {
+      return prevLocations.map(loc => {
+        const status = getStatus(
+          termRenderings,
+          loc.termId,
+          loc.vernLabel || '',
+          collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+          extractedVerses
+        );
+        return { ...loc, status };
+      });
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [extractedVerses, termRenderings, mapDef.template]); // locations intentionally omitted to prevent infinite loop
+
   return (
     <div className="app-container">
       {' '}
@@ -1125,7 +1348,7 @@ function MainApp({ settings, templateFolder, onExit }) {
                     fontSize: '12px',
                   }}
                 >
-                  Loading image...
+                  {inLang(uiStr.loadingImage, lang)}
                 </div>
               )}
               {imageData === null && imageError && (
@@ -1152,6 +1375,7 @@ function MainApp({ settings, templateFolder, onExit }) {
                 onSelectLocation={memoizedHandleSelectLocation}
                 selLocation={selLocation}
                 labelScale={labelScale}
+                labelOpacity={labelOpacity}
                 mapDef={memoizedMapDef}
                 termRenderings={termRenderings}
                 lang={lang}
@@ -1235,6 +1459,7 @@ function MainApp({ settings, templateFolder, onExit }) {
           extractedVerses={extractedVerses}
           setTermRenderings={setTermRenderings}
           collectionId={currentCollectionId} // Pass the collection ID
+          onReloadExtractedVerses={handleReloadExtractedVerses}
         />
       </div>{' '}
       <SettingsModal
@@ -1242,6 +1467,8 @@ function MainApp({ settings, templateFolder, onExit }) {
         onClose={() => setShowSettings(false)}
         labelScale={labelScale}
         setLabelScale={setLabelScale}
+        labelOpacity={labelOpacity}
+        setLabelOpacity={setLabelOpacity}
         lang={lang}
         setLang={setLang}
         showFrac={showFrac}

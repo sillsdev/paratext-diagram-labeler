@@ -1,76 +1,154 @@
-// filepath: c:\git\mapLabelerExt\biblical-map-app\src\CollectionManager.js
-// Collection mapping structure
-export const COLLECTIONS = {
-  SMR: {
-    id: 'SMR',
-    name: 'SIL Map Repository',
-    placeNamesFile: 'smr-placenames-refs.json',
-    mapDefsFile: 'smr-map-defs.json',
-    description: 'SIL Map Repository collection',
-  },
-  BFBS: {
-    id: 'BFBS',
-    name: 'BFBS Map Collection',
-    placeNamesFile: 'BFBS_PlaceNames&Refs.json',
-    mapDefsFile: 'bfbs-map-defs.json',
-    description: 'British and Foreign Bible Society maps',
-  },
-  // Additional collections as needed
-};
+import packageInfo from '../package.json';
 
-// Helper functions for collections
-export function getAllCollectionIds() {
-  return Object.keys(COLLECTIONS);
-}
+const mergeKeysFile = "mergekeys.json";
+const termListFile = "termlist.json";
+const mapDefsFile = "map-defs.json";
 
-export function getCollectionById(id) {
-  return COLLECTIONS[id] || COLLECTIONS.SMR;
-}
-
-// Function to determine collection ID from template name
 export function getCollectionIdFromTemplate(templateName) {
   if (!templateName) return 'SMR'; // Default to SMR if no template
-  const match = templateName.match(/^([^_]+)_/);
+  const match = templateName.match(/^([a-z]{2,4})_/i);
   // Always uppercase the collection ID to match the COLLECTIONS object keys
-  return match ? match[1].toUpperCase() : 'SMR'; // Default to SMR if no match
+  if (match) return match[1].toUpperCase();
+  return 'SMR'; // Default to SMR if no pattern match
+}  
+
+
+// Function to determine collection ID and template name from rough template name
+export function findCollectionIdAndTemplate(templateName) {
+  if (!templateName) return ['SMR', '' ]; // Default to SMR if no template
+
+  const match = templateName.match(/^([a-z]{2,4})_/i);
+  // Always uppercase the collection ID to match the COLLECTIONS object keys
+  if (match) return [match[1].toUpperCase(), templateName];
+
+  // If no pattern match, search through all available collections
+  if (collectionManager.isInitialized) {
+    const allCollectionIds = collectionManager.getAllCollectionIds();
+    console.log(`Searching for template "${templateName}" in ${allCollectionIds.length} collections:`, allCollectionIds);
+    
+    for (const collectionId of allCollectionIds) {
+      // Only search in collections that are actually loaded
+      if (!collectionManager.isCollectionLoaded(collectionId)) {
+        console.log(`Skipping collection ${collectionId} - not loaded`);
+        continue;
+      }
+      
+      const mapDefs = collectionManager.getMapDefs(collectionId);
+      console.log(`Checking collection ${collectionId} with ${Object.keys(mapDefs).length} templates`);
+      
+      // Check for exact match first
+      if (mapDefs[templateName]) {
+        console.log(`Found template "${templateName}" in collection ${collectionId}`);
+        return [collectionId, templateName];
+      }
+      
+      // Check for match with collection prefix
+      const prefixedTemplateName = `${collectionId}_${templateName}`;
+      if (mapDefs[prefixedTemplateName]) {
+        console.log(`Found template "${templateName}" with prefix "${prefixedTemplateName}" in collection ${collectionId}`);
+        return [collectionId, prefixedTemplateName];
+      }
+      
+      // Check for case-insensitive match
+      const normalizedMapDefs = collectionManager.collectionsData.get(collectionId)?.normalizedMapDefs;
+      if (normalizedMapDefs && normalizedMapDefs[templateName.toLowerCase()]) {
+        console.log(`Found template "${templateName}" (case-insensitive) in collection ${collectionId}`);
+        return [collectionId, templateName];
+      }
+      
+      // Check for case-insensitive match with collection prefix
+      if (normalizedMapDefs && normalizedMapDefs[prefixedTemplateName.toLowerCase()]) {
+        console.log(`Found template "${templateName}" (case-insensitive with prefix) in collection ${collectionId}`);
+        return [collectionId, prefixedTemplateName];
+      }
+    }
+    console.warn(`Template "${templateName}" not found in any collection, defaulting to SMR`);
+  }
+
+  return ['SMR', templateName]; // Default to SMR if no match found anywhere
 }
 
 class CollectionManager {
   constructor() {
-    this.collectionsData = {};
+    this.availableCollections = new Map(); // id -> collection config from collection.json
+    this.collectionsData = new Map(); // id -> loaded JSON data (mergeKeys, termlist, mapDefs)
+    this.appVersion = packageInfo.version; // from package.json 
     this.isInitialized = false;
     this.isLoading = false;
     this.loadError = null;
-  } // Initialize by loading all collections
+    this.coreTermlist = null;
+  }
+
+  // Helper functions for collections
+  getAllCollectionIds() {
+    return Array.from(this.availableCollections.keys());
+  }
+
+  getCollectionConfig(collectionId) {
+    return this.availableCollections.get(collectionId?.toUpperCase());
+  }
+
+  getCollectionName(collectionId) {
+    const normalizedId = (collectionId || '').toUpperCase();
+    const config = this.availableCollections.get(normalizedId);
+    return config ? config.name : normalizedId;
+  }
+
+  // Initialize by loading all collections
   async initializeAllCollections(templateFolderPath) {
     if (this.isInitialized) return;
     if (this.isLoading) return;
 
     this.isLoading = true;
     this.loadError = null;
-
     this.templateFolderPath = templateFolderPath;
+
     if (!this.templateFolderPath) {
       this.loadError = new Error(
         'Template folder path is not set. Please configure the template folder in settings.'
       );
+      this.isLoading = false;
+      return;
     }
 
     try {
-      const collectionIds = getAllCollectionIds();
-      console.log(`Starting to load ${collectionIds.length} collections...`);
+      // 1. Discover available collections
+      const discoveredCollections = await this.discoverCollections(templateFolderPath);
+      
+      // 2. Filter by version compatibility and store available collections
+      for (const config of discoveredCollections) {
+        if (this.isVersionCompatible(config.minLabelerVersion)) {
+          this.availableCollections.set(config.id, config);
+        } else {
+          console.warn(`Skipping collection "${config.name}" (requires version ${config.minLabelerVersion}, current: ${this.appVersion})`);
+          alert(`Collection "${config.name}" requires app version ${config.minLabelerVersion} or higher. Current version is ${this.appVersion}. Please update the app to use this collection.`);
+        }
+      }
 
-      // Create promises for loading all collections in parallel
-      const loadPromises = collectionIds.map(id => this.loadCollection(id));
+      // 3. Load core termlist (if it exists)
+      try {
+        this.coreTermlist = await window.electronAPI.loadFromJson(templateFolderPath, 'core-termlist.json');
+        console.log('Core termlist loaded successfully:', Object.keys(this.coreTermlist).length, 'terms');
+      } catch (error) {
+        console.warn('Core termlist not found or failed to load:', error.message);
+        this.coreTermlist = {};
+      }
 
-      // Wait for all collections to load
+      // 4. Load all compatible collections
+      const loadPromises = Array.from(this.availableCollections.keys()).map(id => 
+        this.loadCollection(id).catch(error => {
+          console.error(`Failed to load collection ${id}:`, error);
+          return null; // Don't fail entire initialization
+        })
+      );
+
       await Promise.all(loadPromises);
-
       this.isInitialized = true;
-      console.log(`All ${collectionIds.length} collections loaded successfully`);
+      
+      console.log(`Initialized ${this.availableCollections.size} collections successfully`);
     } catch (error) {
       this.loadError = error;
-      console.error('Failed to initialize all collections:', error);
+      console.error('Failed to initialize collections:', error);
     } finally {
       this.isLoading = false;
     }
@@ -78,91 +156,88 @@ class CollectionManager {
 
   // Load a specific collection
   async loadCollection(collectionId) {
-    if (this.collectionsData[collectionId]?.isLoaded) {
-      console.log(`Collection ${collectionId} already loaded`);
-      return;
+    const config = this.availableCollections.get(collectionId);
+    if (!config) {
+      throw new Error(`Collection ${collectionId} not found in available collections`);
     }
 
-    const collection = getCollectionById(collectionId);
-    console.log(`Loading collection ${collection.name}...`);
+    console.log(`Loading collection ${config.name}...`);
 
     try {
-      // Create collection data structure if it doesn't exist
-      if (!this.collectionsData[collectionId]) {
-        this.collectionsData[collectionId] = {
-          isLoaded: false,
-          placenames: null,
-          mapDefs: null,
-        };
-      } // Use templateFolderPath if provided, otherwise fall back to the old method
-      // Ensure consistent path separator (backslash for Windows)
-      const templatePath = this.templateFolderPath;
-
-      // Check if template path exists before trying to load from it
-      console.log(`Verifying template folder exists: ${templatePath}`);
-      const folderExists = await this.checkFolderExists(templatePath);
-
-      if (!folderExists) {
-        throw new Error(`Template folder not found: ${templatePath}`);
-      }
-
-      console.log(`Loading collection data from verified path: ${templatePath}`);
-
-      // Load placenames and map definitions in parallel
-      const [placenames, mapDefs] = await Promise.all([
-        window.electronAPI.loadFromJson(templatePath, collection.placeNamesFile).catch(err => {
-          console.error(`Failed to load placenames file: ${collection.placeNamesFile}`, err);
-          throw new Error(
-            `Could not load required file: ${collection.placeNamesFile}. Please check that your template folder is configured correctly.`
-          );
-        }),
-        window.electronAPI.loadFromJson(templatePath, collection.mapDefsFile).catch(err => {
-          console.error(`Failed to load map definitions file: ${collection.mapDefsFile}`, err);
-          throw new Error(
-            `Could not load required file: ${collection.mapDefsFile}. Please check that your template folder is configured correctly.`
-          );
-        }),
+      // Load the three standard JSON files in parallel
+      const [mergeKeys, termlist, mapDefs] = await Promise.all([
+        window.electronAPI.loadFromJson(config.path, mergeKeysFile),
+        window.electronAPI.loadFromJson(config.path, termListFile), 
+        window.electronAPI.loadFromJson(config.path, mapDefsFile)
       ]);
 
-      // Check if data was loaded successfully
-      if (!placenames || Object.keys(placenames).length === 0) {
-        throw new Error(`Empty placenames data loaded from ${collection.placeNamesFile}`);
+      // Basic existence checks (detailed validation can be added later)
+      if (!mergeKeys || Object.keys(mergeKeys).length === 0) {
+        throw new Error(`Empty or missing merge keys in ${mergeKeysFile}`);
+      }
+      if (!mapDefs || Object.keys(mapDefs).length === 0) {
+        throw new Error(`Empty or missing map definitions in ${mapDefsFile}`);
       }
 
-      if (!mapDefs || Object.keys(mapDefs).length === 0) {
-        throw new Error(`Empty map definitions loaded from ${collection.mapDefsFile}`);
+
+
+      // termlist can be empty, just warn
+      if (!termlist || Object.keys(termlist).length === 0) {
+        console.warn(`Empty or missing term list in ${termListFile} for collection ${collectionId}`);
       }
+
+      // Validate and clean up map definitions - remove duplicate merge keys and labels without merge keys
+      for (const [templateName, mapDef] of Object.entries(mapDefs)) {
+        if (mapDef.labels && Array.isArray(mapDef.labels)) {
+          const seenMergeKeys = new Set();
+          const validLabels = [];
+          
+          for (const label of mapDef.labels) {
+            if (!label.mergeKey) {
+              console.error(`Collection ${config.name}: Label without merge key found in template "${templateName}". Label dropped.`);
+            } else if (seenMergeKeys.has(label.mergeKey)) {
+              console.error(`Collection ${config.name}: Duplicate merge key "${label.mergeKey}" found in template "${templateName}". Duplicate label removed.`);
+            } else {
+              seenMergeKeys.add(label.mergeKey);
+              validLabels.push(label);
+            }
+          }
+          
+          // Update the map definition with cleaned labels if any were dropped
+          if (validLabels.length !== mapDef.labels.length) {
+            const droppedCount = mapDef.labels.length - validLabels.length;
+            mapDef.labels = validLabels;
+            console.warn(`Collection ${config.name}: Removed ${droppedCount} invalid labels from template "${templateName}"`);
+          }
+        }
+      }
+
       // Build normalized map defs for case-insensitive lookup
       const normalizedMapDefs = {};
-      // console.log(`Building normalized map definitions for collection ${collectionId}`);
       for (const key in mapDefs) {
-        normalizedMapDefs[key.toLowerCase()] = key; // Store original key for lookup
-        // console.log(`Map key: "${key}" => normalized: "${key.toLowerCase()}"`);
+        normalizedMapDefs[key.toLowerCase()] = key;
       }
-      // console.log(`Created ${Object.keys(normalizedMapDefs).length} normalized map definition keys for ${collectionId}`);
-      // Show some examples of normalized keys
-      // const exampleKeys = Object.keys(normalizedMapDefs).slice(0, 3);
-      // console.log("Example normalized keys:", exampleKeys);
 
-      // Store the loaded data
-      this.collectionsData[collectionId] = {
+      // Store the loaded data using the new Map structure
+      this.collectionsData.set(collectionId, {
         isLoaded: true,
-        placenames,
+        config: config, // Store the collection.json config
+        mergeKeys,
+        termlist: termlist || {},
         mapDefs,
         normalizedMapDefs,
-      };
+      });
 
-      console.log(
-        `Collection ${collection.name} loaded successfully with ${
-          Object.keys(placenames).length
-        } placenames and ${Object.keys(mapDefs).length} map definitions`
-      );
+      console.log(`Collection ${config.name} loaded: ${Object.keys(mapDefs).length} map definitions, ${Object.keys(mergeKeys).length} merge keys, ${Object.keys(termlist).length} terms`);
+      
     } catch (error) {
-      console.error(`Failed to load collection ${collection.name}:`, error);
-      // Keep the collection structure but mark as failed
-      if (this.collectionsData[collectionId]) {
-        this.collectionsData[collectionId].loadError = error;
-      }
+      console.error(`Failed to load collection ${config.name}:`, error);
+      // Store error info but don't throw
+      this.collectionsData.set(collectionId, {
+        isLoaded: false,
+        config: config,
+        loadError: error
+      });
     }
   }
 
@@ -170,19 +245,29 @@ class CollectionManager {
   isCollectionLoaded(collectionId) {
     // Ensure uppercase collection ID for consistency
     const normalizedId = (collectionId || '').toUpperCase();
-    return !!this.collectionsData[normalizedId]?.isLoaded;
+    const data = this.collectionsData.get(normalizedId);
+    return data?.isLoaded || false;
   }
 
-  getPlacenames(collectionId) {
+  getMergeKeys(collectionId) {
     // Ensure uppercase collection ID for consistency
     const normalizedId = (collectionId || '').toUpperCase();
-    return this.collectionsData[normalizedId]?.placenames || {};
+    const data = this.collectionsData.get(normalizedId);
+    return data?.mergeKeys || {};
+  }
+
+  getTermlist(collectionId) {
+    // Ensure uppercase collection ID for consistency
+    const normalizedId = (collectionId || '').toUpperCase();
+    const data = this.collectionsData.get(normalizedId);
+    return data?.termlist || {};
   }
 
   getMapDefs(collectionId) {
     // Ensure uppercase collection ID for consistency
     const normalizedId = (collectionId || '').toUpperCase();
-    return this.collectionsData[normalizedId]?.mapDefs || {};
+    const data = this.collectionsData.get(normalizedId);
+    return data?.mapDefs || {};
   } // Get map definition with case-insensitive lookup
 
   getMapDef(templateName, collectionId) {
@@ -204,7 +289,7 @@ class CollectionManager {
       return null;
     }
 
-    const collection = this.collectionsData[collectionId];
+    const collection = this.collectionsData.get(collectionId);
     if (!collection?.isLoaded) {
       console.warn(
         `Collection ${collectionId} not loaded, can't get map definition for ${templateName}`
@@ -215,7 +300,6 @@ class CollectionManager {
     console.log('Collection is loaded:', collection.isLoaded);
 
     // Try direct lookup first
-    console.log('Attempting direct lookup with key:', templateName);
     if (collection.mapDefs[templateName]) {
       console.log('Found template with exact match');
       const result = { ...collection.mapDefs[templateName] };
@@ -224,13 +308,6 @@ class CollectionManager {
     }
 
     // Try case-insensitive lookup
-    console.log('Attempting case-insensitive lookup with key:', templateName.toLowerCase());
-    console.log(
-      'Available normalized keys:',
-      Object.keys(collection.normalizedMapDefs).slice(0, 5),
-      '...'
-    );
-
     const normalizedKey = collection.normalizedMapDefs[templateName.toLowerCase()];
     if (normalizedKey) {
       console.log('Found template with case-insensitive match:', normalizedKey);
@@ -259,65 +336,144 @@ class CollectionManager {
     return mapDef;
   }
 
-  // Placenames access methods with collection ID parameter
-  getGloss(mergeKey, collectionId = 'SMR') {
-    const placenames = this.getPlacenames(collectionId);
-    const entry = placenames[mergeKey];
-    if (!entry) {
-      console.warn(`mergeKey "${mergeKey}" not found in ${collectionId} collection placenames`);
+  getTermEntry(termId, collectionId) {
+    let termlist = this.getTermlist(collectionId);
+    if (termlist[termId]) {
+      return termlist[termId];
+    }
+    if (this.coreTermlist[termId]) {
+      return this.coreTermlist[termId];
+    }
+    return null;
+  }
+
+  // MergeKeys and Termlist access methods with collection ID parameter
+  getGloss(mergeKey, collectionId) {
+    if (!mergeKey) { return ''; }
+    const termId = this.getTermId(mergeKey, collectionId);
+    if (!termId) {
+      console.warn(`termId not found for mergeKey "${mergeKey}" in ${collectionId} collection`);
       return '';
     }
-    return entry.gloss || '';
+    const termEntry = this.getTermEntry(termId, collectionId);
+    if (!termEntry) {
+      console.warn(
+        `term ID "${termId}" not found in ${collectionId} collection term list`,
+        this.getTermlist(collectionId)
+      );
+      return '';
+    }
+    return termEntry.gloss || '';
   }
 
   getMapxKey(mergeKey, collectionId = 'SMR') {
-    const placenames = this.getPlacenames(collectionId);
-    const entry = placenames[mergeKey];
+    const mergeKeys = this.getMergeKeys(collectionId);
+    const entry = mergeKeys[mergeKey];
     if (!entry) {
-      console.error(`mergeKey "${mergeKey}" not found in ${collectionId} collection placenames!`);
+      console.error(`mergeKey "${mergeKey}" not found in ${collectionId} collection merge keys!`);
       return mergeKey;
     }
-    return entry.mapxKey || entry.gloss.en || mergeKey;
+    return entry.mapxKey || mergeKey;
   }
 
   getTermId(mergeKey, collectionId = 'SMR') {
-    const placenames = this.getPlacenames(collectionId);
-    const entry = placenames[mergeKey];
+    if (!mergeKey) { return ''; }
+    const mergeKeys = this.getMergeKeys(collectionId);
+    const entry = mergeKeys[mergeKey];
     if (!entry) {
-      console.warn(`mergeKey "${mergeKey}" not found in ${collectionId} collection placenames`);
+      console.warn(`mergeKey "${mergeKey}" not found in ${collectionId} collection merge keys`);
       return '';
     }
     return entry.termId || '';
   }
 
   getDefinition(mergeKey, collectionId = 'SMR') {
-    const placenames = this.getPlacenames(collectionId);
-    const entry = placenames[mergeKey];
-    if (!entry) {
-      // Avoid spamming console with warnings
+    const termId = this.getTermId(mergeKey, collectionId);
+    if (!termId) {
+      console.warn(`termId not found for mergeKey "${mergeKey}" in ${collectionId} collection`);
       return '';
     }
-    return entry.context || '';
+    const termEntry = this.getTermEntry(termId, collectionId);
+    if (!termEntry) {
+      console.warn(
+        `term ID "${termId}" not found in ${collectionId} collection term list`,
+        this.getTermlist(collectionId)
+      );
+      return '';
+    }
+    return termEntry.context || '';
+  }
+
+  getAltTermIds(mergeKey, collectionId = 'SMR') {
+    const mergeKeys = this.getMergeKeys(collectionId);
+    const entry = mergeKeys[mergeKey];
+    if (!entry || !entry.altTermIds) {
+      return '';
+    }
+    return entry.altTermIds;
   }
 
   getTransliteration(mergeKey, collectionId = 'SMR') {
-    const placenames = this.getPlacenames(collectionId);
-    const entry = placenames[mergeKey];
-    if (!entry) {
-      // Avoid spamming console with warnings
+    if (!mergeKey) { return ''; }
+    const termId = this.getTermId(mergeKey, collectionId);
+    if (!termId) {
+      console.warn(`termId not found for mergeKey "${mergeKey}" in ${collectionId} collection`);
       return '';
     }
-    return entry.transliteration || '';
+    const termEntry = this.getTermEntry(termId, collectionId);
+    if (!termEntry) {
+      console.warn(
+        `term ID "${termId}" not found in ${collectionId} collection term list`,
+        this.getTermlist(collectionId)
+      );
+      return '';
+    }
+    return termEntry.transliteration || '';
   }
 
   getRefs(mergeKey, collectionId = 'SMR') {
-    const placenames = this.getPlacenames(collectionId);
-    const entry = placenames[mergeKey];
-    if (!entry) {
-      console.warn(`mergeKey "${mergeKey}" not found in ${collectionId} collection placenames!`);
+    const termId = this.getTermId(mergeKey, collectionId);
+    if (!termId) {
+      console.warn(`termId not found for mergeKey "${mergeKey}" in ${collectionId} collection`);
       return [];
     }
-    return entry.refs || [];
+    const termEntry = this.getTermEntry(termId, collectionId);
+    if (!termEntry) {
+      console.warn(
+        `term ID "${termId}" not found in ${collectionId} collection term list`,
+        this.getTermlist(collectionId)
+      );
+      return [];
+    }
+    return termEntry.refs || [];
+  }
+
+  async discoverCollections(templateFolderPath) {
+    try {
+      const collections = await window.electronAPI.discoverCollections(templateFolderPath);
+      console.log(`Discovered ${collections.length} collections:`, collections.map(c => c.name));
+      return collections;
+    } catch (error) {
+      console.error('Failed to discover collections:', error);
+      throw error;
+    }
+  }
+
+  isVersionCompatible(requiredVersion) {
+    if (!requiredVersion) return true;
+    
+    const parseVersion = (version) => version.split('.').map(num => parseInt(num, 10));
+    const current = parseVersion(this.appVersion);
+    const required = parseVersion(requiredVersion);
+    
+    for (let i = 0; i < Math.max(current.length, required.length); i++) {
+      const currentPart = current[i] || 0;
+      const requiredPart = required[i] || 0;
+      
+      if (currentPart < requiredPart) return false;
+      if (currentPart > requiredPart) return true;
+    }
+    return true;
   }
 
   // Helper method to check if a folder exists
@@ -337,3 +493,12 @@ class CollectionManager {
 
 // Create singleton instance
 export const collectionManager = new CollectionManager();
+
+// Helper functions for external access
+export function getAllCollectionIds() {
+  return collectionManager.getAllCollectionIds();
+}
+
+export function getCollectionName(collectionId) {
+  return collectionManager.getCollectionName(collectionId);
+}

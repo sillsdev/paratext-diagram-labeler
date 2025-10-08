@@ -12,6 +12,7 @@ import {
   STATUS_RENDERING_SHORT,
   STATUS_BAD_EXPLICIT_FORM,
   STATUS_INCOMPLETE,
+  STATUS_MULTIPLE_RENDERINGS,
 } from './constants.js';
 
 export const statusValue = [
@@ -24,6 +25,7 @@ export const statusValue = [
   { bkColor: 'crimson', textColor: 'white', sort: 6 }, // 6 - Rendering shorter than label
   { bkColor: 'magenta', textColor: 'black', sort: 7 }, // 7 - Bad explicit form
   { bkColor: '#80FF00', textColor: 'black', sort: 8 }, // 8 - Incomplete : #80FF00
+  { bkColor: 'purple', textColor: 'white', sort: 9 }, // 9 - Multiple renderings
 ];
 
 export function prettyRef(ref) {
@@ -59,13 +61,15 @@ export function getMatchTally(entry, refs, extractedVerses) {
         .map(r => r.trim())
         .filter(r => r.length > 0)
         .map(r => {
-          let pattern = r;
-          // Insert word boundary at start if not starting with *
-          if (!pattern.startsWith('*')) pattern = MATCH_PRE_B + pattern;
-          // Insert word boundary at end if not ending with *
-          if (!pattern.endsWith('*')) pattern = pattern + MATCH_POST_B;
-          // Replace * [with [\w-]* (word chars + dash)
-          pattern = pattern.replace(/\*/g, MATCH_W + '*');
+          let pattern = convertParatextWildcardsToRegex(r);
+          // Insert word boundary at start if not starting with word character pattern
+          if (!pattern.startsWith('(?:' + MATCH_W) && !pattern.startsWith(MATCH_W)) {
+            pattern = MATCH_PRE_B + pattern;
+          }
+          // Insert word boundary at end if not ending with word character pattern
+          if (!pattern.endsWith('*)') && !pattern.endsWith('*')) {
+            pattern = pattern + MATCH_POST_B;
+          }
           // console.log(`Creating regex for rendering "${r}" with pattern "${pattern}"`);
           try {
             return new RegExp(pattern, 'iu');
@@ -124,7 +128,7 @@ export function getStatus(termRenderings, termId, vernLabel, refs, extractedVers
     return STATUS_NO_RENDERINGS; // { status: "No renderings", color: "indianred" };
   }
 
-  const mapForm = getMapForm(termRenderings, termId);
+  const mapForm = getMapFormStrict(termRenderings, termId);
   if (!mapForm) {
     return STATUS_NO_RENDERINGS; // { status: "No renderings", color: "indianred" };
   }
@@ -150,14 +154,33 @@ export function getStatus(termRenderings, termId, vernLabel, refs, extractedVers
 
   // vernLabel !== mapForm
   return wordMatchesRenderings(vernLabel, entry.renderings, false)
-    ? STATUS_RENDERING_SHORT
-    : STATUS_UNMATCHED; // "insufficient"
+    ? /\S\s*\n\s*\S/.test(entry.renderings)
+      ? STATUS_MULTIPLE_RENDERINGS
+      : STATUS_RENDERING_SHORT
+    : STATUS_UNMATCHED;
 }
 
-export function getMapForm(termRenderings, termId) {
+export function getMapForm(termRenderings, termId, altTermIds) {
+  const strictForm = getMapFormStrict(termRenderings, termId);
+  if (strictForm) {
+    return strictForm;
+  }
+  if (!altTermIds) {
+    return '';
+  }
+  const altTermIdList = altTermIds.split(/\s*,\s*/);
+  for (const altTermId of altTermIdList) {
+    const altForm = getMapFormStrict(termRenderings, altTermId);
+    if (altForm) {
+      return altForm;
+    }
+  }
+  return '';
+}
+
+function getMapFormStrict(termRenderings, termId) {
   const entry = termRenderings[termId];
   if (!entry) {
-    //console.warn(`TermId "${termId}" not found in term renderings`);
     return '';
   }
   let renderingsStr = entry.renderings || '';
@@ -184,6 +207,7 @@ export function getMapForm(termRenderings, termId) {
   return processedItems.join('—');
 }
 
+// Check if a word matches any of the renderings, returning a 1-based index of the match.
 export function wordMatchesRenderings(word, renderings, anchored = true) {
   let renderingList = [];
   renderingList = renderings
@@ -192,18 +216,19 @@ export function wordMatchesRenderings(word, renderings, anchored = true) {
     .map(r => r.replace(/\(.*/g, '').replace(/.*\)/g, '')) // Remove content in parentheses (comments), even if only partially enclosed. (The user may be typing a comment.)
     .map(r => r.trim())
     .filter(r => r.length > 0)
-    .map(r => r.replace(/\*/g, MATCH_W + '*')); // TODO: 1. implement better \w.   2. Handle isoolated * better.
+    .map(r => convertParatextWildcardsToRegex(r));
 
-  for (let rendering of renderingList) {
+  for (let i = 0; i < renderingList.length; i++) {
+    const rendering = renderingList[i];
     try {
       const pattern = anchored ? '^' + rendering + '$' : rendering;
-      console.log(
-        `Checking word "${word}" against rendering "${rendering}" with pattern "${pattern}"`
-      );
+      // console.log(
+      //   `Checking word "${word}" against rendering "${rendering}" with pattern "${pattern}"`
+      // );
       const regex = new RegExp(pattern, 'iu');
       if (regex.test(word)) {
         // console.log(`Word "${word}" matches rendering "${rendering}"`);
-        return true;
+        return i + 1; // Return 1-based index
       } else {
         // console.log(`Word "${word}" doesn't match rendering "${rendering}" with pattern "${pattern}"`);
       }
@@ -212,7 +237,39 @@ export function wordMatchesRenderings(word, renderings, anchored = true) {
       continue;
     }
   }
-  return false;
+  return 0; // No match found
+}
+
+// Convert Paratext wildcard patterns to regex patterns
+function convertParatextWildcardsToRegex(rendering) {
+  // Split the rendering into tokens (words and asterisks)
+  const tokens = rendering.split(/(\s+|\*+)/);
+  let regexParts = [];
+
+  for (let i = 0; i < tokens.length; i++) {
+    const token = tokens[i];
+
+    if (token.match(/^\s+$/)) {
+      // Whitespace - preserve as is
+      regexParts.push(token.replace(/\s/g, '\\s'));
+    } else if (token === '**') {
+      // Two consecutive asterisks - matches any number of optional words
+      regexParts.push('(?:' + MATCH_W + '+(?:\\s+' + MATCH_W + '+)*)?');
+    } else if (token === '*') {
+      // Single isolated asterisk - matches up to one optional word
+      regexParts.push('(?:' + MATCH_W + '+)?');
+    } else if (token.includes('*')) {
+      // Word containing asterisks (prefix, suffix, infix patterns)
+      let wordPattern = token.replace(/[.+?^${}()|[\]\\]/g, '\\$&'); // Escape regex metacharacters
+      wordPattern = wordPattern.replace(/\*/g, MATCH_W + '*'); // Replace * with word character pattern
+      regexParts.push(wordPattern);
+    } else if (token.length > 0) {
+      // Regular word - escape regex metacharacters
+      regexParts.push(token.replace(/[.+?^${}()|[\]\\]/g, '\\$&'));
+    }
+  }
+
+  return regexParts.join('');
 }
 
 // Utility function to determine if a location is visible based on selected variant

@@ -1,12 +1,14 @@
 import React, { useState, useCallback } from 'react';
 import './PreLaunchScreen.css';
+import uiStr from './data/ui-strings.json';
+import { inLang } from './Utils.js';
 
 // Icons for valid/invalid status
 const CheckIcon = () => <span className="status-icon valid">✓</span>;
 
 const ErrorIcon = () => <span className="status-icon invalid">✗</span>;
 
-const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch }) => {
+const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch, language = 'en' }) => {
   // Use local state for editing but rely on parent for validated errors
   const [editedSettings, setEditedSettings] = useState({ ...settings });
 
@@ -46,26 +48,22 @@ const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch }) => {
     onLaunch(editedSettings);
   }, [editedSettings, onLaunch]);
 
-  // Trigger validation when component mounts to ensure errors are displayed correctly
-  // useEffect(() => {
-  //   // Only trigger if we have settings and onSettingsChange handler
-  //   if (settings && onSettingsChange) {
-  //     // Re-validate the settings by notifying the parent
-  //     onSettingsChange({...settings});
-  //   }
-  // }, []); // Empty dependency array runs only on mount
-
+  
   return (
     <div className="pre-launch-screen">
       <div className="pre-launch-header">
         <div className="header-content">
           <div className="logo-container">
-            <img src="./assets/logo.svg" alt="Scripture Map Labeler Logo" className="app-logo" />
+            <img src="./assets/logo.svg" alt="Paratext Diagram Labeler Logo" className="app-logo" />
           </div>
           <div className="header-text">
-            <h2>Paratext 9 standalone proposed UX preview of the</h2>
-            <h1>Scripture Map Labeler </h1>
-            <h2>extension for Paratext 10</h2>
+            <h1>{inLang(uiStr.paratextDiagramLabeler, language)} </h1>
+            <h2>Paratext 9 standalone edition</h2>
+            <p>
+              <a href="https://tiny.cc/labeler" target="_blank" rel="noopener noreferrer">
+                tiny.cc/labeler
+              </a>
+            </p>
           </div>
         </div>
       </div>
@@ -95,7 +93,7 @@ const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch }) => {
           </div>
           <div className="setting-content">
             <div className="setting-input-group">
-              <label>Template Folder:</label>
+              <label>{inLang(uiStr.templateFolder, language)}</label>
               <input
                 type="text"
                 value={editedSettings.templateFolder || ''}
@@ -116,7 +114,7 @@ const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch }) => {
           </div>
           <div className="setting-content">
             <div className="setting-input-group">
-              <label>Project Folder:</label>
+              <label>{inLang(uiStr.projectFolder, language)}</label>
               <input
                 type="text"
                 value={editedSettings.projectFolder || ''}

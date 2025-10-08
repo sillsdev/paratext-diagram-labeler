@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import './MainApp.css';
 import uiStr from './data/ui-strings.json';
 import {
@@ -7,11 +7,16 @@ import {
   USFM_VIEW,
   STATUS_NO_RENDERINGS,
   STATUS_GUESSED,
+  STATUS_RENDERING_SHORT,
+  STATUS_MULTIPLE_RENDERINGS,
+  STATUS_UNMATCHED,
 } from './constants.js';
-import { collectionManager, getCollectionIdFromTemplate } from './CollectionManager';
+import { collectionManager, getCollectionIdFromTemplate, findCollectionIdAndTemplate } from './CollectionManager';
 import { getMapDef } from './MapData';
-import { inLang, statusValue } from './Utils.js';
+import { inLang, statusValue, getMapForm, wordMatchesRenderings } from './Utils.js';
 import { settingsService } from './services/SettingsService.js';
+import { AutocorrectTextarea } from './components/AutocorrectTextarea';
+import { useAutocorrect } from './hooks/useAutocorrect';
 
 export default function DetailsPane({
   selLocation,
@@ -38,9 +43,9 @@ export default function DetailsPane({
   selectedVariant = 0,
   onVariantChange,
 }) {
-  const [vernacular, setVernacular] = useState(locations[selLocation]?.vernLabel || '');
   const [localIsApproved, setLocalIsApproved] = useState(isApproved);
-  const [localRenderings, setLocalRenderings] = useState(renderings);  const [showTemplateInfo, setShowTemplateInfo] = useState(false);
+  const [localRenderings, setLocalRenderings] = useState(renderings);
+  const [showTemplateInfo, setShowTemplateInfo] = useState(false);
   const [templateData, setTemplateData] = useState({});
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [selectedExportFormat, setSelectedExportFormat] = useState('idml');
@@ -54,29 +59,64 @@ export default function DetailsPane({
       }
 
       try {
-        const collectionId = getCollectionIdFromTemplate(mapDef.template);
-        const data = await getMapDef(mapDef.template, collectionId);
-        setTemplateData(data || {});
+        console.log(`Loading template data for: ${mapDef.template}`);
+        const [collectionId, templateName] = findCollectionIdAndTemplate(mapDef.template);
+        const data = await getMapDef(templateName, collectionId);
+        setTemplateData({ ...data, templateName });
       } catch (error) {
         console.error(`Error loading template data for ${mapDef.template}:`, error);
-        setTemplateData({});
+        setTemplateData({ templateName: mapDef.template });
       }
     };
 
     loadTemplateData();
   }, [mapDef.template]);
 
+  // Simplified vernacular state management for debugging
+  // const [localVernacular, setLocalVernacular] = useState(locations[selLocation]?.vernLabel || '');
+
+  // Re-enable autocorrect hook for vernacular input
+  const {
+    value: vernacularValue,
+    setValue: setVernacularValue,
+    handleChange: handleVernacularChange,
+    textareaRef: vernacularAutocorrectRef,
+  } = useAutocorrect(locations[selLocation]?.vernLabel || '', text => {
+    // console.log('DetailsPane: Vernacular changing to', text);
+    onUpdateVernacular(locations[selLocation].termId, text);
+  });
+
+  // const vernacularAutocorrectRef = useRef(null);
+
+  const prevSelLocationRef = useRef(selLocation);
+  
+  // Forward the ref from useAutocorrect to the external vernacularInputRef
   useEffect(() => {
-    setVernacular(locations[selLocation]?.vernLabel || '');
+    if (vernacularInputRef && vernacularAutocorrectRef.current) {
+      vernacularInputRef.current = vernacularAutocorrectRef.current;
+    }
+  }, [vernacularInputRef, vernacularAutocorrectRef]);
+  
+  useEffect(() => {
+    // Sync local vernacular when selection changes
+    const newVernacular = locations[selLocation]?.vernLabel || '';
+    setVernacularValue(newVernacular);
     setLocalIsApproved(isApproved);
     setLocalRenderings(renderings);
-  }, [selLocation, isApproved, renderings, locations]);
+  }, [selLocation, isApproved, renderings, locations, setVernacularValue]);
 
   useEffect(() => {
-    if (vernacularInputRef && vernacularInputRef.current && mapPaneView === MAP_VIEW) {
-      vernacularInputRef.current.focus();
+    // Only focus when selLocation actually changes and we're in MAP_VIEW
+    if (prevSelLocationRef.current !== selLocation && mapPaneView === MAP_VIEW) {
+      prevSelLocationRef.current = selLocation;
+      if (vernacularAutocorrectRef && vernacularAutocorrectRef.current) {
+        console.log('Focusing vernacular input for location:', selLocation);
+        vernacularAutocorrectRef.current.focus();
+      }
+    } else if (prevSelLocationRef.current !== selLocation) {
+      prevSelLocationRef.current = selLocation;
     }
-  }, [selLocation, mapPaneView, vernacularInputRef]);
+  }, [selLocation, mapPaneView, vernacularAutocorrectRef]);
 
   // Use the status from the location object which is already calculated in App.js
   // This is more reliable than recalculating it here
@@ -89,12 +129,6 @@ export default function DetailsPane({
   if (transliteration) {
     transliteration = ` /${transliteration}/`;
   }
-
-  const handleVernChange = e => {
-    const newVernacular = e.target.value;
-    setVernacular(newVernacular); // Update state immediately
-    onUpdateVernacular(locations[selLocation].termId, newVernacular);
-  };
 
   // Tally status counts for all locations
   const statusTallies = useMemo(() => {
@@ -115,6 +149,49 @@ export default function DetailsPane({
     onExit();
   };
 
+  const onAddMapForm = () => {
+    // This function is called when the user clicks the "Add Map" button
+    // Append the contents of the vernacular input to the renderings textarea
+    if (vernacularAutocorrectRef && vernacularAutocorrectRef.current) {
+      const vernacularText = vernacularValue.trim();
+      // Append the vernacular text to the renderings textarea
+      if (renderingsTextareaRef && renderingsTextareaRef.current) {
+        const currentRenderings = renderingsTextareaRef.current.value
+          .split('\n')
+          .map(line => line.trim())
+          .filter(line => line.length > 0)
+          .join('\n');
+        console.log(`Current renderings: "${currentRenderings}"`);
+
+        const whichRendering = wordMatchesRenderings(vernacularText, currentRenderings, false);
+        console.log(`Matched rendering index: ${whichRendering}`);
+        const mapForm = ` (@${vernacularText})`;
+        try {
+          // insert mapForm into renderingsTextareaRef.current.value at the end of the rendering whose 1-based index is whichRendering
+          const lines = currentRenderings.split('\n');
+          lines[whichRendering - 1] += mapForm;
+          renderingsTextareaRef.current.value = lines.join('\n');
+        } catch (e) {
+          renderingsTextareaRef.current.value = currentRenderings + mapForm;
+        }
+        onRenderingsChange({ target: { value: renderingsTextareaRef.current.value } });
+      }
+    }
+  };
+
+  const onRefreshLabel = () => {
+    // This function is called when the user clicks the "Refresh Labels" button.
+    // Update the vernacular input using getMapForm
+    if (selLocation >= 0 && selLocation < locations.length) {
+      const currentLocation = locations[selLocation];
+      const altTermIds = collectionManager.getAltTermIds(currentLocation?.mergeKey, getCollectionIdFromTemplate(mapDef.template));
+      const mapForm = getMapForm(termRenderings, currentLocation.termId, altTermIds);
+      console.log('Refreshing label for location:', currentLocation.mergeKey, 'Map form:', mapForm);
+      setVernacularValue(mapForm);
+      onUpdateVernacular(currentLocation.termId, mapForm);
+    }
+  };
+
   // Helper function to generate USFM from the current map state // TODO: compare with usfmFromMap(). Could probably be consolidated.
   const generateUsfm = () => {
     console.log('Converting map to USFM:', mapDef);
@@ -130,10 +207,10 @@ export default function DetailsPane({
 
     // Add each label as a \zlabel entry
     locations.forEach(label => {
-      usfm += `\\zlabel |key="${label.mergeKey}" termid="${label.termId}" gloss="${inLang(
+      usfm += `\\zlabel-s |key="${label.mergeKey}" termid="${label.termId}" gloss="${inLang(
         label.gloss,
         lang
-      )}" label="${label.vernLabel || ''}"\\*\n`;
+      )}"\\*${label.vernLabel || ''}\\zlabel-e\\*\n`;
     });
 
     usfm += '\\zdiagram-e \\*';
@@ -144,7 +221,7 @@ export default function DetailsPane({
   const handleOk = () => {
     // Save current USFM to settings.usfm
     const currentUsfm = generateUsfm();
-    console.log('OK! Generated USFM:', currentUsfm);
+    // console.log('OK! Generated USFM:', currentUsfm);
     settingsService
       .updateUsfm(currentUsfm)
       // .then(() => {settingsService.saveSettings();})
@@ -160,13 +237,13 @@ export default function DetailsPane({
 
   // --- Template info/browse group ---
   // Access the template name from the global map object
-  const templateName = mapDef.template || '(' + inLang(uiStr.noTemplate, lang) + ')'; 
-  
+  const templateName = mapDef.template || '(' + inLang(uiStr.noTemplate, lang) + ')';
+
   // Export to data merge file handler
   const handleExportDataMerge = async () => {
     let outputFormat = templateData.formats;
     console.log('Exporting data merge with format:', outputFormat);
-    if (outputFormat === 'idml, mapx') { 
+    if (outputFormat.includes('mapx')) {  // Even a mapx-only template can be exported to idml.txt so that it can be reloaded here later.
       // Prompt user to select output format. Return if user cancels.
       console.log('Prompting user to select export format');
       setShowExportDialog(true);
@@ -177,14 +254,15 @@ export default function DetailsPane({
     await handleExportWithFormat(outputFormat);
   };
   // Handle export after format selection
-  const handleExportWithFormat = async (format) => {
+  const handleExportWithFormat = async format => {
     try {
       // Prepare locations with mapxKey computed for each location
       const locationsWithMapxKey = locations.map(location => {
         const mapxKey = collectionManager.getMapxKey(location.mergeKey, collectionId);
         return {
           ...location,
-          mapxKey: mapxKey
+          mapxKey: mapxKey,
+          vernLabel: location.vernLabel.replace(/[❪{]/g, '(').replace(/[❫}]/g, ')'), // Replace { and } with ( and )
         };
       });
 
@@ -199,11 +277,11 @@ export default function DetailsPane({
         console.log('Export successful or cancelled:', result.message);
       } else {
         // Show error message
-        alert(`Export cancelled: ${result.message}`);
+        alert(inLang(uiStr.exportCancelled, lang) + (result.message ? ': ' + result.message : ''));
       }
     } catch (error) {
       console.error('Export error:', error);
-      alert(`Not exported: ${error.message}`);
+      alert(inLang(uiStr.notExported, lang) + (error.message ? ': ' + error.message : ''));
     }
   };
 
@@ -656,10 +734,10 @@ export default function DetailsPane({
                   {templateData.ownerRules}
                 </a>
               </div>
-            )}          </div>
+            )}{' '}
+          </div>
         </div>
       )}
-      
       {/* Modal dialog for export format selection */}
       {showExportDialog && (
         <div
@@ -687,16 +765,16 @@ export default function DetailsPane({
               position: 'relative',
             }}
           >
-            <h4 style={{ marginTop: 0 }}>Export to data merge file</h4>
+            <h4 style={{ marginTop: 0 }}>{inLang(uiStr.exportToDataMergeFile, lang)}</h4>
             <div style={{ marginBottom: 16 }}>
-              <p style={{ marginBottom: 12 }}>Select output format:</p>
+              <p style={{ marginBottom: 12 }}>{inLang(uiStr.selectOutputFormat, lang)}</p>
               <label style={{ display: 'block', marginBottom: 8, cursor: 'pointer' }}>
                 <input
                   type="radio"
                   name="exportFormat"
                   value="idml"
                   checked={selectedExportFormat === 'idml'}
-                  onChange={(e) => setSelectedExportFormat(e.target.value)}
+                  onChange={e => setSelectedExportFormat(e.target.value)}
                   style={{ marginRight: 8 }}
                 />
                 InDesign (IDML)
@@ -707,7 +785,7 @@ export default function DetailsPane({
                   name="exportFormat"
                   value="mapx"
                   checked={selectedExportFormat === 'mapx'}
-                  onChange={(e) => setSelectedExportFormat(e.target.value)}
+                  onChange={e => setSelectedExportFormat(e.target.value)}
                   style={{ marginRight: 8 }}
                 />
                 Map Creator (MAPX)
@@ -724,7 +802,7 @@ export default function DetailsPane({
                   cursor: 'pointer',
                 }}
               >
-                Cancel
+                {inLang(uiStr.cancel, lang)}
               </button>
               <button
                 onClick={async () => {
@@ -740,13 +818,12 @@ export default function DetailsPane({
                   cursor: 'pointer',
                 }}
               >
-                OK
+                {inLang(uiStr.ok, lang)}
               </button>
             </div>
           </div>
         </div>
       )}
-      
       {/* Status Tally Table */}
       <div
         style={{
@@ -819,38 +896,59 @@ export default function DetailsPane({
             border: '1px solid black',
             borderRadius: '0.7em',
           }}
-        >          <textarea
-            ref={vernacularInputRef}
-            value={vernacular}
-            onChange={handleVernChange}
-            onKeyDown={(e) => {
+        >
+          {' '}
+          <textarea
+            ref={vernacularAutocorrectRef}
+            value={vernacularValue}
+            onChange={handleVernacularChange}
+            onKeyDown={e => {
               // Prevent line breaks but allow other keys
               if (e.key === 'Enter') {
                 e.preventDefault();
               }
+              // console.log('Vernacular textarea KEYDOWN:', e.key);
             }}
             placeholder={inLang(uiStr.enterLabel, lang)}
             className="form-control mb-2"
-            style={{ 
-              width: '100%', 
+            style={{
+              width: '100%',
               border: '1px solid black',
               minHeight: '32px',
               resize: 'vertical',
               whiteSpace: 'pre-wrap',
               overflowWrap: 'break-word',
               fontFamily: 'inherit',
-              fontSize: 'inherit'
+              fontSize: 'inherit',
             }}
             spellCheck={false}
             rows={1}
-          />
-          <span style={{ color: statusValue[status].textColor, fontSize: '0.8em' }}>
+          />{' '}
+          <span
+            style={{
+              color: statusValue[status].textColor,
+              fontSize: '0.8em',
+              lineHeight: '1.2',
+              display: 'block',
+              marginTop: '4px',
+            }}
+          >
             <span style={{ fontWeight: 'bold' }}>
               {inLang(uiStr.statusValue[status].text, lang) + ': '}
             </span>
             {inLang(uiStr.statusValue[status].help, lang)}
+            {(status === STATUS_RENDERING_SHORT || status === STATUS_MULTIPLE_RENDERINGS) && ( // If status is "short", show Add Map Form button
+              <button style={{ marginLeft: 8 }} onClick={() => onAddMapForm()}>
+                {inLang(uiStr.addMapForm, lang)}
+              </button>
+            )}
+            {status === STATUS_UNMATCHED && (
+              <button style={{ marginLeft: 8 }} onClick={() => onRefreshLabel()}>
+                {inLang(uiStr.refreshLabel, lang)}
+              </button>
+            )}
             {status === STATUS_NO_RENDERINGS && ( // If status is "no renderings", show Add to renderings button
-              <button style={{ marginLeft: 8 }} onClick={() => onCreateRendering(vernacular)}>
+              <button style={{ marginLeft: 8 }} onClick={() => onCreateRendering(vernacularValue || '')}>
                 {inLang(uiStr.addToRenderings, lang)}
               </button>
             )}
@@ -886,10 +984,11 @@ export default function DetailsPane({
         </h5>
         <div className="term-renderings" style={{ margin: '8px' }}>
           {' '}
-          <textarea
+          <AutocorrectTextarea
             ref={renderingsTextareaRef}
             value={localRenderings}
             onChange={e => {
+              console.log('Renderings onChange called with:', e.target.value);
               const termId = locations[selLocation].termId;
               const newValue = e.target.value;
 

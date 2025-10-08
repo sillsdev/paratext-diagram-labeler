@@ -8,6 +8,11 @@ class SettingsService {
   }
 
   async loadSettings() {
+    // If settings are already loaded, return them without reloading
+    if (this.isLoaded && this.settings) {
+      return this.settings;
+    }
+
     try {
       // Try to load settings file
       const settings = await window.electronAPI.loadFromJson(null, 'MapLabelerSettings.json');

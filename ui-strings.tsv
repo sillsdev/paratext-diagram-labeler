@@ -1,0 +1,101 @@
+key	en	es	fr	ne
+statusValue_0_text	Blank	En blanco	Vide	खाली
+statusValue_0_help	Provide the text to be used in this label.	Proporcione el texto que se usará en esta etiqueta.	Fournissez le texte à utiliser pour cette étiquette.	यस लेबलमा प्रयोग हुने पाठ प्रदान गर्नुहोस्।
+statusValue_1_text	Multiple Options	Múltiples opciones	Plusieurs options	धेरै विकल्पहरू
+statusValue_1_help	Multiple options have been provided for you to select from. Ensure that you don't have any bad renderings, and then edit the label to remove unwanted options.	Se han proporcionado múltiples opciones para que seleccione. Asegúrese de que no haya traducciones incorrectas y luego edite la etiqueta para eliminar las opciones no deseadas.	Plusieurs options vous ont été proposées. Assurez-vous qu'il n'y a pas de mauvaises traductions, puis modifiez l'étiquette pour supprimer les options indésirables.	तपाईंको छनोटका लागि धेरै विकल्पहरू प्रदान गरिएको छ। गलत अनुवाद छैन भनेर सुनिश्चित गर्नुहोस्, अनि अनावश्यक विकल्पहरू हटाउन लेबल सम्पादन गर्नुहोस्।
+statusValue_2_text	No renderings	Sin traducciones	Aucune traduction	अनुवाद छैन
+statusValue_2_help	Your project does not yet contain any renderings for this term.	Su proyecto aún no contiene ninguna traducción para este término.	Votre projet ne contient pas encore de traduction pour ce terme.	तपाईंको परियोजनामा यो शब्दको लागि कुनै अनुवाद छैन।
+statusValue_3_text	Unmatched label	Etiqueta no coincidente	Étiquette non correspondante	मिल्दो लेबल छैन
+statusValue_3_help	The label above is not matched by the renderings below.	La etiqueta anterior no coincide con las traducciones a continuación.	L'étiquette ci-dessus ne correspond à aucune des traductions ci-dessous.	माथिको लेबल तलका अनुवादहरूसँग मेल खाँदैन।
+statusValue_4_text	Matched	Coincidente	Correspondant	मिल्यो
+statusValue_4_help	The term renderings will be able to supply this label to any other map in the project that needs it.	Las traducciones del término podrán propocionar esta etiqueta a cualquier otro mapa del proyecto que la necesite.	Les traductions du terme pourront fournir cette étiquette à toute autre carte du projet qui en a besoin.	शब्द अनुवादहरूले यो लेबल आवश्यक पर्ने अन्य नक्सामा पनि उपलब्ध गराउन सक्छन्।
+statusValue_5_text	Guessed	Conjeturada	Deviné	अनुमान गरिएको
+statusValue_5_help	This label matches a guessed rendering which must be approved.	Esta etiqueta coincide con una traducción conjeturada que debe ser aprobada.	Cette étiquette correspond à une traduction devinée qui doit être approuvée.	यो लेबल अनुमान गरिएको अनुवादसँग मेल खान्छ, जसलाई स्वीकृत गर्नुपर्छ।
+statusValue_6_text	Label cannot be derived from rendering	La etiqueta no puede derivarse de la traducción	L'étiquette ne peut pas être dérivée de la traduction	लेबल अनुवादबाट व्युत्पन्न गर्न सकिँदैन
+statusValue_6_help	The rendering below does not have enough information to produce this label for other maps. If the rendering is correct,	La traducción abajo no tiene suficiente información para producir esta etiqueta para otros mapas. Si la traducción es correcta,	La traduction ci-dessous ne contient pas suffisamment d'informations pour produire cette étiquette pour d'autres cartes. Si la traduction est correcte,	तलको अनुवादले अन्य नक्साहरूका लागि यो लेबल उत्पादन गर्न पर्याप्त जानकारी छैन। यदि अनुवाद सही छ भने,
+statusValue_7_text	Bad explicit form	Forma explícita incorrecta	Forme explicite incorrecte	गलत स्पष्ट रूप
+statusValue_7_help	The renderings specify an explicit map form, but it is not matched by any rendering.	Las traducciones especifican una forma explícita para el mapa, pero no coincide con ninguna traducción.	Les traductions spécifient une forme explicite pour la carte, mais aucune traduction ne la correspond.	अनुवादहरूले स्पष्ट नक्सा रूप तोकेको छ, तर कुनै अनुवादसँग मेल खाँदैन।
+statusValue_8_text	Incomplete	Incompleto	Incomplet	अधूरो
+statusValue_8_help	There are verses where we would expect this rendering to be used, but it is not present there. Adjust the renderings to include more renderings, or mark those verses as denied.	Hay versículos donde esperaríamos que se usara esta traducción, pero no está presente allí. Ajuste las traducciones para incluir más traducciones o marque esos versículos como denegados.	Il y a des versets où nous nous attendons à ce que cette traduction soit utilisée, mais elle n'est pas présente. Ajustez les traductions pour en inclure davantage, ou marquez ces versets comme refusés.	त्यहाँ केही पदहरू छन् जहाँ यो अनुवाद प्रयोग हुने अपे क्षा गरिएको छ, तर त्यो त्यहाँ उपस्थित छैन। अनुवादहरूलाई थप अनुवादहरू समावेश गर्न समायोजन गर्नुहोस्, वा ती पदहरूलाई अस्वीकृत रूपमा चिन्ह लगाउनुहोस्।
+statusValue_9_text	Multiple renderings	Múltiples traducciones	Plusieurs traductions	धेरै अनुवादहरू
+statusValue_9_help	The renderings list below contains multiple renderings, and does not explicitly specify which is the map form. If multiple rendering are necessary,	La lista de traducciones abajo contiene múltiples traducciones y no especifica explícitamente cuál es la forma del mapa. Si son necesarias múltiples traducciones,	La liste des traductions ci-dessous contient plusieurs traductions et ne spécifie pas explicitement quelle est la forme de la carte. Si plusieurs traductions sont nécessaires,	तलको अनुवाद सूचीमा धेरै अनुवादहरू छन्, र यसले स्पष्ट रूपमा नक्सा रूप निर्दिष्ट गर्दैन। यदि धेरै अनुवादहरू आवश्यक छन् भने,
+addMapForm	add an explicit map form.	agregue una forma explícita del mapa.	ajoutez une forme explicite pour la carte.	स्पष्ट नक्सा रूप थप्नुहोस्।
+addRendering	Add rendering	Agregar traducción	Ajouter un rendu	अनुवाद थप्नुहोस्
+addToRenderings	Add to renderings	Agregar a traducciones	Ajouter aux rendus	अनुवादहरूमा थप्नुहोस्
+approveRendering	Approve Rendering	Aprobar traducción	Approuver le Rendu	अनुमोदन गर्नुहोस्
+baseLayerTypes	Base layer types	Tipos de capa base	Types de couche de base	आधार तहका प्रकारहरू
+browseTemplate	Browse for map template	Buscar plantilla de mapa	Parcourir les modèles de carte	नक्सा टेम्प्लेट खोज्नुहोस्
+cancel	Cancel	Cancelar	Annuler	रद्द गर्नुहोस्
+close	Close	Cerrar	Fermer	बन्द गर्नुहोस्
+enterLabel	Enter translated label	Ingrese la etiqueta traducida	Entrez l'étiquette traduite	अनुवादित लेबल प्रविष्ट गर्नुहोस्
+enterRenderings	Enter renderings here, one per line.\nOptionally, explicitly mark the map form of the rendering by adding it as a comment that begins with '@'.\ne.g. Misra* (@Misradesh)	Ingrese los traducciones aquí, uno por línea.\nOpcionalmente, marque explícitamente la forma del mapa agregándola como un comentario que comience con '@'.\np.ej. Misra* (@Misradesh)	Entrez les rendus ici, un par ligne.\nOptionnellement, marquez explicitement la forme de la carte en l'ajoutant comme un commentaire commençant par '@'.\np.ex. Misra* (@Misradesh)	यहाँ अनुवादहरू प्रविष्ट गर्नुहोस्, प्रत्येक लाइनमा एक।\nवैकल्पिक रूपमा, '@' बाट सुरु हुने टिप्पणीको रूपमा अनुवादको नक्सा रूप स्पष्ट रूपमा चिन्ह लगाउनुहोस्।\nजस्तै: Misra* (@Misradesh)
+export	Export to data merge file	Exportar a archivo de combinación de datos	Exporter vers un fichier de fusion de données	डाटा मर्ज फाइलमा निर्यात गर्नुहोस्
+fileFormats	File formats	Formatos de archivo	Formats de fichier	फाइल ढाँचाहरू
+found	Found	Encontrado	Trouvé	फेला पर्यो
+gloss	Gloss	Glosa	Glossaire	व्याख्या
+guessed	Guessed	Conjeturada	Devinés	अनुमान गरिएको
+invalidUsfm	Invalid USFM format. Changes not applied.	Formato USFM inválido. Cambios no aplicados.	Format USFM invalide. Modifications non appliquées.	अवैध USFM ढाँचा। परिवर्तनहरू लागू गरिएनन्।
+label	Label	Etiqueta	Étiquette	लेबल
+labelSize	Label Size	Tamaño de etiqueta	Taille de l'étiquette	लेबलको आकार
+labelOpacity	Label Opacity	Opacidad de la etiqueta	Opacité de l'étiquette	लेबलको अपारदर्शिता
+language	Language	Idioma	Langue	भाषा
+mapView	Map View	Vista de mapa	Vue de la carte	नक्सा दृश्य
+noLocations	No locations to display	No hay ubicaciones para mostrar	Aucun emplacement à afficher	देखाउन स्थानहरू छैनन्
+noTemplate	No template	Sin plantilla	Aucun modèle	टेम्प्लेट छैन
+noReferences	No references found for this term.	No se encontraron referencias para este término.	Aucune référence trouvée pour ce terme.	यो शब्दका लागि कुनै सन्दर्भ फेला परेन।
+ok	OK	Aceptar	OK	ठीक छ
+owner	Owner	Propietario	Propriétaire	मालिक
+refreshLabel	Refresh label	Actualizar etiqueta	Actualiser l'étiquette	लेबल रिफ्रेश गर्नुहोस्
+replaceRenderings	Replace renderings and label	Reemplazar traducciones y etiqueta	Remplacer	प्रतिस्थापन गर्नुहोस्
+settings	Settings	Configuración	Paramètres	सेटिङहरू
+status	Status	Estado	Statut	स्थिति
+switchView	Switch view	Cambiar vista	Changer de vue	दृश्य परिवर्तन गर्नुहोस्
+tableView	Table View	Vista de tabla	Vue du tableau	तालिका दृश्य
+tally	Tally	Conteo	Total	गणना
+showOnlyMissing	Show only verses without matching renderings	Mostrar solo versículos sin traducciones coincidentes	Afficher uniquement les versets sans traductions correspondantes	मिल्दो अनुवाद नभएका पदहरू मात्र देखाउनुहोस्
+showAllVerses	Show all verses	Mostrar todos los versículos	Afficher tous les versets	सबै पदहरू देखाउनुहोस्
+showUniqueForms	Show unique forms	Mostrar formas únicas	Afficher les formes uniques	अनूठो रूपहरू देखाउनुहोस्
+missing	Missing	Faltante	Manquant	हराइरहेको
+unique	Unique	Único	Unique	अनूठो
+showTallyFractions	Show tally fractions	Mostrar fracciones del conteo	Afficher les fractions du total	गणना भिन्नहरू देखाउनुहोस्
+templateInfo	Template info	Información de la plantilla	Infos du modèle	टेम्प्लेट जानकारी
+termRenderings	Term Renderings	Traducciones de términos	Rendus des Termes	शब्द अनुवादहरू
+usageRules	Usage and Attribution Rules	Reglas de uso y atribución	Règles d'utilisation et d'attribution	प्रयोग र श्रेय नियमहरू
+usfmView	USFM View	Vista de USFM	Vue USFM	USFM दृश्य
+invalidDataMerge	Invalid data merge file format	Formato de archivo de combinación de datos no válido	Format de fichier de fusion de données invalide	अमान्य डाटा मर्ज फाइल ढाँचा
+failedToReadFile	Failed to read file content	Error al leer el contenido del archivo	Échec de lecture du contenu du fichier	फाइल सामग्री पढ्न असफल
+errorSelectingFile	Error selecting file	Error al seleccionar archivo	Erreur lors de la sélection du fichier	फाइल छनोट गर्दा त्रुटि
+loadingImage	Loading image...	Cargando imagen...	Chargement de l'image...	छवि लोड हुँदै...
+exportCancelled	Export cancelled	Exportación cancelada	Exportation annulée	निर्यात रद्द गरियो
+notExported	Not exported	No exportado	Non exporté	निर्यात गरिएन
+couldNotSendToParatext	Could not send reference to Paratext	No se pudo enviar la referencia a Paratext	Impossible d'envoyer la référence à Paratext	Paratext मा सन्दर्भ पठाउन सकिएन
+errorSendingToParatext	Error sending reference to Paratext	Error al enviar la referencia a Paratext	Erreur lors de l'envoi de référence à Paratext	Paratext मा सन्दर्भ पठाउँदा त्रुटि
+paratextInstructions	1. Go to Paratext and edit {reference}.\n2. Save your changes in Paratext.\n3. Come back here and click "OK" to refresh the verse text from Paratext.	1. Ve a Paratext y edita {reference}.\n2. Guarda tus cambios en Paratext.\n3. Regresa aquí y haz clic en "Aceptar" para actualizar el texto del versículo desde Paratext.	1. Allez à Paratext et éditez {reference}.\n2. Sauvegardez vos modifications dans Paratext.\n3. Revenez ici et cliquez sur "OK" pour actualiser le texte du verset depuis Paratext.	1. Paratext मा जानुहोस् र {reference} सम्पादन गर्नुहोस्।\n2. Paratext मा आफ्ना परिवर्तनहरू बचत गर्नुहोस्।\n3. यहाँ फर्केर आउनुहोस् र Paratext बाट पद पाठ रिफ्रेश गर्न "OK" क्लिक गर्नुहोस्।
+failedToRequestVerses	Failed to request filtered verses	Error al solicitar versículos filtrados	Échec de la demande de versets filtrés	फिल्टर गरिएका पदहरू अनुरोध गर्न असफल
+indesignIdml	InDesign (IDML)	InDesign (IDML)	InDesign (IDML)	InDesign (IDML)
+mapCreatorMapx	Map Creator (MAPX)	Map Creator (MAPX)	Map Creator (MAPX)	Map Creator (MAPX)
+sendReferenceToParatext	Send reference to Paratext	Enviar la referencia a Paratext	Envoyer la référence à Paratext	Paratext मा सन्दर्भ पठाउनुहोस्
+noVerseTextYet	No verse text yet	Aún no hay texto del versículo	Pas encore de texte de verset	अझै पद पाठ छैन
+matchFound	Match found	Coincidencia encontrada	Correspondance trouvée	मेल फेला पर्यो
+noMatchClickToDeny	No match (Click to deny)	Sin coincidencia (Clic para denegar)	Pas de correspondance (Cliquer pour refuser)	कुनै मेल छैन (अस्वीकार गर्न क्लिक गर्नुहोस्)
+removeDenial	Remove denial	Eliminar denegación	Supprimer le refus	अस्वीकार हटाउनुहोस्
+markAsDenied	Mark as denied	Marcar como denegado	Marquer comme refusé	अस्वीकारको रूपमा चिन्ह लगाउनुहोस्
+noVerseTextYetBrackets	[No verse text yet]	[Aún no hay texto del versículo]	[Pas encore de texte de verset]	[अझै पद पाठ छैन]
+failedToLoadTermRenderings	Failed to load term-renderings.json	Error al cargar term-renderings.json	Échec du chargement de term-renderings.json	term-renderings.json लोड गर्न असफल
+loadingMapImage	Loading map image...	Cargando imagen del mapa...	Chargement de l'image de la carte...	नक्सा छवि लोड हुँदै...
+imageLoadingFailed	Image loading failed. Please check the installation.	Error al cargar la imagen. Verifique la instalación.	Échec du chargement de l'image. Veuillez vérifier l'installation.	छवि लोड गर्न असफल। कृपया स्थापना जाँच गर्नुहोस्।
+exportToDataMergeFile	Export to data merge file	Exportar a archivo de combinación de datos	Exporter vers un fichier de fusion de données	डाटा मर्ज फाइलमा निर्यात गर्नुहोस्
+selectOutputFormat	Select output format:	Seleccionar formato de salida:	Sélectionner le format de sortie:	आउटपुट ढाँचा छनोट गर्नुहोस्:
+loadingSettings	Loading settings...	Cargando configuración...	Chargement des paramètres...	सेटिङहरू लोड हुँदै...
+paratextDiagramLabeler	Paratext Diagram Labeler	Paratext Diagram Labeler	Paratext Diagram Labeler	Paratext Diagram Labeler
+templateFolder	Template Folder:	Carpeta de Plantillas:	Dossier de Modèles:	टेम्प्लेट फोल्डर:
+projectFolder	Project Folder:	Carpeta del Proyecto:	Dossier du Projet:	परियोजना फोल्डर:
+saveRenderingsTo	Save Renderings To:	Guardar traducciones en:	Enregistrer les Rendus Dans:	अनुवादहरू यहाँ बचत गर्नुहोस्:
+usfmInOut	USFM In/Out:	USFM Entrada/Salida:	USFM Entrée/Sortie:	USFM इन/आउट:
+specifyTemplateFolder	Please specify the location of the folder containing the map templates	Especifique la ubicación de la carpeta que contiene las plantillas de mapas	Veuillez spécifier l'emplacement du dossier contenant les modèles de cartes	कृपया नक्सा टेम्प्लेटहरू भएको फोल्डरको स्थान निर्दिष्ट गर्नुहोस्
+templateFolderNotFound	Template folder not found. Please specify the location of the folder containing the map templates.	Carpeta de plantillas no encontrada. Especifique la ubicación de la carpeta que contiene las plantillas de mapas.	Dossier de modèles introuvable. Veuillez spécifier l'emplacement du dossier contenant les modèles de cartes.	टेम्प्लेट फोल्डर फेला परेन। कृपया नक्सा टेम्प्लेटहरू भएको फोल्डरको स्थान निर्दिष्ट गर्नुहोस्।
+specifyProjectFolder	Please specify the location of your Paratext project folder	Especifique la ubicación de su carpeta de proyecto de Paratext	Veuillez spécifier l'emplacement de votre dossier de projet Paratext	कृपया आफ्नो Paratext परियोजना फोल्डरको स्थान निर्दिष्ट गर्नुहोस्
+projectFolderNotFound	Project folder not found. Please specify the location of your Paratext project folder.	Carpeta de proyecto no encontrada. Especifique la ubicación de su carpeta de proyecto de Paratext.	Dossier de projet introuvable. Veuillez spécifier l'emplacement de votre dossier de projet Paratext.	परियोजना फोल्डर फेला परेन। कृपया आफ्नो Paratext परियोजना फोल्डरको स्थान निर्दिष्ट गर्नुहोस्।
+failedToLoadTermRenderingsFromFolder	Failed to load term renderings from project folder. Please check the folder and try again.	Error al cargar las traducciones de términos desde la carpeta del proyecto. Verifique la carpeta e intente nuevamente.	Échec du chargement des rendus de termes depuis le dossier du projet. Veuillez vérifier le dossier et réessayer.	परियोजना फोल्डरबाट शब्द अनुवादहरू लोड गर्न असफल। कृपया फोल्डर जाँच गर्नुहोस् र फेरि प्रयास गर्नुहोस्।
+errorCheckingProjectFolder	Error checking project folder	Error al verificar la carpeta del proyecto	Erreur lors de la vérification du dossier du projet	परियोजना फोल्डर जाँच गर्दा त्रुटि
+errorCheckingTemplateFolder	Error checking template folder	Error al verificar la carpeta de plantillas	Erreur lors de la vérification du dossier de modèles	टेम्प्लेट फोल्डर जाँच गर्दा त्रुटि

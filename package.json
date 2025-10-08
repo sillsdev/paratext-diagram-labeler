@@ -1,9 +1,9 @@
 {
-  "name": "scripture-map-labeler",
-  "version": "0.1.0",
+  "name": "paratext-diagram-labeler",
+  "version": "0.0.7",
   "private": true,
-  "author": "Map Labeler Team",
-  "description": "Scripture Map Labeler",
+  "author": "SIL Scripture Publishing Services",
+  "description": "Paratext Diagram Labeler",
   "dependencies": {
     "@electron/remote": "^2.1.2",
     "@testing-library/dom": "^10.4.0",
@@ -20,6 +20,7 @@
     "react-scripts": "5.0.1",
     "usfm-js": "^3.4.3",
     "web-vitals": "^2.1.4",
+    "winreg": "^1.2.5",
     "xml2js": "^0.6.2"
   },
   "main": "build/electron-main.js",
@@ -67,20 +68,26 @@
     "wait-on": "^9.0.1"
   },
   "build": {
-    "appId": "org.sil.scripture-map-labeler",
-    "productName": "Scripture Map Labeler",
+    "appId": "org.sil.paratext-diagram-labeler",
+    "productName": "Paratext Diagram Labeler",
     "files": [
       "build/**/*",
-      "node_modules/**/*"
+      "node_modules/**/*",
+      "electron-main.js",
+      "preload.js"
     ],
     "directories": {
-      "buildResources": "build",
+      "buildResources": "buildResources",
       "output": "dist"
     },
     "extraResources": [
       {
         "from": "public/assets",
         "to": "assets"
+      },
+      {
+        "from": "buildResources/icon.ico",
+        "to": "icon.ico"
       }
     ],
     "asar": false,
@@ -90,16 +97,17 @@
         "nsis",
         "portable"
       ],
-      "icon": "public/icon.ico"
+      "icon": "buildResources/icon.ico"
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "installerIcon": "public/icon.ico",
-      "uninstallerIcon": "public/icon.ico",
-      "installerHeaderIcon": "public/icon.ico",
+      "installerIcon": "buildResources/icon.ico",
+      "uninstallerIcon": "buildResources/icon.ico",
+      "installerHeaderIcon": "buildResources/icon.ico",
       "createDesktopShortcut": true,
-      "createStartMenuShortcut": true
+      "createStartMenuShortcut": true,
+      "shortcutName": "Paratext Diagram Labeler"
     },
     "mac": {
       "target": "dmg",

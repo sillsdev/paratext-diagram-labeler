@@ -2,11 +2,9 @@ import React, { useEffect, useRef } from 'react';
 import './MainApp.css';
 import uiStr from './data/ui-strings.json';
 import { CheckmarkIcon, DeniedCheckmarkIcon, WarningIcon } from './TermIcons';
-// import { MAP_VIEW, TABLE_VIEW, USFM_VIEW, STATUS_NO_RENDERINGS, STATUS_GUESSED } from './constants.js';
-// Status values not yet used: STATUS_BLANK, STATUS_MULTIPLE,  STATUS_UNMATCHED, STATUS_MATCHED, STATUS_RENDERING_SHORT, STATUS_BAD_EXPLICIT_FORM
-// import TermRenderings from './TermRenderings';
 import { collectionManager } from './CollectionManager';
 import { inLang, statusValue, getMatchTally, isLocationVisible } from './Utils.js';
+import { AutocorrectInput } from './components/AutocorrectInput';
 
 // Table View component
 export default function TableView({
@@ -22,13 +20,21 @@ export default function TableView({
   selectedVariant = 0,
 }) {
   const inputRefs = useRef([]);
+  const prevSelLocationRef = useRef(selLocation);
+  
   useEffect(() => {
-    // Focus the input for the selected row
-    const idx = selLocation;
-    if (idx >= 0 && inputRefs.current[idx]) {
-      inputRefs.current[idx].focus();
+    // Only focus when selLocation actually changes, not when locations array is updated
+    if (prevSelLocationRef.current !== selLocation) {
+      prevSelLocationRef.current = selLocation;
+      
+      // Focus the input for the selected row
+      const idx = selLocation;
+      if (idx >= 0 && inputRefs.current[idx]) {
+        inputRefs.current[idx].focus();
+        console.log('TableView: Focus set on input for location:', selLocation);  
+      }
     }
-  }, [selLocation, locations]);
+  }, [selLocation]);
   return (
     <div className="table-view-scroll-wrapper">
       <table className="table-view" style={{ borderCollapse: 'collapse' }}>
@@ -40,9 +46,8 @@ export default function TableView({
             <th style={{ textAlign: 'left' }}>{inLang(uiStr.found, lang)}</th>
             <th>{inLang(uiStr.status, lang)}</th>
           </tr>
-        </thead>{' '}
+        </thead>
         <tbody>
-          {' '}
           {locations
             .filter(loc => isLocationVisible(loc, selectedVariant))
             .map((loc, i) => {
@@ -66,7 +71,7 @@ export default function TableView({
                     {inLang(loc.gloss, lang)}
                   </td>
                   <td style={isSelected ? { paddingTop: 4, paddingBottom: 4 } : {}}>
-                    <input
+                    <AutocorrectInput
                       ref={el => (inputRefs.current[i] = el)}
                       type="text"
                       value={loc.vernLabel || ''}

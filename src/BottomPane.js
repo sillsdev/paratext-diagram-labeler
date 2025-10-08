@@ -1,10 +1,15 @@
 import React from 'react';
 import { FaPencilAlt } from 'react-icons/fa';
 import uiStr from './data/ui-strings.json';
-import { CheckmarkIcon, DeniedCheckmarkIcon, CrossIcon, NoneIcon } from './TermIcons';
+import { CheckmarkIcon, DeniedCheckmarkIcon, CrossIcon, NoneIcon, ShowAllIcon, ShowMissingIcon, ShowUniqueIcon } from './TermIcons';
 import { MATCH_PRE_B, MATCH_POST_B, MATCH_W } from './constants.js';
 import { collectionManager } from './CollectionManager';
 import { inLang, prettyRef } from './Utils.js';
+
+// Filter mode constants
+const FILTER_SHOW_ALL = 'all';
+const FILTER_SHOW_MISSING = 'missing';
+const FILTER_SHOW_UNIQUE = 'unique';
 
 // Bottom Pane component to display a scrollable list of verses referencing the termId
 function BottomPane({
@@ -20,11 +25,13 @@ function BottomPane({
   extractedVerses,
   setTermRenderings,
   collectionId = 'SMR',
+  onReloadExtractedVerses,
 }) {
   const paneRef = React.useRef();
   const [selectedText, setSelectedText] = React.useState('');
   // Add a local state to force re-render on denial toggle
   const [denialToggle, setDenialToggle] = React.useState(false);
+  const [filterMode, setFilterMode] = React.useState(FILTER_SHOW_ALL);
 
   React.useEffect(() => {
     function handleSelectionChange() {
@@ -109,15 +116,13 @@ function BottomPane({
     return text;
   }
 
-  // Compute match tally
+  // Compute match tally and filter-specific counts
   let deniedRefs = termRenderings[termId]?.denials || [];
-  // if (deniedRefs.length !== 0) {
-  //   console.log(`Term "${termId}" has denied references:`, deniedRefs);
-  // } else {
-  //   console.log(`compute match tally for ${termId}`, termRenderings);
-  // }
   let matchCount = 0;
   let nonEmptyRefCt = 0; // Count of non-empty references
+  let missingCount = 0; // Count of missing (non-matching, non-denied) verses
+  let uniqueCount = 0; // Count of unique forms (calculated separately)
+  
   const matchResults = refs.map(refId => {
     const verse = extractedVerses[refId] || '';
     if (!verse) {
@@ -126,9 +131,40 @@ function BottomPane({
     }
     nonEmptyRefCt++;
     const hasMatch = renderingList.some(r => r.test(verse));
-    if (hasMatch || deniedRefs.includes(refId)) matchCount++;
+    const isDenied = deniedRefs.includes(refId);
+    
+    if (hasMatch || isDenied) {
+      matchCount++;
+    } else {
+      missingCount++;
+    }
+    
     return hasMatch;
   });
+
+  // Calculate unique forms count for Show Unique mode
+  if (filterMode === FILTER_SHOW_UNIQUE) {
+    const seenForms = new Set();
+    refs.forEach((refId, i) => {
+      const verse = extractedVerses[refId] || '';
+      const hasMatch = matchResults[i];
+      
+      if (hasMatch && verse) {
+        // Extract matched text (case-insensitive, preserve diacritics/punctuation)
+        for (const regex of renderingList) {
+          const match = verse.match(regex);
+          if (match) {
+            const matchedText = match[0].toLowerCase();
+            if (!seenForms.has(matchedText)) {
+              seenForms.add(matchedText);
+              uniqueCount++;
+            }
+            break;
+          }
+        }
+      }
+    });
+  }
 
   return (
     <div
@@ -161,14 +197,83 @@ function BottomPane({
           minHeight: 28,
         }}
       >
-        <span>
-          {inLang(uiStr.found, lang)}: {matchCount}/{nonEmptyRefCt}
+        <div style={{ display: 'flex' }}>
+          {/* Show All Button */}
+          <button
+            style={{
+              fontSize: 13,
+              padding: '4px 4px',
+              borderRadius: '4px 0 0 4px',
+              background: filterMode === FILTER_SHOW_ALL ? '#d0eaff' : undefined,
+              border: filterMode === FILTER_SHOW_ALL ? '2px inset #2196f3' : '1px solid #b2dfdb',
+              cursor: 'pointer',
+              height: 22,
+              minWidth: 22,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            onClick={() => setFilterMode(FILTER_SHOW_ALL)}
+            title={inLang(uiStr.showAllVerses, lang)}
+          >
+            <ShowAllIcon />
+          </button>
+          
+          {/* Show Missing Button */}
+          <button
+            style={{
+              fontSize: 13,
+              padding: '4px 4px',
+              borderRadius: 0,
+              background: filterMode === FILTER_SHOW_MISSING ? '#d0eaff' : undefined,
+              border: filterMode === FILTER_SHOW_MISSING ? '2px inset #2196f3' : '1px solid #b2dfdb',
+              cursor: 'pointer',
+              height: 22,
+              minWidth: 22,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            onClick={() => setFilterMode(FILTER_SHOW_MISSING)}
+            title={inLang(uiStr.showOnlyMissing, lang)}
+          >
+            <ShowMissingIcon />
+          </button>
+          
+          {/* Show Unique Button */}
+          <button
+            style={{
+              fontSize: 13,
+              padding: '4px 4px',
+              borderRadius: '0 4px 4px 0',
+              background: filterMode === FILTER_SHOW_UNIQUE ? '#d0eaff' : undefined,
+              border: filterMode === FILTER_SHOW_UNIQUE ? '2px inset #2196f3' : '1px solid #b2dfdb',
+              cursor: 'pointer',
+              height: 22,
+              minWidth: 22,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            onClick={() => {
+              setFilterMode(FILTER_SHOW_UNIQUE);
+              // Note: unique forms are now calculated per-render, no state reset needed
+            }}
+            title={inLang(uiStr.showUniqueForms, lang)}
+          >
+            <ShowUniqueIcon />
+          </button>
+        </div>
+        <span style={{ marginLeft: 8 }}>
+          {filterMode === FILTER_SHOW_ALL && `${inLang(uiStr.found, lang)}: ${matchCount}/${nonEmptyRefCt}`}
+          {filterMode === FILTER_SHOW_MISSING && `${inLang(uiStr.missing, lang)}: ${missingCount}/${nonEmptyRefCt}`}
+          {filterMode === FILTER_SHOW_UNIQUE && `${inLang(uiStr.unique, lang)}: ${uniqueCount}`}
         </span>
         {selectedText && (
           <>
             <button
               style={{
-                marginLeft: 8,
+                marginLeft: 16,
                 fontSize: 13,
                 padding: '1px 6px',
                 borderRadius: 4,
@@ -187,7 +292,7 @@ function BottomPane({
                 fontSize: 13,
                 padding: '1px 6px',
                 borderRadius: 4,
-                background: '#ffe0e0',
+                background: 'gold',
                 border: '1px solid #dfb2b2',
                 cursor: 'pointer',
                 height: 22,
@@ -215,99 +320,161 @@ function BottomPane({
                 </td>
               </tr>
             ) : (
-              refs.map((refId, i) => {
-                // Reference denialToggle to force re-render
-                void denialToggle;
-                const verse = extractedVerses[refId] || '';
-                const hasMatch = matchResults[i];
-                const isDenied = deniedRefs.includes(refId);
-                // Handler must be in this scope
-                const handleToggleDenied = () => {
-                  const data = termRenderings;
-                  let denials = Array.isArray(data[termId]?.denials)
-                    ? [...data[termId].denials]
-                    : [];
-                  if (isDenied) {
-                    denials = denials.filter(r => r !== refId);
-                  } else {
-                    if (!denials.includes(refId)) denials.push(refId);
-                  }
-                  if (!data[termId]) data[termId] = {};
-                  data[termId].denials = denials;
-                  const updatedData = { ...data };
-                  setTermRenderings(updatedData);
-                  if (typeof setRenderings === 'function') setRenderings(r => r + '');
-                  setDenialToggle(t => !t);
-                  if (typeof onDenialsChanged === 'function') onDenialsChanged(); // <-- update locations in App
-                };
-                return (
-                  <tr key={refId} style={{ borderBottom: '1px solid #eee', verticalAlign: 'top' }}>
-                    <td
-                      style={{
-                        width: 38,
-                        textAlign: 'center',
-                        padding: '2px 0',
-                        verticalAlign: 'top',
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
-                      {!verse ? (
-                        <NoneIcon title="No verse text yet" />
-                      ) : hasMatch ? (
-                        <CheckmarkIcon title="Match found" />
-                      ) : (
-                        <span
-                          style={{ cursor: 'pointer', display: 'inline-block' }}
-                          onClick={handleToggleDenied}
-                          title={isDenied ? 'Remove denial' : 'Mark as denied'}
-                        >
-                          {isDenied ? (
-                            <DeniedCheckmarkIcon />
-                          ) : (
-                            <CrossIcon title="No match (Click to deny)" />
-                          )}
-                        </span>
-                      )}
-                      <button
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          padding: 0,
-                          marginLeft: 4,
-                          cursor: 'pointer',
-                          color: '#888',
-                          fontSize: 14,
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          verticalAlign: 'top',
-                        }}
-                        title="Edit"
-                        aria-label="Edit"
-                        onClick={() =>
-                          alert(`Edit ${prettyRef(refId)} directly in Paratext.`, 'Edit Verse')
+              (() => {
+                // Pre-calculate unique forms for FILTER_SHOW_UNIQUE mode
+                const currentSeenForms = new Set();
+                const filteredRefs = [];
+                
+                refs.forEach((refId, i) => {
+                  // Reference denialToggle to force re-render
+                  void denialToggle;
+                  const verse = extractedVerses[refId] || '';
+                  const hasMatch = matchResults[i];
+                  const isDenied = deniedRefs.includes(refId);
+
+                  // Apply filtering logic
+                  let shouldShow = true;
+                  
+                  if (filterMode === FILTER_SHOW_MISSING) {
+                    shouldShow = verse && !hasMatch && !isDenied;
+                  } else if (filterMode === FILTER_SHOW_UNIQUE) {
+                    if (!hasMatch || !verse) {
+                      shouldShow = false;
+                    } else {
+                      // Extract matched text (case-insensitive, preserve diacritics/punctuation)
+                      let matchedText = null;
+                      for (const regex of renderingList) {
+                        const match = verse.match(regex);
+                        if (match) {
+                          matchedText = match[0].toLowerCase();
+                          break;
                         }
-                      >
-                        <FaPencilAlt />
-                      </button>
-                    </td>
-                    <td
-                      style={{
-                        padding: '2px 0 2px 8px',
-                        verticalAlign: 'top',
-                        wordBreak: 'break-word',
-                        whiteSpace: 'normal',
-                      }}
+                      }
+                      
+                      if (!matchedText || currentSeenForms.has(matchedText)) {
+                        shouldShow = false;
+                      } else {
+                        currentSeenForms.add(matchedText);
+                      }
+                    }
+                  }
+                  // FILTER_SHOW_ALL shows everything (existing behavior)
+                  
+                  if (shouldShow) {
+                    filteredRefs.push({ refId, i, verse, hasMatch, isDenied });
+                  }
+                });
+
+                return filteredRefs.map(({ refId, i, verse, hasMatch, isDenied }) => {
+
+                  // Handler must be in this scope
+                  const handleToggleDenied = () => {
+                    const data = termRenderings;
+                    let denials = Array.isArray(data[termId]?.denials)
+                      ? [...data[termId].denials]
+                      : [];
+                    if (isDenied) {
+                      denials = denials.filter(r => r !== refId);
+                    } else {
+                      if (!denials.includes(refId)) denials.push(refId);
+                    }
+                    if (!data[termId]) data[termId] = {};
+                    data[termId].denials = denials;
+                    const updatedData = { ...data };
+                    setTermRenderings(updatedData);
+                    if (typeof setRenderings === 'function') setRenderings(r => r + '');
+                    setDenialToggle(t => !t);
+                    if (typeof onDenialsChanged === 'function') onDenialsChanged(); // <-- update locations in App
+                  };
+                  return (
+                    <tr
+                      key={refId}
+                      style={{ borderBottom: '1px solid #eee', verticalAlign: 'top' }}
                     >
-                      <span style={{ fontWeight: 'bold', marginRight: 4 }}>
-                        {prettyRef(refId)}{' '}
-                      </span>
-                      {hasMatch
-                        ? highlightMatch(verse, renderingList)
-                        : verse || <span style={{ color: '#888' }}>[No verse text yet]</span>}
-                    </td>
-                  </tr>
-                );
-              })
+                      <td
+                        style={{
+                          width: 38,
+                          textAlign: 'center',
+                          padding: '2px 0',
+                          verticalAlign: 'top',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {!verse ? (
+                          <NoneIcon title="No verse text yet" />
+                        ) : hasMatch ? (
+                          <CheckmarkIcon title="Match found" />
+                        ) : (
+                          <span
+                            style={{ cursor: 'pointer', display: 'inline-block' }}
+                            onClick={handleToggleDenied}
+                            title={isDenied ? 'Remove denial' : 'Mark as denied'}
+                          >
+                            {isDenied ? (
+                              <DeniedCheckmarkIcon />
+                            ) : (
+                              <CrossIcon title="No match (Click to deny)" />
+                            )}
+                          </span>
+                        )}
+                        <button
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            padding: 0,
+                            marginLeft: 4,
+                            cursor: 'pointer',
+                            color: '#888',
+                            fontSize: 14,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            verticalAlign: 'top',
+                          }}
+                          title="Send reference to Paratext"
+                          aria-label="Send reference to Paratext"
+                          onClick={async () => {
+                            try {
+                              const result = await window.electronAPI.broadcastReference(prettyRef(refId));
+                              if (result.success) {
+                                console.log(`Successfully sent reference to Paratext: ${result.reference}`);
+                              } else {
+                                console.warn(`Failed to send reference to Paratext: ${result.error}`);
+                                alert(inLang(uiStr.couldNotSendToParatext, lang) + (result.error ? ': ' + result.error : ''));
+                              }
+                            } catch (error) {
+                              console.error('Error broadcasting reference:', error);
+                              alert(inLang(uiStr.errorSendingToParatext, lang) + (error.message ? ': ' + error.message : ''));
+                            }
+                            alert(inLang(uiStr.paratextInstructions, lang).replace('{reference}', prettyRef(refId)));
+                            // Reload the extracted verses to reflect changes
+                            if (onReloadExtractedVerses) {
+                              await onReloadExtractedVerses(termId, mergeKey);
+                            }
+
+                          }}
+                        >
+                          <FaPencilAlt />
+                        </button>
+                      </td>
+                      <td
+                        style={{
+                          padding: '2px 0 2px 8px',
+                          verticalAlign: 'top',
+                          wordBreak: 'break-word',
+                          whiteSpace: 'normal',
+                        }}
+                      >
+                        <span style={{ fontWeight: 'bold', marginRight: 4 }}>
+                          {prettyRef(refId)}{' '}
+                        </span>
+                        {hasMatch
+                          ? highlightMatch(verse, renderingList)
+                          : verse || <span style={{ color: '#888' }}>[No verse text yet]</span>}
+                      </td>
+                    </tr>
+                  );
+                });
+              })() // Close the IIFE
             )}
           </tbody>
         </table>

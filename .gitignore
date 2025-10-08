@@ -11,8 +11,7 @@
 # production
 /build
 /dist
-
-/dist
+/_LabelerTemplates
 
 # misc
 .DS_Store

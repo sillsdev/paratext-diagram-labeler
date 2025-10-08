@@ -1,9 +1,10 @@
 import supportedLanguages from './data/ui-languages.json';
 import { inLang } from './Utils.js';
 import uiStr from './data/ui-strings.json';
+import packageInfo from '../package.json';
 
 // Settings Modal Dialog
-export default function SettingsModal({ open, onClose, labelScale, setLabelScale, lang, setLang, showFrac, setShowFrac }) {
+export default function SettingsModal({ open, onClose, labelScale, setLabelScale, labelOpacity, setLabelOpacity, lang, setLang, showFrac, setShowFrac }) {
   if (!open) return null;
   return (
     <div
@@ -50,6 +51,21 @@ export default function SettingsModal({ open, onClose, labelScale, setLabelScale
           <span>{labelScale.toFixed(2)}x</span>
         </div>
         <div style={{ marginBottom: 16, textAlign: 'center' }}>
+          <label style={{ fontWeight: 'bold', marginRight: 8, textAlign: 'center' }}>
+            {inLang(uiStr.labelOpacity, lang)}:
+          </label>
+          <input
+            type="range"
+            min={10}
+            max={100}
+            step={1}
+            value={labelOpacity}
+            onChange={e => setLabelOpacity(parseFloat(e.target.value))}
+            style={{ verticalAlign: 'middle', marginRight: 8 }}
+          />
+          <span>{labelOpacity.toFixed(0)}%</span>
+        </div>
+        <div style={{ marginBottom: 16, textAlign: 'center' }}>
           <label style={{ fontWeight: 'bold', marginRight: 8 }}>
             {inLang(uiStr.language, lang)}:
           </label>{' '}
@@ -86,6 +102,20 @@ export default function SettingsModal({ open, onClose, labelScale, setLabelScale
             {inLang(uiStr.showTallyFractions, lang)}
           </label>
         </div>
+        
+        {/* Version information */}
+        <div style={{ 
+          marginTop: 20, 
+          paddingTop: 16, 
+          paddingBottom: 16,
+          borderTop: '1px solid #eee',
+          fontSize: '0.85em',
+          color: '#666',
+          textAlign: 'center'
+        }}>
+          {inLang(uiStr.paratextDiagramLabeler, lang)} (PT9 standalone edition) v. {packageInfo.version}-alpha
+        </div>
+        
         <div style={{ textAlign: 'center' }}>
           <button onClick={onClose} style={{ fontSize: 15, padding: '4px 16px', borderRadius: 4 }}>
             {inLang(uiStr.close, lang)}
