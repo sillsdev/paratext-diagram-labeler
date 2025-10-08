@@ -43,16 +43,14 @@ class SettingsService {
     }
   }
 
-  // Helper to check if a folder exists
+  // Helper to check if a folder exists. Path has already been normalized.
   async folderExists(path) {
     if (!path) return false;
 
     try {
-      // Normalize path by replacing forward slashes with backslashes for Windows
-      const normalizedPath = path.replace(/\//g, '\\');
-      console.log('Checking folder exists:', normalizedPath);
+      console.log('Checking folder exists:', path);
 
-      const stat = await window.electronAPI.statPath(normalizedPath);
+      const stat = await window.electronAPI.statPath(path);
       // The stat object has isDirectory as a property, not a function
       return stat && stat.isDirectory === true;
     } catch (error) {
@@ -142,8 +140,9 @@ class SettingsService {
 
     try {
       if (folder) {
-        // Normalize path to ensure consistent Windows backslashes
-        const normalizedFolder = folder.replace(/\//g, '\\');
+        // Normalize path to ensure consistent slashes for current platform
+        const pathSeparator = window.electronAPI.getPathSeparator();
+        const normalizedFolder = folder.replace(/[/\\]/g, pathSeparator);
         console.log('Setting template folder to:', normalizedFolder);
 
         // Check if folder exists before saving it
