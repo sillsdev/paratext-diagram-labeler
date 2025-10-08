@@ -109,7 +109,7 @@ export function ShowUniqueIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" style={{ verticalAlign: 'middle' }}>
       <path d="M3 6h14l-4 4v6l-2-2v-4L3 6z" fill="#666" stroke="#666" strokeWidth="1"/>
-      <text x="4  " y="17" textAnchor="middle" fill="#00a000" fontSize="11" fontWeight="bold">1</text>
+      <text x="4" y="17" textAnchor="middle" fill="#00a000" fontSize="11" fontWeight="bold">1</text>
     </svg>
   );
 }
