@@ -141,7 +141,7 @@ class SettingsService {
     try {
       if (folder) {
         // Normalize path to ensure consistent slashes for current platform
-        const pathSeparator = window.electronAPI.getPathSeparator ? window.electronAPI.getPathSeparator() : require('path').sep;
+        const pathSeparator = window.electronAPI.getPathSeparator();
         const normalizedFolder = folder.replace(/[/\\]/g, pathSeparator);
         console.log('Setting template folder to:', normalizedFolder);
 

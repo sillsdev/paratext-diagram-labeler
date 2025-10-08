@@ -6,7 +6,7 @@ class AutocorrectService {
 
   async loadAutocorrectFile(projectFolder) {
     try {
-      const pathSeparator = window.electronAPI.getPathSeparator ? window.electronAPI.getPathSeparator() : require('path').sep;
+      const pathSeparator = window.electronAPI.getPathSeparator();
       const filePath = `${projectFolder}${pathSeparator}autocorrect.txt`;
       const content = await window.electronAPI.readFile(filePath);
       this.parseRules(content);
