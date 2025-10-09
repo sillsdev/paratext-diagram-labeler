@@ -90,7 +90,14 @@
         "to": "icon.ico"
       }
     ],
-    "asar": false,
+    "asar": true,
+    "asarUnpack": [
+      "assets/**",
+      "data/**",
+      "**/*.node",
+      "**/node_modules/**/build/Release/**",
+      "**/node_modules/native-*/**"
+    ],
     "npmRebuild": false,
     "win": {
       "target": [
