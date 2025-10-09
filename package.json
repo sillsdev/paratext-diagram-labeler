@@ -2,7 +2,7 @@
   "name": "paratext-diagram-labeler",
   "version": "0.0.7",
   "private": true,
-  "author": "SIL Scripture Publishing Services",
+  "author": "SIL Scripture Publishing Services <paratextmaplabeler@gmail.com>",
   "description": "Paratext Diagram Labeler",
   "dependencies": {
     "@electron/remote": "^2.1.2",
