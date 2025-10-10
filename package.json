@@ -94,8 +94,7 @@
     "npmRebuild": false,
     "win": {
       "target": [
-        "nsis",
-        "portable"
+        "nsis"
       ],
       "icon": "buildResources/icon.ico"
     },
