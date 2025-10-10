@@ -141,8 +141,8 @@ class SettingsService {
     try {
       if (folder) {
         // Normalize path to ensure consistent slashes for current platform
-        const pathSeparator = window.electronAPI.getPathSeparator();
-        const normalizedFolder = folder.replace(/[/\\]/g, pathSeparator);
+        // Use forward slashes for consistency across platforms, Node.js handles this
+        const normalizedFolder = folder.replace(/\\/g, '/');
         console.log('Setting template folder to:', normalizedFolder);
 
         // Check if folder exists before saving it

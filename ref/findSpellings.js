@@ -5,9 +5,20 @@ const path = require('path');
 const xml2js = require('xml2js');
 
 // Configuration
-const PROJECT_FOLDER = "C:\\My Paratext 9 Projects\\zMaps";
-const XML_INPUT_FILE = path.join(__dirname, 'BiblicalTerms.xml');
+const PROJECTS_FOLDER = "C:\\My Paratext 9 Projects\\";
+const PROJECTS = [ ["zMaps", "N"], 
+                    ["zN84", "n"],
+                    ["zE16", "E"],
+                    ["zG92", "G"],
+                    ["zR52", "R"],
+                    ["zT08", "T"],
+                    ["zK54", "K"]                    
+];
+const XML_INPUT_FILE = path.join(__dirname, 'BiblicalTerms-eng.xml');
 const JSON_OUTPUT_FILE = path.join(__dirname, 'BiblicalTermsWithSpellings.json');
+
+// Current project being processed
+let currentProjectFolder = '';
 
 // Settings for the project (similar to electron-main.js)
 let settings = {
@@ -68,11 +79,25 @@ function bookName(bookNum) {
   let start = (bookNum * 6) + (settings.use41 ? 0 : 2);
   let length = (settings.useMAT ? 3 : 0) + (settings.use41 ? 2 : 0);
   const bookScheme = bookSchemes.slice(start, start + length);
-  return path.join(PROJECT_FOLDER, settings.pre + bookScheme + settings.post);
+  return path.join(currentProjectFolder, settings.pre + bookScheme + settings.post);
 }
 
 // Extract verse text from USFM chapter content
 function getVerseText(usfmChapterText, verseNum) {
+  // Handle verse 0 - content after chapter marker but before first verse
+  if (verseNum === 0) {
+    const firstVerseMatch = usfmChapterText.match(/\\v \d+/);
+    if (firstVerseMatch) {
+      // Return content from start of chapter to first verse marker
+      const beforeFirstVerse = usfmChapterText.substring(0, firstVerseMatch.index);
+      return beforeFirstVerse.trim();
+    } else {
+      // No verses found, return entire chapter content
+      return usfmChapterText.trim();
+    }
+  }
+  
+  // Handle regular verses (1+)
   const verseRegex = /\\v (\d+(?:\u200f?-\d+)?)(.*?)(?=(?:\\v \d+(?:\u200f?-\d+)?|$))/gs;
   let match;
 
@@ -116,6 +141,16 @@ function cleanUsfmText(usfmText) {
   // Remove extra whitespace
   usfmText = usfmText.replace(/\s+/g, ' ').trim();
   return usfmText;
+}
+
+// Parse multiple alternatives from gloss (separated by comma, semicolon, slash, or "or")
+function parseGlossAlternatives(gloss) {
+  if (!gloss) return [];
+  
+  // Split by comma, semicolon, forward slash, or " or " (with spaces), then clean up
+  return gloss.split(/[,;\/]|\s+or\s+/i)
+    .map(alt => alt.trim())
+    .filter(alt => alt.length > 0);
 }
 
 // Calculate Levenshtein distance for fuzzy matching
@@ -303,7 +338,7 @@ async function getFilteredVerses(references) {
 }
 
 // Process a single term to find its spelling
-async function processTermSpelling(term, logErrors = true) {
+async function processTermSpelling(term, projectCode, logErrors = true) {
   const termId = term.$.Id;
   const gloss = term.Gloss;
   const category = term.Category;
@@ -317,9 +352,8 @@ async function processTermSpelling(term, logErrors = true) {
       console.warn(`Term ${termId} has no references`);
     }
     return {
-      foundSpelling: '',
-      foundTally: 0,
-      foundPercent: 0
+      [`spell-${projectCode}`]: '',
+      [`pc-${projectCode}`]: 0
     };
   }
   
@@ -338,38 +372,56 @@ async function processTermSpelling(term, logErrors = true) {
         console.warn(`No verse texts found for term ${termId} (${gloss})`);
       }
       return {
-        foundSpelling: '',
-        foundTally: 0,
-        foundPercent: 0
+        [`spell-${projectCode}`]: '',
+        [`pc-${projectCode}`]: 0
       };
     }
     
-    // Find matches in each verse
-    const spellings = {};
+    // Parse gloss alternatives (e.g., "Babel, Babylon, Babylonia")
+    const glossAlternatives = parseGlossAlternatives(gloss);
+    
+    // If no alternatives found, use the original gloss
+    if (glossAlternatives.length === 0) {
+      glossAlternatives.push(gloss);
+    }
+    
+    // Find matches for each gloss alternative
+    const allSpellings = {};
     let totalVerses = 0;
     
     for (const [ref, verseText] of Object.entries(verseTexts)) {
       totalVerses++;
-      const match = findBestMatch(verseText, gloss);
       
-      if (match && match.score > 0.4) { // Minimum threshold for considering a match
-        const spelling = match.text;
-        if (!spellings[spelling]) {
-          spellings[spelling] = { count: 0, totalScore: 0 };
+      // Try each gloss alternative and find the best match for this verse
+      let bestMatch = null;
+      let bestScore = 0;
+      
+      for (const alternative of glossAlternatives) {
+        const match = findBestMatch(verseText, alternative);
+        if (match && match.score > bestScore && match.score > 0.4) {
+          bestMatch = match;
+          bestScore = match.score;
         }
-        spellings[spelling].count++;
-        spellings[spelling].totalScore += match.score;
+      }
+      
+      // Record the best match found for this verse
+      if (bestMatch) {
+        const spelling = bestMatch.text;
+        if (!allSpellings[spelling]) {
+          allSpellings[spelling] = { count: 0, totalScore: 0 };
+        }
+        allSpellings[spelling].count++;
+        allSpellings[spelling].totalScore += bestMatch.score;
       }
     }
     
-    if (Object.keys(spellings).length === 0) {
+    if (Object.keys(allSpellings).length === 0) {
       if (shouldLogErrors) {
         console.warn(`No suitable spellings found for term ${termId} (${gloss}) in ${totalVerses} verses`);
       }
       return {
-        foundSpelling: '',
-        foundTally: 0,
-        foundPercent: 0
+        [`spell-${projectCode}`]: '',
+        [`pc-${projectCode}`]: 0
       };
     }
     
@@ -377,7 +429,7 @@ async function processTermSpelling(term, logErrors = true) {
     let bestSpelling = '';
     let bestScore = 0;
     
-    for (const [spelling, data] of Object.entries(spellings)) {
+    for (const [spelling, data] of Object.entries(allSpellings)) {
       const avgScore = data.totalScore / data.count;
       const combinedScore = data.count * avgScore;
       
@@ -387,40 +439,35 @@ async function processTermSpelling(term, logErrors = true) {
       }
     }
     
-    const foundTally = spellings[bestSpelling].count;
+    const foundTally = allSpellings[bestSpelling].count;
     const foundPercent = Math.round((foundTally / totalVerses) * 100);
     
-    console.log(`Term ${termId} (${gloss}): Found "${bestSpelling}" in ${foundTally}/${totalVerses} verses (${foundPercent}%)`);
+    console.log(`Term ${termId} (${gloss}) [${projectCode}]: Found "${bestSpelling}" in ${foundTally}/${totalVerses} verses (${foundPercent}%)`);
     
     return {
-      foundSpelling: bestSpelling,
-      foundTally: foundTally,
-      foundPercent: foundPercent
+      [`spell-${projectCode}`]: bestSpelling,
+      [`pc-${projectCode}`]: foundPercent
     };
     
   } catch (error) {
     if (shouldLogErrors) {
-      console.error(`Error processing term ${termId} (${gloss}):`, error.message);
+      console.error(`Error processing term ${termId} (${gloss}) [${projectCode}]:`, error.message);
     }
     return {
-      foundSpelling: '',
-      foundTally: 0,
-      foundPercent: 0
+      [`spell-${projectCode}`]: '',
+      [`pc-${projectCode}`]: 0
     };
   }
 }
 
 // Main function
 async function main() {
-  console.log('Finding spellings for Biblical terms...');
-  console.log(`Project folder: ${PROJECT_FOLDER}`);
+  console.log('Finding spellings for Biblical terms across multiple projects...');
+  console.log(`Projects folder: ${PROJECTS_FOLDER}`);
   console.log(`Input XML: ${XML_INPUT_FILE}`);
   console.log(`Output JSON: ${JSON_OUTPUT_FILE}`);
   
   try {
-    // Load project settings
-    await loadSettings(PROJECT_FOLDER);
-    
     // Read and parse XML file
     console.log('Reading BiblicalTerms.xml...');
     const xmlContent = await fs.promises.readFile(XML_INPUT_FILE, 'utf8');
@@ -436,50 +483,65 @@ async function main() {
     const terms = Array.isArray(result.BiblicalTermsList.Term) ? result.BiblicalTermsList.Term : [result.BiblicalTermsList.Term];
     console.log(`Found ${terms.length} terms to process`);
     
-    // Process each term
-    const processedTerms = [];
-    let processed = 0;
+    // Initialize processedTerms with basic structure
+    const processedTerms = terms.map(term => ({
+      Id: term.$.Id,
+      Strong: term.Strong,
+      Transliteration: term.Transliteration,
+      Gloss: term.Gloss,
+      Definition: term.Definition,
+      Category: term.Category,
+      Domain: term.Domain,
+      References: term.References && term.References.Verse 
+        ? (Array.isArray(term.References.Verse) ? term.References.Verse : [term.References.Verse])
+          .map(ref => ref.toString().substring(0, 9))
+        : []
+    }));
     
-    for (const term of terms) {
-      processed++;
-      if (processed % 10 === 0) {
-        console.log(`Processed ${processed}/${terms.length} terms...`);
+    // Process each project
+    for (const [projectName, projectCode] of PROJECTS) {
+      currentProjectFolder = path.join(PROJECTS_FOLDER, projectName);
+      console.log(`\nProcessing project: ${projectName} (${projectCode})`);
+      console.log(`Project folder: ${currentProjectFolder}`);
+      
+      // Load project settings
+      await loadSettings(currentProjectFolder);
+      
+      // Process each term for this project
+      let processed = 0;
+      for (let i = 0; i < terms.length; i++) {
+        processed++;
+        if (processed % 50 === 0) {
+          console.log(`  Processed ${processed}/${terms.length} terms for ${projectName}...`);
+        }
+        
+        const term = terms[i];
+        const spellingInfo = await processTermSpelling(term, projectCode);
+        
+        // Add project-specific properties to the corresponding processed term
+        Object.assign(processedTerms[i], spellingInfo);
       }
       
-      const spellingInfo = await processTermSpelling(term);
-      
-      // Create new term object with spelling information
-      const processedTerm = {
-        ...term,
-        foundSpelling: spellingInfo.foundSpelling,
-        foundTally: spellingInfo.foundTally,
-        foundPercent: spellingInfo.foundPercent
-      };
-      
-      processedTerms.push(processedTerm);
+      console.log(`Completed project ${projectName}: ${processed} terms processed`);
     }
     
-    // Create output structure
-    const output = {
-      BiblicalTermsList: {
-        $: result.BiblicalTermsList.$ || {}, // Preserve any attributes
-        Term: processedTerms
-      }
-    };
-    
     // Write JSON output
-    console.log(`Writing output to ${JSON_OUTPUT_FILE}...`);
-    await fs.promises.writeFile(JSON_OUTPUT_FILE, JSON.stringify(output, null, 2), 'utf8');
+    console.log(`\nWriting output to ${JSON_OUTPUT_FILE}...`);
+    await fs.promises.writeFile(JSON_OUTPUT_FILE, JSON.stringify(processedTerms, null, 2), 'utf8');
     
     console.log('Processing complete!');
-    console.log(`Processed ${processedTerms.length} terms`);
+    console.log(`Processed ${processedTerms.length} terms across ${PROJECTS.length} projects`);
     
     // Summary statistics
-    const withSpellings = processedTerms.filter(t => t.foundSpelling && t.foundSpelling.length > 0);
-    const highConfidence = processedTerms.filter(t => t.foundPercent >= 50);
-    
-    console.log(`Terms with found spellings: ${withSpellings.length}/${processedTerms.length} (${Math.round(withSpellings.length/processedTerms.length*100)}%)`);
-    console.log(`Terms with high confidence (≥50%): ${highConfidence.length}/${processedTerms.length} (${Math.round(highConfidence.length/processedTerms.length*100)}%)`);
+    for (const [projectName, projectCode] of PROJECTS) {
+      const spellProp = `spell-${projectCode}`;
+      const pcProp = `pc-${projectCode}`;
+      
+      const withSpellings = processedTerms.filter(t => t[spellProp] && t[spellProp].length > 0);
+      const highConfidence = processedTerms.filter(t => t[pcProp] >= 50);
+      
+      console.log(`${projectName} (${projectCode}): ${withSpellings.length}/${processedTerms.length} with spellings (${Math.round(withSpellings.length/processedTerms.length*100)}%), ${highConfidence.length} high confidence (≥50%)`);
+    }
     
   } catch (error) {
     console.error('Error:', error);
