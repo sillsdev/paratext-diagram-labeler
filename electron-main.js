@@ -853,54 +853,74 @@ ipcMain.handle('broadcast-reference', async (event, reference) => {
       }
     }
     
-    console.log('Registry command stdout:', stdout);
+    // console.log('Registry command stdout:', stdout);
     console.log(`Successfully set reference in registry: ${cleanedRef}`);
     
     // Step 2: Broadcast SantaFeFocus message (like the working precompiled helper)
     console.log('Broadcasting SantaFeFocus message to Paratext...');
-    
+
+    let broadcastSucceeded = false;
+    // 1. Try PowerShell method first
     try {
-      // First, try to use the existing helper if available
-      const helperPath = path.join(__dirname, 'helpers', 'SantaFeBroadcast.exe');
-      
-      if (fs.existsSync(helperPath)) {
-        console.log('Using existing SantaFeBroadcast.exe helper...');
-        const { stdout: helperStdout, stderr: helperStderr } = await execAsync(`"${helperPath}"`, { timeout: 5000 });
-        console.log('Helper stdout:', helperStdout || '(no stdout)');
-        if (helperStderr && helperStderr.trim()) {
-          console.log('Helper stderr:', helperStderr);
-        }
-        
-        if (helperStdout && helperStdout.includes('SUCCESS: SantaFeFocus broadcast completed')) {
-          console.log('SantaFeFocus message broadcast succeeded using helper.');
-          return;
+      const powershellCmd = `powershell -NoProfile -ExecutionPolicy Bypass -Command "try { Write-Host 'Registering SantaFeFocus message...'; Add-Type -TypeDefinition 'using System; using System.Runtime.InteropServices; public class User32 { [DllImport(\\"user32.dll\\", CharSet = CharSet.Unicode)] public static extern uint RegisterWindowMessage(string lpString); [DllImport(\\"user32.dll\\")] public static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam); }'; $msgId = [User32]::RegisterWindowMessage('SantaFeFocus'); Write-Host (\\"Message ID: $msgId\\"); if ($msgId -eq 0) { Write-Host 'ERROR: RegisterWindowMessage failed'; exit 1 }; Write-Host 'Broadcasting message...'; $hwndBroadcast = [IntPtr]0xFFFF; $wParam = [IntPtr]1; $lParam = [IntPtr]0; $result = [User32]::PostMessage($hwndBroadcast, $msgId, $wParam, $lParam); Write-Host (\\"PostMessage result: $result\\"); if ($result) { Write-Host 'SUCCESS: SantaFeFocus broadcast completed'; exit 0 } else { Write-Host 'ERROR: PostMessage failed'; exit 1 } } catch { Write-Host (\\"EXCEPTION: $($_.Exception.Message)\\"); exit 1 }"`;
+      const { stdout: powershellStdout, stderr: powershellStderr } = await execAsync(powershellCmd, { timeout: 5000 });
+      console.log('PowerShell stdout:', powershellStdout || '(no stdout)');
+      if (powershellStderr && powershellStderr.trim()) {
+        console.log('PowerShell stderr:', powershellStderr);
+      }
+      if (powershellStdout && powershellStdout.includes('SUCCESS: SantaFeFocus broadcast completed')) {
+        console.log('SantaFeFocus message broadcast succeeded using PowerShell.');
+        broadcastSucceeded = true;
+      } else {
+        console.log('PowerShell SantaFeFocus broadcast may have failed. Check Paratext for reference update.');
+      }
+    } catch (psError) {
+      console.log('PowerShell broadcast attempt failed:', psError.message);
+    }
+
+    // 2. If PowerShell failed, try SantaFeBroadcast.exe helper
+    if (!broadcastSucceeded) {
+      try {
+        const helperPath = path.join(__dirname, 'helpers', 'SantaFeBroadcast.exe');
+          if (fs.existsSync(helperPath)) {
+            console.log('Trying SantaFeBroadcast.exe helper...');
+            const { stdout: helperStdout, stderr: helperStderr } = await execAsync(`"${helperPath}"`, { timeout: 5000 });
+            console.log('Helper stdout:', helperStdout || '(no stdout)');
+            if (helperStderr && helperStderr.trim()) {
+              console.log('Helper stderr:', helperStderr);
+            }
+            if (helperStdout && helperStdout.includes('SUCCESS: SantaFeFocus broadcast completed')) {
+              console.log('SantaFeFocus message broadcast succeeded using helper.');
+              broadcastSucceeded = true;
+            } else {
+              console.log('SantaFeBroadcast.exe may have failed. Check Paratext for reference update.');
+            }
+          }
+        } catch (helperError) {
+          console.log('SantaFeBroadcast.exe attempt failed:', helperError.message);
         }
       }
-      
-      // If helper doesn't exist or failed, compile and run C# code directly
-      console.log('Compiling and running C# broadcast code...');
-      
-      // Create a temporary C# file
-      const tempDir = path.join(__dirname, 'temp');
-      if (!fs.existsSync(tempDir)) {
-        fs.mkdirSync(tempDir);
-      }
-      
-      const tempCsFile = path.join(tempDir, 'TempBroadcast.cs');
-      const tempExeFile = path.join(tempDir, 'TempBroadcast.exe');
-      
-      // Write the exact same C# code as the working helper
-      const csCode = `using System;
+
+      // 3. If both failed, try compiling and running C# code
+      if (!broadcastSucceeded) {
+        try {
+          console.log('Compiling and running C# broadcast code...');
+          const os = require('os');
+          const tempDir = path.join(os.tmpdir(), 'paratext-labeler-broadcast');
+          if (!fs.existsSync(tempDir)) {
+            fs.mkdirSync(tempDir, { recursive: true });
+          }
+          const tempCsFile = path.join(tempDir, 'TempBroadcast.cs');
+          const tempExeFile = path.join(tempDir, 'TempBroadcast.exe');
+          const csCode = `using System;
 using System.Runtime.InteropServices;
 
 class Program
 {
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
     static extern uint RegisterWindowMessage(string lpString);
-    
     [DllImport("user32.dll")]
     static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
-    
     static int Main(string[] args)
     {
         try
@@ -908,17 +928,14 @@ class Program
             Console.WriteLine("Registering SantaFeFocus message...");
             uint msgId = RegisterWindowMessage("SantaFeFocus");
             Console.WriteLine("Message ID: " + msgId);
-            
             if (msgId == 0)
             {
                 Console.WriteLine("ERROR: RegisterWindowMessage failed");
                 return 1;
             }
-            
             Console.WriteLine("Broadcasting message...");
             bool result = PostMessage((IntPtr)0xFFFF, msgId, (IntPtr)1, IntPtr.Zero);
             Console.WriteLine("PostMessage result: " + result);
-            
             if (result)
             {
                 Console.WriteLine("SUCCESS: SantaFeFocus broadcast completed");
@@ -937,66 +954,65 @@ class Program
         }
     }
 }`;
-
-      fs.writeFileSync(tempCsFile, csCode);
-      
-      // Compile the C# code
-      console.log('Compiling C# broadcast code...');
-      const cscPath = 'C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe';
-      const compileCmd = `"${cscPath}" /out:"${tempExeFile}" "${tempCsFile}"`;
-      
-      try {
-        await execAsync(compileCmd, { timeout: 10000 });
-        console.log('C# code compiled successfully');
-        
-        // Run the compiled executable
-        console.log('Running compiled broadcast executable...');
-        const { stdout: exeStdout, stderr: exeStderr } = await execAsync(`"${tempExeFile}"`, { timeout: 5000 });
-        
-        console.log('Broadcast stdout:', exeStdout || '(no stdout)');
-        if (exeStderr && exeStderr.trim()) {
-          console.log('Broadcast stderr:', exeStderr);
-        }
-        
-        // Clean up temp files
-        try {
-          fs.unlinkSync(tempCsFile);
-          fs.unlinkSync(tempExeFile);
-        } catch (cleanupError) {
-          console.log('Note: Could not clean up temp files:', cleanupError.message);
-        }
-        
-        if (exeStdout && exeStdout.includes('SUCCESS: SantaFeFocus broadcast completed')) {
-          console.log('SantaFeFocus message broadcast succeeded.');
-        } else {
-          console.log('SantaFeFocus message may have failed. Check Paratext for reference update.');
-        }
-        
-      } catch (compileError) {
-        console.log('C# compilation failed, falling back to PowerShell...');
-        
-        // Final fallback - try a very basic PowerShell approach
-        const basicCmd = `powershell -NoProfile -Command "
+          fs.writeFileSync(tempCsFile, csCode);
+          // Compile the C# code - try to find csc.exe in common locations
+          console.log('Compiling C# broadcast code...');
+          const possibleCscPaths = [
+            'C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe',
+            'C:\\Windows\\Microsoft.NET\\Framework\\v4.0.30319\\csc.exe',
+            'C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\MSBuild\\Current\\Bin\\Roslyn\\csc.exe',
+            'C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\MSBuild\\Current\\Bin\\Roslyn\\csc.exe',
+            'C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\Roslyn\\csc.exe',
+            'C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\MSBuild\\Current\\Bin\\Roslyn\\csc.exe',
+            'C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Professional\\MSBuild\\Current\\Bin\\Roslyn\\csc.exe',
+            'C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\MSBuild\\Current\\Bin\\Roslyn\\csc.exe'
+          ];
+          let cscPath = null;
+          for (const testPath of possibleCscPaths) {
+            if (fs.existsSync(testPath)) {
+              cscPath = testPath;
+              console.log(`Found C# compiler at: ${cscPath}`);
+              break;
+            }
+          }
+          if (!cscPath) {
+            throw new Error('C# compiler (csc.exe) not found in common locations');
+          }
+          const compileCmd = `"${cscPath}" /out:"${tempExeFile}" "${tempCsFile}"`;
+          await execAsync(compileCmd, { timeout: 10000 });
+          console.log('C# code compiled successfully');
+          // Run the compiled executable
+          console.log('Running compiled broadcast executable...');
+          const { stdout: exeStdout, stderr: exeStderr } = await execAsync(`"${tempExeFile}"`, { timeout: 5000 });
+          console.log('Broadcast stdout:', exeStdout || '(no stdout)');
+          if (exeStderr && exeStderr.trim()) {
+            console.log('Broadcast stderr:', exeStderr);
+          }
+          // Clean up temp files
           try {
-            [System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms') | Out-Null
-            Add-Type -TypeDefinition 'using System;using System.Runtime.InteropServices;public class User32{[DllImport(\\"user32.dll\\")]public static extern uint RegisterWindowMessage(string s);[DllImport(\\"user32.dll\\")]public static extern bool PostMessage(IntPtr h,uint m,IntPtr w,IntPtr l);}'
-            \\$id=[User32]::RegisterWindowMessage('SantaFeFocus')
-            \\$r=[User32]::PostMessage(0xFFFF,\\$id,1,0)
-            Write-Host \\"ID:\\$id Result:\\$r\\"
-          } catch { Write-Host \\"Error:\\$_\\" }
-        "`;
-        
-        const { stdout: basicStdout } = await execAsync(basicCmd, { timeout: 5000 });
-        console.log('Basic PowerShell result:', basicStdout || '(no output)');
+            fs.unlinkSync(tempCsFile);
+            fs.unlinkSync(tempExeFile);
+          } catch (cleanupError) {
+            console.log('Note: Could not clean up temp files:', cleanupError.message);
+          }
+          if (exeStdout && exeStdout.includes('SUCCESS: SantaFeFocus broadcast completed')) {
+            console.log('SantaFeFocus message broadcast succeeded.');
+            broadcastSucceeded = true;
+          } else {
+            console.log('SantaFeFocus message may have failed. Check Paratext for reference update.');
+          }
+        } catch (compileError) {
+          console.log('C# broadcast attempt failed:', compileError.message);
+        }
       }
-      
-    } catch (broadcastError) {
-      console.warn('Warning: All SantaFeFocus broadcast attempts failed:', broadcastError.message);
+    // If all attempts failed, warn user
+    if (!broadcastSucceeded) {
+      console.warn('Warning: All SantaFeFocus broadcast attempts failed.');
       console.log('Registry key has been set. Paratext may need to be restarted or manually refreshed.');
     }
-    
     return { success: true, reference: cleanedRef };
-  } catch (error) {
+  } 
+  catch (error) {
     console.error('Error broadcasting reference:', error);
     return { success: false, error: error.message };
   }
