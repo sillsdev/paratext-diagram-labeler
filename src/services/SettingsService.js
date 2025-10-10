@@ -44,12 +44,15 @@ class SettingsService {
   }
 
   // Helper to check if a folder exists. Path has already been normalized.
+  // Helper to check if a folder exists. Path has already been normalized.
   async folderExists(path) {
     if (!path) return false;
 
     try {
       console.log('Checking folder exists:', path);
+      console.log('Checking folder exists:', path);
 
+      const stat = await window.electronAPI.statPath(path);
       const stat = await window.electronAPI.statPath(path);
       // The stat object has isDirectory as a property, not a function
       return stat && stat.isDirectory === true;
