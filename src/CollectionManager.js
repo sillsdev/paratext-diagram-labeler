@@ -95,7 +95,7 @@ class CollectionManager {
   }
 
   // Initialize by loading all collections
-  async initializeAllCollections(templateFolderPath) {
+  async initializeAllCollections(templateFolderPath, projectFolder) {
     if (this.isInitialized) return;
     if (this.isLoading) return;
 
@@ -127,7 +127,7 @@ class CollectionManager {
 
       // 3. Load core termlist (if it exists)
       try {
-        this.coreTermlist = await window.electronAPI.loadFromJson(templateFolderPath, 'core-termlist.json');
+        this.coreTermlist = await window.electronAPI.loadTermsFromJson(templateFolderPath, 'core-termlist.json', projectFolder);
         console.log('Core termlist loaded successfully:', Object.keys(this.coreTermlist).length, 'terms');
       } catch (error) {
         console.warn('Core termlist not found or failed to load:', error.message);
@@ -136,7 +136,7 @@ class CollectionManager {
 
       // 4. Load all compatible collections
       const loadPromises = Array.from(this.availableCollections.keys()).map(id => 
-        this.loadCollection(id).catch(error => {
+        this.loadCollection(id, projectFolder).catch(error => {
           console.error(`Failed to load collection ${id}:`, error);
           return null; // Don't fail entire initialization
         })
@@ -155,7 +155,7 @@ class CollectionManager {
   }
 
   // Load a specific collection
-  async loadCollection(collectionId) {
+  async loadCollection(collectionId, projectFolder) {
     const config = this.availableCollections.get(collectionId);
     if (!config) {
       throw new Error(`Collection ${collectionId} not found in available collections`);
@@ -167,7 +167,7 @@ class CollectionManager {
       // Load the three standard JSON files in parallel
       const [mergeKeys, termlist, mapDefs] = await Promise.all([
         window.electronAPI.loadFromJson(config.path, mergeKeysFile),
-        window.electronAPI.loadFromJson(config.path, termListFile), 
+        window.electronAPI.loadTermsFromJson(config.path, termListFile, projectFolder),
         window.electronAPI.loadFromJson(config.path, mapDefsFile)
       ]);
 
