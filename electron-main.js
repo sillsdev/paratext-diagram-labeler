@@ -862,46 +862,7 @@ ipcMain.handle('broadcast-reference', async (event, reference) => {
     let broadcastSucceeded = false;
     // 1. Try PowerShell method first
     try {
-      const powershellCmd = `powershell -NoProfile -ExecutionPolicy Bypass -Command "
-        try {
-          Write-Host 'Registering SantaFeFocus message...'
-          # Define the exact same P/Invoke signatures as the C# code
-          Add-Type -TypeDefinition '
-            using System;
-            using System.Runtime.InteropServices;
-            public class User32 {
-                [DllImport(\\"user32.dll\\", CharSet = CharSet.Unicode)]
-                public static extern uint RegisterWindowMessage(string lpString);
-                [DllImport(\\"user32.dll\\")]
-                public static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
-            }
-          '
-          # Register the message (exactly like C# code)
-          \\$msgId = [User32]::RegisterWindowMessage('SantaFeFocus')
-          Write-Host (\\"Message ID: \\" + \\$msgId)
-          if (\\$msgId -eq 0) {
-            Write-Host 'ERROR: RegisterWindowMessage failed'
-            exit 1
-          }
-          Write-Host 'Broadcasting message...'
-          # Use proper IntPtr casting (0xFFFF = HWND_BROADCAST, wParam=1, lParam=0)
-          \\$hwndBroadcast = [IntPtr]0xFFFF
-          \\$wParam = [IntPtr]1
-          \\$lParam = [IntPtr]0
-          \\$result = [User32]::PostMessage(\\$hwndBroadcast, \\$msgId, \\$wParam, \\$lParam)
-          Write-Host (\\"PostMessage result: \\" + \\$result)
-          if (\\$result) {
-            Write-Host 'SUCCESS: SantaFeFocus broadcast completed'
-            exit 0
-          } else {
-            Write-Host 'ERROR: PostMessage failed'
-            exit 1
-          }
-        } catch {
-          Write-Host (\\"EXCEPTION: \\" + \\$_.Exception.Message)
-          exit 1
-        }
-      "`;
+      const powershellCmd = `powershell -NoProfile -ExecutionPolicy Bypass -Command "try { Write-Host 'Registering SantaFeFocus message...'; Add-Type -TypeDefinition 'using System; using System.Runtime.InteropServices; public class User32 { [DllImport(\\"user32.dll\\", CharSet = CharSet.Unicode)] public static extern uint RegisterWindowMessage(string lpString); [DllImport(\\"user32.dll\\")] public static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam); }'; $msgId = [User32]::RegisterWindowMessage('SantaFeFocus'); Write-Host (\\"Message ID: $msgId\\"); if ($msgId -eq 0) { Write-Host 'ERROR: RegisterWindowMessage failed'; exit 1 }; Write-Host 'Broadcasting message...'; $hwndBroadcast = [IntPtr]0xFFFF; $wParam = [IntPtr]1; $lParam = [IntPtr]0; $result = [User32]::PostMessage($hwndBroadcast, $msgId, $wParam, $lParam); Write-Host (\\"PostMessage result: $result\\"); if ($result) { Write-Host 'SUCCESS: SantaFeFocus broadcast completed'; exit 0 } else { Write-Host 'ERROR: PostMessage failed'; exit 1 } } catch { Write-Host (\\"EXCEPTION: $($_.Exception.Message)\\"); exit 1 }"`;
       const { stdout: powershellStdout, stderr: powershellStderr } = await execAsync(powershellCmd, { timeout: 5000 });
       console.log('PowerShell stdout:', powershellStdout || '(no stdout)');
       if (powershellStderr && powershellStderr.trim()) {
