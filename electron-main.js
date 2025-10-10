@@ -853,7 +853,7 @@ ipcMain.handle('broadcast-reference', async (event, reference) => {
       }
     }
     
-    console.log('Registry command stdout:', stdout);
+    // console.log('Registry command stdout:', stdout);
     console.log(`Successfully set reference in registry: ${cleanedRef}`);
     
     // Step 2: Broadcast SantaFeFocus message (like the working precompiled helper)
