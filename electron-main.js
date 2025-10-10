@@ -449,6 +449,20 @@ ipcMain.handle('select-template-file', async (event) => {
 });
 
 function getVerseText(usfmChapterText, verseNum) {
+  // Handle verse 0 - content after chapter marker but before first verse
+  if (verseNum === 0) {
+    const firstVerseMatch = usfmChapterText.match(/\\v \d+/);
+    if (firstVerseMatch) {
+      // Return content from start of chapter to first verse marker
+      const beforeFirstVerse = usfmChapterText.substring(0, firstVerseMatch.index);
+      return beforeFirstVerse.trim();
+    } else {
+      // No verses found, return entire chapter content
+      return usfmChapterText.trim();
+    }
+  }
+  
+  // Handle regular verses (1+)
   // Regular expression to match verse markers (single or bridged, e.g., \v 12 or \v 11-14)
   const verseRegex = /\\v (\d+(?:\u200f?-\d+)?)(.*?)(?=(?:\\v \d+(?:\u200f?-\d+)?|$))/gs;
 
@@ -842,158 +856,143 @@ ipcMain.handle('broadcast-reference', async (event, reference) => {
     console.log('Registry command stdout:', stdout);
     console.log(`Successfully set reference in registry: ${cleanedRef}`);
     
-    // Verify the registry value was set correctly
-    try {
-      const verifyCommand = `reg query "${regKey}" /ve`;
-      const { stdout: verifyOutput } = await execAsync(verifyCommand);
-      console.log('Registry verification:', verifyOutput);
-    } catch (verifyError) {
-      console.warn('Could not verify registry value:', verifyError.message);
-    }
-    
-    // Step 2: Broadcast Windows message to notify Paratext
-    // This matches the Python ptxprint implementation exactly
+    // Step 2: Broadcast SantaFeFocus message (like the working precompiled helper)
     console.log('Broadcasting SantaFeFocus message to Paratext...');
     
     try {
-      // Try a more robust PowerShell approach with verbose output and error handling
-      const broadcastCmd = `powershell -ExecutionPolicy Bypass -NoProfile -Command "
-        \\$VerbosePreference = 'Continue'
-        \\$ErrorActionPreference = 'Stop'
-        
-        Write-Output 'Starting SantaFeFocus broadcast...'
-        
-        try {
-          # Define the Win32 API functions
-          \\$signature = @'
-[DllImport(\\"user32.dll\\", SetLastError = true, CharSet = CharSet.Unicode)]
-public static extern uint RegisterWindowMessage(string lpString);
-
-[DllImport(\\"user32.dll\\", SetLastError = true)]
-public static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
-
-[DllImport(\\"kernel32.dll\\")]
-public static extern uint GetLastError();
-'@
-          
-          Write-Output 'Adding Win32 API type...'
-          Add-Type -MemberDefinition \\$signature -Name 'Win32' -Namespace 'SantaFe'
-          Write-Output 'Win32 API type added successfully'
-          
-          # Register the custom message
-          Write-Output 'Registering SantaFeFocus message...'
-          \\$messageId = [SantaFe.Win32]::RegisterWindowMessage('SantaFeFocus')
-          \\$lastError = [SantaFe.Win32]::GetLastError()
-          Write-Output \\"RegisterWindowMessage returned: \\$messageId (LastError: \\$lastError)\\"
-          
-          if (\\$messageId -eq 0) {
-            throw \\"RegisterWindowMessage failed with error: \\$lastError\\"
-          }
-          
-          # Broadcast the message to all top-level windows (HWND_BROADCAST = 0xFFFF)
-          Write-Output 'Broadcasting message to all windows...'
-          \\$result = [SantaFe.Win32]::PostMessage([IntPtr]0xFFFF, \\$messageId, [IntPtr]1, [IntPtr]0)
-          \\$lastError = [SantaFe.Win32]::GetLastError()
-          Write-Output \\"PostMessage returned: \\$result (LastError: \\$lastError)\\"
-          
-          if (\\$result) {
-            Write-Output 'SUCCESS: SantaFeFocus message broadcast completed'
-          } else {
-            Write-Output \\"WARNING: PostMessage returned false (Error: \\$lastError)\\"
-          }
-          
-          Write-Output \\"Final result: MessageID=\\$messageId, Broadcast=\\$result\\"
-          
-        } catch {
-          Write-Error \\"Exception occurred: \\$(\\_)\\"
-          Write-Error \\"Exception type: \\$(\\_)?.GetType()?.FullName\\"
-          Write-Error \\"Stack trace: \\$(\\_)?.ScriptStackTrace\\"
-          exit 1
+      // First, try to use the existing helper if available
+      const helperPath = path.join(__dirname, 'helpers', 'SantaFeBroadcast.exe');
+      
+      if (fs.existsSync(helperPath)) {
+        console.log('Using existing SantaFeBroadcast.exe helper...');
+        const { stdout: helperStdout, stderr: helperStderr } = await execAsync(`"${helperPath}"`, { timeout: 5000 });
+        console.log('Helper stdout:', helperStdout || '(no stdout)');
+        if (helperStderr && helperStderr.trim()) {
+          console.log('Helper stderr:', helperStderr);
         }
-      "`;
-      
-      console.log('Executing enhanced PowerShell broadcast command...');
-      const { stdout: broadcastStdout, stderr: broadcastStderr } = await execAsync(broadcastCmd, { timeout: 20000 });
-      
-      console.log('Enhanced broadcast stdout:', broadcastStdout || '(no stdout)');
-      if (broadcastStderr && broadcastStderr.trim()) {
-        console.log('Enhanced broadcast stderr:', broadcastStderr);
+        
+        if (helperStdout && helperStdout.includes('SUCCESS: SantaFeFocus broadcast completed')) {
+          console.log('SantaFeFocus message broadcast succeeded using helper.');
+          return;
+        }
       }
       
-      // Try a simpler fallback approach
-      let simpleStdout = '';
-      if (!broadcastStdout || !broadcastStdout.includes('SUCCESS')) {
-        console.log('Enhanced approach did not show success, trying simple fallback...');
+      // If helper doesn't exist or failed, compile and run C# code directly
+      console.log('Compiling and running C# broadcast code...');
+      
+      // Create a temporary C# file
+      const tempDir = path.join(__dirname, 'temp');
+      if (!fs.existsSync(tempDir)) {
+        fs.mkdirSync(tempDir);
+      }
+      
+      const tempCsFile = path.join(tempDir, 'TempBroadcast.cs');
+      const tempExeFile = path.join(tempDir, 'TempBroadcast.exe');
+      
+      // Write the exact same C# code as the working helper
+      const csCode = `using System;
+using System.Runtime.InteropServices;
+
+class Program
+{
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+    static extern uint RegisterWindowMessage(string lpString);
+    
+    [DllImport("user32.dll")]
+    static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+    
+    static int Main(string[] args)
+    {
+        try
+        {
+            Console.WriteLine("Registering SantaFeFocus message...");
+            uint msgId = RegisterWindowMessage("SantaFeFocus");
+            Console.WriteLine("Message ID: " + msgId);
+            
+            if (msgId == 0)
+            {
+                Console.WriteLine("ERROR: RegisterWindowMessage failed");
+                return 1;
+            }
+            
+            Console.WriteLine("Broadcasting message...");
+            bool result = PostMessage((IntPtr)0xFFFF, msgId, (IntPtr)1, IntPtr.Zero);
+            Console.WriteLine("PostMessage result: " + result);
+            
+            if (result)
+            {
+                Console.WriteLine("SUCCESS: SantaFeFocus broadcast completed");
+                return 0;
+            }
+            else
+            {
+                Console.WriteLine("ERROR: PostMessage failed");
+                return 1;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("EXCEPTION: " + ex.Message);
+            return 1;
+        }
+    }
+}`;
+
+      fs.writeFileSync(tempCsFile, csCode);
+      
+      // Compile the C# code
+      console.log('Compiling C# broadcast code...');
+      const cscPath = 'C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe';
+      const compileCmd = `"${cscPath}" /out:"${tempExeFile}" "${tempCsFile}"`;
+      
+      try {
+        await execAsync(compileCmd, { timeout: 10000 });
+        console.log('C# code compiled successfully');
         
-        const simpleCmd = `powershell -Command "
-          Add-Type -TypeDefinition 'using System; using System.Runtime.InteropServices; public class MsgAPI { [DllImport(\\"user32.dll\\")] public static extern uint RegisterWindowMessage(string s); [DllImport(\\"user32.dll\\")] public static extern bool PostMessage(IntPtr h, uint m, IntPtr w, IntPtr l); }'
-          \\$m = [MsgAPI]::RegisterWindowMessage('SantaFeFocus')
-          \\$r = [MsgAPI]::PostMessage([IntPtr]0xFFFF, \\$m, [IntPtr]1, [IntPtr]0)
-          'MsgID:' + \\$m + ' Result:' + \\$r
+        // Run the compiled executable
+        console.log('Running compiled broadcast executable...');
+        const { stdout: exeStdout, stderr: exeStderr } = await execAsync(`"${tempExeFile}"`, { timeout: 5000 });
+        
+        console.log('Broadcast stdout:', exeStdout || '(no stdout)');
+        if (exeStderr && exeStderr.trim()) {
+          console.log('Broadcast stderr:', exeStderr);
+        }
+        
+        // Clean up temp files
+        try {
+          fs.unlinkSync(tempCsFile);
+          fs.unlinkSync(tempExeFile);
+        } catch (cleanupError) {
+          console.log('Note: Could not clean up temp files:', cleanupError.message);
+        }
+        
+        if (exeStdout && exeStdout.includes('SUCCESS: SantaFeFocus broadcast completed')) {
+          console.log('SantaFeFocus message broadcast succeeded.');
+        } else {
+          console.log('SantaFeFocus message may have failed. Check Paratext for reference update.');
+        }
+        
+      } catch (compileError) {
+        console.log('C# compilation failed, falling back to PowerShell...');
+        
+        // Final fallback - try a very basic PowerShell approach
+        const basicCmd = `powershell -NoProfile -Command "
+          try {
+            [System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms') | Out-Null
+            Add-Type -TypeDefinition 'using System;using System.Runtime.InteropServices;public class User32{[DllImport(\\"user32.dll\\")]public static extern uint RegisterWindowMessage(string s);[DllImport(\\"user32.dll\\")]public static extern bool PostMessage(IntPtr h,uint m,IntPtr w,IntPtr l);}'
+            \\$id=[User32]::RegisterWindowMessage('SantaFeFocus')
+            \\$r=[User32]::PostMessage(0xFFFF,\\$id,1,0)
+            Write-Host \\"ID:\\$id Result:\\$r\\"
+          } catch { Write-Host \\"Error:\\$_\\" }
         "`;
         
-        const { stdout: simpleStdoutResult, stderr: simpleStderr } = await execAsync(simpleCmd, { timeout: 10000 });
-        simpleStdout = simpleStdoutResult || '';
-        console.log('Simple fallback result:', simpleStdout || '(no stdout)');
-        if (simpleStderr && simpleStderr.trim()) {
-          console.log('Simple fallback stderr:', simpleStderr);
-        }
-      }
-      
-      // Additional fallback: Use precompiled helper
-      if (!broadcastStdout?.includes('SUCCESS') && !simpleStdout?.includes('Result:True')) {
-        console.log('Previous PowerShell approaches unclear, trying precompiled helper...');
-        
-        try {
-          const path = require('path');
-          
-          // Try to use the precompiled helper
-          const precompiledHelper = path.join(__dirname, 'helpers', 'SantaFeBroadcast.exe');
-          if (fs.existsSync(precompiledHelper)) {
-            console.log('Using precompiled SantaFeBroadcast helper...');
-            try {
-              const { stdout: helperOut, stderr: helperErr } = await execAsync(`"${precompiledHelper}"`, { timeout: 5000 });
-              console.log('Precompiled helper output:', helperOut || '(no output)');
-              if (helperErr && helperErr.trim()) {
-                console.log('Precompiled helper stderr:', helperErr);
-              }
-            } catch (helperError) {
-              console.log('Precompiled helper failed:', helperError.message);
-            }
-          } else {
-            console.log('Precompiled helper not found at:', precompiledHelper);
-            console.log('Windows message broadcasting will rely on PowerShell approaches only.');
-          }
-          
-        } catch (csError) {
-          console.log('Helper execution error:', csError.message);
-        }
-      }
-      
-      console.log('All SantaFeFocus message broadcast attempts completed.');
-      
-      // Final status message for the user
-      if (!broadcastStdout?.includes('SUCCESS') && !simpleStdout?.includes('Result:True')) {
-        console.log('Windows message broadcasting was attempted but may not have succeeded.');
-        console.log('However, the registry key has been set correctly, so Paratext should still receive the update.');
-        console.log('If Paratext does not scroll to the reference, try restarting Paratext or manually navigating to the reference.');
-      } else {
-        console.log('Windows message broadcast appears to have succeeded.');
+        const { stdout: basicStdout } = await execAsync(basicCmd, { timeout: 5000 });
+        console.log('Basic PowerShell result:', basicStdout || '(no output)');
       }
       
     } catch (broadcastError) {
-      console.warn('Warning: SantaFeFocus message broadcast failed:', broadcastError.message);
+      console.warn('Warning: All SantaFeFocus broadcast attempts failed:', broadcastError.message);
       console.log('Registry key has been set. Paratext may need to be restarted or manually refreshed.');
-      
-      // Final fallback: Try a direct Windows command
-      try {
-        console.log('Attempting direct Windows message using msg command...');
-        const msgCmd = `msg * "SantaFeFocus registry update: ${cleanedRef}"`;
-        await execAsync(msgCmd, { timeout: 5000 });
-        console.log('Direct message command executed');
-      } catch (msgError) {
-        console.warn('Direct message command also failed:', msgError.message);
-      }
     }
     
     return { success: true, reference: cleanedRef };
