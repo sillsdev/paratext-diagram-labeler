@@ -1,9 +1,8 @@
-# Support Paratext Diagram Labeler
+# Support SIL Paratext Diagram Labeler
 
 If this project helps you, consider supporting development and maintenance.
 
 - Email: paratextmaplabeler@gmail.com
-- GitHub Sponsors: see `.github/FUNDING.yml`
-- Custom donation links: open a PR to add your preferred platform
+- Donate today: https://give.sil.org/campaign/597654/donate
 
 Thank you for your support!
