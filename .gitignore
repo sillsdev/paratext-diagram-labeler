@@ -12,6 +12,8 @@
 /build
 /dist
 /_LabelerTemplates
+/ref
+/versification
 
 # misc
 .DS_Store

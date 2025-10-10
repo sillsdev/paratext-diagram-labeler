@@ -608,6 +608,178 @@ function loadFromJson(jsonPath, jsonFilename) {
   return {}; // Return empty settings if file doesn't exist or has an error
 }
 
+function convertReferencesToVersification(terms, versification) {
+  const versificationFileId = ["lxx", "vul", "eng", "rsc", "rso"][versification - 2] || "eng";
+  const versificationMapPath = path.join(__dirname, 'src', 'data', 'v', `${versificationFileId}.json`);
+  const orgMapPath = path.join(__dirname, 'src', 'data', 'v', 'org.json');
+  
+  console.log(`Converting references to versification using map: ${versificationMapPath}`);
+  
+  try {
+    // Load versification mapping files
+    const targetVersificationData = JSON.parse(fs.readFileSync(versificationMapPath, 'utf8'));
+    const orgVersificationData = JSON.parse(fs.readFileSync(orgMapPath, 'utf8'));
+    
+    // Create book code to number mapping (1-based index)
+    const bookCodes = Object.keys(orgVersificationData.maxVerses);
+    const bookToNumber = {};
+    const numberToBook = {};
+    
+    bookCodes.forEach((book, index) => {
+      const bookNumber = index + 1;
+      bookToNumber[book] = bookNumber;
+      numberToBook[bookNumber] = book;
+    });
+    
+    // Helper function to convert BCV9 format to standard "BBB C:V" format
+    function bcvToStandard(bcvRef) {
+      const digits = bcvRef.toString().padStart(9, '0');
+      const bookNum = parseInt(digits.substr(0, 3));
+      const chapter = parseInt(digits.substr(3, 3));
+      const verse = parseInt(digits.substr(6, 3));
+      
+      if (numberToBook[bookNum]) {
+        return `${numberToBook[bookNum]} ${chapter}:${verse}`;
+      }
+      return null;
+    }
+    
+    // Helper function to convert standard "BBB C:V" format to BCV9 format
+    function standardToBcv(stdRef) {
+      const match = stdRef.match(/^([A-Z0-9]+) (\d+):(\d+)$/);
+      if (!match) return null;
+      
+      const [, book, chapter, verse] = match;
+      const bookNum = bookToNumber[book];
+      
+      if (!bookNum) return null;
+      
+      const bookStr = bookNum.toString().padStart(3, '0');
+      const chapterStr = chapter.padStart(3, '0');
+      const verseStr = verse.padStart(3, '0');
+      
+      return `${bookStr}${chapterStr}${verseStr}`;
+    }
+    
+    // Helper function to expand a range reference like "GEN 1:1-5" into individual verse references
+    function expandRange(ref) {
+      const match = ref.match(/^([A-Z0-9]+) (\d+):(\d+)-(\d+)$/);
+      if (!match) {
+        return [ref]; // Not a range, return as-is
+      }
+      
+      const [, book, chapter, startVerse, endVerse] = match;
+      const result = [];
+      for (let verse = parseInt(startVerse); verse <= parseInt(endVerse); verse++) {
+        result.push(`${book} ${chapter}:${verse}`);
+      }
+      return result;
+    }
+    
+    // Create mapping from ORG to target versification
+    function createMapping(mappedVerses) {
+      const mapping = {};
+      
+      for (const [source, target] of Object.entries(mappedVerses)) {
+        const sourceRefs = expandRange(source);
+        const targetRefs = expandRange(target);
+        
+        // Both ranges should have the same length
+        if (sourceRefs.length !== targetRefs.length) {
+          console.warn(`Warning: Range mismatch between "${source}" and "${target}"`);
+          continue;
+        }
+        
+        for (let i = 0; i < sourceRefs.length; i++) {
+          mapping[sourceRefs[i]] = targetRefs[i];
+        }
+      }
+      
+      return mapping;
+    }
+    
+    // Create inverse mapping (since target versification maps back to ORG)
+    function createInverseMapping(mapping) {
+      const inverse = {};
+      for (const [key, value] of Object.entries(mapping)) {
+        inverse[value] = key;
+      }
+      return inverse;
+    }
+    
+    // Convert a reference from ORG to target versification
+    function convertReference(ref, orgToTargetMapping) {
+      // Check if there's an explicit mapping
+      if (orgToTargetMapping[ref]) {
+        return orgToTargetMapping[ref];
+      }
+      
+      // If no mapping found, assume 1:1 mapping (most verses are the same)
+      return ref;
+    }
+    
+    // Create the mapping from ORG to target versification
+    const targetToOrgMapping = createMapping(targetVersificationData.mappedVerses);
+    const orgToTargetMapping = createInverseMapping(targetToOrgMapping);
+    
+    // Process each term in the terms object
+    const convertedTerms = { ...terms };
+    let totalConversions = 0;
+    
+    for (const [termId, termData] of Object.entries(convertedTerms)) {
+      if (termData && termData.refs && Array.isArray(termData.refs)) {
+        const convertedRefs = [];
+        
+        for (const ref of termData.refs) {
+          // Convert BCV9 to standard format
+          const standardRef = bcvToStandard(ref);
+          if (standardRef) {
+            // Convert from ORG to target versification
+            const convertedStandardRef = convertReference(standardRef, orgToTargetMapping);
+            
+            // Convert back to BCV9 format
+            const convertedBcvRef = standardToBcv(convertedStandardRef);
+            if (convertedBcvRef) {
+              convertedRefs.push(convertedBcvRef);
+              if (convertedBcvRef !== ref) {
+                totalConversions++;
+                console.log(`  Converted: ${ref} (${standardRef}) -> ${convertedBcvRef} (${convertedStandardRef})`);
+              }
+            } else {
+              // If conversion failed, keep original
+              convertedRefs.push(ref);
+            }
+          } else {
+            // If BCV parsing failed, keep original
+            convertedRefs.push(ref);
+          }
+        }
+        
+        // Update the refs array with converted references
+        convertedTerms[termId].refs = convertedRefs;
+      }
+    }
+    
+    console.log(`Conversion complete: ${totalConversions} references converted`);
+    return convertedTerms;
+    
+  } catch (error) {
+    console.error('Failed to convert references to versification:', error);
+    return terms; // Return original terms if conversion fails
+  }
+}
+
+// Load a json file of terms, converting references to the appropriate versification for the project
+async function loadTermsFromJson(jsonPath, jsonFilename, projectFolder) {
+  await loadSettings(projectFolder);
+  var terms = loadFromJson(jsonPath, jsonFilename);
+  if (settings.versification > 1) {
+    // Convert references to the appropriate versification
+    terms = convertReferencesToVersification(terms, settings.versification);
+  }
+  return terms;
+}
+
 // Function to save settings
 function saveToJson(jsonPath, jsonFilename, settings) {
   if (!jsonPath) {
@@ -627,6 +799,10 @@ function saveToJson(jsonPath, jsonFilename, settings) {
 // Expose these functions via IPC
 ipcMain.handle('load-from-json', async (event, jsonPath, jsonFilename) => {
   return loadFromJson(jsonPath, jsonFilename);
+});
+
+ipcMain.handle('load-terms-from-json', async (event, jsonPath, jsonFilename, projectFolder) => {
+  return loadTermsFromJson(jsonPath, jsonFilename, projectFolder);
 });
 
 ipcMain.handle('save-to-json', async (event, jsonPath, jsonFilename, settings) => {

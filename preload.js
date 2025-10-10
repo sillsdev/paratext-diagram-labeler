@@ -16,6 +16,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   loadFromJson: (jsonPath, jsonFilename) =>
     ipcRenderer.invoke('load-from-json', jsonPath, jsonFilename),
 
+  loadTermsFromJson: (jsonPath, jsonFilename, projectFolder) =>
+    ipcRenderer.invoke('load-terms-from-json', jsonPath, jsonFilename, projectFolder),
+
   saveToJson: (jsonPath, jsonFilename, settings) =>
     ipcRenderer.invoke('save-to-json', jsonPath, jsonFilename, settings),
 

@@ -230,20 +230,20 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
       console.log('Loading map collections...');
 
       // Make sure we have the required settings
-      if (!settings || !settings.templateFolder) {
-        console.error('Template folder setting is missing', settings);
-        throw new Error('Template folder setting is missing');
+      if (!settings || !settings.templateFolder || !settings.projectFolder) {
+        console.error('Template or project folder setting is missing', settings);
+        throw new Error('Template or project folder setting is missing');
       }
       try {
         // Use the template folder prop instead of settings to ensure consistency
-        await collectionManager.initializeAllCollections(templateFolder);
+        await collectionManager.initializeAllCollections(templateFolder, projectFolder);
         setIsInitialized(true);
       } catch (collectionError) {
         console.error('Failed to initialize map collections:', collectionError);
       }
     };
     initializeColls();
-  }, [settings, templateFolder]);
+  }, [settings, templateFolder, projectFolder]);
 
   // Set initial locations
   useEffect(() => {
