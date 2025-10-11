@@ -117,14 +117,14 @@
         "AppImage",
         "deb"
       ],
-      "category": "Education",
-      "deb": {
-        "depends": [
-          "libasound2",
-          "libnss3",
-          "libxss1"
-        ]
-      }
+      "category": "Education"
+    },
+    "deb": {
+      "depends": [
+        "libasound2",
+        "libnss3",
+        "libxss1"
+      ]
     }
   }
 }
