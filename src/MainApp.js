@@ -1098,6 +1098,55 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
     return () => window.removeEventListener('keydown', handleGlobalKeyDown);
   }, [mapPaneView, handleNextLocation]); // Remove mapDef, mapRef from deps
 
+  // Add listener for fit-map event from menu
+  useEffect(() => {
+    if (electronAPI && electronAPI.onFitMap) {
+      const handleFitMap = () => {
+        console.log('Fit Map triggered from menu');
+        setResetZoomFlag(true);
+      };
+      
+      electronAPI.onFitMap(handleFitMap);
+      
+      return () => {
+        if (electronAPI.removeFitMapListener) {
+          electronAPI.removeFitMapListener(handleFitMap);
+        }
+      };
+    }
+  }, []);
+
+  // Add listeners for navigation events from menu
+  useEffect(() => {
+    if (electronAPI && electronAPI.onNextLabel && electronAPI.onPreviousLabel) {
+      const handleNextLabel = () => {
+        if (mapPaneView !== USFM_VIEW) {
+          console.log('Next Label triggered from menu');
+          handleNextLocation(true);
+        }
+      };
+      
+      const handlePreviousLabel = () => {
+        if (mapPaneView !== USFM_VIEW) {
+          console.log('Previous Label triggered from menu');
+          handleNextLocation(false);
+        }
+      };
+      
+      electronAPI.onNextLabel(handleNextLabel);
+      electronAPI.onPreviousLabel(handlePreviousLabel);
+      
+      return () => {
+        if (electronAPI.removeNextLabelListener) {
+          electronAPI.removeNextLabelListener(handleNextLabel);
+        }
+        if (electronAPI.removePreviousLabelListener) {
+          electronAPI.removePreviousLabelListener(handlePreviousLabel);
+        }
+      };
+    }
+  }, [mapPaneView, handleNextLocation]);
+
   // Memoize locations and mapDef to prevent MapPane remounts
   const memoizedLocations = useMemo(() => locations, [locations]);
   const memoizedMapDef = useMemo(() => mapDef, [mapDef]);

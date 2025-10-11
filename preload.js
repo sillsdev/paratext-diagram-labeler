@@ -40,4 +40,18 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   discoverCollections: templateFolderPath =>
     ipcRenderer.invoke('discover-collections', templateFolderPath),
+
+  // Add listener for fit-map event from menu
+  onFitMap: (callback) => ipcRenderer.on('fit-map', callback),
+  
+  // Remove listener for fit-map event
+  removeFitMapListener: (callback) => ipcRenderer.removeListener('fit-map', callback),
+
+  // Add listeners for navigation events from menu
+  onNextLabel: (callback) => ipcRenderer.on('next-label', callback),
+  onPreviousLabel: (callback) => ipcRenderer.on('previous-label', callback),
+  
+  // Remove listeners for navigation events
+  removeNextLabelListener: (callback) => ipcRenderer.removeListener('next-label', callback),
+  removePreviousLabelListener: (callback) => ipcRenderer.removeListener('previous-label', callback),
 });
