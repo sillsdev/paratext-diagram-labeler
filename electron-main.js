@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, Menu, shell } = require('electron');
 const { initialize, enable } = require('@electron/remote/main');
 const { ipcMain, dialog } = require('electron');
 const fs = require('fs');
@@ -196,6 +196,11 @@ function createWindow() {
   // Store reference to main window for focus restoration
   mainWindow = win;
   
+  // Set up the custom menu
+  const menuTemplate = createMenuTemplate();
+  const menu = Menu.buildFromTemplate(menuTemplate);
+  Menu.setApplicationMenu(menu);
+  
   enable(win.webContents);
   // Check if we're in development or production
   const isDev = process.env.NODE_ENV === 'development';
@@ -237,6 +242,145 @@ function createWindow() {
   if (require('electron-squirrel-startup')) {
     app.quit();
   }
+}
+
+// Create custom menu template
+function createMenuTemplate() {
+  const template = [
+    {
+      label: 'File',
+      submenu: [
+        {
+          role: 'quit'
+        }
+      ]
+    },
+    {
+      label: 'Edit',
+      submenu: [
+        { role: 'undo' },
+        { role: 'redo' },
+        { type: 'separator' },
+        { role: 'cut' },
+        { role: 'copy' },
+        { role: 'paste' },
+        { role: 'selectall' }
+      ]
+    },
+    {
+      label: 'View',
+      submenu: [
+        {
+          label: 'Next Label',
+          accelerator: 'PageDown',
+          click: () => {
+            // Send IPC message to renderer to trigger next location
+            if (mainWindow && mainWindow.webContents) {
+              mainWindow.webContents.send('next-label');
+            }
+          }
+        },
+        {
+          label: 'Previous Label',
+          accelerator: 'PageUp',
+          click: () => {
+            // Send IPC message to renderer to trigger previous location
+            if (mainWindow && mainWindow.webContents) {
+              mainWindow.webContents.send('previous-label');
+            }
+          }
+        },
+        { type: 'separator' },
+        {
+          label: 'Zoom to Fit Map',
+          accelerator: 'CmdOrCtrl+9',
+          click: () => {
+            // Send IPC message to renderer to trigger zoom reset
+            if (mainWindow && mainWindow.webContents) {
+              mainWindow.webContents.send('fit-map');
+            }
+          }
+        },
+        { type: 'separator' },
+        { role: 'resetZoom' },
+        { role: 'zoomIn' },
+        { role: 'zoomOut' },
+        { type: 'separator' },
+        { role: 'forceReload' },
+        { role: 'toggleDevTools' },
+        { type: 'separator' },
+        { role: 'togglefullscreen' }
+      ]
+    },
+    {
+      label: 'Help',
+      submenu: [
+        {
+          label: 'Documentation',
+          click: () => {
+            shell.openExternal('https://tiny.cc/labeler');
+          }
+        }
+      ]
+    }
+  ];
+
+  // macOS specific menu adjustments
+  if (process.platform === 'darwin') {
+    // Add app menu at the beginning
+    template.unshift({
+      label: app.getName(),
+      submenu: [
+        { role: 'about' },
+        { type: 'separator' },
+        { role: 'services', submenu: [] },
+        { type: 'separator' },
+        { role: 'hide' },
+        { role: 'hideothers' },
+        { role: 'unhide' },
+        { type: 'separator' },
+        { role: 'quit' }
+      ]
+    });
+
+    // Remove quit from File menu since it's now in the app menu
+    const fileMenu = template.find(menu => menu.label === 'File');
+    if (fileMenu) {
+      fileMenu.submenu = fileMenu.submenu.filter(item => item.role !== 'quit');
+    }
+
+    // Add Speech submenu to Edit menu
+    const editMenu = template.find(menu => menu.label === 'Edit');
+    if (editMenu) {
+      editMenu.submenu.push(
+        { type: 'separator' },
+        {
+          label: 'Speech',
+          submenu: [
+            { role: 'startspeaking' },
+            { role: 'stopspeaking' }
+          ]
+        }
+      );
+    }
+
+    // Add Window menu after View menu
+    const viewMenuIndex = template.findIndex(menu => menu.label === 'View');
+    if (viewMenuIndex !== -1) {
+      template.splice(viewMenuIndex + 1, 0, {
+        label: 'Window',
+        submenu: [
+          { role: 'close' },
+          { role: 'minimize' },
+          { role: 'zoom' },
+          { type: 'separator' },
+          { role: 'front' }
+        ]
+      });
+    }
+  }
+
+  return template;
 }
 
 function BCV(ref) {
