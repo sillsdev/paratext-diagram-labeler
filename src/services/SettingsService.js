@@ -28,7 +28,7 @@ class SettingsService {
           projectFolder: null,
           usfm: null,
           templateFolder: null,
-          saveToDemo: true,
+          saveToDemo: false,
         };
         await this.saveSettings(); // Save the default settings
         console.log('Created default settings:', this.settings);

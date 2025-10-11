@@ -230,7 +230,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
       console.log('Loading map collections...');
 
       // Make sure we have the required settings
-      if (!settings || !settings.templateFolder || !settings.projectFolder) {
+      if (!settings || !settings.templateFolder || !projectFolder) {
         console.error('Template or project folder setting is missing', settings);
         throw new Error('Template or project folder setting is missing');
       }

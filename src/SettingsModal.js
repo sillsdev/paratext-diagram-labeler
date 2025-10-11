@@ -113,7 +113,7 @@ export default function SettingsModal({ open, onClose, labelScale, setLabelScale
           color: '#666',
           textAlign: 'center'
         }}>
-          {inLang(uiStr.paratextDiagramLabeler, lang)} (PT9 standalone edition) v. {packageInfo.version}-alpha
+          {inLang(uiStr.paratextDiagramLabeler, lang)} (PT9 standalone edition) v. {packageInfo.version}-beta
         </div>
         
         <div style={{ textAlign: 'center' }}>
