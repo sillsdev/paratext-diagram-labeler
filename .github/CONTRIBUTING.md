@@ -21,4 +21,4 @@ Thanks for your interest in contributing! Please follow these guidelines:
 - Use the issue templates and include steps to reproduce, expected vs actual behavior, and environment details.
 
 ## Contact
-Questions? Open an issue or email paratextmaplabeler@gmail.com.
+Questions? Open an issue or email paratextdiagramlabeler@gmail.com .
