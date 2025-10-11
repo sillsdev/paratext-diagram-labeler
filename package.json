@@ -2,8 +2,9 @@
   "name": "paratext-diagram-labeler",
   "version": "0.1.0",
   "private": true,
-  "author": "SIL Scripture Publishing Services <paratextmaplabeler@gmail.com>",
+  "author": "SIL Scripture Publishing Services <paratextdiagramlabeler@gmail.com>",
   "description": "Paratext Diagram Labeler",
+  "license": "MIT",
   "dependencies": {
     "@electron/remote": "^2.1.2",
     "@testing-library/dom": "^10.4.0",

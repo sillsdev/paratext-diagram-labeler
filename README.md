@@ -1,5 +1,7 @@
 # Getting Started
 
+[![Sponsor](https://img.shields.io/badge/Sponsor-This%20Project-ff69b4?logo=GitHub%20Sponsors&logoColor=white)](FUNDING.md)
+
 Biblical map app should run cross-platform on Windows, Mac and Linux
 
 First do
