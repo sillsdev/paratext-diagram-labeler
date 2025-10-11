@@ -327,6 +327,7 @@ function createMenuTemplate() {
 
   // macOS specific menu adjustments
   if (process.platform === 'darwin') {
+    // Add app menu at the beginning
     template.unshift({
       label: app.getName(),
       submenu: [
@@ -342,26 +343,41 @@ function createMenuTemplate() {
       ]
     });
 
-    // Edit menu
-    template[2].submenu.push(
-      { type: 'separator' },
-      {
-        label: 'Speech',
-        submenu: [
-          { role: 'startspeaking' },
-          { role: 'stopspeaking' }
-        ]
-      }
-    );
+    // Remove quit from File menu since it's now in the app menu
+    const fileMenu = template.find(menu => menu.label === 'File');
+    if (fileMenu) {
+      fileMenu.submenu = fileMenu.submenu.filter(item => item.role !== 'quit');
+    }
 
-    // Window menu
-    template[4].submenu = [
-      { role: 'close' },
-      { role: 'minimize' },
-      { role: 'zoom' },
-      { type: 'separator' },
-      { role: 'front' }
-    ];
+    // Add Speech submenu to Edit menu
+    const editMenu = template.find(menu => menu.label === 'Edit');
+    if (editMenu) {
+      editMenu.submenu.push(
+        { type: 'separator' },
+        {
+          label: 'Speech',
+          submenu: [
+            { role: 'startspeaking' },
+            { role: 'stopspeaking' }
+          ]
+        }
+      );
+    }
+
+    // Add Window menu after View menu
+    const viewMenuIndex = template.findIndex(menu => menu.label === 'View');
+    if (viewMenuIndex !== -1) {
+      template.splice(viewMenuIndex + 1, 0, {
+        label: 'Window',
+        submenu: [
+          { role: 'close' },
+          { role: 'minimize' },
+          { role: 'zoom' },
+          { type: 'separator' },
+          { role: 'front' }
+        ]
+      });
+    }
   }
 
   return template;
