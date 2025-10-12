@@ -74,9 +74,38 @@ jobs:
             dist/*.tar.gz
           retention-days: 30
 
+  build-mac:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build macOS package
+        run: npm run package-mac
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload macOS artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-packages
+          path: |
+            dist/*.dmg
+            dist/*.zip
+          retention-days: 30
+
   release:
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: [build-windows, build-linux]
+    needs: [build-windows, build-linux, build-mac]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -94,6 +123,12 @@ jobs:
           name: linux-packages
           path: ./dist/
 
+      - name: Download macOS artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: macos-packages
+          path: ./dist/
+
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
@@ -104,6 +139,8 @@ jobs:
             dist/*.rpm
             dist/*.AppImage
             dist/*.tar.gz
+            dist/*.dmg
+            dist/*.zip
           draft: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

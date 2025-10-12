@@ -102,8 +102,7 @@
     "npmRebuild": false,
     "win": {
       "target": [
-        "nsis",
-        "portable"
+        "nsis"
       ],
       "icon": "buildResources/icon.ico"
     },
@@ -127,6 +126,13 @@
         "deb"
       ],
       "category": "Education"
+    },
+    "deb": {
+      "depends": [
+        "libasound2",
+        "libnss3",
+        "libxss1"
+      ]
     }
   }
 }
