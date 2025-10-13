@@ -1,5 +1,7 @@
-// filepath: c:\git\mapLabelerExt\biblical-map-app\src\services\SettingsService.js
 // src/services/SettingsService.js
+
+const PDL_SETTINGS_FILENAME = 'DiagramLabelerSettings.json';
+
 class SettingsService {
   constructor() {
     this.settings = null;
@@ -15,7 +17,7 @@ class SettingsService {
 
     try {
       // Try to load settings file
-      const settings = await window.electronAPI.loadFromJson(null, 'MapLabelerSettings.json');
+      const settings = await window.electronAPI.loadFromJson(null, PDL_SETTINGS_FILENAME);
 
       // If settings were loaded successfully
       if (settings && Object.keys(settings).length > 0) {
@@ -63,7 +65,7 @@ class SettingsService {
     if (!this.settings) return false;
 
     try {
-      await window.electronAPI.saveToJson(null, 'MapLabelerSettings.json', this.settings);
+      await window.electronAPI.saveToJson(null, PDL_SETTINGS_FILENAME, this.settings);
       return true;
     } catch (error) {
       console.error('Error saving settings:', error);
