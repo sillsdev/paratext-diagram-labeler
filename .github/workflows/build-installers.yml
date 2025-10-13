@@ -86,18 +86,20 @@ jobs:
         with:
           path: ./dist/
 
+      - name: List all files recursively
+        run: ls -lR .
+
+      - name: List dist files
+        run: ls -lR ./dist
+
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            dist/*.exe
-            dist/*.msi
-            dist/*.deb
-            dist/*.rpm
-            dist/*.AppImage
-            dist/*.tar.gz
-            dist/*.dmg
-            dist/*.zip
+            *.exe
+            *.deb
+            *.AppImage
+            *.dmg
           draft: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
