@@ -91,6 +91,18 @@
         "to": "icon.ico"
       }
     ],
+    "extraFiles": [
+      {
+        "from": "resources/_LabelerTemplates",
+        "to": "_LabelerTemplates",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "resources/Sample Maps",
+        "to": "Sample Maps",
+        "filter": ["**/*"]
+      }
+    ],
     "asar": true,
     "asarUnpack": [
       "assets/**",
