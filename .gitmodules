@@ -1,0 +1,4 @@
+[submodule "resources"]
+	path = resources
+	url = https://github.com/sillsdev/sil-map-definitions.git
+	branch = main
