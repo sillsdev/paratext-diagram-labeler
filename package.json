@@ -89,17 +89,16 @@
       {
         "from": "buildResources/icon.ico",
         "to": "icon.ico"
+      },
+      {
+        "from": "resources/Sample Maps",
+        "to": "Sample Maps"
       }
     ],
     "extraFiles": [
       {
         "from": "resources/_LabelerTemplates",
         "to": "_LabelerTemplates",
-        "filter": ["**/*"]
-      },
-      {
-        "from": "resources/Sample Maps",
-        "to": "Sample Maps",
         "filter": ["**/*"]
       }
     ],

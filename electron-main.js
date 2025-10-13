@@ -1456,6 +1456,51 @@ app.whenReady().then(() => {
   console.log(`Log file location: ${path.join(app.getPath('userData'), 'electron-main.log')}`);
   console.log('=====================================');
   
+  // On first run (or if not present), copy Sample Maps to user's Pictures folder
+  try {
+    const picturesDir = app.getPath('pictures');
+    const destDir = path.join(picturesDir, 'Sample Maps');
+    const srcDir = process.resourcesPath
+      ? path.join(process.resourcesPath, 'Sample Maps')
+      : path.join(__dirname, 'resources', 'Sample Maps');
+
+    // Only copy if destination doesn't exist yet
+    try {
+      const st = fs.statSync(destDir);
+      if (!st.isDirectory()) {
+        console.warn(`[Sample Maps] Destination exists but is not a directory: ${destDir}`);
+      } else {
+        console.log(`[Sample Maps] Already present at ${destDir}`);
+      }
+    } catch {
+      // dest doesn't exist -> attempt copy
+      try {
+        // Recursively copy folder (Node 16+: cpSync supports recursive)
+        if (fs.cpSync) {
+          fs.cpSync(srcDir, destDir, { recursive: true });
+        } else {
+          // Fallback if cpSync missing
+          const copyRecursive = (src, dst) => {
+            if (!fs.existsSync(dst)) fs.mkdirSync(dst, { recursive: true });
+            for (const entry of fs.readdirSync(src)) {
+              const s = path.join(src, entry);
+              const d = path.join(dst, entry);
+              const stat = fs.statSync(s);
+              if (stat.isDirectory()) copyRecursive(s, d);
+              else fs.copyFileSync(s, d);
+            }
+          };
+          copyRecursive(srcDir, destDir);
+        }
+        console.log(`[Sample Maps] Copied to ${destDir}`);
+      } catch (copyErr) {
+        console.error('[Sample Maps] Failed to copy to Pictures folder:', copyErr);
+      }
+    }
+  } catch (e) {
+    console.error('[Sample Maps] Unexpected error preparing pictures copy:', e);
+  }
+
   createWindow();
 });
 
