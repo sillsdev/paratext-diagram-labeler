@@ -8,16 +8,44 @@ on:
     branches: [master]
 
 jobs:
-  build-windows:
-    runs-on: windows-latest
+  build:
+    name: Build ${{ matrix.platform }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - platform: windows
+            os: windows-latest
+            build_script: npm run package-windows
+            artifact_name: windows-installer
+            artifact_paths: |
+              dist/*.exe
+            windows_sign: true
+          - platform: linux
+            os: ubuntu-latest
+            build_script: npm run package-linux
+            artifact_name: linux-packages
+            artifact_paths: |
+              dist/*.deb
+              dist/*.AppImage
+              dist/*.tar.gz
+            windows_sign: false
+          - platform: mac
+            os: macos-latest
+            build_script: npm run package-mac
+            artifact_name: macos-packages
+            artifact_paths: |
+              dist/*.dmg
+              dist/*.zip
+            windows_sign: false
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           submodules: true
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '22'
           cache: 'npm'
@@ -25,114 +53,37 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build Windows installer
-        run: npm run package-windows
+      - name: Build
+        run: ${{ matrix.build_script }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Sign installer
+      - name: Sign Windows installer
+        if: matrix.windows_sign == true
         uses: sillsdev/codesign/trusted-signing-action@v3
         with:
           credentials: ${{ secrets.TRUSTED_SIGNING_CREDENTIALS }}
           files-folder: dist
           files-folder-filter: Paratext*.exe
 
-      - name: Upload Windows artifacts
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: windows-installer
-          path: |
-            dist/*.exe
-          retention-days: 30
-
-  build-linux:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: true
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build Linux packages
-        run: npm run package-linux
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload Linux artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: linux-packages
-          path: |
-            dist/*.deb
-            dist/*.rpm
-            dist/*.AppImage
-            dist/*.tar.gz
-          retention-days: 30
-
-  build-mac:
-    runs-on: macos-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: true
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build macOS package
-        run: npm run package-mac
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload macOS artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: macos-packages
-          path: |
-            dist/*.dmg
-            dist/*.zip
+          name: ${{ matrix.artifact_name }}
+          path: ${{ matrix.artifact_paths }}
           retention-days: 30
 
   release:
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: [build-windows, build-linux, build-mac]
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      - name: Download Windows artifacts
+      - name: Download all build artifacts
         uses: actions/download-artifact@v4
         with:
-          name: windows-installer
-          path: ./dist/
-
-      - name: Download Linux artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: linux-packages
-          path: ./dist/
-
-      - name: Download macOS artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: macos-packages
           path: ./dist/
 
       - name: Create Release
