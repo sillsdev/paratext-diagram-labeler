@@ -1451,7 +1451,7 @@ function copySampleMaps() {
     if (process.env.NODE_ENV === 'development') return;  // Skip in development mode
 
     const picturesDir = app.getPath('pictures');
-    const destDir = path.join(picturesDir, '!All Sample Maps');
+    const destDir = path.join(picturesDir, '!All Map Samples');
     const srcDir = process.resourcesPath
       ? path.join(process.resourcesPath, 'Sample Maps')
       : path.join(__dirname, 'resources', 'Sample Maps');
