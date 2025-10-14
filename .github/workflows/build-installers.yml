@@ -24,7 +24,7 @@ jobs:
           - platform: linux
             os: ubuntu-latest
             build_script: npm run package-linux
-            artifact_name: linux-packages
+            artifact_name: linux-installer
             artifact_paths: |
               dist/*.deb
               dist/*.AppImage
@@ -33,7 +33,7 @@ jobs:
           - platform: mac
             os: macos-latest
             build_script: npm run package-mac
-            artifact_name: macos-packages
+            artifact_name: macos-installer
             artifact_paths: |
               dist/*.dmg
               dist/*.zip
@@ -85,21 +85,19 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: ./dist/
+          merge-multiple: true
 
-      - name: List all files recursively
-        run: ls -lR .
-
-      - name: List dist files
+      - name: List dist files (debugging)
         run: ls -lR ./dist
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            *.exe
-            *.deb
-            *.AppImage
-            *.dmg
+            dist/*.exe
+            dist/*.deb
+            dist/*.AppImage
+            dist/*.dmg
           draft: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
