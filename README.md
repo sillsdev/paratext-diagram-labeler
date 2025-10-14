@@ -1,4 +1,4 @@
-# Paratext Diagram Labeler
+# <img src="docs/images/image6.png" alt="logo" width="100"> Paratext Diagram Labeler
 
 [![Latest Release](https://img.shields.io/github/v/release/sillsdev/paratext-diagram-labeler?include_prereleases&sort=semver&display_name=tag)](https://github.com/sillsdev/paratext-diagram-labeler/releases/latest)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/sillsdev/paratext-diagram-labeler/build-installers.yml?branch=master)](https://github.com/sillsdev/paratext-diagram-labeler/actions/workflows/build-installers.yml)
@@ -8,7 +8,7 @@
 [![Contributors](https://img.shields.io/github/contributors/sillsdev/paratext-diagram-labeler)](https://github.com/sillsdev/paratext-diagram-labeler/graphs/contributors)
 [![Sponsor](https://img.shields.io/badge/Sponsor-This%20Project-ff69b4?logo=GitHub%20Sponsors&logoColor=white)](FUNDING.md)
 
-> Interactive map labeling tool for biblical diagrams with Paratext integration
+> Interactive map labeling tool for biblical diagrams with Scripture references and Paratext integration
 
 ## 📥 Download
 
@@ -23,10 +23,6 @@
 ## Developers
 
 Head on over to [CONTRIBUTING.md](CONTRIBUTING.md) for details
-
-# Biblical Map Labeler
-
-This is an Electron-based application for labeling biblical maps with scripture references.
 
 ## Features
 
@@ -45,4 +41,3 @@ The "Send reference to Paratext" feature works by:
 3. Paratext automatically scrolls to the specified reference
 
 This matches the exact behavior used by PTXprint and other SIL tools.
-Builds the app.
