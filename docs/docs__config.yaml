@@ -1,0 +1,5 @@
+theme: minima
+title: Paratext Diagram Labeler
+description: A tool for creating and labeling diagrams for Paratext projects.
+header_pages:
+  - index.html
