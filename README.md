@@ -1,73 +1,28 @@
-# Getting Started
+# Paratext Diagram Labeler
 
+[![Latest Release](https://img.shields.io/github/v/release/sillsdev/paratext-diagram-labeler?include_prereleases&sort=semver&display_name=tag)](https://github.com/sillsdev/paratext-diagram-labeler/releases/latest)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/sillsdev/paratext-diagram-labeler/build-installers.yml?branch=master)](https://github.com/sillsdev/paratext-diagram-labeler/actions/workflows/build-installers.yml)
+[![Download Count](https://img.shields.io/github/downloads/sillsdev/paratext-diagram-labeler/total)](https://github.com/sillsdev/paratext-diagram-labeler/releases)
+[![License](https://img.shields.io/github/license/sillsdev/paratext-diagram-labeler)](LICENSE.md)
+[![Last Commit](https://img.shields.io/github/last-commit/sillsdev/paratext-diagram-labeler)](https://github.com/sillsdev/paratext-diagram-labeler/commits/master)
+[![Contributors](https://img.shields.io/github/contributors/sillsdev/paratext-diagram-labeler)](https://github.com/sillsdev/paratext-diagram-labeler/graphs/contributors)
 [![Sponsor](https://img.shields.io/badge/Sponsor-This%20Project-ff69b4?logo=GitHub%20Sponsors&logoColor=white)](FUNDING.md)
 
-Biblical map app should run cross-platform on Windows, Mac and Linux
+> Interactive map labeling tool for biblical diagrams with Paratext integration
 
-First do
+## 📥 Download
 
-`npm install`
+| Platform | Download |
+|----------|----------|
+| 🪟 **Windows** | [Download exe installer](https://github.com/sillsdev/paratext-diagram-labeler/releases/latest) |
+| 🐧 **Linux** | [Download deb or appImage package](https://github.com/sillsdev/paratext-diagram-labeler/releases/latest) |
+| 🍎 **macOS** | [Download dmg (unsigned) installer](https://github.com/sillsdev/paratext-diagram-labeler/releases/latest) |
 
-To run the app in development mode:
+> 💡 **Note**: All download links automatically point to the latest release. Choose your platform-specific installer from the release page.
 
-`npm run dev-mode`
+## Developers
 
-Runs the app in the development mode.
-
-### `build-release.bat`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Head on over to [CONTRIBUTING.md](CONTRIBUTING.md) for details
 
 # Biblical Map Labeler
 
