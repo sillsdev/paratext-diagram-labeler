@@ -1481,13 +1481,18 @@ app.whenReady().then(() => {
         } else {
           // Fallback if cpSync missing
           const copyRecursive = (src, dst) => {
-            if (!fs.existsSync(dst)) fs.mkdirSync(dst, { recursive: true });
-            for (const entry of fs.readdirSync(src)) {
-              const s = path.join(src, entry);
-              const d = path.join(dst, entry);
-              const stat = fs.statSync(s);
-              if (stat.isDirectory()) copyRecursive(s, d);
-              else fs.copyFileSync(s, d);
+            try {
+              if (!fs.existsSync(dst)) fs.mkdirSync(dst, { recursive: true });
+              for (const entry of fs.readdirSync(src)) {
+                const s = path.join(src, entry);
+                const d = path.join(dst, entry);
+                const stat = fs.statSync(s);
+                if (stat.isDirectory()) copyRecursive(s, d);
+                else fs.copyFileSync(s, d);
+              }
+            } catch (err) {
+              console.error(`[Sample Maps] Error copying from "${src}" to "${dst}":`, err);
+              throw err;
             }
           };
           copyRecursive(srcDir, destDir);
