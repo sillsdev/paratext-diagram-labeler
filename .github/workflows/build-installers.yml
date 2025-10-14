@@ -4,8 +4,9 @@ on:
   push:
     branches: [master]
     tags: ['v*']
-  pull_request:
-    branches: [master]
+permissions:
+  contents: write
+  pull-requests: read
 
 jobs:
   build:
@@ -24,7 +25,7 @@ jobs:
           - platform: linux
             os: ubuntu-latest
             build_script: npm run package-linux
-            artifact_name: linux-packages
+            artifact_name: linux-installer
             artifact_paths: |
               dist/*.deb
               dist/*.AppImage
@@ -33,7 +34,7 @@ jobs:
           - platform: mac
             os: macos-latest
             build_script: npm run package-mac
-            artifact_name: macos-packages
+            artifact_name: macos-installer
             artifact_paths: |
               dist/*.dmg
               dist/*.zip
@@ -85,19 +86,22 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: ./dist/
+          merge-multiple: true
+
+      - name: List dist files (debugging)
+        run: ls -lR ./dist
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
             dist/*.exe
-            dist/*.msi
             dist/*.deb
-            dist/*.rpm
             dist/*.AppImage
-            dist/*.tar.gz
             dist/*.dmg
-            dist/*.zip
           draft: true
+          generate_release_notes: true
+          body: |
+            *Built with ❤️ by SIL Scripture Publishing Services*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
