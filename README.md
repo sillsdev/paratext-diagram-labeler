@@ -1,4 +1,4 @@
-# Paratext Diagram Labeler
+# <img src="docs/images/image6.png" alt="logo" width="100"> Paratext Diagram Labeler
 
 [![Latest Release](https://img.shields.io/github/v/release/sillsdev/paratext-diagram-labeler?include_prereleases&sort=semver&display_name=tag)](https://github.com/sillsdev/paratext-diagram-labeler/releases/latest)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/sillsdev/paratext-diagram-labeler/build-installers.yml?branch=master)](https://github.com/sillsdev/paratext-diagram-labeler/actions/workflows/build-installers.yml)
