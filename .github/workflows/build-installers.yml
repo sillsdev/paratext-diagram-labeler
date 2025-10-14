@@ -117,7 +117,7 @@ jobs:
             ## 🔧 MacOS Installation (unsigned installer)
 
             1. Until the MacOS installer is signed, you need to do the following after installation:
-               - Right-click (or Control-click) the `.app` file in the Applications folderand select "Open"
+               - Right-click (or Control-click) the `.app` file in the Applications folder and select "Open"
                - In the dialog that appears, click "Open" again to confirm you want to open the app
 
             ---
