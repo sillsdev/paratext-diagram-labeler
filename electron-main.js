@@ -4,7 +4,6 @@ const { ipcMain, dialog } = require('electron');
 const fs = require('fs');
 const path = require('path');
 const xml2js = require('xml2js');
-const { copy } = require('fs-extra');
 
 // Settings relating to Settings.xml
 let curProjectFolder = '';
