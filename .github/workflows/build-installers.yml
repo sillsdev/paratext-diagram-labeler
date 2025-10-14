@@ -99,5 +99,27 @@ jobs:
             dist/*.AppImage
             dist/*.dmg
           draft: true
+          generate_release_notes: true
+          body: |
+            ## 🚀 What's New
+
+            <!-- Auto-generated release notes will appear above this line -->
+
+            ## 📦 Downloads
+
+            - **Windows**: Download the `.exe` installer
+            - **Linux**: 
+              - `.deb` for Ubuntu/Debian systems
+              - `.AppImage` for universal Linux compatibility
+            - **macOS**: Download the `.dmg` installer (unsigned!)
+
+            ## 🔧 MacOS Installation (unsigned installer)
+
+            1. Until the MacOS installer is signed, you need to do the following after installation:
+               - Right-click (or Control-click) the `.app` file in the Applications folderand select "Open"
+               - In the dialog that appears, click "Open" again to confirm you want to open the app
+
+            ---
+            *Built with ❤️ by SIL Scripture Publishing Services*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
