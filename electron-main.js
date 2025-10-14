@@ -4,6 +4,7 @@ const { ipcMain, dialog } = require('electron');
 const fs = require('fs');
 const path = require('path');
 const xml2js = require('xml2js');
+const { copy } = require('fs-extra');
 
 // Settings relating to Settings.xml
 let curProjectFolder = '';
@@ -1444,37 +1445,86 @@ function cleanReference(reference) {
   return reference; // Return as-is if no match
 }
 
-app.whenReady().then(() => {
-  console.log('=== Paratext Diagram Labeler Starting ===');
-  console.log(`App version: ${app.getVersion()}`);
-  console.log(`Electron version: ${process.versions.electron}`);
-  console.log(`Node version: ${process.versions.node}`);
-  console.log(`Platform: ${process.platform}`);
-  console.log(`Working directory: ${process.cwd()}`);
-  console.log(`App path: ${app.getAppPath()}`);
-  console.log(`User data path: ${app.getPath('userData')}`);
-  console.log(`Log file location: ${path.join(app.getPath('userData'), 'electron-main.log')}`);
-  console.log('=====================================');
-  
-  // On first run (or if not present), copy Sample Maps to user's Pictures folder
+// On first run (or if not present), copy Sample Maps to user's Pictures folder.
+// If destination exists, check for newer files and update them.
+function copySampleMaps() {
   try {
+    if (process.env.NODE_ENV === 'development') return;  // Skip in development mode
+
     const picturesDir = app.getPath('pictures');
-    const destDir = path.join(picturesDir, 'Sample Maps');
+    const destDir = path.join(picturesDir, '!All Sample Maps');
     const srcDir = process.resourcesPath
       ? path.join(process.resourcesPath, 'Sample Maps')
       : path.join(__dirname, 'resources', 'Sample Maps');
 
-    // Only copy if destination doesn't exist yet
+    // Check if source directory exists first
+    if (!fs.existsSync(srcDir)) {
+      console.warn(`[Sample Maps] Source directory not found: ${srcDir}`);
+      return;
+    }
+
+    // Enhanced copy function that checks file modification times
+    const copyWithTimeCheck = (src, dst) => {
+      let filesUpdated = 0;
+      let filesSkipped = 0;
+      
+      const processDirectory = (srcPath, dstPath) => {
+        try {
+          if (!fs.existsSync(dstPath)) {
+            fs.mkdirSync(dstPath, { recursive: true });
+          }
+          
+          for (const entry of fs.readdirSync(srcPath)) {
+            const srcFile = path.join(srcPath, entry);
+            const dstFile = path.join(dstPath, entry);
+            const srcStat = fs.statSync(srcFile);
+            
+            if (srcStat.isDirectory()) {
+              processDirectory(srcFile, dstFile);
+            } else {
+              let shouldCopy = true;
+              
+              // Check if destination file exists and compare modification times
+              if (fs.existsSync(dstFile)) {
+                const dstStat = fs.statSync(dstFile);
+                if (srcStat.mtime <= dstStat.mtime) {
+                  shouldCopy = false;
+                  filesSkipped++;
+                }
+              }
+              
+              if (shouldCopy) {
+                fs.copyFileSync(srcFile, dstFile);
+                filesUpdated++;
+                console.log(`[Sample Maps] Updated: ${path.relative(dst, dstFile)}`);
+              }
+            }
+          }
+        } catch (err) {
+          console.error(`[Sample Maps] Error processing "${srcPath}" to "${dstPath}":`, err);
+          throw err;
+        }
+      };
+      
+      processDirectory(src, dst);
+      return { filesUpdated, filesSkipped };
+    };
+
+    // Check if destination exists
     try {
       const st = fs.statSync(destDir);
       if (!st.isDirectory()) {
         console.warn(`[Sample Maps] Destination exists but is not a directory: ${destDir}`);
+        return;
       } else {
-        console.log(`[Sample Maps] Already present at ${destDir}`);
+        console.log(`[Sample Maps] Checking for updates in ${destDir}`);
+        const { filesUpdated, filesSkipped } = copyWithTimeCheck(srcDir, destDir);
+        console.log(`[Sample Maps] Update complete: ${filesUpdated} files updated, ${filesSkipped} files skipped (already current)`);
       }
     } catch {
-      // dest doesn't exist -> attempt copy
+      // dest doesn't exist -> full copy
       try {
+        console.log(`[Sample Maps] Creating new Sample Maps folder at ${destDir}`);
         // Recursively copy folder (Node 16+: cpSync supports recursive)
         if (fs.cpSync) {
           fs.cpSync(srcDir, destDir, { recursive: true });
@@ -1497,7 +1547,7 @@ app.whenReady().then(() => {
           };
           copyRecursive(srcDir, destDir);
         }
-        console.log(`[Sample Maps] Copied to ${destDir}`);
+        console.log(`[Sample Maps] Initial copy completed to ${destDir}`);
       } catch (copyErr) {
         console.error('[Sample Maps] Failed to copy to Pictures folder:', copyErr);
       }
@@ -1505,7 +1555,21 @@ app.whenReady().then(() => {
   } catch (e) {
     console.error('[Sample Maps] Unexpected error preparing pictures copy:', e);
   }
+}
 
+app.whenReady().then(() => {
+  console.log('=== Paratext Diagram Labeler Starting ===');
+  console.log(`App version: ${app.getVersion()}`);
+  console.log(`Electron version: ${process.versions.electron}`);
+  console.log(`Node version: ${process.versions.node}`);
+  console.log(`Platform: ${process.platform}`);
+  console.log(`Working directory: ${process.cwd()}`);
+  console.log(`App path: ${app.getAppPath()}`);
+  console.log(`User data path: ${app.getPath('userData')}`);
+  console.log(`Log file location: ${path.join(app.getPath('userData'), 'electron-main.log')}`);
+  console.log('=====================================');
+  
+  copySampleMaps();
   createWindow();
 });
 
