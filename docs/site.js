@@ -127,20 +127,6 @@ class SiteManager {
             </div>
 
             <div class="content-section">
-                <h2 class="section-title">Quick Start</h2>
-                <div class="info-card">
-                    <h3>New Users</h3>
-                    <p>Get started quickly with the Paratext Diagram Labeler:</p>
-                    <ol>
-                        <li><a href="#downloads">Download and install</a> the latest version</li>
-                        <li>Check the <a href="#getting-started">Getting Started</a> guide for prerequisites</li>
-                        <li>Learn about the <a href="#interface">interface</a> and basic workflow</li>
-                        <li>Start <a href="#working-with-labels">working with labels</a> on your maps</li>
-                    </ol>
-                </div>
-            </div>
-
-            <div class="content-section">
                 <h2 class="section-title">Key Features</h2>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
                     <div class="info-card">
@@ -274,21 +260,7 @@ class SiteManager {
                     <li>Download the <strong>Paratext Diagram Labeler Setup</strong> program for your operating system</li>
                     <li>Run the installer and follow the setup instructions</li>
                 </ol>
-            </div>
-            
-            <div class="content-section">
-                <h2 class="section-title">Launching the Labeler</h2>
-                <p>On Windows, the <strong>Paratext Diagram Labeler</strong> should appear in your Start menu, 
-                or you can run the executable from wherever you installed it.</p>
-                
-                <p>You will see the "pre-Launch" screen that contains the context that the Paratext 10 extension 
-                will (in the future) provide:</p>
-                
-                <div class="info-card">
-                    <img src="images/image_B1.png" alt="Pre-Launch Screen" style="max-width: 600px;">
-                    <p><em>The pre-launch screen where you select your project and map collection</em></p>
-                </div>
-            </div>
+            </div>            
         `;
     }
 
@@ -523,7 +495,7 @@ class SiteManager {
             <div class="content-section">
                 <h2 class="section-title">Data Merge Files</h2>
                 <p>Once you've completed your label work, the Labeler can generate data merge files for use in Map Creator or Adobe InDesign.</p>
-                <p>For detailed instructions on using the exported files, see the <a href="#making-maps">Making Maps</a> section.</p>
+                <p>For detailed instructions on using the exported files, see the <a href="#map-varieties">Making Maps</a> sections.</p>
             </div>
             
             <div class="content-section">
