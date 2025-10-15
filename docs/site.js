@@ -22,8 +22,20 @@ class SiteManager {
     }
 
     setupNavigation() {
-        const navLinks = document.querySelectorAll('.nav-link');
+        const navLinks = document.querySelectorAll('.sil-nav-link');
         navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const page = link.getAttribute('data-page');
+                if (page) {
+                    window.location.hash = page;
+                }
+            });
+        });
+
+        // Setup footer navigation
+        const footerLinks = document.querySelectorAll('.sil-footer a[data-page]');
+        footerLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 const page = link.getAttribute('data-page');
@@ -36,7 +48,7 @@ class SiteManager {
 
     loadPage(pageId) {
         // Remove active class from all nav links
-        document.querySelectorAll('.nav-link').forEach(link => {
+        document.querySelectorAll('.sil-nav-link').forEach(link => {
             link.classList.remove('active');
         });
         
@@ -46,13 +58,116 @@ class SiteManager {
             currentLink.classList.add('active');
         }
         
+        // Handle home page vs other pages display
+        this.handlePageLayout(pageId);
+        
+        // Handle Learn page sidebar
+        this.handleLearnNavigation(pageId);
+        
         // Load page content
         this.displayPage(pageId);
         this.currentPage = pageId;
     }
 
+    handlePageLayout(pageId) {
+        const languageTechStrip = document.getElementById('language-tech-strip');
+        const breadcrumbStrip = document.getElementById('breadcrumb-strip');
+        const bannerSection = document.getElementById('banner-section');
+        const currentPageTitle = document.getElementById('current-page-title');
+        
+        if (pageId === 'home') {
+            // Show home page elements
+            languageTechStrip.style.display = 'block';
+            bannerSection.style.display = 'block';
+            breadcrumbStrip.style.display = 'none';
+        } else {
+            // Show non-home page elements
+            languageTechStrip.style.display = 'none';
+            bannerSection.style.display = 'none';
+            breadcrumbStrip.style.display = 'block';
+            
+            // Update breadcrumb text
+            const pageTitles = {
+                'getting-started': 'FEATURES',
+                'downloads': 'DOWNLOADS',
+                'learn': 'LEARN',
+                'key-concepts': 'LEARN > KEY CONCEPTS',
+                'launch-screen': 'LEARN > LAUNCH SCREEN',
+                'selecting-template': 'LEARN > SELECTING TEMPLATE',
+                'interface': 'LEARN > INTERFACE',
+                'keyboard-shortcuts': 'LEARN > KEYBOARD SHORTCUTS',
+                'working-with-labels': 'LEARN > WORKING WITH LABELS',
+                'map-varieties': 'LEARN > MAP VARIETIES',
+                'indesign-maps': 'LEARN > INDESIGN MAPS',
+                'map-creator-maps': 'LEARN > MAP CREATOR MAPS',
+                'feedback': 'GET HELP'
+            };
+            
+            currentPageTitle.textContent = pageTitles[pageId] || pageId.toUpperCase();
+        }
+    }
+
+    handleLearnNavigation(pageId) {
+        const sidebar = document.getElementById('learn-nav');
+        const contentWrapper = document.querySelector('.sil-content-wrapper');
+        
+        const learnPages = [
+            'key-concepts', 'launch-screen', 'selecting-template', 
+            'interface', 'keyboard-shortcuts', 'working-with-labels',
+            'map-varieties', 'indesign-maps', 'map-creator-maps'
+        ];
+        
+        if (pageId === 'learn' || learnPages.includes(pageId)) {
+            sidebar.style.display = 'block';
+            contentWrapper.classList.add('with-sidebar');
+            this.setupLearnSidebar(pageId);
+        } else {
+            sidebar.style.display = 'none';
+            contentWrapper.classList.remove('with-sidebar');
+        }
+    }
+
+    setupLearnSidebar(currentPageId) {
+        const sidebar = document.getElementById('learn-nav');
+        sidebar.innerHTML = `
+            <div class="sil-sidebar-header">
+                <img src="images/logo.png" alt="Paratext Diagram Labeler" class="sil-sidebar-logo">
+            </div>
+            <ul class="sil-sidebar-nav">
+                <li><a href="#learn" data-page="learn" class="${currentPageId === 'learn' ? 'active' : ''}">Overview</a></li>
+                <li><a href="#key-concepts" data-page="key-concepts" class="${currentPageId === 'key-concepts' ? 'active' : ''}">Key Concepts</a></li>
+                <li><a href="#launch-screen" data-page="launch-screen" class="${currentPageId === 'launch-screen' ? 'active' : ''}">Launch Screen</a></li>
+                <li><a href="#selecting-template" data-page="selecting-template" class="${currentPageId === 'selecting-template' ? 'active' : ''}">Selecting a Template</a></li>
+                <li><a href="#interface" data-page="interface" class="${currentPageId === 'interface' ? 'active' : ''}">Interface Overview</a></li>
+                <li><a href="#keyboard-shortcuts" data-page="keyboard-shortcuts" class="${currentPageId === 'keyboard-shortcuts' ? 'active' : ''}">Keyboard Shortcuts</a></li>
+                <li><a href="#working-with-labels" data-page="working-with-labels" class="${currentPageId === 'working-with-labels' ? 'active' : ''}">Working with Labels</a></li>
+                <li class="nav-subsection">
+                    <a href="#map-varieties" data-page="map-varieties" class="${currentPageId === 'map-varieties' ? 'active' : ''}">Map Varieties</a>
+                </li>
+                <li class="nav-subsection">
+                    <a href="#indesign-maps" data-page="indesign-maps" class="${currentPageId === 'indesign-maps' ? 'active' : ''}">InDesign Maps</a>
+                </li>
+                <li class="nav-subsection">
+                    <a href="#map-creator-maps" data-page="map-creator-maps" class="${currentPageId === 'map-creator-maps' ? 'active' : ''}">Map Creator Maps</a>
+                </li>
+            </ul>
+        `;
+
+        // Setup sidebar navigation
+        const sidebarLinks = sidebar.querySelectorAll('a[data-page]');
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const page = link.getAttribute('data-page');
+                if (page) {
+                    window.location.hash = page;
+                }
+            });
+        });
+    }
+
     displayPage(pageId) {
-        const mainContent = document.querySelector('.main-content');
+        const mainContent = document.querySelector('.sil-content');
         
         switch(pageId) {
             case 'home':
@@ -60,6 +175,12 @@ class SiteManager {
                 break;
             case 'getting-started':
                 mainContent.innerHTML = this.getGettingStartedPage();
+                break;
+            case 'downloads':
+                mainContent.innerHTML = this.getDownloadsPage();
+                break;
+            case 'learn':
+                mainContent.innerHTML = this.getLearnOverviewPage();
                 break;
             case 'key-concepts':
                 mainContent.innerHTML = this.getKeyConceptsPage();
@@ -78,9 +199,6 @@ class SiteManager {
                 break;
             case 'keyboard-shortcuts':
                 mainContent.innerHTML = this.getKeyboardShortcutsPage();
-                break;
-            case 'downloads':
-                mainContent.innerHTML = this.getDownloadsPage();
                 break;
             case 'map-varieties':
                 mainContent.innerHTML = this.getMapVarietiesPage();
@@ -993,6 +1111,67 @@ class SiteManager {
                         <li><strong>Feedback Form:</strong> <a href="https://forms.gle/fVa6qjrsnx3k1ir17">Beta Testing Feedback</a></li>
                     </ul>
                 </div>
+            </div>
+        `;
+    }
+
+    getLearnOverviewPage() {
+        return `
+            <div class="content-section">
+                <h1>Learn</h1>
+                <p>Master the Paratext Diagram Labeler with our comprehensive guides and tutorials.</p>
+
+                <h2>User Guide</h2>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h3><a href="#key-concepts" data-page="key-concepts">Key Concepts</a></h3>
+                        <p>Understand the fundamental principles behind diagram labeling and how the application works.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3><a href="#launch-screen" data-page="launch-screen">Launch Screen</a></h3>
+                        <p>Learn how to navigate the initial setup and project selection process.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3><a href="#selecting-template" data-page="selecting-template">Selecting a Template</a></h3>
+                        <p>Choose the right template or create custom layouts for your mapping needs.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3><a href="#interface" data-page="interface">Interface Overview</a></h3>
+                        <p>Navigate the application interface efficiently with our detailed walkthrough.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3><a href="#keyboard-shortcuts" data-page="keyboard-shortcuts">Keyboard Shortcuts</a></h3>
+                        <p>Speed up your workflow with essential keyboard shortcuts and hotkeys.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3><a href="#working-with-labels" data-page="working-with-labels">Working with Labels</a></h3>
+                        <p>Master label creation, editing, and management for accurate map annotation.</p>
+                    </div>
+                </div>
+
+                <h2>Making Maps</h2>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h3><a href="#map-varieties" data-page="map-varieties">Map Varieties</a></h3>
+                        <p>Explore different types of maps and diagrams you can create and label.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3><a href="#indesign-maps" data-page="indesign-maps">InDesign Maps</a></h3>
+                        <p>Learn how to integrate your labeled data with Adobe InDesign workflows.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3><a href="#map-creator-maps" data-page="map-creator-maps">Map Creator Maps</a></h3>
+                        <p>Discover how to use labeled data with Map Creator applications.</p>
+                    </div>
+                </div>
+
+                <h2>Getting Help</h2>
+                <p>Need additional assistance? Check out these resources:</p>
+                <ul>
+                    <li><a href="#feedback" data-page="feedback">Feedback & Support</a> - Get help from our community and support team</li>
+                    <li><a href="https://github.com/sillsdev/paratext-diagram-labeler/issues" target="_blank">GitHub Issues</a> - Report bugs or request features</li>
+                    <li><a href="mailto:labeler+subscribe@groups.sall.com">Beta Program</a> - Join our beta testing community</li>
+                </ul>
             </div>
         `;
     }
