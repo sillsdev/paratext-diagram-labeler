@@ -8,91 +8,213 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="site-layout">
-        <!-- Header -->
-        <header class="site-header">
-            <div class="header-content">
-                <img src="images/logo.png" alt="Paratext Diagram Labeler" class="logo">
-                <div>
-                    <h1 class="site-title">Paratext Diagram Labeler</h1>
-                    <p class="site-subtitle">Prepare labels for maps and diagrams in Paratext</p>
+    <!-- Very Dark Blue Header Strip -->
+    <header class="sil-header-dark">
+        <div class="sil-container">
+            <div class="sil-header-layout">
+                <div class="sil-logo-container">
+                    <img src="images/sil_logo_glyph.png" alt="SIL" class="sil-logo">
+                </div>
+                <div class="sil-header-right">
+                    <div class="sil-header-actions">
+                        <a href="https://give.sil.org/campaign/597654/donate" class="sil-donate-btn" target="_blank">Donate</a>
+                    </div>
+                    <nav class="sil-main-nav">
+                        <ul class="sil-nav-menu">
+                            <li class="sil-nav-item">
+                                <a href="#home" class="sil-nav-link active" data-page="home">Home</a>
+                            </li>
+                            <li class="sil-nav-item">
+                                <a href="#getting-started" class="sil-nav-link" data-page="getting-started">Features</a>
+                            </li>
+                            <li class="sil-nav-item">
+                                <a href="#downloads" class="sil-nav-link" data-page="downloads">Downloads</a>
+                            </li>
+                            <li class="sil-nav-item">
+                                <a href="#learn" class="sil-nav-link" data-page="learn">Learn</a>
+                            </li>
+                            <li class="sil-nav-item">
+                                <a href="#feedback" class="sil-nav-link" data-page="feedback">Get Help</a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
-        </header>
+        </div>
+    </header>
 
-        <!-- Navigation -->
-        <nav class="site-nav">
-            <ul class="nav-menu">
-                <li class="nav-item">
-                    <a href="#home" class="nav-link active" data-page="home">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a href="#key-concepts" class="nav-link" data-page="key-concepts">Key Concepts</a>
-                </li>
-                <li class="nav-item">
-                    <a href="#getting-started" class="nav-link" data-page="getting-started">Getting Started</a>
-                </li>
-                <li class="nav-item">
-                    <a href="#downloads" class="nav-link" data-page="downloads">Downloads</a>
-                </li>
-            </ul>
-
-            <div class="nav-section">
-                <div class="nav-section-title">User Guide</div>
-                <ul class="nav-menu">
-                    <li class="nav-item">
-                        <a href="#launch-screen" class="nav-link" data-page="launch-screen">Launch Screen</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#selecting-template" class="nav-link" data-page="selecting-template">Selecting a Template</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#interface" class="nav-link" data-page="interface">Interface Overview</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#keyboard-shortcuts" class="nav-link" data-page="keyboard-shortcuts">Keyboard Shortcuts</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#working-with-labels" class="nav-link" data-page="working-with-labels">Working with Labels</a>
-                    </li>
-                </ul>
+    <!-- Medium Blue App Name Strip -->
+    <div class="sil-app-header">
+        <div class="sil-container">
+            <div class="sil-app-title-section">
+                <h1 class="sil-app-title">Paratext Diagram Labeler</h1>
             </div>
-
-            <div class="nav-section">
-                <div class="nav-section-title">Making Maps</div>
-                <ul class="nav-menu">
-                    <li class="nav-item">
-                        <a href="#map-varieties" class="nav-link" data-page="map-varieties">Map Varieties</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#indesign-maps" class="nav-link" data-page="indesign-maps">InDesign Maps</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#map-creator-maps" class="nav-link" data-page="map-creator-maps">Map Creator Maps</a>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="nav-section">
-                <div class="nav-section-title">Support</div>
-                <ul class="nav-menu">
-                    <li class="nav-item">
-                        <a href="#feedback" class="nav-link" data-page="feedback">Feedback & Support</a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Content will be dynamically loaded here -->
-        </main>
-
-        <!-- Footer -->
-        <footer class="site-footer">
-            <p>&copy; 2025 SIL Global. This is beta software under active development.</p>
-        </footer>
+        </div>
     </div>
+
+    <!-- Light Blue Language Technology Strip (Home page only) -->
+    <div class="sil-language-tech-strip" id="language-tech-strip">
+        <div class="sil-container">
+            <a href="https://software.sil.org/" class="sil-language-tech-link" target="_blank">SIL LANGUAGE TECHNOLOGY</a>
+        </div>
+    </div>
+
+    <!-- Breadcrumb Navigation (Non-home pages) -->
+    <div class="sil-breadcrumb-strip" id="breadcrumb-strip" style="display: none;">
+        <div class="sil-container">
+            <div class="sil-breadcrumb-nav">
+                <a href="#home" data-page="home">HOME</a>
+                <span class="sil-breadcrumb-separator">></span>
+                <span class="sil-breadcrumb-current" id="current-page-title">FEATURES</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Banner (Home page only) -->
+    <div class="sil-banner-section" id="banner-section">
+        <div class="sil-banner">
+            <img src="images/banner.png" alt="Paratext Diagram Labeler Banner" class="sil-banner-img">
+            <div class="sil-banner-overlay">
+                <div class="sil-banner-content">
+                    <img src="images/logo.png" alt="Paratext Diagram Labeler" class="sil-banner-icon">
+                    <p class="sil-banner-tagline">Prepare labels for maps and diagrams in Paratext</p>
+                    <a href="#downloads" class="sil-banner-download-btn" data-page="downloads">Downloads</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="sil-main">
+        <div class="sil-container">
+            <div class="sil-content-wrapper">
+                <div class="sil-content">
+                    <!-- Content will be dynamically loaded here -->
+                </div>
+                <aside class="sil-sidebar" id="learn-nav" style="display: none;">
+                    <!-- Learn page navigation will be inserted here -->
+                </aside>
+            </div>
+        </div>
+    </main>
+
+    <!-- SIL-style Footer -->
+    <footer class="sil-footer">
+        <div class="sil-container">
+            <div class="sil-footer-content">
+                <div class="sil-footer-section">
+                    <h4>About</h4>
+                    <ul>
+                        <li><a href="#home" data-page="home">Home</a></li>
+                        <li><a href="#getting-started" data-page="getting-started">Features</a></li>
+                        <li><a href="#downloads" data-page="downloads">Downloads</a></li>
+                        <li><a href="#learn" data-page="learn">Learn</a></li>
+                        <li><a href="#feedback" data-page="feedback">Get Help</a></li>
+                    </ul>
+                </div>
+                <div class="sil-footer-section">
+                    <h4>SIL Resources</h4>
+                    <ul>
+                        <li><a href="https://www.sil.org/about/discover" target="_blank">Discover SIL</a></li>
+                        <li><a href="https://www.sil.org/langculture" target="_blank">Language & Culture</a></li>
+                        <li><a href="https://www.sil.org/language-development" target="_blank">Language Development</a></li>
+                        <li><a href="https://www.sil.org/about/news" target="_blank">SIL News</a></li>
+                        <li><a href="https://software.sil.org/software-products/" target="_blank">Software Products</a></li>
+                    </ul>
+                </div>
+                <div class="sil-footer-section">
+                    <h4>Technical</h4>
+                    <ul>
+                        <li><a href="https://software.sil.org/news/" target="_blank">Software & Font News</a></li>
+                        <li><a href="https://lingtransoft.info/" target="_blank">LingTranSoft</a></li>
+                        <li><a href="https://www.ethnologue.com/" target="_blank">Ethnologue</a></li>
+                        <li><a href="https://iso639-3.sil.org/" target="_blank">Language Codes</a></li>
+                        <li><a href="https://software.sil.org/fonts/" target="_blank">Font Catalog</a></li>
+                    </ul>
+                </div>
+                <div class="sil-footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="https://www.sil.org/" target="_blank">SIL Global</a></li>
+                        <li><a href="https://software.sil.org/terms-of-use" target="_blank">Terms of Use</a></li>
+                        <li><a href="https://software.sil.org/privacy-policy" target="_blank">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sil-footer-bottom">
+                <p>This software is free to use, modify and redistribute. See the <a href="https://github.com/sillsdev/paratext-diagram-labeler" target="_blank">License</a>.</p>
+                <p>&copy; 2025 SIL Global. This is beta software under active development.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="site.js"></script>
+</body>
+</html>
+
+    <!-- Main Content -->
+    <main class="sil-main">
+        <div class="sil-container">
+            <div class="sil-content-wrapper">
+                <div class="sil-content">
+                    <!-- Content will be dynamically loaded here -->
+                </div>
+                <aside class="sil-sidebar" id="learn-nav" style="display: none;">
+                    <!-- Learn page navigation will be inserted here -->
+                </aside>
+            </div>
+        </div>
+    </main>
+
+    <!-- SIL-style Footer -->
+    <footer class="sil-footer">
+        <div class="sil-container">
+            <div class="sil-footer-content">
+                <div class="sil-footer-section">
+                    <h4>About</h4>
+                    <ul>
+                        <li><a href="#home" data-page="home">Home</a></li>
+                        <li><a href="#getting-started" data-page="getting-started">Getting Started</a></li>
+                        <li><a href="#downloads" data-page="downloads">Downloads</a></li>
+                        <li><a href="#learn" data-page="learn">Learn</a></li>
+                        <li><a href="#feedback" data-page="feedback">Feedback & Support</a></li>
+                    </ul>
+                </div>
+                <div class="sil-footer-section">
+                    <h4>SIL Resources</h4>
+                    <ul>
+                        <li><a href="https://www.sil.org/about/discover" target="_blank">Discover SIL</a></li>
+                        <li><a href="https://www.sil.org/langculture" target="_blank">Language & Culture</a></li>
+                        <li><a href="https://www.sil.org/language-development" target="_blank">Language Development</a></li>
+                        <li><a href="https://www.sil.org/about/news" target="_blank">SIL News</a></li>
+                        <li><a href="https://software.sil.org/software-products/" target="_blank">Software Products</a></li>
+                    </ul>
+                </div>
+                <div class="sil-footer-section">
+                    <h4>Technical</h4>
+                    <ul>
+                        <li><a href="https://software.sil.org/news/" target="_blank">Software & Font News</a></li>
+                        <li><a href="https://lingtransoft.info/" target="_blank">LingTranSoft</a></li>
+                        <li><a href="https://www.ethnologue.com/" target="_blank">Ethnologue</a></li>
+                        <li><a href="https://iso639-3.sil.org/" target="_blank">Language Codes</a></li>
+                        <li><a href="https://software.sil.org/fonts/" target="_blank">Font Catalog</a></li>
+                    </ul>
+                </div>
+                <div class="sil-footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="https://www.sil.org/" target="_blank">SIL Global</a></li>
+                        <li><a href="https://software.sil.org/terms-of-use" target="_blank">Terms of Use</a></li>
+                        <li><a href="https://software.sil.org/privacy-policy" target="_blank">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="sil-footer-bottom">
+                <p>This software is free to use, modify and redistribute. See the <a href="https://github.com/sillsdev/paratext-diagram-labeler" target="_blank">License</a>.</p>
+                <p>&copy; 2025 SIL Global. This is beta software under active development.</p>
+            </div>
+        </div>
+    </footer>
 
     <script src="site.js"></script>
 </body>

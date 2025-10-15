@@ -1,4 +1,25 @@
-/* Reset and base styles */
+/* SIL Software Product Website Styles - Exact Color Match */
+:root {
+    --sil-very-dark-blue: #011c2f;
+    --sil-medium-blue: #004789;
+    --sil-light-blue: #00a7e0;
+    --sil-nav-text: #c2c8c2;
+    --sil-banner-overlay: #1d2327aa;
+    --sil-text-dark: #333333;
+    --sil-text-medium: #666666;
+    --sil-text-light: #999999;
+    --sil-bg-white: #ffffff;
+    --sil-bg-light: #f8f9fa;
+    --sil-bg-gray: #f5f5f5;
+    --sil-border-light: #e0e0e0;
+    --sil-border-medium: #cccccc;
+    --sil-success: #28a745;
+    --sil-warning: #ffc107;
+    --sil-container-width: 1200px;
+    --sil-sidebar-width: 280px;
+}
+
+/* Reset and Base Styles */
 * {
     margin: 0;
     padding: 0;
@@ -6,423 +27,700 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 16px;
     line-height: 1.6;
-    color: #333;
-    background-color: #f8f9fa;
+    color: var(--sil-text-dark);
+    background-color: var(--sil-bg-white);
 }
 
-/* Layout Grid */
-.site-layout {
-    display: grid;
-    grid-template-areas: 
-        "header header"
-        "nav main"
-        "footer footer";
-    grid-template-columns: 280px 1fr;
-    grid-template-rows: auto 1fr auto;
-    min-height: 100vh;
+.sil-container {
+    max-width: var(--sil-container-width);
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
-/* Header */
-.site-header {
-    grid-area: header;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+/* Very Dark Blue Header Strip */
+.sil-header-dark {
+    background-color: var(--sil-very-dark-blue);
     color: white;
-    padding: 1rem 2rem;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 10px 0;
 }
 
-.header-content {
+.sil-header-layout {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.sil-logo-container {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    max-width: 1200px;
-    margin: 0 auto;
 }
 
-.logo {
-    width: 48px;
-    height: 48px;
-    border-radius: 8px;
-    object-fit: contain;
-    background: rgba(255,255,255,0.1);
-    padding: 4px;
+.sil-logo {
+    height: 75px;
+    width: auto;
 }
 
-.site-title {
-    font-size: 1.8rem;
-    font-weight: 600;
-    margin: 0;
+.sil-header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
 }
 
-.site-subtitle {
-    font-size: 0.9rem;
-    opacity: 0.9;
-    margin: 0;
+.sil-header-actions {
+    display: flex;
+    align-items: center;
 }
 
-/* Navigation */
-.site-nav {
-    grid-area: nav;
-    background: #ffffff;
-    border-right: 1px solid #e9ecef;
-    padding: 2rem 0;
-    box-shadow: 2px 0 10px rgba(0,0,0,0.05);
-}
-
-.nav-menu {
-    list-style: none;
-    padding: 0 1rem;
-}
-
-.nav-item {
-    margin-bottom: 0.5rem;
-}
-
-.nav-link {
-    display: block;
-    padding: 0.75rem 1rem;
-    color: #495057;
+.sil-donate-btn {
+    background-color: var(--sil-light-blue);
+    color: white;
+    padding: 4px 12px;
     text-decoration: none;
-    border-radius: 8px;
+    border-radius: 4px;
+    font-weight: normal;
+    font-size: 14px;
     transition: all 0.2s ease;
+}
+
+.sil-donate-btn:hover {
+    background-color: #0095c7;
+    transform: translateY(-1px);
+}
+
+/* Main Navigation in Dark Header */
+.sil-main-nav {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.sil-nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+    margin: 0;
+    padding: 0;
+}
+
+.sil-nav-item {
+    position: relative;
+}
+
+.sil-nav-link {
+    color: var(--sil-nav-text);
+    text-decoration: none;
     font-weight: 500;
+    font-size: 15px;
+    padding: 8px 12px;
+    transition: all 0.2s ease;
+    display: block;
+    line-height: 1;
+    border-radius: 4px;
 }
 
-.nav-link:hover {
-    background: #f8f9fa;
-    color: #667eea;
-    transform: translateX(4px);
-}
-
-.nav-link.active {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.sil-nav-link:hover, .sil-nav-link.active {
+    background-color: #005bb9;
     color: white;
 }
 
-.nav-section {
-    margin-top: 2rem;
-    padding-top: 1rem;
-    border-top: 1px solid #e9ecef;
+/* Medium Blue App Header Strip */
+.sil-app-header {
+    background-color: var(--sil-medium-blue);
+    color: white;
+    padding: 4px 0;
 }
 
-/* Add separator before Support section */
-.nav-section:last-child {
-    border-top: 2px solid #667eea;
-    margin-top: 2.5rem;
-    padding-top: 1.5rem;
+.sil-app-title-section {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
 }
 
-.nav-section-title {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #6c757d;
+.sil-app-icon {
+    display: none;
+}
+
+.sil-app-title {
+    font-size: 28px;
+    font-weight: normal;
+    margin: 0;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 1rem;
-    padding: 0 1rem;
+    letter-spacing: 1px;
 }
 
-/* Main content */
-.main-content {
-    grid-area: main;
-    padding: 2rem;
-    max-width: 1000px;
-    margin: 0 auto;
-    width: 100%;
+/* Light Blue Language Technology Strip (Home only) */
+.sil-language-tech-strip {
+    background-color: var(--sil-light-blue);
+    padding: 4px 0;
+    text-align: left;
 }
 
-.page-header {
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid #e9ecef;
-}
-
-.page-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #212529;
-    margin-bottom: 0.5rem;
-}
-
-.page-subtitle {
-    font-size: 1.1rem;
-    color: #6c757d;
-    margin: 0;
-}
-
-/* Content sections */
-.content-section {
-    margin-bottom: 3rem;
-}
-
-.section-title {
-    font-size: 1.8rem;
-    font-weight: 600;
-    color: #495057;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid #dee2e6;
-}
-
-.section-subtitle {
-    font-size: 1.3rem;
-    font-weight: 500;
-    color: #495057;
-    margin: 2rem 0 1rem 0;
-}
-
-/* Special text styles - preserve from original */
-.searchTerm {
-    font-family: "Courier New", Courier, monospace;
-    background-color: #eeeeee;
-    color: #222222;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-size: 0.9em;
-    border: 1px solid #ddd;
-    font-weight: 500;
-}
-
-.maroonOval {
-    background-color: #980000;
-    color: #ffffff;
-    border-radius: 15px;
-    padding: 3px 8px;
-    display: inline-block;
-    font-weight: 600;
-    font-size: 0.85em;
-    text-align: center;
-    min-width: 20px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-}
-
-/* Cards and callouts */
-.info-card {
-    background: white;
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    border: 1px solid #e9ecef;
-    transition: all 0.2s ease;
-}
-
-.info-card:hover {
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    transform: translateY(-2px);
-}
-
-.warning-card {
-    background: #fff3cd;
-    border: 1px solid #ffeaa7;
-    border-left: 4px solid #ffc107;
-}
-
-.warning-card:hover {
-    background: #fef7d6;
-}
-
-.info-card h3 {
-    margin-top: 0;
-    color: #495057;
-}
-
-.info-card h4 {
-    margin-top: 1.5rem;
-    margin-bottom: 0.5rem;
-    color: #495057;
-}
-
-/* Images */
-img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    border: 1px solid #e9ecef;
-    margin: 0.5rem 0;
-}
-
-.logo {
-    width: 48px;
-    height: 48px;
-    border-radius: 8px;
-    object-fit: contain;
-    background: rgba(255,255,255,0.1);
-    padding: 4px;
-    box-shadow: none;
-    border: none;
-    margin: 0;
-}
-
-/* Lists */
-ul, ol {
-    margin: 1rem 0;
-    padding-left: 2rem;
-}
-
-li {
-    margin-bottom: 0.5rem;
-}
-
-/* Links */
-a {
-    color: #667eea;
+.sil-language-tech-link {
+    color: white;
     text-decoration: none;
-    font-weight: 500;
+    font-weight: normal;
+    font-size: 14px;
+    letter-spacing: 1px;
 }
 
-a:hover {
-    color: #764ba2;
+.sil-language-tech-link:hover {
     text-decoration: underline;
 }
 
-/* Buttons */
-.btn {
-    display: inline-block;
-    padding: 0.75rem 1.5rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+/* Breadcrumb Strip (Non-home pages) */
+.sil-breadcrumb-strip {
+    background-color: var(--sil-light-blue);
+    color: white;
+    padding: 4px 0;
+}
+
+.sil-breadcrumb-nav {
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.sil-breadcrumb-nav a {
     color: white;
     text-decoration: none;
+}
+
+.sil-breadcrumb-nav a:hover {
+    text-decoration: underline;
+}
+
+.sil-breadcrumb-separator {
+    margin: 0 8px;
+    color: white;
+}
+
+.sil-breadcrumb-current {
+    color: white;
+}
+
+/* Banner Section (Home only) */
+.sil-banner-section {
+    position: relative;
+}
+
+.sil-banner {
+    position: relative;
+    height: 300px;
+    overflow: hidden;
+}
+
+.sil-banner-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.sil-banner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sil-banner-content {
+    background-color: var(--sil-banner-overlay);
+    padding: 40px;
     border-radius: 8px;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    border: none;
-    cursor: pointer;
+    text-align: center;
+    color: white;
+    max-width: 500px;
 }
 
-.btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+.sil-banner-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.sil-banner-tagline {
+    font-size: 18px;
+    margin-bottom: 25px;
+    line-height: 1.4;
+}
+
+.sil-banner-download-btn {
+    background-color: var(--sil-medium-blue);
     color: white;
+    padding: 12px 30px;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 16px;
+    display: inline-block;
+    transition: all 0.2s ease;
+}
+
+.sil-banner-download-btn:hover {
+    background-color: var(--sil-light-blue);
+    color: var(--sil-very-dark-blue);
+    transform: translateY(-2px);
+}
+
+/* Main Content Layout */
+.sil-main {
+    min-height: 500px;
+    padding: 40px 0;
+    background-color: var(--sil-bg-white);
+}
+
+.sil-content-wrapper {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+}
+
+.sil-content-wrapper.with-sidebar {
+    grid-template-columns: 1fr var(--sil-sidebar-width);
+}
+
+.sil-content {
+    max-width: 100%;
+}
+
+/* Learn Page Sidebar */
+.sil-sidebar {
+    background-color: var(--sil-bg-gray);
+    padding: 25px;
+    border-radius: 8px;
+    height: fit-content;
+    position: sticky;
+    top: 20px;
+}
+
+.sil-sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--sil-border-medium);
+}
+
+.sil-sidebar-logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 6px;
+}
+
+.sil-sidebar-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--sil-text-dark);
+}
+
+.sil-sidebar-nav {
+    list-style: none;
+}
+
+.sil-sidebar-nav li {
+    margin-bottom: 8px;
+}
+
+.sil-sidebar-nav a {
+    display: block;
+    padding: 10px 15px;
+    color: var(--sil-text-dark);
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.sil-sidebar-nav a:hover, .sil-sidebar-nav a.active {
+    background-color: var(--sil-medium-blue);
+    color: white;
+}
+
+.sil-sidebar-nav .nav-subsection {
+    margin-left: 15px;
+    margin-top: 8px;
+}
+
+.sil-sidebar-nav .nav-subsection a {
+    font-size: 13px;
+    color: var(--sil-text-medium);
+}
+
+/* Content Styles */
+.content-section {
+    margin-bottom: 50px;
+}
+
+.content-section h1 {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--sil-text-dark);
+    margin-bottom: 25px;
+    line-height: 1.2;
+}
+
+.content-section h2 {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--sil-text-dark);
+    margin: 35px 0 20px 0;
+    line-height: 1.3;
+}
+
+.content-section h3 {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--sil-text-dark);
+    margin: 30px 0 15px 0;
+}
+
+.content-section h4 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--sil-text-dark);
+    margin: 25px 0 12px 0;
+}
+
+.content-section p {
+    margin-bottom: 18px;
+    line-height: 1.7;
+    color: var(--sil-text-dark);
+}
+
+.content-section ul, .content-section ol {
+    margin: 18px 0 18px 30px;
+}
+
+.content-section li {
+    margin-bottom: 8px;
+    line-height: 1.6;
+}
+
+.content-section a {
+    color: var(--sil-medium-blue);
     text-decoration: none;
 }
 
-.btn-secondary {
-    background: #6c757d;
+.content-section a:hover {
+    text-decoration: underline;
 }
 
-.btn-outline {
-    background: transparent;
-    border: 2px solid #667eea;
-    color: #667eea;
+/* Feature Cards */
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin: 40px 0;
 }
 
-.btn-outline:hover {
-    background: #667eea;
-    color: white;
+.feature-card {
+    background-color: var(--sil-bg-light);
+    padding: 30px;
+    border-radius: 8px;
+    border: 1px solid var(--sil-border-light);
+    transition: all 0.2s ease;
 }
 
-/* Footer */
-.site-footer {
-    grid-area: footer;
-    background: #495057;
-    color: white;
-    padding: 2rem;
+.feature-card:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.feature-card h3 {
+    color: var(--sil-medium-blue);
+    margin-bottom: 15px;
+}
+
+.feature-card img {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    border-radius: 6px;
+    margin: 15px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Download Section */
+.download-section {
+    background-color: var(--sil-light-blue);
+    padding: 40px;
+    border-radius: 8px;
+    margin: 40px 0;
     text-align: center;
 }
 
+.download-section h2 {
+    color: var(--sil-medium-blue);
+    margin-bottom: 20px;
+}
+
+.download-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 25px;
+}
+
+.download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 30px;
+    background-color: var(--sil-medium-blue);
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.download-btn:hover {
+    background-color: var(--sil-very-dark-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3);
+}
+
+.download-btn-secondary {
+    background-color: white;
+    color: var(--sil-medium-blue);
+    border: 2px solid var(--sil-medium-blue);
+}
+
+.download-btn-secondary:hover {
+    background-color: var(--sil-medium-blue);
+    color: white;
+}
+
 /* Tables */
-table {
+.content-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 1rem 0;
-    background: white;
+    margin: 25px 0;
+    background-color: white;
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-th, td {
-    padding: 0.75rem;
+.content-table th {
+    background-color: var(--sil-medium-blue);
+    color: white;
+    padding: 15px;
     text-align: left;
-    border-bottom: 1px solid #e9ecef;
-}
-
-th {
-    background: #f8f9fa;
     font-weight: 600;
-    color: #495057;
 }
 
-/* Responsive design */
+.content-table td {
+    padding: 15px;
+    border-bottom: 1px solid var(--sil-border-light);
+}
+
+.content-table tr:last-child td {
+    border-bottom: none;
+}
+
+.content-table tr:nth-child(even) {
+    background-color: var(--sil-bg-light);
+}
+
+/* Code Blocks */
+.content-section pre, .content-section code {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    background-color: var(--sil-bg-gray);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.content-section pre {
+    padding: 20px;
+    margin: 20px 0;
+    overflow-x: auto;
+    border: 1px solid var(--sil-border-light);
+}
+
+/* SIL Footer Styles */
+.sil-footer {
+    background-color: var(--sil-text-dark);
+    color: white;
+    padding: 50px 0 30px 0;
+    margin-top: 60px;
+}
+
+.sil-footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.sil-footer-section h4 {
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.sil-footer-section ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.sil-footer-section li {
+    margin-bottom: 10px;
+}
+
+.sil-footer-section a {
+    color: #cccccc;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.2s ease;
+}
+
+.sil-footer-section a:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+.sil-footer-logo {
+    width: 60px;
+    height: 60px;
+    filter: brightness(0) invert(1);
+}
+
+.sil-footer-bottom {
+    border-top: 1px solid #555555;
+    padding-top: 30px;
+    text-align: center;
+    color: #cccccc;
+    font-size: 14px;
+}
+
+.sil-footer-bottom p {
+    margin-bottom: 10px;
+}
+
+.sil-footer-bottom a {
+    color: var(--sil-light-blue);
+    text-decoration: none;
+}
+
+.sil-footer-bottom a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
-    .site-layout {
-        grid-template-areas: 
-            "header"
-            "nav"
-            "main"
-            "footer";
+    .sil-header-top-row {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+        align-items: center;
+    }
+    
+    .sil-main-nav {
+        justify-content: center;
+    }
+    
+    .sil-nav-menu {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .sil-nav-link {
+        padding: 12px;
+        text-align: center;
+    }
+    
+    .sil-app-title-section {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+    
+    .sil-app-title {
+        font-size: 22px;
+    }
+    
+    .sil-banner {
+        height: 250px;
+    }
+    
+    .sil-banner-content {
+        padding: 25px;
+        margin: 0 20px;
+    }
+    
+    .sil-banner-icon {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .sil-banner-tagline {
+        font-size: 16px;
+    }
+    
+    .sil-content-wrapper.with-sidebar {
         grid-template-columns: 1fr;
     }
     
-    .site-nav {
-        position: relative;
-        border-right: none;
-        border-bottom: 1px solid #e9ecef;
-        padding: 1rem 0;
+    .sil-sidebar {
+        order: -1;
+        position: static;
     }
     
-    .nav-menu {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        padding: 0 1rem;
-    }
-    
-    .nav-item {
-        margin-bottom: 0;
-    }
-    
-    .nav-section {
-        margin-top: 0;
-        padding-top: 0;
-        border-top: none;
-    }
-    
-    .nav-section-title {
-        display: none;
-    }
-    
-    .main-content {
-        padding: 1rem;
-    }
-    
-    .page-title {
-        font-size: 2rem;
-    }
-    
-    .header-content {
+    .download-buttons {
         flex-direction: column;
+        align-items: center;
+    }
+    
+    .feature-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .sil-footer-content {
+        grid-template-columns: 1fr;
         text-align: center;
-        gap: 0.5rem;
     }
 }
 
-/* Utility classes */
-.text-center { text-align: center; }
-.text-muted { color: #6c757d; }
-.mb-2 { margin-bottom: 1rem; }
-.mb-3 { margin-bottom: 1.5rem; }
-.mt-2 { margin-top: 1rem; }
-.mt-3 { margin-top: 1.5rem; }
-
-/* Code blocks */
-pre, code {
-    font-family: 'Courier New', monospace;
-    background: #f8f9fa;
-    border-radius: 4px;
-}
-
-code {
-    padding: 2px 4px;
-    font-size: 0.9em;
-}
-
-pre {
-    padding: 1rem;
-    overflow-x: auto;
-    border: 1px solid #e9ecef;
+@media (max-width: 480px) {
+    .sil-container {
+        padding: 0 15px;
+    }
+    
+    .sil-main {
+        padding: 20px 0;
+    }
+    
+    .content-section h1 {
+        font-size: 28px;
+    }
+    
+    .content-section h2 {
+        font-size: 22px;
+    }
+    
+    .download-section {
+        padding: 25px 20px;
+    }
+    
+    .feature-card {
+        padding: 20px;
+    }
+    
+    .sil-banner-content {
+        padding: 20px;
+    }
 }
