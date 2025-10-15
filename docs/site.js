@@ -626,10 +626,22 @@ class SiteManager {
                 <p>Download the latest version from GitHub Releases:</p>
                 
                 <div class="info-card">
-                    <iframe src="https://github.com/sillsdev/paratext-diagram-labeler/releases" 
-                            style="width: 100%; height: 600px; border: 1px solid #e9ecef; border-radius: 8px;"
-                            title="GitHub Releases">
-                    </iframe>
+                    <h3>🔗 GitHub Releases</h3>
+                    <p>Visit the official releases page to download the latest version of Paratext Diagram Labeler:</p>
+                    <a href="https://github.com/sillsdev/paratext-diagram-labeler/releases" target="_blank" class="btn" style="display: inline-block; padding: 12px 24px; background: #28a745; color: white; text-decoration: none; border-radius: 6px; font-weight: 600; margin: 10px 0;">
+                        📥 Download from GitHub Releases
+                    </a>
+                    <p style="margin-top: 10px;"><small><em>Opens in a new tab</em></small></p>
+                    
+                    <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 6px; border-left: 4px solid #007bff;">
+                        <h4>What you'll find on the releases page:</h4>
+                        <ul style="margin: 10px 0;">
+                            <li><strong>Latest stable version</strong> - Recommended for most users</li>
+                            <li><strong>Beta releases</strong> - For testing new features</li>
+                            <li><strong>Download assets</strong> - Installers for Windows, Mac, and Linux</li>
+                            <li><strong>Release notes</strong> - What's new in each version</li>
+                        </ul>
+                    </div>
                 </div>
                 
                 <div class="info-card">
