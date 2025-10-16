@@ -253,7 +253,7 @@ class SiteManager {
                 <p>If you didn’t already sign up for the beta test program, please do so now by sending an email to <a href="mailto:labeler+subscribe@groups.sall.com">labeler+subscribe@groups.sall.com</a>, and then click the confirm link in the email you receive in reply.</p>
                 <p>As this is beta software and primarily intended to test the user experience for integration into Paratext 10:</p>
                 <ul>
-                    <li>Don’t expect a patch system. Upgrading to the latest version means downloading the installer again and running it replace your previous version.</li>
+                    <li>Don’t expect a patch system. Upgrading to the latest version means downloading the installer again and running it to replace your previous version.</li>
                     <li>The app is under active development, and the underlying data structures for representing map data may change. However, we do not anticipate that such changes will have any more impact on users than a typical version update would. E.g. Minor adjustments to the look and feel in order to support the new functionality.</li>
                     <li>The Mac and Linux versions are relatively untested so far. We’d be glad for any help in testing them out.</li>
                 </ul>
