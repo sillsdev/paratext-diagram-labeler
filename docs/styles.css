@@ -220,19 +220,19 @@ body {
 
 .sil-banner-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    top: 15px;
+    left: 20%;
+    right: 20%;
+    bottom: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: var(--sil-banner-overlay);
+    border-radius: 12px;
 }
 
 .sil-banner-content {
-    background-color: var(--sil-banner-overlay);
     padding: 40px;
-    border-radius: 8px;
     text-align: center;
     color: white;
     max-width: 500px;
@@ -369,6 +369,11 @@ body {
     color: var(--sil-text-dark);
     margin-bottom: 25px;
     line-height: 1.2;
+}
+
+.page-title {
+    border-bottom: 3px solid #00a7e0;
+    padding-bottom: 20px;
 }
 
 .content-section h2 {

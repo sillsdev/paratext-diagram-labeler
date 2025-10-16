@@ -1013,7 +1013,7 @@ class SiteManager {
   getLearnOverviewPage() {
     return `
             <div class="content-section">
-                <h1>Learn</h1>
+                <h1 class="page-title">Learn</h1>
                 <p>Master the Paratext Diagram Labeler with our comprehensive guides and tutorials.</p>
 
                 <h2>User Guide</h2>
