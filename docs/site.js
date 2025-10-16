@@ -1019,27 +1019,27 @@ class SiteManager {
                 <h2>User Guide</h2>
                 <div class="feature-grid">
                     <div class="feature-card">
-                        <h3><a href="#key-concepts" data-page="key-concepts">Key Concepts</a></h3>
+                        <h3><span style="font-size: 24px; margin-right: 8px;">💡</span><a href="#key-concepts" data-page="key-concepts">Key Concepts</a></h3>
                         <p>Understand the fundamental principles behind diagram labeling and how the application works.</p>
                     </div>
                     <div class="feature-card">
-                        <h3><a href="#launch-screen" data-page="launch-screen">Launch Screen</a></h3>
+                        <h3><span style="font-size: 24px; margin-right: 8px;">🚀</span><a href="#launch-screen" data-page="launch-screen">Launch Screen</a></h3>
                         <p>Learn how to navigate the initial setup and project selection process.</p>
                     </div>
                     <div class="feature-card">
-                        <h3><a href="#selecting-template" data-page="selecting-template">Selecting a Template</a></h3>
+                        <h3><span style="font-size: 24px; margin-right: 8px;">📋</span><a href="#selecting-template" data-page="selecting-template">Selecting a Template</a></h3>
                         <p>Choose the right template or create custom layouts for your mapping needs.</p>
                     </div>
                     <div class="feature-card">
-                        <h3><a href="#interface" data-page="interface">Interface Overview</a></h3>
+                        <h3><span style="font-size: 24px; margin-right: 8px;">🖥️</span><a href="#interface" data-page="interface">Interface Overview</a></h3>
                         <p>Navigate the application interface efficiently with our detailed walkthrough.</p>
                     </div>
                     <div class="feature-card">
-                        <h3><a href="#keyboard-shortcuts" data-page="keyboard-shortcuts">Keyboard Shortcuts</a></h3>
+                        <h3><span style="font-size: 24px; margin-right: 8px;">⌨️</span><a href="#keyboard-shortcuts" data-page="keyboard-shortcuts">Keyboard Shortcuts</a></h3>
                         <p>Speed up your workflow with essential keyboard shortcuts and hotkeys.</p>
                     </div>
                     <div class="feature-card">
-                        <h3><a href="#working-with-labels" data-page="working-with-labels">Working with Labels</a></h3>
+                        <h3><span style="font-size: 24px; margin-right: 8px;">🏷️</span><a href="#working-with-labels" data-page="working-with-labels">Working with Labels</a></h3>
                         <p>Master label creation, editing, and management for accurate map annotation.</p>
                     </div>
                 </div>
@@ -1047,15 +1047,15 @@ class SiteManager {
                 <h2>Making Maps</h2>
                 <div class="feature-grid">
                     <div class="feature-card">
-                        <h3><a href="#map-varieties" data-page="map-varieties">Map Varieties</a></h3>
+                        <h3><span style="font-size: 24px; margin-right: 8px;">🗺️</span><a href="#map-varieties" data-page="map-varieties">Map Varieties</a></h3>
                         <p>Understand Map Varieties in the SIL Map Repository.</p>
                     </div>
                     <div class="feature-card">
-                        <h3><a href="#indesign-maps" data-page="indesign-maps">InDesign Maps</a></h3>
+                        <h3><span style="font-size: 24px; margin-right: 8px;">📐</span><a href="#indesign-maps" data-page="indesign-maps">InDesign Maps</a></h3>
                         <p>Learn how to integrate your labeled data with Adobe InDesign workflows.</p>
                     </div>
                     <div class="feature-card">
-                        <h3><a href="#map-creator-maps" data-page="map-creator-maps">Map Creator Maps</a></h3>
+                        <h3><span style="font-size: 24px; margin-right: 8px;">🛠️</span><a href="#map-creator-maps" data-page="map-creator-maps">Map Creator Maps</a></h3>
                         <p>Discover how to use labeled data with Map Creator applications.</p>
                     </div>
                 </div>
