@@ -1,237 +1,262 @@
 // Simple JavaScript for navigation and page management
 class SiteManager {
-    constructor() {
-        this.pages = new Map();
-        this.currentPage = '';
-        this.init();
-    }
+  constructor() {
+    this.pages = new Map();
+    this.currentPage = '';
+    this.init();
+  }
 
-    init() {
-        // Initialize navigation
-        this.setupNavigation();
-        
-        // Load initial page
-        const hash = window.location.hash.slice(1) || 'home';
-        this.loadPage(hash);
-        
-        // Handle hash changes
-        window.addEventListener('hashchange', () => {
-            const page = window.location.hash.slice(1) || 'home';
-            this.loadPage(page);
-        });
-    }
+  init() {
+    // Initialize navigation
+    this.setupNavigation();
 
-    setupNavigation() {
-        const navLinks = document.querySelectorAll('.sil-nav-link');
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const page = link.getAttribute('data-page');
-                if (page) {
-                    window.location.hash = page;
-                }
-            });
-        });
+    // Load initial page
+    const hash = window.location.hash.slice(1) || 'home';
+    this.loadPage(hash);
 
-        // Setup footer navigation
-        const footerLinks = document.querySelectorAll('.sil-footer a[data-page]');
-        footerLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const page = link.getAttribute('data-page');
-                if (page) {
-                    window.location.hash = page;
-                }
-            });
-        });
-    }
+    // Handle hash changes
+    window.addEventListener('hashchange', () => {
+      const page = window.location.hash.slice(1) || 'home';
+      this.loadPage(page);
+    });
+  }
 
-    loadPage(pageId) {
-        // Remove active class from all nav links
-        document.querySelectorAll('.sil-nav-link').forEach(link => {
-            link.classList.remove('active');
-        });
-        
-        // Add active class to current page link
-        const currentLink = document.querySelector(`[data-page="${pageId}"]`);
-        if (currentLink) {
-            currentLink.classList.add('active');
+  setupNavigation() {
+    const navLinks = document.querySelectorAll('.sil-nav-link');
+    navLinks.forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const page = link.getAttribute('data-page');
+        if (page) {
+          window.location.hash = page;
         }
-        
-        // Handle home page vs other pages display
-        this.handlePageLayout(pageId);
-        
-        // Handle Learn page sidebar
-        this.handleLearnNavigation(pageId);
-        
-        // Load page content
-        this.displayPage(pageId);
-        this.currentPage = pageId;
-    }
+      });
+    });
 
-    handlePageLayout(pageId) {
-        const languageTechStrip = document.getElementById('language-tech-strip');
-        const breadcrumbStrip = document.getElementById('breadcrumb-strip');
-        const bannerSection = document.getElementById('banner-section');
-        const currentPageTitle = document.getElementById('current-page-title');
-        
-        if (pageId === 'home') {
-            // Show home page elements
-            languageTechStrip.style.display = 'block';
-            bannerSection.style.display = 'block';
-            breadcrumbStrip.style.display = 'none';
-        } else {
-            // Show non-home page elements
-            languageTechStrip.style.display = 'none';
-            bannerSection.style.display = 'none';
-            breadcrumbStrip.style.display = 'block';
-            
-            // Update breadcrumb text
-            const pageTitles = {
-                'getting-started': 'FEATURES',
-                'downloads': 'DOWNLOADS',
-                'learn': 'LEARN',
-                'key-concepts': 'LEARN > KEY CONCEPTS',
-                'launch-screen': 'LEARN > LAUNCH SCREEN',
-                'selecting-template': 'LEARN > SELECTING TEMPLATE',
-                'interface': 'LEARN > INTERFACE',
-                'keyboard-shortcuts': 'LEARN > KEYBOARD SHORTCUTS',
-                'working-with-labels': 'LEARN > WORKING WITH LABELS',
-                'map-varieties': 'LEARN > MAP VARIETIES',
-                'indesign-maps': 'LEARN > INDESIGN MAPS',
-                'map-creator-maps': 'LEARN > MAP CREATOR MAPS',
-                'feedback': 'GET HELP'
-            };
-            
-            currentPageTitle.textContent = pageTitles[pageId] || pageId.toUpperCase();
+    // Setup footer navigation
+    const footerLinks = document.querySelectorAll('.sil-footer a[data-page]');
+    footerLinks.forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const page = link.getAttribute('data-page');
+        if (page) {
+          window.location.hash = page;
         }
+      });
+    });
+  }
+
+  loadPage(pageId) {
+    // Remove active class from all nav links
+    document.querySelectorAll('.sil-nav-link').forEach(link => {
+      link.classList.remove('active');
+    });
+
+    // Add active class to current page link
+    const currentLink = document.querySelector(`[data-page="${pageId}"]`);
+    if (currentLink) {
+      currentLink.classList.add('active');
     }
 
-    handleLearnNavigation(pageId) {
-        const sidebar = document.getElementById('learn-nav');
-        const contentWrapper = document.querySelector('.sil-content-wrapper');
-        
-        const learnPages = [
-            'key-concepts', 'launch-screen', 'selecting-template', 
-            'interface', 'keyboard-shortcuts', 'working-with-labels',
-            'map-varieties', 'indesign-maps', 'map-creator-maps'
-        ];
-        
-        if (pageId === 'learn' || learnPages.includes(pageId)) {
-            sidebar.style.display = 'block';
-            contentWrapper.classList.add('with-sidebar');
-            this.setupLearnSidebar(pageId);
-        } else {
-            sidebar.style.display = 'none';
-            contentWrapper.classList.remove('with-sidebar');
-        }
-    }
+    // Handle home page vs other pages display
+    this.handlePageLayout(pageId);
 
-    setupLearnSidebar(currentPageId) {
-        const sidebar = document.getElementById('learn-nav');
-        sidebar.innerHTML = `
+    // Handle Learn page sidebar
+    this.handleLearnNavigation(pageId);
+
+    // Load page content
+    this.displayPage(pageId);
+    this.currentPage = pageId;
+  }
+
+  handlePageLayout(pageId) {
+    const languageTechStrip = document.getElementById('language-tech-strip');
+    const breadcrumbStrip = document.getElementById('breadcrumb-strip');
+    const bannerSection = document.getElementById('banner-section');
+    const currentPageTitle = document.getElementById('current-page-title');
+
+    if (pageId === 'home') {
+      // Show home page elements
+      languageTechStrip.style.display = 'block';
+      bannerSection.style.display = 'block';
+      breadcrumbStrip.style.display = 'none';
+    } else {
+      // Show non-home page elements
+      languageTechStrip.style.display = 'none';
+      bannerSection.style.display = 'none';
+      breadcrumbStrip.style.display = 'block';
+
+      // Update breadcrumb text
+      const pageTitles = {
+        'getting-started': 'PREREQUISITES',
+        downloads: 'DOWNLOADS',
+        learn: 'LEARN',
+        'key-concepts': 'LEARN > KEY CONCEPTS',
+        'launch-screen': 'LEARN > LAUNCH SCREEN',
+        'selecting-template': 'LEARN > SELECTING TEMPLATE',
+        interface: 'LEARN > INTERFACE',
+        'keyboard-shortcuts': 'LEARN > KEYBOARD SHORTCUTS',
+        'working-with-labels': 'LEARN > WORKING WITH LABELS',
+        'map-varieties': 'LEARN > MAP VARIETIES',
+        'indesign-maps': 'LEARN > INDESIGN MAPS',
+        'map-creator-maps': 'LEARN > MAP CREATOR MAPS',
+        feedback: 'FEEDBACK',
+      };
+
+      currentPageTitle.textContent = pageTitles[pageId] || pageId.toUpperCase();
+    }
+  }
+
+  handleLearnNavigation(pageId) {
+    const sidebar = document.getElementById('learn-nav');
+    const contentWrapper = document.querySelector('.sil-content-wrapper');
+
+    const learnPages = [
+      'key-concepts',
+      'launch-screen',
+      'selecting-template',
+      'interface',
+      'keyboard-shortcuts',
+      'working-with-labels',
+      'map-varieties',
+      'indesign-maps',
+      'map-creator-maps',
+    ];
+
+    if (pageId === 'learn' || learnPages.includes(pageId)) {
+      sidebar.style.display = 'block';
+      contentWrapper.classList.add('with-sidebar');
+      this.setupLearnSidebar(pageId);
+    } else {
+      sidebar.style.display = 'none';
+      contentWrapper.classList.remove('with-sidebar');
+    }
+  }
+
+  setupLearnSidebar(currentPageId) {
+    const sidebar = document.getElementById('learn-nav');
+    sidebar.innerHTML = `
             <div class="sil-sidebar-header">
                 <img src="images/logo.png" alt="Paratext Diagram Labeler" class="sil-sidebar-logo">
             </div>
             <ul class="sil-sidebar-nav">
-                <li><a href="#learn" data-page="learn" class="${currentPageId === 'learn' ? 'active' : ''}">Overview</a></li>
-                <li><a href="#key-concepts" data-page="key-concepts" class="${currentPageId === 'key-concepts' ? 'active' : ''}">Key Concepts</a></li>
-                <li><a href="#launch-screen" data-page="launch-screen" class="${currentPageId === 'launch-screen' ? 'active' : ''}">Launch Screen</a></li>
-                <li><a href="#selecting-template" data-page="selecting-template" class="${currentPageId === 'selecting-template' ? 'active' : ''}">Selecting a Template</a></li>
-                <li><a href="#interface" data-page="interface" class="${currentPageId === 'interface' ? 'active' : ''}">Interface Overview</a></li>
-                <li><a href="#keyboard-shortcuts" data-page="keyboard-shortcuts" class="${currentPageId === 'keyboard-shortcuts' ? 'active' : ''}">Keyboard Shortcuts</a></li>
-                <li><a href="#working-with-labels" data-page="working-with-labels" class="${currentPageId === 'working-with-labels' ? 'active' : ''}">Working with Labels</a></li>
+                <li><a href="#learn" data-page="learn" class="${
+                  currentPageId === 'learn' ? 'active' : ''
+                }">Overview</a></li>
+                <li><a href="#key-concepts" data-page="key-concepts" class="${
+                  currentPageId === 'key-concepts' ? 'active' : ''
+                }">Key Concepts</a></li>
+                <li><a href="#launch-screen" data-page="launch-screen" class="${
+                  currentPageId === 'launch-screen' ? 'active' : ''
+                }">Launch Screen</a></li>
+                <li><a href="#selecting-template" data-page="selecting-template" class="${
+                  currentPageId === 'selecting-template' ? 'active' : ''
+                }">Selecting a Template</a></li>
+                <li><a href="#interface" data-page="interface" class="${
+                  currentPageId === 'interface' ? 'active' : ''
+                }">Interface Overview</a></li>
+                <li><a href="#keyboard-shortcuts" data-page="keyboard-shortcuts" class="${
+                  currentPageId === 'keyboard-shortcuts' ? 'active' : ''
+                }">Keyboard Shortcuts</a></li>
+                <li><a href="#working-with-labels" data-page="working-with-labels" class="${
+                  currentPageId === 'working-with-labels' ? 'active' : ''
+                }">Working with Labels</a></li>
                 <li class="nav-subsection">
-                    <a href="#map-varieties" data-page="map-varieties" class="${currentPageId === 'map-varieties' ? 'active' : ''}">Map Varieties</a>
+                    <a href="#map-varieties" data-page="map-varieties" class="${
+                      currentPageId === 'map-varieties' ? 'active' : ''
+                    }">Map Varieties</a>
                 </li>
                 <li class="nav-subsection">
-                    <a href="#indesign-maps" data-page="indesign-maps" class="${currentPageId === 'indesign-maps' ? 'active' : ''}">InDesign Maps</a>
+                    <a href="#indesign-maps" data-page="indesign-maps" class="${
+                      currentPageId === 'indesign-maps' ? 'active' : ''
+                    }">InDesign Maps</a>
                 </li>
                 <li class="nav-subsection">
-                    <a href="#map-creator-maps" data-page="map-creator-maps" class="${currentPageId === 'map-creator-maps' ? 'active' : ''}">Map Creator Maps</a>
+                    <a href="#map-creator-maps" data-page="map-creator-maps" class="${
+                      currentPageId === 'map-creator-maps' ? 'active' : ''
+                    }">Map Creator Maps</a>
                 </li>
             </ul>
         `;
 
-        // Setup sidebar navigation
-        const sidebarLinks = sidebar.querySelectorAll('a[data-page]');
-        sidebarLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const page = link.getAttribute('data-page');
-                if (page) {
-                    window.location.hash = page;
-                }
-            });
-        });
-    }
-
-    displayPage(pageId) {
-        const mainContent = document.querySelector('.sil-content');
-        
-        switch(pageId) {
-            case 'home':
-                mainContent.innerHTML = this.getHomePage();
-                break;
-            case 'getting-started':
-                mainContent.innerHTML = this.getGettingStartedPage();
-                break;
-            case 'downloads':
-                mainContent.innerHTML = this.getDownloadsPage();
-                break;
-            case 'learn':
-                mainContent.innerHTML = this.getLearnOverviewPage();
-                break;
-            case 'key-concepts':
-                mainContent.innerHTML = this.getKeyConceptsPage();
-                break;
-            case 'launch-screen':
-                mainContent.innerHTML = this.getLaunchScreenPage();
-                break;
-            case 'selecting-template':
-                mainContent.innerHTML = this.getSelectingTemplatePage();
-                break;
-            case 'interface':
-                mainContent.innerHTML = this.getInterfacePage();
-                break;
-            case 'working-with-labels':
-                mainContent.innerHTML = this.getWorkingWithLabelsPage();
-                break;
-            case 'keyboard-shortcuts':
-                mainContent.innerHTML = this.getKeyboardShortcutsPage();
-                break;
-            case 'map-varieties':
-                mainContent.innerHTML = this.getMapVarietiesPage();
-                break;
-            case 'indesign-maps':
-                mainContent.innerHTML = this.getInDesignMapsPage();
-                break;
-            case 'map-creator-maps':
-                mainContent.innerHTML = this.getMapCreatorMapsPage();
-                break;
-            case 'feedback':
-                mainContent.innerHTML = this.getFeedbackPage();
-                break;
-            default:
-                mainContent.innerHTML = this.getHomePage();
+    // Setup sidebar navigation
+    const sidebarLinks = sidebar.querySelectorAll('a[data-page]');
+    sidebarLinks.forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const page = link.getAttribute('data-page');
+        if (page) {
+          window.location.hash = page;
         }
-        
-        // Scroll to top
-        window.scrollTo(0, 0);
+      });
+    });
+  }
+
+  displayPage(pageId) {
+    const mainContent = document.querySelector('.sil-content');
+
+    switch (pageId) {
+      case 'home':
+        mainContent.innerHTML = this.getHomePage();
+        break;
+      case 'getting-started':
+        mainContent.innerHTML = this.getGettingStartedPage();
+        break;
+      case 'downloads':
+        mainContent.innerHTML = this.getDownloadsPage();
+        break;
+      case 'learn':
+        mainContent.innerHTML = this.getLearnOverviewPage();
+        break;
+      case 'key-concepts':
+        mainContent.innerHTML = this.getKeyConceptsPage();
+        break;
+      case 'launch-screen':
+        mainContent.innerHTML = this.getLaunchScreenPage();
+        break;
+      case 'selecting-template':
+        mainContent.innerHTML = this.getSelectingTemplatePage();
+        break;
+      case 'interface':
+        mainContent.innerHTML = this.getInterfacePage();
+        break;
+      case 'working-with-labels':
+        mainContent.innerHTML = this.getWorkingWithLabelsPage();
+        break;
+      case 'keyboard-shortcuts':
+        mainContent.innerHTML = this.getKeyboardShortcutsPage();
+        break;
+      case 'map-varieties':
+        mainContent.innerHTML = this.getMapVarietiesPage();
+        break;
+      case 'indesign-maps':
+        mainContent.innerHTML = this.getInDesignMapsPage();
+        break;
+      case 'map-creator-maps':
+        mainContent.innerHTML = this.getMapCreatorMapsPage();
+        break;
+      case 'feedback':
+        mainContent.innerHTML = this.getFeedbackPage();
+        break;
+      default:
+        mainContent.innerHTML = this.getHomePage();
     }
 
-    getHomePage() {
-        return `
-            <div class="page-header">
-                <h1 class="page-title">Paratext Diagram Labeler</h1>
-                <p class="page-subtitle">Prepare labels for maps and diagrams in your Paratext projects</p>
-            </div>
-            
+    // Scroll to top
+    window.scrollTo(0, 0);
+  }
+
+  getHomePage() {
+    return `
             <div class="info-card warning-card">
-                <h3>🚧 Beta Software Notice</h3>
-                <p>This is beta software primarily intended to test the user experience for integration into Paratext 10. 
-                If you haven't already, please join the beta test program by sending an email to 
-                <a href="mailto:labeler+subscribe@groups.sall.com">labeler+subscribe@groups.sall.com</a>.</p>
+                <h3>🚧 Beta Software Notices</h3>
+                <p>If you didn’t already sign up for the beta test program, please do so now by sending an email to <a href="mailto:labeler+subscribe@groups.sall.com">labeler+subscribe@groups.sall.com</a>, and then click the confirm link in the email you receive in reply.</p>
+                <p>As this is beta software and primarily intended to test the user experience for integration into Paratext 10:</p>
+                <ul>
+                    <li>Don’t expect a patch system. Upgrading to the latest version means downloading the installer again and running it to replace your previous version.</li>
+                    <li>The app is under active development, and the underlying data structures for representing map data may change. However, we do not anticipate that such changes will have any more impact on users than a typical version update would. E.g. Minor adjustments to the look and feel in order to support the new functionality.</li>
+                    <li>The Mac and Linux versions are relatively untested so far. We’d be glad for any help in testing them out.</li>
+                </ul>
             </div>
 
             <div class="content-section">
@@ -267,25 +292,15 @@ class SiteManager {
             </div>
 
             <div class="content-section">
-                <h2 class="section-title">Current Status</h2>
-                <p>This standalone React app works with Paratext 8 or 9 project files. The goal is to create an 
-                extension that is fully integrated in Paratext 10. The current version serves to test the user 
-                experience before full integration.</p>
-                
-                <div class="info-card">
-                    <h3>Beta Limitations</h3>
-                    <ul>
-                        <li>No patch system - upgrades require downloading and running the full installer</li>
-                        <li>Data structures may change during development</li>
-                        <li>Mac and Linux versions are less tested than Windows</li>
-                    </ul>
-                </div>
+                <h2 class="section-title">Editions</h2>
+                <p>The goal is to create an extension that is fully integrated in Paratext 10. As such it must be an integrated React app. At present, we have a standalone React app that is separate from Paratext, but which works with Paratext 8 or 9 project files. You can use it to prepare your maps, but the real purpose of the Paratext 9 standalone edition is to test the user experience, so that when integrated into Paratext 10, we’ll be able to have an extension that is intuitive and useful.</p>
+                <p>Everything in this site relates to the Paratext 9 standalone edition.</p>
             </div>
         `;
-    }
+  }
 
-    getKeyConceptsPage() {
-        return `
+  getKeyConceptsPage() {
+    return `
             <div class="page-header">
                 <h1 class="page-title">Key Concepts</h1>
                 <p class="page-subtitle">Understanding how the Labeler works with your project</p>
@@ -311,7 +326,7 @@ class SiteManager {
             
             <div class="content-section">
                 <h2 class="section-title">Saving Your Work</h2>
-                
+                <p> There are two ways that you can save diagram labels for later use:</p>
                 <div class="info-card">
                     <h3>Method 1: IDML Data Merge Files</h3>
                     <p>You can export all the labels for a diagram into an IDML data merge file, which is the format from which you could merge them into an IDML diagram. It is recommended that you save these in the <code>shared\\labeler</code> folder within your project folder, so that they are included in your send/receive.</p>
@@ -331,36 +346,32 @@ class SiteManager {
                 </div>
             </div>
         `;
-    }
+  }
 
-    // Page content methods will be implemented as we build each page
-    getGettingStartedPage() {
-        return `
+  // Page content methods will be implemented as we build each page
+  getGettingStartedPage() {
+    return `
             <div class="page-header">
-                <h1 class="page-title">Getting Started</h1>
-                <p class="page-subtitle">Prerequisites and installation guide</p>
+                <h1 class="page-title">Prerequisites</h1>
             </div>
             
             <div class="content-section">
-                <h2 class="section-title">Prerequisites</h2>
                 <div class="info-card">
-                    <h3>Required Software</h3>
+                    <h3>For Translation Teams  (to use Paratext Diagram Labeler)</h3>
                     <ul>
                         <li><strong>Paratext 9</strong> should already be installed</li>
-                        <li>Either <a href="https://fmosoft.com/map-creator">Map Creator</a> to work with .mapx files or 
-                            <a href="https://www.adobe.com/products/indesign.html">Adobe InDesign</a> to work with .idml files</li>
+                    <li>In your Paratext project, it's highly recommended that you at least have the Biblical Terms tool 
+                    guess renderings for all Names. Some diagrams will also benefit from Realia guessed renderings.</li>
+                    <li>You need to know which formats of maps your typesetter can work with, either Map Creator (.mapx) or Adobe InDesign (.idml)</li>
+                    <li>Be sure to read through the <a href="#learn">User Guide</a>.</li>
                     </ul>
                 </div>
                 
                 <div class="info-card">
-                    <h3>Paratext Project Setup</h3>
-                    <p>In your Paratext project, it's highly recommended that you at least have the Biblical Terms tool 
-                    guess renderings for all Names. Some diagrams will also benefit from Realia guessed renderings.</p>
-                </div>
-                
-                <div class="info-card">
-                    <h3>Required Map Collections</h3>
+                    <h3>For the Typesetter (to create maps from data merge files exported from Labeler)</h3>
                     <ul>
+                    <li>You will need either <a href="https://fmosoft.com/map-creator">Map Creator</a> to work with .mapx files or 
+                            <a href="https://www.adobe.com/products/indesign.html">Adobe InDesign</a> to work with .idml files</li>
                         <li>Download all maps and diagrams from the <a href="https://tiny.cc/sil-maps">SIL Map Repository</a>
                             <br><em>Tip: Download the <strong>compact</strong> edition, not the expanded edition, which only adds redundant clutter.</em></li>
                         <li>For Map Creator built-in maps, also download 
@@ -368,22 +379,13 @@ class SiteManager {
                             and unzip to a convenient location with your other master map files.</li>
                     </ul>
                 </div>
+                
             </div>
-            
-            <div class="content-section">
-                <h2 class="section-title">Installation</h2>
-                <ol>
-                    <li>Visit the <a href="#downloads">Downloads</a> page or go directly to the 
-                        <a href="https://github.com/sillsdev/paratext-diagram-labeler/releases">GitHub Releases page</a></li>
-                    <li>Download the <strong>Paratext Diagram Labeler Setup</strong> program for your operating system</li>
-                    <li>Run the installer and follow the setup instructions</li>
-                </ol>
-            </div>            
         `;
-    }
+  }
 
-    getLaunchScreenPage() {
-        return `
+  getLaunchScreenPage() {
+    return `
             <div class="page-header">
                 <h1 class="page-title">Launching the Labeler</h1>
                 <p class="page-subtitle">The pre-launch screen and settings</p>
@@ -428,10 +430,10 @@ class SiteManager {
                 <p>Once these settings provide the necessary context for the Labeler, click the Launch button.</p>
             </div>
         `;
-    }
+  }
 
-    getSelectingTemplatePage() {
-        return `
+  getSelectingTemplatePage() {
+    return `
             <div class="page-header">
                 <h1 class="page-title">Selecting a Diagram Template</h1>
                 <p class="page-subtitle">How to browse and choose map templates</p>
@@ -491,10 +493,10 @@ class SiteManager {
                 </div>
             </div>
         `;
-    }
+  }
 
-    getInterfacePage() {
-        return `
+  getInterfacePage() {
+    return `
             <div class="page-header">
                 <h1 class="page-title">Using the Labeler</h1>
                 <p class="page-subtitle">Understanding the Labeler's main interface</p>
@@ -589,10 +591,10 @@ class SiteManager {
                 <p>The USFM view displays how the diagram and its labels might be currently represented in USFM 3. Please note that this is subject to change, so at the current time, it is recommended that you save your work by exporting to *.idml.txt files rather than by copying and pasting USFM text to/from your Paratext project.</p>
             </div>
         `;
-    }
+  }
 
-    getWorkingWithLabelsPage() {
-        return `
+  getWorkingWithLabelsPage() {
+    return `
             <div class="page-header">
                 <h1 class="page-title">Working with Labels</h1>
                 <p class="page-subtitle">Understanding and managing your map labels</p>
@@ -621,10 +623,10 @@ class SiteManager {
                 <p>If you've created maps already with the current version of Scripture Map Labeler, those labels will be accessible to you in Paratext Diagram Labeler if you took the step of ensuring your labels were copied into the term renderings. If you have not done that, the easiest way to do that now is to use the <a href="https://tiny.cc/maplabelerhelper">Map Labeler Helper's</a> "Commit Labels" tool.</p>
             </div>
         `;
-    }
+  }
 
-    getKeyboardShortcutsPage() {
-        return `
+  getKeyboardShortcutsPage() {
+    return `
             <div class="page-header">
                 <h1 class="page-title">Keyboard Shortcuts</h1>
                 <p class="page-subtitle">Speed up your workflow with these shortcuts</p>
@@ -682,56 +684,21 @@ class SiteManager {
                 </table>
             </div>
         `;
-    }
+  }
 
-    getDownloadsPage() {
-        return `
+  getDownloadsPage() {
+    return `
             <div class="page-header">
                 <h1 class="page-title">Downloads</h1>
                 <p class="page-subtitle">Get the latest version of Paratext Diagram Labeler</p>
             </div>
             
             <div class="content-section">
-                <div class="info-card warning-card">
-                    <h3>Beta Software Notice</h3>
-                    <p>Remember that this is beta software. There is no patch system - upgrading to the latest version 
-                    means downloading the installer again and running it to replace your previous version.</p>
-                </div>
-            </div>
-            
-            <div class="content-section">
-                <h2 class="section-title">System Requirements</h2>
                 <div class="info-card">
-                    <ul>
-                        <li><strong>Windows:</strong> Windows 10 or later (primary supported platform)</li>
-                        <li><strong>Mac:</strong> macOS 10.14 or later (less tested)</li>
-                        <li><strong>Linux:</strong> Modern Linux distributions (less tested)</li>
-                    </ul>
-                    <p><em>Note: Mac and Linux versions are relatively untested. We'd appreciate help testing them out.</em></p>
-                </div>
-            </div>
-            
-            <div class="content-section">
-                <h2 class="section-title">Latest Releases</h2>
-                <p>Download the latest version from GitHub Releases:</p>
-                
-                <div class="info-card">
-                    <h3>🔗 GitHub Releases</h3>
-                    <p>Visit the official releases page to download the latest version of Paratext Diagram Labeler:</p>
                     <a href="https://github.com/sillsdev/paratext-diagram-labeler/releases" target="_blank" class="btn" style="display: inline-block; padding: 12px 24px; background: #28a745; color: white; text-decoration: none; border-radius: 6px; font-weight: 600; margin: 10px 0;">
                         📥 Download from GitHub Releases
                     </a>
                     <p style="margin-top: 10px;"><small><em>Opens in a new tab</em></small></p>
-                    
-                    <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 6px; border-left: 4px solid #007bff;">
-                        <h4>What you'll find on the releases page:</h4>
-                        <ul style="margin: 10px 0;">
-                            <li><strong>Latest stable version</strong> - Recommended for most users</li>
-                            <li><strong>Beta releases</strong> - For testing new features</li>
-                            <li><strong>Download assets</strong> - Installers for Windows, Mac, and Linux</li>
-                            <li><strong>Release notes</strong> - What's new in each version</li>
-                        </ul>
-                    </div>
                 </div>
                 
                 <div class="info-card">
@@ -746,27 +713,21 @@ class SiteManager {
             </div>
             
             <div class="content-section">
-                <h2 class="section-title">Previous Versions</h2>
-                <p>You can access previous releases from the GitHub releases page above. However, we recommend 
-                using the latest version for the best experience and latest bug fixes.</p>
-            </div>
-            
-            <div class="content-section">
-                <h2 class="section-title">Need Help?</h2>
+                <h2 class="section-title">System Requirements</h2>
                 <div class="info-card">
-                    <p>If you encounter issues with installation or downloading:</p>
                     <ul>
-                        <li>Check the <a href="#feedback">Feedback & Support</a> page for help</li>
-                        <li>Join the beta testing program for updates and support</li>
-                        <li>Report issues on the GitHub repository</li>
+                        <li><strong>Windows:</strong> Windows 10 or later (primary supported platform)</li>
+                        <li><strong>Linux:</strong> Modern Linux distributions (less tested)</li>
+                        <li><strong>Mac:</strong> macOS 10.14 or later (less tested)</li>
                     </ul>
+                    <p><em>Note: Mac and Linux versions are relatively untested. We'd appreciate help testing them out.</em></p>
                 </div>
             </div>
         `;
-    }
+  }
 
-    getMapVarietiesPage() {
-        return `
+  getMapVarietiesPage() {
+    return `
             <div class="page-header">
                 <h1 class="page-title">Understanding Map Varieties</h1>
                 <p class="page-subtitle">SIL Map Repository filename conventions and options</p>
@@ -817,10 +778,10 @@ class SiteManager {
                 </div>
             </div>
         `;
-    }
+  }
 
-    getInDesignMapsPage() {
-        return `
+  getInDesignMapsPage() {
+    return `
             <div class="page-header">
                 <h1 class="page-title">Working with InDesign Maps</h1>
                 <p class="page-subtitle">Complete guide for typesetting with IDML files</p>
@@ -953,10 +914,10 @@ class SiteManager {
                 </div>
             </div>
         `;
-    }
+  }
 
-    getMapCreatorMapsPage() {
-        return `
+  getMapCreatorMapsPage() {
+    return `
             <div class="page-header">
                 <h1 class="page-title">Working with Map Creator Maps</h1>
                 <p class="page-subtitle">Complete guide for working with MAPX files</p>
@@ -1028,95 +989,29 @@ class SiteManager {
                 </div>
             </div>
         `;
-    }
+  }
 
-    getFeedbackPage() {
-        return `
+  getFeedbackPage() {
+    return `
             <div class="page-header">
-                <h1 class="page-title">Feedback & Support</h1>
-                <p class="page-subtitle">Get help and share your feedback</p>
+                <h1 class="page-title">Feedback</h1>
             </div>
             
             <div class="content-section">
-                <h2 class="section-title">Beta Testing Program</h2>
-                <div class="info-card">
-                    <h3>Join the Beta Program</h3>
-                    <p>Stay updated on the latest developments and get support from other beta testers:</p>
-                    <a href="mailto:labeler+subscribe@groups.sall.com" class="btn">Join Beta Mailing List</a>
-                    <p class="mt-2"><em>Click the confirm link in the email you receive to complete your subscription.</em></p>
-                </div>
-            </div>
-            
-            <div class="content-section">
-                <h2 class="section-title">Feedback Form</h2>
                 <div class="info-card">
                     <h3>Share Your Experience</h3>
                     <p>Thank you for your willingness to beta test this software. After installing and using this software, 
                     please complete our feedback form:</p>
                     
-                    <a href="https://forms.gle/fVa6qjrsnx3k1ir17" class="btn">Complete Feedback Form</a>
+                    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSc2gEdVYaRTemTOje2Yhly7bNcjSTqv9i3LVlG8c74oIwgfXA/viewform?embedded=true" width="100%" height="1500" frameborder="0" marginheight="0" marginwidth="0" style="border-radius: 8px; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.08);">Loading…</iframe>
                     
-                    <div class="mt-3">
-                        <h4>What to Include:</h4>
-                        <ul>
-                            <li>Things you particularly appreciate</li>
-                            <li>Problems you encountered</li>
-                            <li>Enhancements you'd like to see in the final Paratext 10 version</li>
-                            <li>Suggestions for improving this documentation</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="content-section">
-                <h2 class="section-title">Report Issues</h2>
-                <div class="info-card">
-                    <h3>GitHub Issues</h3>
-                    <p>Found a bug or have a feature request? Report it on GitHub:</p>
-                    <a href="https://github.com/sillsdev/paratext-diagram-labeler/issues" class="btn btn-outline">Report Issue</a>
-                    
-                    <div class="mt-3">
-                        <h4>Before Reporting:</h4>
-                        <ul>
-                            <li>Check if the issue has already been reported</li>
-                            <li>Include your operating system and software version</li>
-                            <li>Provide steps to reproduce the issue</li>
-                            <li>Include any error messages or screenshots</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="content-section">
-                <h2 class="section-title">Migrating from Scripture Map Labeler</h2>
-                <div class="info-card">
-                    <h3>Existing Users</h3>
-                    <p>If you've created maps with the current version of Scripture Map Labeler, those labels will be 
-                    accessible in Paratext Diagram Labeler if you ensured your labels were copied into the term renderings.</p>
-                    
-                    <p>If you haven't done that, the easiest way is to use the 
-                    <a href="https://tiny.cc/maplabelerhelper">Map Labeler Helper's</a> "Commit Labels" tool.</p>
-                </div>
-            </div>
-            
-            <div class="content-section">
-                <h2 class="section-title">Contact Information</h2>
-                <div class="info-card">
-                    <h3>SIL Global</h3>
-                    <p>This software is developed by SIL Global as part of the Paratext ecosystem.</p>
-
-                    <ul>
-                        <li><strong>Beta Program:</strong> <a href="mailto:labeler+subscribe@groups.sall.com">labeler+subscribe@groups.sall.com</a></li>
-                        <li><strong>GitHub:</strong> <a href="https://github.com/sillsdev/paratext-diagram-labeler">sillsdev/paratext-diagram-labeler</a></li>
-                        <li><strong>Feedback Form:</strong> <a href="https://forms.gle/fVa6qjrsnx3k1ir17">Beta Testing Feedback</a></li>
-                    </ul>
                 </div>
             </div>
         `;
-    }
+  }
 
-    getLearnOverviewPage() {
-        return `
+  getLearnOverviewPage() {
+    return `
             <div class="content-section">
                 <h1>Learn</h1>
                 <p>Master the Paratext Diagram Labeler with our comprehensive guides and tutorials.</p>
@@ -1153,7 +1048,7 @@ class SiteManager {
                 <div class="feature-grid">
                     <div class="feature-card">
                         <h3><a href="#map-varieties" data-page="map-varieties">Map Varieties</a></h3>
-                        <p>Explore different types of maps and diagrams you can create and label.</p>
+                        <p>Understand Map Varieties in the SIL Map Repository.</p>
                     </div>
                     <div class="feature-card">
                         <h3><a href="#indesign-maps" data-page="indesign-maps">InDesign Maps</a></h3>
@@ -1164,20 +1059,12 @@ class SiteManager {
                         <p>Discover how to use labeled data with Map Creator applications.</p>
                     </div>
                 </div>
-
-                <h2>Getting Help</h2>
-                <p>Need additional assistance? Check out these resources:</p>
-                <ul>
-                    <li><a href="#feedback" data-page="feedback">Feedback & Support</a> - Get help from our community and support team</li>
-                    <li><a href="https://github.com/sillsdev/paratext-diagram-labeler/issues" target="_blank">GitHub Issues</a> - Report bugs or request features</li>
-                    <li><a href="mailto:labeler+subscribe@groups.sall.com">Beta Program</a> - Join our beta testing community</li>
-                </ul>
             </div>
         `;
-    }
+  }
 }
 
 // Initialize the site when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new SiteManager();
+  new SiteManager();
 });

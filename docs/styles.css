@@ -243,12 +243,15 @@ body {
     height: 80px;
     border-radius: 8px;
     margin-bottom: 20px;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8)) drop-shadow(0 0 16px rgba(255, 255, 255, 0.5));
 }
 
 .sil-banner-tagline {
-    font-size: 18px;
+    font-size: 21.6px;
     margin-bottom: 25px;
     line-height: 1.4;
+    font-weight: bold;
+    font-style: italic;
 }
 
 .sil-banner-download-btn {
@@ -618,6 +621,24 @@ body {
 
 .sil-footer-bottom a:hover {
     text-decoration: underline;
+}
+
+/* Warning Card Styling */
+.warning-card {
+    background: #fff4e5;
+    border: 1.5px solid #d97a00;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+/* Indented list for warning-card */
+.warning-card ul {
+    margin-left: 1.5em;
+    padding-left: 0;
+}
+.warning-card ul li {
+    text-indent: -1.5em;
+    padding-left: 1.5em;
 }
 
 /* Responsive Design */
