@@ -21,6 +21,16 @@ Thanks for your interest in contributing! Please follow these guidelines:
 Installers are build on Github Actions with every push to master and with every release.
 
 ## Release process
+First update the submodule as follows:
+
+`git submodule update --remote resources`
+
+`git add resources`
+
+`git commit -m "Update sil-map-definitions submodule to latest commit" || echo "No submodule update needed"`
+
+`git push`
+
 Tag a commit on master with the version number convention vX.X.X and push that tag
 e.g. `git tag v0.1.0 && git push origin v0.1.0`
 This will build the installers and create a draft release.  You manually mark the release as published by editing the description and click "Publish"
