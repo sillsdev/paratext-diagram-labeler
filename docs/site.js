@@ -350,11 +350,13 @@ class SiteManager {
                     <ul>
                     <li>You will need either <a href="https://fmosoft.com/map-creator">Map Creator</a> to work with .mapx files or 
                             <a href="https://www.adobe.com/products/indesign.html">Adobe InDesign</a> to work with .idml files</li>
+                    <li>If you want to use the built-in maps that come with Map Creator, instead use the editions of these maps 
+                    that are provided in the SIL Map Repository (with usage rules code "fmo" for FMOSoft), as these labels will align more consistently with the labels used
+                    by Paratext Diagram Labeler.</li>
                         <li>Download all maps and diagrams from the <a href="https://tiny.cc/sil-maps">SIL Map Repository</a>
-                            <br><em>Tip: Download the <strong>compact</strong> edition, not the expanded edition, which only adds redundant clutter.</em></li>
-                        <li>For Map Creator built-in maps, also download 
-                            <a href="https://drive.google.com/file/d/1XS42-dX2XWoEVWg3jZeTkpujb2dPdPVj/view?usp=drive_link">fmosoft Master Maps - SMR edition.zip</a>
-                            and unzip to a convenient location with your other master map files.</li>
+                            <br><em>Tip: Download the <strong>compact</strong> edition, not the expanded edition, which only adds redundant clutter, 
+                            and does not include the SMR edition of the FMOSoft maps and diagrams.</em></li>
+
                     </ul>
                 </div>
                 
