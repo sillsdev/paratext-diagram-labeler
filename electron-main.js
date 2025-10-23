@@ -10,6 +10,12 @@ const fs = require('fs');
 const path = require('path');
 const xml2js = require('xml2js');
 
+// Linux-specific GTK compatibility fix - must be set before app.whenReady()
+if (process.platform === 'linux') {
+  app.commandLine.appendSwitch('disable-gpu-sandbox');
+  app.commandLine.appendSwitch('disable-software-rasterizer');
+}
+
 // Settings relating to Settings.xml
 let curProjectFolder = '';
 let settings = {};
@@ -1572,13 +1578,6 @@ app.whenReady().then(() => {
   console.log(`User data path: ${app.getPath('userData')}`);
   console.log(`Log file location: ${path.join(app.getPath('userData'), 'electron-main.log')}`);
   console.log('=====================================');
-  
-  // Linux-specific GTK compatibility fix
-  if (process.platform === 'linux') {
-    console.log('Applying Linux GTK compatibility fixes...');
-    app.commandLine.appendSwitch('disable-gpu-sandbox');
-    app.commandLine.appendSwitch('disable-software-rasterizer');
-  }
   
   copySampleMaps();
   createWindow();
