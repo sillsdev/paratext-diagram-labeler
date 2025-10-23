@@ -1,9 +1,20 @@
+// GTK compatibility fix for Linux - must be before any Electron imports
+if (process.platform === 'linux') {
+  process.env.GDK_BACKEND = 'x11';
+}
+
 const { app, BrowserWindow, Menu, shell } = require('electron');
 const { initialize, enable } = require('@electron/remote/main');
 const { ipcMain, dialog } = require('electron');
 const fs = require('fs');
 const path = require('path');
 const xml2js = require('xml2js');
+
+// Linux-specific GTK compatibility fix - must be set before app.whenReady()
+if (process.platform === 'linux') {
+  app.commandLine.appendSwitch('disable-gpu-sandbox');
+  app.commandLine.appendSwitch('disable-software-rasterizer');
+}
 
 // Settings relating to Settings.xml
 let curProjectFolder = '';
