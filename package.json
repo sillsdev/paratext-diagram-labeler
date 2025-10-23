@@ -136,7 +136,14 @@
         "AppImage",
         "deb"
       ],
-      "category": "Education"
+      "category": "Education",
+      "executableArgs": [
+        "--disable-gpu-sandbox",
+        "--disable-software-rasterizer",
+        "--disable-gpu",
+        "--no-sandbox",
+        "--ozone-platform=x11"
+      ]
     },
     "deb": {
       "depends": [

@@ -1,6 +1,8 @@
 // GTK compatibility fix for Linux - must be before any Electron imports
 if (process.platform === 'linux') {
   process.env.GDK_BACKEND = 'x11';
+  // Additional environment variables to prevent GTK conflicts
+  process.env.ELECTRON_OZONE_PLATFORM_HINT = 'auto';
 }
 
 const { app, BrowserWindow, Menu, shell } = require('electron');
@@ -14,6 +16,10 @@ const xml2js = require('xml2js');
 if (process.platform === 'linux') {
   app.commandLine.appendSwitch('disable-gpu-sandbox');
   app.commandLine.appendSwitch('disable-software-rasterizer');
+  app.commandLine.appendSwitch('disable-gpu');
+  app.commandLine.appendSwitch('no-sandbox');
+  // Force Ozone platform to X11 to avoid Wayland GTK conflicts
+  app.commandLine.appendSwitch('ozone-platform', 'x11');
 }
 
 // Settings relating to Settings.xml
