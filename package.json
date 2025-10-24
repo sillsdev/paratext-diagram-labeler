@@ -140,9 +140,8 @@
       "executableArgs": [
         "--disable-gpu-sandbox",
         "--disable-software-rasterizer",
-        "--disable-gpu",
-        "--no-sandbox",
-        "--ozone-platform=x11"
+        "--disable-dev-shm-usage",
+        "--no-sandbox"
       ]
     },
     "deb": {

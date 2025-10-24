@@ -1,8 +1,23 @@
 // GTK compatibility fix for Linux - must be before any Electron imports
 if (process.platform === 'linux') {
-  process.env.GDK_BACKEND = 'x11';
+  // Detect if running on Wayland
+  const isWayland = process.env.WAYLAND_DISPLAY || process.env.XDG_SESSION_TYPE === 'wayland';
+  
+  if (isWayland) {
+    // Wayland-specific environment variables
+    process.env.ELECTRON_OZONE_PLATFORM_HINT = 'wayland';
+    process.env.WAYLAND_DISPLAY = process.env.WAYLAND_DISPLAY || 'wayland-0';
+    // Disable GPU to prevent GTK conflicts on Wayland
+    process.env.LIBGL_ALWAYS_SOFTWARE = '1';
+  } else {
+    // X11-specific settings
+    process.env.GDK_BACKEND = 'x11';
+    process.env.ELECTRON_OZONE_PLATFORM_HINT = 'x11';
+  }
+  
   // Additional environment variables to prevent GTK conflicts
-  process.env.ELECTRON_OZONE_PLATFORM_HINT = 'auto';
+  process.env.GTK_THEME = 'Adwaita';
+  process.env.QT_QPA_PLATFORM = 'wayland';
 }
 
 const { app, BrowserWindow, Menu, shell } = require('electron');
@@ -14,12 +29,26 @@ const xml2js = require('xml2js');
 
 // Linux-specific GTK compatibility fix - must be set before app.whenReady()
 if (process.platform === 'linux') {
-  app.commandLine.appendSwitch('disable-gpu-sandbox');
-  app.commandLine.appendSwitch('disable-software-rasterizer');
-  app.commandLine.appendSwitch('disable-gpu');
-  app.commandLine.appendSwitch('no-sandbox');
-  // Force Ozone platform to X11 to avoid Wayland GTK conflicts
-  app.commandLine.appendSwitch('ozone-platform', 'x11');
+  const isWayland = process.env.WAYLAND_DISPLAY || process.env.XDG_SESSION_TYPE === 'wayland';
+  
+  if (isWayland) {
+    // Wayland-specific command line switches
+    app.commandLine.appendSwitch('enable-features', 'WaylandWindowDecorations,UseOzonePlatform');
+    app.commandLine.appendSwitch('ozone-platform', 'wayland');
+    app.commandLine.appendSwitch('disable-gpu');
+    app.commandLine.appendSwitch('disable-gpu-sandbox');
+    app.commandLine.appendSwitch('disable-software-rasterizer');
+    app.commandLine.appendSwitch('disable-dev-shm-usage');
+    app.commandLine.appendSwitch('no-sandbox');
+    // Disable native dialogs to prevent GTK conflicts
+    app.commandLine.appendSwitch('disable-features', 'VizDisplayCompositor');
+  } else {
+    // X11-specific command line switches
+    app.commandLine.appendSwitch('disable-gpu-sandbox');
+    app.commandLine.appendSwitch('disable-software-rasterizer');
+    app.commandLine.appendSwitch('ozone-platform', 'x11');
+    app.commandLine.appendSwitch('no-sandbox');
+  }
 }
 
 // Settings relating to Settings.xml
@@ -539,6 +568,11 @@ ipcMain.handle('save-term-renderings', async (event, projectFolder, saveToDemo, 
 ipcMain.handle('select-project-folder', async event => {
   const result = await dialog.showOpenDialog({
     properties: ['openDirectory'],
+    // Force non-native dialog on Linux to avoid GTK conflicts
+    ...(process.platform === 'linux' && { 
+      defaultPath: require('os').homedir(),
+      title: 'Select Project Folder'
+    })
   });
   if (result.canceled || !result.filePaths.length) {
     return null;
@@ -569,7 +603,11 @@ ipcMain.handle('select-template-file', async (event) => {
           name: 'All Files',
           extensions: ['*']
         }
-      ]
+      ],
+      // Force non-native dialog on Linux to avoid GTK conflicts
+      ...(process.platform === 'linux' && { 
+        defaultPath: require('os').homedir()
+      })
     });
 
     if (result.canceled || !result.filePaths.length) {
@@ -1058,6 +1096,10 @@ ipcMain.handle(
             extensions: [`${format}.txt`],
           },
         ],
+        // Force non-native dialog on Linux to avoid GTK conflicts
+        ...(process.platform === 'linux' && { 
+          showsTagField: false
+        })
       });
 
       if (result.canceled) {
