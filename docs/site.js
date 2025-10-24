@@ -233,7 +233,7 @@ class SiteManager {
                 <ul>
                     <li>Don’t expect a patch system. Upgrading to the latest version means downloading the installer again and running it to replace your previous version.</li>
                     <li>The app is under active development, and the underlying data structures for representing map data may change. However, we do not anticipate that such changes will have any more impact on users than a typical version update would. E.g. Minor adjustments to the look and feel in order to support the new functionality.</li>
-                    <li>The Mac and Linux versions are relatively untested so far. We’d be glad for any help in testing them out.</li>
+                    <li>The Mac and Linux versions are untested so far. We’d be glad for any help in testing them out.</li>
                 </ul>
             </div>
 
