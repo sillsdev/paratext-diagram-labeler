@@ -54,6 +54,7 @@ if (process.platform === 'linux') {
 // Settings relating to Settings.xml
 let curProjectFolder = '';
 let settings = {};
+let templatesDir = path.join(app.getPath('pictures'), '!All Map Samples');
 
 // Reference to the main window for focus restoration
 let mainWindow = null;
@@ -586,6 +587,7 @@ ipcMain.handle('select-template-file', async (event) => {
     const result = await dialog.showOpenDialog({
       title: 'Select a template image or an IDML merge file',
       properties: ['openFile'],
+      defaultPath: templatesDir,
       filters: [
         {
           name: 'All Template Files',
@@ -616,6 +618,13 @@ ipcMain.handle('select-template-file', async (event) => {
 
     const filePath = result.filePaths[0];
     const fileName = path.basename(filePath);
+    
+    // Update templatesDir to the directory of the selected file
+    const selectedDirectory = path.dirname(filePath);
+    if (selectedDirectory !== templatesDir) {
+      templatesDir = selectedDirectory;
+      console.log(`Updated templatesDir to: ${templatesDir}`);
+    }
     
     // Read file content if it's a text file
     let fileContent = null;
