@@ -195,6 +195,11 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
     const saved = localStorage.getItem('showFrac'); // Persist showFrac in localStorage
     return saved === 'true';
   });
+  const [mapxPaths, setMapxPaths] = useState(() => {
+    const saved = localStorage.getItem('mapxPaths'); // Persist mapxPaths in localStorage
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [mapxPath, setMapxPath] = useState(''); // Current template's MAPX file path
   const [showSettings, setShowSettings] = useState(false);
   const [selectedVariant, setSelectedVariant] = useState(0); // 0 means no variants, 1+ for actual variants
   const [resetZoomFlag, setResetZoomFlag] = useState(false); // For controlling Leaflet map
@@ -221,6 +226,58 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
   useEffect(() => {
     localStorage.setItem('showFrac', showFrac.toString());
   }, [showFrac]);
+
+  // Persist mapxPaths to localStorage
+  useEffect(() => {
+    localStorage.setItem('mapxPaths', JSON.stringify(mapxPaths));
+  }, [mapxPaths]);
+
+  // Update mapxPath when template changes or mapxPaths change
+  useEffect(() => {
+    const findMapxPath = async () => {
+      if (!mapDef.template || mapxPaths.length === 0) {
+        setMapxPath('');
+        return;
+      }
+
+      // Try to find MAPX file with different naming conventions
+      const templateName = mapDef.template;
+      const mapxFilenames = [];
+      
+      // First try with the full template name (with collection prefix)
+      mapxFilenames.push(`${templateName}.mapx`);
+      
+      // Then try without collection prefix (extract part after underscore)
+      const underscoreIndex = templateName.indexOf('_');
+      if (underscoreIndex !== -1 && underscoreIndex < templateName.length - 1) {
+        const templateWithoutPrefix = templateName.substring(underscoreIndex + 1);
+        mapxFilenames.push(`${templateWithoutPrefix}.mapx`);
+      }
+      
+      for (const folderPath of mapxPaths) {
+        for (const mapxFilename of mapxFilenames) {
+          try {
+            const fullPath = electronAPI ? await electronAPI.path.join(folderPath, mapxFilename) : '';
+            const exists = electronAPI ? await electronAPI.fileExists(fullPath) : false;
+            
+            if (exists) {
+              console.log(`Found MAPX file: ${fullPath}`);
+              setMapxPath(fullPath);
+              return;
+            }
+          } catch (error) {
+            console.log(`Error checking MAPX file ${mapxFilename} in ${folderPath}:`, error);
+          }
+        }
+      }
+      
+      // No MAPX file found with any naming convention
+      console.log(`No MAPX file found for template: ${templateName}. Tried: ${mapxFilenames.join(', ')}`);
+      setMapxPath('');
+    };
+
+    findMapxPath();
+  }, [mapDef.template, mapxPaths]);
 
   useEffect(() => {
     // Load collections on mount, and then never again.
@@ -1488,6 +1545,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
             onExit={onExit}
             selectedVariant={selectedVariant} // Pass selected variant
             onVariantChange={handleVariantChange} // Pass variant change handler
+            mapxPath={mapxPath} // Pass current MAPX file path
           />
         </div>
       </div>
@@ -1522,6 +1580,8 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
         setLang={setLang}
         showFrac={showFrac}
         setShowFrac={setShowFrac}
+        mapxPaths={mapxPaths}
+        setMapxPaths={setMapxPaths}
       />{' '}
     </div>
   );

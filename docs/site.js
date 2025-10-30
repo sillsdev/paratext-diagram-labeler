@@ -264,7 +264,7 @@ class SiteManager {
                     </div>
                     <div class="info-card">
                         <h3>📤 Export Ready</h3>
-                        <p>Generate data merge files for use in Map Creator or Adobe InDesign</p>
+                        <p>Generate data merge files for use in Map Creator or Adobe InDesign, or actual Map Creator files pre-filled with your labels</p>
                     </div>
                 </div>
             </div>
@@ -297,7 +297,7 @@ class SiteManager {
                         
                         <li>You store your labels in the Term Renderings so that they will be automatically available on other maps and diagrams. The <a href="#working-with-labels">color-coded statuses</a> will help to ensure that you've done this consistently. However, you are free to export and use labels no matter what status they have. You may have valid reasons not to match the label used for the same location on a different map. E.g. A place is labeled "Mizpah" on one map, but "Mizpah of Moab" on another. But the status will at least make you aware of the difference.</li>
                         
-                        <li>There are two ways that you can save diagram labels for later use:</li>
+                        
                     </ul>
                 </div>
             </div>
@@ -354,8 +354,8 @@ class SiteManager {
                     that are provided in the SIL Map Repository (with usage rules code "fmo" for FMOSoft), as these labels will align more consistently with the labels used
                     by Paratext Diagram Labeler.</li>
                         <li>Download all maps and diagrams from the <a href="https://tiny.cc/sil-maps">SIL Map Repository</a>
-                            <br><em>Tip: Download the <strong>compact</strong> edition, not the expanded edition, which only adds redundant clutter, 
-                            and does not include the SMR edition of the FMOSoft maps and diagrams.</em></li>
+                            <br><em>Tip: Download the <strong>compact</strong> edition, not the expanded IDML edition, which only adds redundant files, 
+                            and does not include any Map Creator maps/diagrams.</em></li>
 
                     </ul>
                 </div>
@@ -594,7 +594,8 @@ class SiteManager {
             
             <div class="content-section">
                 <h2 class="section-title">Data Merge Files</h2>
-                <p>Once you've completed your label work, the Labeler can generate data merge files for use in Map Creator or Adobe InDesign.</p>
+                <p>Once you've completed your label work, the Labeler can generate data merge files for use in Map Creator or Adobe InDesign. 
+                Better yet, it can create actual Map Creator files pre-filled with your labels.</p>
                 <p>For detailed instructions on using the exported files, visit the <a href="https://tiny.cc/sil-maps" target="_blank">SIL Maps & Illustrations Repository</a> site, especially the section on <i>How to Use the Maps.</i></p>
             </div>
             
