@@ -1173,7 +1173,7 @@ ipcMain.handle(
 
       // Generate suggested filename
       const projectName = settings.name;
-      const suggestedFilename = `${templateName} @${projectName}` + (format==='mapx-full' ? '.mapx' : `${format}.txt`);
+      const suggestedFilename = `${templateName} @${projectName}` + (format === 'mapx-full' ? '.mapx' : `${format}.txt`);
       const suggestedPath = path.join(defaultPath, suggestedFilename);
 
       // Show save dialog
