@@ -4,7 +4,43 @@ import uiStr from './data/ui-strings.json';
 import packageInfo from '../package.json';
 
 // Settings Modal Dialog
-export default function SettingsModal({ open, onClose, labelScale, setLabelScale, labelOpacity, setLabelOpacity, lang, setLang, showFrac, setShowFrac }) {
+export default function SettingsModal({ 
+  open, 
+  onClose, 
+  labelScale, 
+  setLabelScale, 
+  labelOpacity, 
+  setLabelOpacity, 
+  lang, 
+  setLang, 
+  showFrac, 
+  setShowFrac,
+  mapxPaths,
+  setMapxPaths
+}) {
+  const electronAPI = window.electronAPI;
+  
+  const handleAddMapxPath = async () => {
+    if (!electronAPI) {
+      alert('File selection not supported in web environment');
+      return;
+    }
+    
+    try {
+      const selectedPath = await electronAPI.selectProjectFolder();
+      if (selectedPath && !mapxPaths.includes(selectedPath)) {
+        setMapxPaths([...mapxPaths, selectedPath]);
+      }
+    } catch (error) {
+      console.error('Error selecting MAPX folder:', error);
+      alert('Error selecting folder: ' + error.message);
+    }
+  };
+
+  const handleRemoveMapxPath = (pathToRemove) => {
+    setMapxPaths(mapxPaths.filter(path => path !== pathToRemove));
+  };
+
   if (!open) return null;
   return (
     <div
@@ -101,6 +137,80 @@ export default function SettingsModal({ open, onClose, labelScale, setLabelScale
             />
             {inLang(uiStr.showTallyFractions, lang)}
           </label>
+        </div>
+
+        {/* MAPX Paths Section */}
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
+            {inLang(uiStr.mapxPaths, lang)}:
+          </div>
+          <div style={{ 
+            border: '1px solid #ccc', 
+            borderRadius: 4, 
+            padding: 8, 
+            minHeight: 60,
+            maxHeight: 120,
+            overflowY: 'auto',
+            backgroundColor: '#f9f9f9',
+            marginBottom: 8
+          }}>
+            {mapxPaths.length === 0 ? (
+              <div style={{ color: '#666', fontStyle: 'italic', textAlign: 'center' }}>
+                No MAPX paths configured
+              </div>
+            ) : (
+              mapxPaths.map((path, index) => (
+                <div key={index} style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  marginBottom: 4, 
+                  padding: 4,
+                  backgroundColor: 'white',
+                  borderRadius: 2,
+                  border: '1px solid #ddd'
+                }}>
+                  <span style={{ 
+                    flex: 1, 
+                    fontSize: '0.9em', 
+                    wordBreak: 'break-all' 
+                  }}>
+                    {path}
+                  </span>
+                  <button
+                    onClick={() => handleRemoveMapxPath(path)}
+                    style={{
+                      marginLeft: 8,
+                      padding: '2px 6px',
+                      fontSize: '0.8em',
+                      backgroundColor: '#ff4444',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: 3,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {inLang(uiStr.removeMapxPath, lang)}
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <button
+              onClick={handleAddMapxPath}
+              style={{
+                padding: '6px 12px',
+                fontSize: '0.9em',
+                backgroundColor: '#007bff',
+                color: 'white',
+                border: 'none',
+                borderRadius: 4,
+                cursor: 'pointer'
+              }}
+            >
+              {inLang(uiStr.addMapxPath, lang)}
+            </button>
+          </div>
         </div>
         
         {/* Version information */}

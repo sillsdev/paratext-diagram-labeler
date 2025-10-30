@@ -94,6 +94,11 @@ class SettingsService {
     return this.settings?.language || 'en';
   }
 
+  // Get language setting (defaults to 'en')
+  getLanguageCode() {
+    return this.settings?.languageCode || 'en';
+  }
+
   // Get last USFM
   getUsfm() {
     return this.settings?.usfm || null;

@@ -42,6 +42,7 @@ export default function DetailsPane({
   onExit,
   selectedVariant = 0,
   onVariantChange,
+  mapxPath,
 }) {
   const [localIsApproved, setLocalIsApproved] = useState(isApproved);
   const [localRenderings, setLocalRenderings] = useState(renderings);
@@ -49,6 +50,13 @@ export default function DetailsPane({
   const [templateData, setTemplateData] = useState({});
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [selectedExportFormat, setSelectedExportFormat] = useState('idml');
+
+  // Reset export format if mapx-full is selected but no MAPX path is available
+  useEffect(() => {
+    if (selectedExportFormat === 'mapx-full' && !mapxPath) {
+      setSelectedExportFormat('idml');
+    }
+  }, [mapxPath, selectedExportFormat]);
 
   // Load template data when mapDef.template changes
   useEffect(() => {
@@ -271,6 +279,9 @@ export default function DetailsPane({
         templateName: templateName,
         format: format,
         projectFolder: settingsService.getProjectFolder(),
+        mapxPath: mapxPath,
+        language: settingsService.getLanguage(),
+        languageCode: settingsService.getLanguageCode(),
       });
 
       if (result.success || result.canceled) {
@@ -765,7 +776,7 @@ export default function DetailsPane({
               position: 'relative',
             }}
           >
-            <h4 style={{ marginTop: 0 }}>{inLang(uiStr.exportToDataMergeFile, lang)}</h4>
+            <h4 style={{ marginTop: 0 }}>{inLang(uiStr.export, lang)}</h4>
             <div style={{ marginBottom: 16 }}>
               <p style={{ marginBottom: 12 }}>{inLang(uiStr.selectOutputFormat, lang)}</p>
               <label style={{ display: 'block', marginBottom: 8, cursor: 'pointer' }}>
@@ -777,9 +788,9 @@ export default function DetailsPane({
                   onChange={e => setSelectedExportFormat(e.target.value)}
                   style={{ marginRight: 8 }}
                 />
-                InDesign (IDML)
+                InDesign data merge file (.IDML.TXT)
               </label>
-              <label style={{ display: 'block', cursor: 'pointer' }}>
+              <label style={{ display: 'block', marginBottom: 8, cursor: 'pointer' }}>
                 <input
                   type="radio"
                   name="exportFormat"
@@ -788,8 +799,42 @@ export default function DetailsPane({
                   onChange={e => setSelectedExportFormat(e.target.value)}
                   style={{ marginRight: 8 }}
                 />
-                Map Creator (MAPX)
+                Map Creator data merge file (.MAPX.TXT)
               </label>
+              {mapxPath ? (
+                <label style={{ display: 'block', cursor: 'pointer' }}>
+                  <input
+                    type="radio"
+                    name="exportFormat"
+                    value="mapx-full"
+                    checked={selectedExportFormat === 'mapx-full'}
+                    onChange={e => setSelectedExportFormat(e.target.value)}
+                    style={{ marginRight: 8 }}
+                  />
+                  Map Creator file (.MAPX)
+                </label>
+              ) : (
+                <div style={{ 
+                  display: 'block', 
+                  marginLeft: 28, 
+                  marginBottom: 8,
+                  padding: '8px 12px',
+                  backgroundColor: '#f8f9fa',
+                  border: '1px solid #dee2e6',
+                  borderRadius: '4px',
+                  fontSize: '0.9em',
+                  color: '#6c757d'
+                }}>
+                  {!templateData.formats || !templateData.formats.includes('mapx') ? (
+                    <span>This diagram is currently only available in IDML format.</span>
+                  ) : (
+                    <span>
+                      <b>MAPX master file</b> not found.<br />
+                      Specify the folder in ⚙️ Settings.
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
               <button
