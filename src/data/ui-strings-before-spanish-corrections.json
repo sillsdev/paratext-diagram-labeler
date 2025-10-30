@@ -1,79 +1,124 @@
 {
   "statusValue": [
-    { 
-      "text": { "en": "Blank", "es": "En blanco", "fr": "Vide", "ne": "खाली" }, 
-      "help": { 
-        "en": "Provide the text to be used in this label.", 
-        "es": "Proporcione el texto que se usará en esta etiqueta.", 
+    {
+      "text": {
+        "en": "Blank",
+        "es": "En blanco",
+        "fr": "Vide",
+        "ne": "खाली"
+      },
+      "help": {
+        "en": "Provide the text to be used in this label.",
+        "es": "Proporcione el texto que se usará en esta etiqueta.",
         "fr": "Fournissez le texte à utiliser pour cette étiquette.",
         "ne": "यस लेबलमा प्रयोग हुने पाठ प्रदान गर्नुहोस्।"
       }
-    },  
-    { 
-      "text": { "en": "Multiple Options",  "es": "Múltiples opciones", "fr": "Plusieurs options", "ne": "धेरै विकल्पहरू" }, 
-      "help": { 
-        "en": "Multiple options have been provided for you to select from. Ensure that you don't have any bad renderings, and then edit the label to remove unwanted options.", 
-        "es": "Se han proporcionado múltiples opciones para que seleccione. Asegúrese de que no haya renderizaciones incorrectas y luego edite la etiqueta para eliminar las opciones no deseadas.", 
+    },
+    {
+      "text": {
+        "en": "Multiple Options",
+        "es": "Múltiples opciones",
+        "fr": "Plusieurs options",
+        "ne": "धेरै विकल्पहरू"
+      },
+      "help": {
+        "en": "Multiple options have been provided for you to select from. Ensure that you don't have any bad renderings, and then edit the label to remove unwanted options.",
+        "es": "Se han proporcionado múltiples opciones para que seleccione. Asegúrese de que no haya renderizaciones incorrectas y luego edite la etiqueta para eliminar las opciones no deseadas.",
         "fr": "Plusieurs options vous ont été proposées. Assurez-vous qu'il n'y a pas de mauvaises traductions, puis modifiez l'étiquette pour supprimer les options indésirables.",
         "ne": "तपाईंको छनोटका लागि धेरै विकल्पहरू प्रदान गरिएको छ। गलत अनुवाद छैन भनेर सुनिश्चित गर्नुहोस्, अनि अनावश्यक विकल्पहरू हटाउन लेबल सम्पादन गर्नुहोस्।"
-      } 
-    },    
-    { 
-      "text": { "en": "No renderings", "es": "Sin renderizaciones", "fr": "Aucune traduction", "ne": "अनुवाद छैन" }, 
-      "help": { 
-        "en": "Your project does not yet contain any renderings for this term.", 
-        "es": "Su proyecto aún no contiene ninguna renderización para este término.", 
+      }
+    },
+    {
+      "text": {
+        "en": "No renderings",
+        "es": "Sin renderizaciones",
+        "fr": "Aucune traduction",
+        "ne": "अनुवाद छैन"
+      },
+      "help": {
+        "en": "Your project does not yet contain any renderings for this term.",
+        "es": "Su proyecto aún no contiene ninguna renderización para este término.",
         "fr": "Votre projet ne contient pas encore de traduction pour ce terme.",
         "ne": "तपाईंको परियोजनामा यो शब्दको लागि कुनै अनुवाद छैन।"
-      } 
-    }, 
-    { 
-      "text": { "en": "Unmatched label", "es": "Etiqueta no coincidente", "fr": "Étiquette non correspondante", "ne": "मिल्दो लेबल छैन" }, 
-      "help": { 
-        "en": "The label above is not matched by the renderings below.", 
+      }
+    },
+    {
+      "text": {
+        "en": "Unmatched label",
+        "es": "Etiqueta no coincidente",
+        "fr": "Étiquette non correspondante",
+        "ne": "मिल्दो लेबल छैन"
+      },
+      "help": {
+        "en": "The label above is not matched by the renderings below.",
         "es": "La etiqueta anterior no coincide con las renderizaciones a continuación.",
         "fr": "L'étiquette ci-dessus ne correspond à aucune des traductions ci-dessous.",
         "ne": "माथिको लेबल तलका अनुवादहरूसँग मेल खाँदैन।"
-      } 
-    },  
-    { 
-      "text": { "en": "Matched", "es": "Coincidente", "fr": "Correspondant", "ne": "मिल्यो" }, 
-      "help": { 
-        "en": "The term renderings will be able to supply this label to any other map in the project that needs it.", 
-        "es": "Las renderizaciones del término podrán suministrar esta etiqueta a cualquier otro mapa del proyecto que la necesite.", 
+      }
+    },
+    {
+      "text": {
+        "en": "Matched",
+        "es": "Coincidente",
+        "fr": "Correspondant",
+        "ne": "मिल्यो"
+      },
+      "help": {
+        "en": "The term renderings will be able to supply this label to any other map in the project that needs it.",
+        "es": "Las renderizaciones del término podrán suministrar esta etiqueta a cualquier otro mapa del proyecto que la necesite.",
         "fr": "Les traductions du terme pourront fournir cette étiquette à toute autre carte du projet qui en a besoin.",
         "ne": "शब्द अनुवादहरूले यो लेबल आवश्यक पर्ने अन्य नक्सामा पनि उपलब्ध गराउन सक्छन्।"
-      } 
-    },      
-    { 
-      "text": { "en": "Guessed", "es": "Adivinada", "fr": "Deviné", "ne": "अनुमान गरिएको" }, 
-      "help": { 
-        "en": "This label matches a guessed rendering which must be approved.", 
-        "es": "Esta etiqueta coincide con una renderización adivinada que debe ser aprobada.", 
+      }
+    },
+    {
+      "text": {
+        "en": "Guessed",
+        "es": "Adivinada",
+        "fr": "Deviné",
+        "ne": "अनुमान गरिएको"
+      },
+      "help": {
+        "en": "This label matches a guessed rendering which must be approved.",
+        "es": "Esta etiqueta coincide con una renderización adivinada que debe ser aprobada.",
         "fr": "Cette étiquette correspond à une traduction devinée qui doit être approuvée.",
         "ne": "यो लेबल अनुमान गरिएको अनुवादसँग मेल खान्छ, जसलाई स्वीकृत गर्नुपर्छ।"
-      } 
-    }, 
-    { 
-      "text": { "en": "Label cannot be derived from rendering",  "es": "La etiqueta no puede derivarse de la renderización", "fr": "L'étiquette ne peut pas être dérivée de la traduction", "ne": "लेबल अनुवादबाट व्युत्पन्न गर्न सकिँदैन" }, 
-      "help": { 
-        "en": "The rendering below does not have enough information to produce this label for other maps. If the rendering is correct, ", 
+      }
+    },
+    {
+      "text": {
+        "en": "Label cannot be derived from rendering",
+        "es": "La etiqueta no puede derivarse de la renderización",
+        "fr": "L'étiquette ne peut pas être dérivée de la traduction",
+        "ne": "लेबल अनुवादबाट व्युत्पन्न गर्न सकिँदैन"
+      },
+      "help": {
+        "en": "The rendering below does not have enough information to produce this label for other maps. If the rendering is correct, ",
         "es": "La renderización a continuación no tiene suficiente información para producir esta etiqueta para otros mapas. Si la renderización es correcta, ",
         "fr": "La traduction ci-dessous ne contient pas suffisamment d'informations pour produire cette étiquette pour d'autres cartes. Si la traduction est correcte, ",
         "ne": "तलको अनुवादले अन्य नक्साहरूका लागि यो लेबल उत्पादन गर्न पर्याप्त जानकारी छैन। यदि अनुवाद सही छ भने, "
-      } 
-    }, 
-    { 
-      "text": { "en": "Bad explicit form", "es": "Forma explícita incorrecta", "fr": "Forme explicite incorrecte", "ne": "गलत स्पष्ट रूप" }, 
-      "help": { 
-        "en": "The renderings specify an explicit map form, but it is not matched by any rendering.", 
-        "es": "Las renderizaciones especifican una forma explícita para el mapa, pero no coincide con ninguna renderización.", 
-        "fr": "Les traductions spécifient une forme explicite pour la carte, mais aucune traduction ne la correspond.",
-        "ne": "अनुवादहरूले स्पष्ट नक्सा रूप तोकेको छ, तर कुनै अनुवादसँग मेल खाँदैन।"
-      } 
+      }
     },
     {
-      "text": { "en": "Incomplete", "es": "Incompleto", "fr": "Incomplet", "ne": "अधूरो" },
+      "text": {
+        "en": "Bad explicit form",
+        "es": "Forma explícita incorrecta",
+        "fr": "Forme explicite incorrecte",
+        "ne": "गलत स्पष्ट रूप"
+      },
+      "help": {
+        "en": "The renderings specify an explicit map form, but it is not matched by any rendering.",
+        "es": "Las renderizaciones especifican una forma explícita para el mapa, pero no coincide con ninguna renderización.",
+        "fr": "Les traductions spécifient une forme explicite pour la carte, mais aucune traduction ne la correspond.",
+        "ne": "अनुवादहरूले स्पष्ट नक्सा रूप तोकेको छ, तर कुनै अनुवादसँग मेल खाँदैन।"
+      }
+    },
+    {
+      "text": {
+        "en": "Incomplete",
+        "es": "Incompleto",
+        "fr": "Incomplet",
+        "ne": "अधूरो"
+      },
       "help": {
         "en": "There are verses where we would expect this rendering to be used, but it is not present there. Adjust the renderings to include more renderings, or mark those verses as denied.",
         "es": "Hay versículos donde esperaríamos que se usara esta renderización, pero no está presente allí. Ajuste las renderizaciones para incluir más renderizaciones o marque esos versículos como denegados.",
@@ -82,94 +127,498 @@
       }
     },
     {
-      "text": { "en": "Multiple renderings", "es": "Múltiples renderizaciones", "fr": "Plusieurs traductions", "ne": "धेरै अनुवादहरू" }, 
-      "help": { 
-        "en": "The renderings list below contains multiple renderings, and does not explicitly specify which is the map form. If multiple rendering are necessary, ", 
+      "text": {
+        "en": "Multiple renderings",
+        "es": "Múltiples renderizaciones",
+        "fr": "Plusieurs traductions",
+        "ne": "धेरै अनुवादहरू"
+      },
+      "help": {
+        "en": "The renderings list below contains multiple renderings, and does not explicitly specify which is the map form. If multiple rendering are necessary, ",
         "es": "La lista de renderizaciones a continuación contiene múltiples renderizaciones y no especifica explícitamente cuál es la forma del mapa. Si son necesarias múltiples renderizacio nes, ",
         "fr": "La liste des traductions ci-dessous contient plusieurs traductions et ne spécifie pas explicitement quelle est la forme de la carte. Si plusieurs traductions sont nécessaires, ",
         "ne": "तलको अनुवाद सूचीमा धेरै अनुवादहरू छन्, र यसले स्पष्ट रूपमा नक्सा रूप निर्दिष्ट गर्दैन। यदि धेरै अनुवादहरू आवश्यक छन् भने, "
       }
-    } 
- 
+    }
   ],
- 
-  "addMapForm": { "en": "add an explicit map form.", "es": "agregue una forma explícita del mapa.", "fr": "ajoutez une forme explicite pour la carte.", "ne": "स्पष्ट नक्सा रूप थप्नुहोस्।"   },
-  "addRendering": { "en": "Add rendering", "es": "Agregar rendering", "fr": "Ajouter un rendu", "ne": "अनुवाद थप्नुहोस्" },
-  "addToRenderings": { "en": "Add to renderings", "es": "Agregar a renderings", "fr": "Ajouter aux rendus", "ne": "अनुवादहरूमा थप्नुहोस्" },
-  "approveRendering": { "en": "Approve Rendering", "es": "Aprobar Renderización", "fr": "Approuver le Rendu", "ne": "अनुमोदन गर्नुहोस्" },
-  "baseLayerTypes": { "en": "Base layer types", "es": "Tipos de capa base", "fr": "Types de couche de base", "ne": "आधार तहका प्रकारहरू" },
-  "browseTemplate": { "en": "Browse for map template", "es": "Buscar plantilla de mapa", "fr": "Parcourir les modèles de carte", "ne": "नक्सा टेम्प्लेट खोज्नुहोस्" },
-  "cancel": { "en": "Cancel", "es": "Cancelar", "fr": "Annuler", "ne": "रद्द गर्नुहोस्" },
-  "close": { "en": "Close", "es": "Cerrar", "fr": "Fermer", "ne": "बन्द गर्नुहोस्" },
-  "enterLabel": { "en": "Enter translated label", "es": "Ingrese la etiqueta traducida", "fr": "Entrez l'étiquette traduite", "ne": "अनुवादित लेबल प्रविष्ट गर्नुहोस्" },
-  "enterRenderings": { "en": "Enter renderings here, one per line.\nOptionally, explicitly mark the map form of the rendering by adding it as a comment that begins with '@'.\ne.g. Misra* (@Misradesh)", "es": "Ingrese los renderings aquí, uno por línea.\nOpcionalmente, marque explícitamente la forma del mapa agregándola como un comentario que comience con '@'.\np.ej. Misra* (@Misradesh)", "fr": "Entrez les rendus ici, un par ligne.\nOptionnellement, marquez explicitement la forme de la carte en l'ajoutant comme un commentaire commençant par '@'.\np.ex. Misra* (@Misradesh)", "ne": "यहाँ अनुवादहरू प्रविष्ट गर्नुहोस्, प्रत्येक लाइनमा एक।\nवैकल्पिक रूपमा, '@' बाट सुरु हुने टिप्पणीको रूपमा अनुवादको नक्सा रूप स्पष्ट रूपमा चिन्ह लगाउनुहोस्।\nजस्तै: Misra* (@Misradesh)" },
-  "export": { "en": "Export to data merge file", "es": "Exportar a archivo de combinación de datos", "fr": "Exporter vers un fichier de fusion de données", "ne": "डाटा मर्ज फाइलमा निर्यात गर्नुहोस्" },
-  "fileFormats": { "en": "File formats", "es": "Formatos de archivo", "fr": "Formats de fichier", "ne": "फाइल ढाँचाहरू" },
-  "found": { "en": "Found", "es": "Encontrado", "fr": "Trouvé", "ne": "फेला पर्यो" },
-  "gloss": { "en": "Gloss", "es": "Glosa", "fr": "Glossaire", "ne": "व्याख्या" },
-  "guessed": { "en": "Guessed", "es": "Adivinadas", "fr": "Devinés", "ne": "अनुमान गरिएको" },
-  "invalidUsfm": { "en": "Invalid USFM format. Changes not applied.", "es": "Formato USFM inválido. Cambios no aplicados.", "fr": "Format USFM invalide. Modifications non appliquées.", "ne": "अवैध USFM ढाँचा। परिवर्तनहरू लागू गरिएनन्।" },
-  "label": { "en": "Label", "es": "Etiqueta", "fr": "Étiquette", "ne": "लेबल" },
-  "labelSize": { "en": "Label Size", "es": "Tamaño de etiqueta", "fr": "Taille de l'étiquette", "ne": "लेबलको आकार" },
-  "labelOpacity": { "en": "Label Opacity", "es": "Opacidad de la etiqueta", "fr": "Opacité de l'étiquette", "ne": "लेबलको अपारदर्शिता" },
-  "language": { "en": "Language", "es": "Idioma", "fr": "Langue", "ne": "भाषा" },
-  "mapView": { "en": "Map View", "es": "Vista de mapa", "fr": "Vue de la carte", "ne": "नक्सा दृश्य" },
-  "noLocations": { "en": "No locations to display", "es": "No hay ubicaciones para mostrar", "fr": "Aucun emplacement à afficher", "ne": "देखाउन स्थानहरू छैनन्" },
-  "noTemplate": { "en": "No template", "es": "Sin plantilla", "fr": "Aucun modèle", "ne": "टेम्प्लेट छैन" },
-  "noReferences": { "en": "No references found for this term.", "es": "No se encontraron referencias para este término.", "fr": "Aucune référence trouvée pour ce terme.", "ne": "यो शब्दका लागि कुनै सन्दर्भ फेला परेन।" },
-  "ok": { "en": "OK", "es": "OK", "fr": "OK", "ne": "ठीक छ" },
-  "owner": { "en": "Owner", "es": "Propietario", "fr": "Propriétaire", "ne": "मालिक" },
-  "refreshLabel": { "en": "Refresh label", "es": "Actualizar etiqueta", "fr": "Actualiser l'étiquette", "ne": "लेबल रिफ्रेश गर्नुहोस्" },
-  "replaceRenderings": { "en": "Replace renderings and label", "es": "Reemplazar", "fr": "Remplacer", "ne": "प्रतिस्थापन गर्नुहोस्" },
-  "settings": { "en": "Settings", "es": "Configuración", "fr": "Paramètres", "ne": "सेटिङहरू" },
-  "status": { "en": "Status", "es": "Estado", "fr": "Statut", "ne": "स्थिति" },
-  "switchView": { "en": "Switch view", "es": "Cambiar vista", "fr": "Changer de vue", "ne": "दृश्य परिवर्तन गर्नुहोस्" },
-  "tableView": { "en": "Table View", "es": "Vista de tabla", "fr": "Vue du tableau", "ne": "तालिका दृश्य" },
-  "tally": { "en": "Tally", "es": "Conteo", "fr": "Total", "ne": "गणना" },
-  "showOnlyMissing": { "en": "Show only verses without matching renderings", "es": "Mostrar solo versículos sin renderizaciones coincidentes", "fr": "Afficher uniquement les versets sans traductions correspondantes", "ne": "मिल्दो अनुवाद नभएका पदहरू मात्र देखाउनुहोस्" },
-  "showAllVerses": { "en": "Show all verses", "es": "Mostrar todos los versículos", "fr": "Afficher tous les versets", "ne": "सबै पदहरू देखाउनुहोस्" },
-  "showUniqueForms": { "en": "Show unique forms", "es": "Mostrar formas únicas", "fr": "Afficher les formes uniques", "ne": "अनूठो रूपहरू देखाउनुहोस्" },
-  "missing": { "en": "Missing", "es": "Faltante", "fr": "Manquant", "ne": "हराइरहेको" },
-  "unique": { "en": "Unique", "es": "Único", "fr": "Unique", "ne": "अनूठो" },
-  "showTallyFractions": { "en": "Show tally fractions", "es": "Mostrar fracciones del conteo", "fr": "Afficher les fractions du total", "ne": "गणना भिन्नहरू देखाउनुहोस्" },
-  "templateInfo": { "en": "Template info", "es": "Información de la plantilla", "fr": "Infos du modèle", "ne": "टेम्प्लेट जानकारी" },
-  "termRenderings": { "en": "Term Renderings", "es": "Renderizaciones de Términos", "fr": "Rendus des Termes", "ne": "शब्द अनुवादहरू" },  "usageRules": { "en": "Usage and Attribution Rules", "es": "Reglas de uso y atribución", "fr": "Règles d'utilisation et d'attribution", "ne": "प्रयोग र श्रेय नियमहरू" },
-  "usfmView": { "en": "USFM View", "es": "Vista USFM", "fr": "Vue USFM", "ne": "USFM दृश्य" },
-  "invalidDataMerge": { "en": "Invalid data merge file format", "es": "Formato de archivo de fusión de datos no válido", "fr": "Format de fichier de fusion de données invalide", "ne": "अमान्य डाटा मर्ज फाइल ढाँचा" },
-  "failedToReadFile": { "en": "Failed to read file content", "es": "Error al leer el contenido del archivo", "fr": "Échec de lecture du contenu du fichier", "ne": "फाइल सामग्री पढ्न असफल" },
-  "errorSelectingFile": { "en": "Error selecting file", "es": "Error al seleccionar archivo", "fr": "Erreur lors de la sélection du fichier", "ne": "फाइल छनोट गर्दा त्रुटि" },
-  "loadingImage": { "en": "Loading image...", "es": "Cargando imagen...", "fr": "Chargement de l'image...", "ne": "छवि लोड हुँदै..." },
-  "exportCancelled": { "en": "Export cancelled", "es": "Exportación cancelada", "fr": "Exportation annulée", "ne": "निर्यात रद्द गरियो" },
-  "notExported": { "en": "Not exported", "es": "No exportado", "fr": "Non exporté", "ne": "निर्यात गरिएन" },
-  "couldNotSendToParatext": { "en": "Could not send reference to Paratext", "es": "No se pudo enviar referencia a Paratext", "fr": "Impossible d'envoyer la référence à Paratext", "ne": "Paratext मा सन्दर्भ पठाउन सकिएन" },
-  "errorSendingToParatext": { "en": "Error sending reference to Paratext", "es": "Error al enviar referencia a Paratext", "fr": "Erreur lors de l'envoi de référence à Paratext", "ne": "Paratext मा सन्दर्भ पठाउँदा त्रुटि" },
-  "paratextInstructions": { "en": "1. Go to Paratext and edit {reference}.\n2. Save your changes in Paratext.\n3. Come back here and click \"OK\" to refresh the verse text from Paratext.", "es": "1. Ve a Paratext y edita {reference}.\n2. Guarda tus cambios en Paratext.\n3. Regresa aquí y haz clic en \"OK\" para actualizar el texto del versículo desde Paratext.", "fr": "1. Allez à Paratext et éditez {reference}.\n2. Sauvegardez vos modifications dans Paratext.\n3. Revenez ici et cliquez sur \"OK\" pour actualiser le texte du verset depuis Paratext.", "ne": "1. Paratext मा जानुहोस् र {reference} सम्पादन गर्नुहोस्।\n2. Paratext मा आफ्ना परिवर्तनहरू बचत गर्नुहोस्।\n3. यहाँ फर्केर आउनुहोस् र Paratext बाट पद पाठ रिफ्रेश गर्न \"OK\" क्लिक गर्नुहोस्।" },
-  "failedToRequestVerses": { "en": "Failed to request filtered verses", "es": "Error al solicitar versículos filtrados", "fr": "Échec de la demande de versets filtrés", "ne": "फिल्टर गरिएका पदहरू अनुरोध गर्न असफल" },
-  "indesignIdml": { "en": "InDesign (IDML)", "es": "InDesign (IDML)", "fr": "InDesign (IDML)", "ne": "InDesign (IDML)" },
-  "mapCreatorMapx": { "en": "Map Creator (MAPX)", "es": "Map Creator (MAPX)", "fr": "Map Creator (MAPX)", "ne": "Map Creator (MAPX)" },
-  "sendReferenceToParatext": { "en": "Send reference to Paratext", "es": "Enviar referencia a Paratext", "fr": "Envoyer la référence à Paratext", "ne": "Paratext मा सन्दर्भ पठाउनुहोस्" },
-  "noVerseTextYet": { "en": "No verse text yet", "es": "Aún no hay texto del versículo", "fr": "Pas encore de texte de verset", "ne": "अझै पद पाठ छैन" },
-  "matchFound": { "en": "Match found", "es": "Coincidencia encontrada", "fr": "Correspondance trouvée", "ne": "मेल फेला पर्यो" },
-  "noMatchClickToDeny": { "en": "No match (Click to deny)", "es": "Sin coincidencia (Clic para denegar)", "fr": "Pas de correspondance (Cliquer pour refuser)", "ne": "कुनै मेल छैन (अस्वीकार गर्न क्लिक गर्नुहोस्)" },
-  "removeDenial": { "en": "Remove denial", "es": "Eliminar denegación", "fr": "Supprimer le refus", "ne": "अस्वीकार हटाउनुहोस्" },
-  "markAsDenied": { "en": "Mark as denied", "es": "Marcar como denegado", "fr": "Marquer comme refusé", "ne": "अस्वीकारको रूपमा चिन्ह लगाउनुहोस्" },
-  "noVerseTextYetBrackets": { "en": "[No verse text yet]", "es": "[Aún no hay texto del versículo]", "fr": "[Pas encore de texte de verset]", "ne": "[अझै पद पाठ छैन]" },
-  "failedToLoadTermRenderings": { "en": "Failed to load term-renderings.json", "es": "Error al cargar term-renderings.json", "fr": "Échec du chargement de term-renderings.json", "ne": "term-renderings.json लोड गर्न असफल" },
-  "loadingMapImage": { "en": "Loading map image...", "es": "Cargando imagen del mapa...", "fr": "Chargement de l'image de la carte...", "ne": "नक्सा छवि लोड हुँदै..." },
-  "imageLoadingFailed": { "en": "Image loading failed. Please check the installation.", "es": "Error al cargar la imagen. Verifique la instalación.", "fr": "Échec du chargement de l'image. Veuillez vérifier l'installation.", "ne": "छवि लोड गर्न असफल। कृपया स्थापना जाँच गर्नुहोस्।" },
-  "exportToDataMergeFile": { "en": "Export to data merge file", "es": "Exportar a archivo de combinación de datos", "fr": "Exporter vers un fichier de fusion de données", "ne": "डाटा मर्ज फाइलमा निर्यात गर्नुहोस्" },
-  "selectOutputFormat": { "en": "Select output format:", "es": "Seleccionar formato de salida:", "fr": "Sélectionner le format de sortie:", "ne": "आउटपुट ढाँचा छनोट गर्नुहोस्:" },
-  "loadingSettings": { "en": "Loading settings...", "es": "Cargando configuración...", "fr": "Chargement des paramètres...", "ne": "सेटिङहरू लोड हुँदै..." },
-  "paratextDiagramLabeler": { "en": "Paratext Diagram Labeler", "es": "Etiquetador de Diagramas Paratext", "fr": "Étiqueteur de Diagrammes Paratext", "ne": "Paratext आरेख लेबलर" },
-  "templateFolder": { "en": "Template Folder:", "es": "Carpeta de Plantillas:", "fr": "Dossier de Modèles:", "ne": "टेम्प्लेट फोल्डर:" },
-  "projectFolder": { "en": "Project Folder:", "es": "Carpeta del Proyecto:", "fr": "Dossier du Projet:", "ne": "परियोजना फोल्डर:" },
-  "saveRenderingsTo": { "en": "Save Renderings To:", "es": "Guardar Renderizaciones En:", "fr": "Enregistrer les Rendus Dans:", "ne": "अनुवादहरू यहाँ बचत गर्नुहोस्:" },
-  "usfmInOut": { "en": "USFM In/Out:", "es": "USFM Entrada/Salida:", "fr": "USFM Entrée/Sortie:", "ne": "USFM इन/आउट:" },
-  "specifyTemplateFolder": { "en": "Please specify the location of the folder containing the map templates", "es": "Especifique la ubicación de la carpeta que contiene las plantillas de mapas", "fr": "Veuillez spécifier l'emplacement du dossier contenant les modèles de cartes", "ne": "कृपया नक्सा टेम्प्लेटहरू भएको फोल्डरको स्थान निर्दिष्ट गर्नुहोस्" },
-  "templateFolderNotFound": { "en": "Template folder not found. Please specify the location of the folder containing the map templates.", "es": "Carpeta de plantillas no encontrada. Especifique la ubicación de la carpeta que contiene las plantillas de mapas.", "fr": "Dossier de modèles introuvable. Veuillez spécifier l'emplacement du dossier contenant les modèles de cartes.", "ne": "टेम्प्लेट फोल्डर फेला परेन। कृपया नक्सा टेम्प्लेटहरू भएको फोल्डरको स्थान निर्दिष्ट गर्नुहोस्।" },
-  "specifyProjectFolder": { "en": "Please specify the location of your Paratext project folder", "es": "Especifique la ubicación de su carpeta de proyecto Paratext", "fr": "Veuillez spécifier l'emplacement de votre dossier de projet Paratext", "ne": "कृपया आफ्नो Paratext परियोजना फोल्डरको स्थान निर्दिष्ट गर्नुहोस्" },
-  "projectFolderNotFound": { "en": "Project folder not found. Please specify the location of your Paratext project folder.", "es": "Carpeta de proyecto no encontrada. Especifique la ubicación de su carpeta de proyecto Paratext.", "fr": "Dossier de projet introuvable. Veuillez spécifier l'emplacement de votre dossier de projet Paratext.", "ne": "परियोजना फोल्डर फेला परेन। कृपया आफ्नो Paratext परियोजना फोल्डरको स्थान निर्दिष्ट गर्नुहोस्।" },
-  "failedToLoadTermRenderingsFromFolder": { "en": "Failed to load term renderings from project folder. Please check the folder and try again.", "es": "Error al cargar las representaciones de términos desde la carpeta del proyecto. Verifique la carpeta e intente nuevamente.", "fr": "Échec du chargement des rendus de termes depuis le dossier du projet. Veuillez vérifier le dossier et réessayer.", "ne": "परियोजना फोल्डरबाट शब्द अनुवादहरू लोड गर्न असफल। कृपया फोल्डर जाँच गर्नुहोस् र फेरि प्रयास गर्नुहोस्।" },
-  "errorCheckingProjectFolder": { "en": "Error checking project folder", "es": "Error al verificar la carpeta del proyecto", "fr": "Erreur lors de la vérification du dossier du projet", "ne": "परियोजना फोल्डर जाँच गर्दा त्रुटि" },
-  "errorCheckingTemplateFolder": { "en": "Error checking template folder", "es": "Error al verificar la carpeta de plantillas", "fr": "Erreur lors de la vérification du dossier de modèles", "ne": "टेम्प्लेट फोल्डर जाँच गर्दा त्रुटि" }
+  "addMapForm": {
+    "en": "add an explicit map form.",
+    "es": "agregue una forma explícita del mapa.",
+    "fr": "ajoutez une forme explicite pour la carte.",
+    "ne": "स्पष्ट नक्सा रूप थप्नुहोस्।"
+  },
+  "addRendering": {
+    "en": "Add rendering",
+    "es": "Agregar rendering",
+    "fr": "Ajouter un rendu",
+    "ne": "अनुवाद थप्नुहोस्"
+  },
+  "addToRenderings": {
+    "en": "Add to renderings",
+    "es": "Agregar a renderings",
+    "fr": "Ajouter aux rendus",
+    "ne": "अनुवादहरूमा थप्नुहोस्"
+  },
+  "approveRendering": {
+    "en": "Approve Rendering",
+    "es": "Aprobar Renderización",
+    "fr": "Approuver le Rendu",
+    "ne": "अनुमोदन गर्नुहोस्"
+  },
+  "baseLayerTypes": {
+    "en": "Base layer types",
+    "es": "Tipos de capa base",
+    "fr": "Types de couche de base",
+    "ne": "आधार तहका प्रकारहरू"
+  },
+  "browseTemplate": {
+    "en": "Browse for map template",
+    "es": "Buscar plantilla de mapa",
+    "fr": "Parcourir les modèles de carte",
+    "ne": "नक्सा टेम्प्लेट खोज्नुहोस्"
+  },
+  "cancel": {
+    "en": "Cancel",
+    "es": "Cancelar",
+    "fr": "Annuler",
+    "ne": "रद्द गर्नुहोस्"
+  },
+  "close": {
+    "en": "Close",
+    "es": "Cerrar",
+    "fr": "Fermer",
+    "ne": "बन्द गर्नुहोस्"
+  },
+  "enterLabel": {
+    "en": "Enter translated label",
+    "es": "Ingrese la etiqueta traducida",
+    "fr": "Entrez l'étiquette traduite",
+    "ne": "अनुवादित लेबल प्रविष्ट गर्नुहोस्"
+  },
+  "enterRenderings": {
+    "en": "Enter renderings here, one per line.\nOptionally, explicitly mark the map form of the rendering by adding it as a comment that begins with '@'.\ne.g. Misra* (@Misradesh)",
+    "es": "Ingrese los renderings aquí, uno por línea.\nOpcionalmente, marque explícitamente la forma del mapa agregándola como un comentario que comience con '@'.\np.ej. Misra* (@Misradesh)",
+    "fr": "Entrez les rendus ici, un par ligne.\nOptionnellement, marquez explicitement la forme de la carte en l'ajoutant comme un commentaire commençant par '@'.\np.ex. Misra* (@Misradesh)",
+    "ne": "यहाँ अनुवादहरू प्रविष्ट गर्नुहोस्, प्रत्येक लाइनमा एक।\nवैकल्पिक रूपमा, '@' बाट सुरु हुने टिप्पणीको रूपमा अनुवादको नक्सा रूप स्पष्ट रूपमा चिन्ह लगाउनुहोस्।\nजस्तै: Misra* (@Misradesh)"
+  },
+  "export": {
+    "en": "Export ",
+    "es": "Exportar",
+    "fr": "Exporter",
+    "ne": "डाटा मर्ज फाइलमा निर्यात गर्नुहोस्"
+  },
+  "fileFormats": {
+    "en": "File formats",
+    "es": "Formatos de archivo",
+    "fr": "Formats de fichier",
+    "ne": "फाइल ढाँचाहरू"
+  },
+  "found": {
+    "en": "Found",
+    "es": "Encontrado",
+    "fr": "Trouvé",
+    "ne": "फेला पर्यो"
+  },
+  "gloss": {
+    "en": "Gloss",
+    "es": "Glosa",
+    "fr": "Glossaire",
+    "ne": "व्याख्या"
+  },
+  "guessed": {
+    "en": "Guessed",
+    "es": "Adivinadas",
+    "fr": "Devinés",
+    "ne": "अनुमान गरिएको"
+  },
+  "invalidUsfm": {
+    "en": "Invalid USFM format. Changes not applied.",
+    "es": "Formato USFM inválido. Cambios no aplicados.",
+    "fr": "Format USFM invalide. Modifications non appliquées.",
+    "ne": "अवैध USFM ढाँचा। परिवर्तनहरू लागू गरिएनन्।"
+  },
+  "label": {
+    "en": "Label",
+    "es": "Etiqueta",
+    "fr": "Étiquette",
+    "ne": "लेबल"
+  },
+  "labelSize": {
+    "en": "Label Size",
+    "es": "Tamaño de etiqueta",
+    "fr": "Taille de l'étiquette",
+    "ne": "लेबलको आकार"
+  },
+  "labelOpacity": {
+    "en": "Label Opacity",
+    "es": "Opacidad de la etiqueta",
+    "fr": "Opacité de l'étiquette",
+    "ne": "लेबलको अपारदर्शिता"
+  },
+  "language": {
+    "en": "Language",
+    "es": "Idioma",
+    "fr": "Langue",
+    "ne": "भाषा"
+  },
+  "mapView": {
+    "en": "Map View",
+    "es": "Vista de mapa",
+    "fr": "Vue de la carte",
+    "ne": "नक्सा दृश्य"
+  },
+  "noLocations": {
+    "en": "No locations to display",
+    "es": "No hay ubicaciones para mostrar",
+    "fr": "Aucun emplacement à afficher",
+    "ne": "देखाउन स्थानहरू छैनन्"
+  },
+  "noTemplate": {
+    "en": "No template",
+    "es": "Sin plantilla",
+    "fr": "Aucun modèle",
+    "ne": "टेम्प्लेट छैन"
+  },
+  "noReferences": {
+    "en": "No references found for this term.",
+    "es": "No se encontraron referencias para este término.",
+    "fr": "Aucune référence trouvée pour ce terme.",
+    "ne": "यो शब्दका लागि कुनै सन्दर्भ फेला परेन।"
+  },
+  "ok": {
+    "en": "OK",
+    "es": "OK",
+    "fr": "OK",
+    "ne": "ठीक छ"
+  },
+  "owner": {
+    "en": "Owner",
+    "es": "Propietario",
+    "fr": "Propriétaire",
+    "ne": "मालिक"
+  },
+  "refreshLabel": {
+    "en": "Refresh label",
+    "es": "Actualizar etiqueta",
+    "fr": "Actualiser l'étiquette",
+    "ne": "लेबल रिफ्रेश गर्नुहोस्"
+  },
+  "replaceRenderings": {
+    "en": "Replace renderings and label",
+    "es": "Reemplazar",
+    "fr": "Remplacer",
+    "ne": "प्रतिस्थापन गर्नुहोस्"
+  },
+  "settings": {
+    "en": "Settings",
+    "es": "Configuración",
+    "fr": "Paramètres",
+    "ne": "सेटिङहरू"
+  },
+  "status": {
+    "en": "Status",
+    "es": "Estado",
+    "fr": "Statut",
+    "ne": "स्थिति"
+  },
+  "switchView": {
+    "en": "Switch view",
+    "es": "Cambiar vista",
+    "fr": "Changer de vue",
+    "ne": "दृश्य परिवर्तन गर्नुहोस्"
+  },
+  "tableView": {
+    "en": "Table View",
+    "es": "Vista de tabla",
+    "fr": "Vue du tableau",
+    "ne": "तालिका दृश्य"
+  },
+  "tally": {
+    "en": "Tally",
+    "es": "Conteo",
+    "fr": "Total",
+    "ne": "गणना"
+  },
+  "showOnlyMissing": {
+    "en": "Show only verses without matching renderings",
+    "es": "Mostrar solo versículos sin renderizaciones coincidentes",
+    "fr": "Afficher uniquement les versets sans traductions correspondantes",
+    "ne": "मिल्दो अनुवाद नभएका पदहरू मात्र देखाउनुहोस्"
+  },
+  "showAllVerses": {
+    "en": "Show all verses",
+    "es": "Mostrar todos los versículos",
+    "fr": "Afficher tous les versets",
+    "ne": "सबै पदहरू देखाउनुहोस्"
+  },
+  "showUniqueForms": {
+    "en": "Show unique forms",
+    "es": "Mostrar formas únicas",
+    "fr": "Afficher les formes uniques",
+    "ne": "अनूठो रूपहरू देखाउनुहोस्"
+  },
+  "missing": {
+    "en": "Missing",
+    "es": "Faltante",
+    "fr": "Manquant",
+    "ne": "हराइरहेको"
+  },
+  "unique": {
+    "en": "Unique",
+    "es": "Único",
+    "fr": "Unique",
+    "ne": "अनूठो"
+  },
+  "showTallyFractions": {
+    "en": "Show tally fractions",
+    "es": "Mostrar fracciones del conteo",
+    "fr": "Afficher les fractions du total",
+    "ne": "गणना भिन्नहरू देखाउनुहोस्"
+  },
+  "templateInfo": {
+    "en": "Template info",
+    "es": "Información de la plantilla",
+    "fr": "Infos du modèle",
+    "ne": "टेम्प्लेट जानकारी"
+  },
+  "termRenderings": {
+    "en": "Term Renderings",
+    "es": "Renderizaciones de Términos",
+    "fr": "Rendus des Termes",
+    "ne": "शब्द अनुवादहरू"
+  },
+  "usageRules": {
+    "en": "Usage and Attribution Rules",
+    "es": "Reglas de uso y atribución",
+    "fr": "Règles d'utilisation et d'attribution",
+    "ne": "प्रयोग र श्रेय नियमहरू"
+  },
+  "usfmView": {
+    "en": "USFM View",
+    "es": "Vista USFM",
+    "fr": "Vue USFM",
+    "ne": "USFM दृश्य"
+  },
+  "invalidDataMerge": {
+    "en": "Invalid data merge file format",
+    "es": "Formato de archivo de fusión de datos no válido",
+    "fr": "Format de fichier de fusion de données invalide",
+    "ne": "अमान्य डाटा मर्ज फाइल ढाँचा"
+  },
+  "failedToReadFile": {
+    "en": "Failed to read file content",
+    "es": "Error al leer el contenido del archivo",
+    "fr": "Échec de lecture du contenu du fichier",
+    "ne": "फाइल सामग्री पढ्न असफल"
+  },
+  "errorSelectingFile": {
+    "en": "Error selecting file",
+    "es": "Error al seleccionar archivo",
+    "fr": "Erreur lors de la sélection du fichier",
+    "ne": "फाइल छनोट गर्दा त्रुटि"
+  },
+  "loadingImage": {
+    "en": "Loading image...",
+    "es": "Cargando imagen...",
+    "fr": "Chargement de l'image...",
+    "ne": "छवि लोड हुँदै..."
+  },
+  "exportCancelled": {
+    "en": "Export cancelled",
+    "es": "Exportación cancelada",
+    "fr": "Exportation annulée",
+    "ne": "निर्यात रद्द गरियो"
+  },
+  "notExported": {
+    "en": "Not exported",
+    "es": "No exportado",
+    "fr": "Non exporté",
+    "ne": "निर्यात गरिएन"
+  },
+  "couldNotSendToParatext": {
+    "en": "Could not send reference to Paratext",
+    "es": "No se pudo enviar referencia a Paratext",
+    "fr": "Impossible d'envoyer la référence à Paratext",
+    "ne": "Paratext मा सन्दर्भ पठाउन सकिएन"
+  },
+  "errorSendingToParatext": {
+    "en": "Error sending reference to Paratext",
+    "es": "Error al enviar referencia a Paratext",
+    "fr": "Erreur lors de l'envoi de référence à Paratext",
+    "ne": "Paratext मा सन्दर्भ पठाउँदा त्रुटि"
+  },
+  "paratextInstructions": {
+    "en": "1. Go to Paratext and edit {reference}.\n2. Save your changes in Paratext.\n3. Come back here and click \"OK\" to refresh the verse text from Paratext.",
+    "es": "1. Ve a Paratext y edita {reference}.\n2. Guarda tus cambios en Paratext.\n3. Regresa aquí y haz clic en \"OK\" para actualizar el texto del versículo desde Paratext.",
+    "fr": "1. Allez à Paratext et éditez {reference}.\n2. Sauvegardez vos modifications dans Paratext.\n3. Revenez ici et cliquez sur \"OK\" pour actualiser le texte du verset depuis Paratext.",
+    "ne": "1. Paratext मा जानुहोस् र {reference} सम्पादन गर्नुहोस्।\n2. Paratext मा आफ्ना परिवर्तनहरू बचत गर्नुहोस्।\n3. यहाँ फर्केर आउनुहोस् र Paratext बाट पद पाठ रिफ्रेश गर्न \"OK\" क्लिक गर्नुहोस्।"
+  },
+  "failedToRequestVerses": {
+    "en": "Failed to request filtered verses",
+    "es": "Error al solicitar versículos filtrados",
+    "fr": "Échec de la demande de versets filtrés",
+    "ne": "फिल्टर गरिएका पदहरू अनुरोध गर्न असफल"
+  },
+  "indesignIdml": {
+    "en": "InDesign (IDML)",
+    "es": "InDesign (IDML)",
+    "fr": "InDesign (IDML)",
+    "ne": "InDesign (IDML)"
+  },
+  "mapCreatorMapx": {
+    "en": "Map Creator (MAPX)",
+    "es": "Map Creator (MAPX)",
+    "fr": "Map Creator (MAPX)",
+    "ne": "Map Creator (MAPX)"
+  },
+  "sendReferenceToParatext": {
+    "en": "Send reference to Paratext",
+    "es": "Enviar referencia a Paratext",
+    "fr": "Envoyer la référence à Paratext",
+    "ne": "Paratext मा सन्दर्भ पठाउनुहोस्"
+  },
+  "noVerseTextYet": {
+    "en": "No verse text yet",
+    "es": "Aún no hay texto del versículo",
+    "fr": "Pas encore de texte de verset",
+    "ne": "अझै पद पाठ छैन"
+  },
+  "matchFound": {
+    "en": "Match found",
+    "es": "Coincidencia encontrada",
+    "fr": "Correspondance trouvée",
+    "ne": "मेल फेला पर्यो"
+  },
+  "noMatchClickToDeny": {
+    "en": "No match (Click to deny)",
+    "es": "Sin coincidencia (Clic para denegar)",
+    "fr": "Pas de correspondance (Cliquer pour refuser)",
+    "ne": "कुनै मेल छैन (अस्वीकार गर्न क्लिक गर्नुहोस्)"
+  },
+  "removeDenial": {
+    "en": "Remove denial",
+    "es": "Eliminar denegación",
+    "fr": "Supprimer le refus",
+    "ne": "अस्वीकार हटाउनुहोस्"
+  },
+  "markAsDenied": {
+    "en": "Mark as denied",
+    "es": "Marcar como denegado",
+    "fr": "Marquer comme refusé",
+    "ne": "अस्वीकारको रूपमा चिन्ह लगाउनुहोस्"
+  },
+  "noVerseTextYetBrackets": {
+    "en": "[No verse text yet]",
+    "es": "[Aún no hay texto del versículo]",
+    "fr": "[Pas encore de texte de verset]",
+    "ne": "[अझै पद पाठ छैन]"
+  },
+  "failedToLoadTermRenderings": {
+    "en": "Failed to load term-renderings.json",
+    "es": "Error al cargar term-renderings.json",
+    "fr": "Échec du chargement de term-renderings.json",
+    "ne": "term-renderings.json लोड गर्न असफल"
+  },
+  "loadingMapImage": {
+    "en": "Loading map image...",
+    "es": "Cargando imagen del mapa...",
+    "fr": "Chargement de l'image de la carte...",
+    "ne": "नक्सा छवि लोड हुँदै..."
+  },
+  "imageLoadingFailed": {
+    "en": "Image loading failed. Please check the installation.",
+    "es": "Error al cargar la imagen. Verifique la instalación.",
+    "fr": "Échec du chargement de l'image. Veuillez vérifier l'installation.",
+    "ne": "छवि लोड गर्न असफल। कृपया स्थापना जाँच गर्नुहोस्।"
+  },
+  "exportToDataMergeFile": {
+    "en": "Export to data merge file",
+    "es": "Exportar a archivo de combinación de datos",
+    "fr": "Exporter vers un fichier de fusion de données",
+    "ne": "डाटा मर्ज फाइलमा निर्यात गर्नुहोस्"
+  },
+  "selectOutputFormat": {
+    "en": "Select output format:",
+    "es": "Seleccionar formato de salida:",
+    "fr": "Sélectionner le format de sortie:",
+    "ne": "आउटपुट ढाँचा छनोट गर्नुहोस्:"
+  },
+  "loadingSettings": {
+    "en": "Loading settings...",
+    "es": "Cargando configuración...",
+    "fr": "Chargement des paramètres...",
+    "ne": "सेटिङहरू लोड हुँदै..."
+  },
+  "paratextDiagramLabeler": {
+    "en": "Paratext Diagram Labeler",
+    "es": "Etiquetador de Diagramas Paratext",
+    "fr": "Étiqueteur de Diagrammes Paratext",
+    "ne": "Paratext आरेख लेबलर"
+  },
+  "templateFolder": {
+    "en": "Template Folder:",
+    "es": "Carpeta de Plantillas:",
+    "fr": "Dossier de Modèles:",
+    "ne": "टेम्प्लेट फोल्डर:"
+  },
+  "projectFolder": {
+    "en": "Project Folder:",
+    "es": "Carpeta del Proyecto:",
+    "fr": "Dossier du Projet:",
+    "ne": "परियोजना फोल्डर:"
+  },
+  "saveRenderingsTo": {
+    "en": "Save Renderings To:",
+    "es": "Guardar Renderizaciones En:",
+    "fr": "Enregistrer les Rendus Dans:",
+    "ne": "अनुवादहरू यहाँ बचत गर्नुहोस्:"
+  },
+  "usfmInOut": {
+    "en": "USFM In/Out:",
+    "es": "USFM Entrada/Salida:",
+    "fr": "USFM Entrée/Sortie:",
+    "ne": "USFM इन/आउट:"
+  },
+  "specifyTemplateFolder": {
+    "en": "Please specify the location of the folder containing the map templates",
+    "es": "Especifique la ubicación de la carpeta que contiene las plantillas de mapas",
+    "fr": "Veuillez spécifier l'emplacement du dossier contenant les modèles de cartes",
+    "ne": "कृपया नक्सा टेम्प्लेटहरू भएको फोल्डरको स्थान निर्दिष्ट गर्नुहोस्"
+  },
+  "templateFolderNotFound": {
+    "en": "Template folder not found. Please specify the location of the folder containing the map templates.",
+    "es": "Carpeta de plantillas no encontrada. Especifique la ubicación de la carpeta que contiene las plantillas de mapas.",
+    "fr": "Dossier de modèles introuvable. Veuillez spécifier l'emplacement du dossier contenant les modèles de cartes.",
+    "ne": "टेम्प्लेट फोल्डर फेला परेन। कृपया नक्सा टेम्प्लेटहरू भएको फोल्डरको स्थान निर्दिष्ट गर्नुहोस्।"
+  },
+  "specifyProjectFolder": {
+    "en": "Please specify the location of your Paratext project folder",
+    "es": "Especifique la ubicación de su carpeta de proyecto Paratext",
+    "fr": "Veuillez spécifier l'emplacement de votre dossier de projet Paratext",
+    "ne": "कृपया आफ्नो Paratext परियोजना फोल्डरको स्थान निर्दिष्ट गर्नुहोस्"
+  },
+  "projectFolderNotFound": {
+    "en": "Project folder not found. Please specify the location of your Paratext project folder.",
+    "es": "Carpeta de proyecto no encontrada. Especifique la ubicación de su carpeta de proyecto Paratext.",
+    "fr": "Dossier de projet introuvable. Veuillez spécifier l'emplacement de votre dossier de projet Paratext.",
+    "ne": "परियोजना फोल्डर फेला परेन। कृपया आफ्नो Paratext परियोजना फोल्डरको स्थान निर्दिष्ट गर्नुहोस्।"
+  },
+  "failedToLoadTermRenderingsFromFolder": {
+    "en": "Failed to load term renderings from project folder. Please check the folder and try again.",
+    "es": "Error al cargar las representaciones de términos desde la carpeta del proyecto. Verifique la carpeta e intente nuevamente.",
+    "fr": "Échec du chargement des rendus de termes depuis le dossier du projet. Veuillez vérifier le dossier et réessayer.",
+    "ne": "परियोजना फोल्डरबाट शब्द अनुवादहरू लोड गर्न असफल। कृपया फोल्डर जाँच गर्नुहोस् र फेरि प्रयास गर्नुहोस्।"
+  },
+  "errorCheckingProjectFolder": {
+    "en": "Error checking project folder",
+    "es": "Error al verificar la carpeta del proyecto",
+    "fr": "Erreur lors de la vérification du dossier du projet",
+    "ne": "परियोजना फोल्डर जाँच गर्दा त्रुटि"
+  },
+  "errorCheckingTemplateFolder": {
+    "en": "Error checking template folder",
+    "es": "Error al verificar la carpeta de plantillas",
+    "fr": "Erreur lors de la vérification du dossier de modèles",
+    "ne": "टेम्प्लेट फोल्डर जाँच गर्दा त्रुटि"
+  }
 }

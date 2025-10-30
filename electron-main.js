@@ -97,10 +97,20 @@ async function loadSettings(projectFolder) {
     if (languageMatch) {
       settings.language = languageMatch[1];
     }   
+    // if rawContents contains <LanguageIsoCode> tag, extract it
+    const languageCodeMatch = rawContents.match(/<LanguageIsoCode>(.*?)<\/LanguageIsoCode>/);
+    if (languageCodeMatch) {
+      settings.languageCode = languageCodeMatch[1];
+    }
     // if rawContents contains <Name> tag, extract it
     const nameMatch = rawContents.match(/<Name>(.*?)<\/Name>/);
     if (nameMatch) {
       settings.name = nameMatch[1];
+    }
+    // if rawContents contains <DefaultFont> tag, extract it
+    const defaultFontMatch = rawContents.match(/<DefaultFont>(.*?)<\/DefaultFont>/);
+    if (defaultFontMatch) {
+      settings.defaultFont = defaultFontMatch[1];
     }
     console.log(`[Settings] Loaded settings from ${settingsPath}`, settings);
   } catch (error) {
@@ -1043,10 +1053,26 @@ ipcMain.handle('stat-path', async (event, filePath) => {
   }
 });
 
+// Handler for path joining
+ipcMain.handle('path-join', async (event, ...paths) => {
+  return path.join(...paths);
+});
+
+// Handler to check if file exists
+ipcMain.handle('file-exists', async (event, filePath) => {
+  try {
+    const normalizedPath = path.normalize(filePath);
+    fs.accessSync(normalizedPath, fs.constants.F_OK);
+    return true;
+  } catch (error) {
+    return false;
+  }
+});
+
 // Handle IDML/MAPX data merge export
 ipcMain.handle(
   'export-data-merge',
-  async (event, { locations, templateName, format, projectFolder }) => {
+  async (event, { locations, templateName, format, projectFolder, mapxPath, language, languageCode }) => {
     await loadSettings(projectFolder);
     try {
       // Automatically create shared/labeler folder structure
@@ -1078,7 +1104,7 @@ ipcMain.handle(
         const dataMergeHeader = locations.map(loc => loc.mergeKey).join('\t');
         const dataMergeContent = locations.map(loc => loc.vernLabel || '').join('\t');
         data = dataMergeHeader + '\n' + dataMergeContent + '\n';
-      } else {        // Prepare MAPX data merge content
+      } else if (format === 'mapx') {        // Prepare MAPX data merge content
         // For each location, use the provided mapxKey and vernacular label, separated by a tab.
         data = locations
           .map(loc => {
@@ -1087,11 +1113,67 @@ ipcMain.handle(
             return `${mapxKey}\t${vernacularLabel}`;
           })
           .join('\n');
+      } else { // mapx-full
+        // Use settings loaded from Settings.xml instead of frontend parameters
+        const actualLanguage = settings.language || language;
+        const actualLanguageCode = settings.languageCode || languageCode;
+        const localeId = actualLanguageCode
+          .replace(/:+/g, '_')
+          .replace(/_$/g, '');
+        const defaultFont = settings.defaultFont || 'Arial';
+        
+        if (!mapxPath) {
+          throw new Error('MAPX template file path not provided. Please configure MAPX paths in Settings.');
+        }
+        
+        const mapxTemplateFilename = mapxPath;
+        
+        // Verify the file exists before attempting to read it
+        if (!fs.existsSync(mapxTemplateFilename)) {
+          throw new Error(`MAPX template file not found at: ${mapxTemplateFilename}`);
+        }
+        
+        console.log(`Reading MAPX template from: ${mapxTemplateFilename}`);
+        console.log(`Using language: ${actualLanguage}, languageCode: ${actualLanguageCode} from Settings.xml`);
+        
+        // read the contents of the file named mapxTemplateFilename into data
+        data = fs.readFileSync(mapxTemplateFilename, 'utf8');
+        
+        // Insert a language definition - modify the Language element
+        const languageRegex = /^(\s*)<Language xsi:type="CustomLanguage" Name="Merge_Key" LocaleId="([^"]*)" FontFamily="([^"]*)"( IsCurrent="true")?\s*\/>/gm;
+        const originalData = data;
+        data = data.replace(languageRegex, (match, whitespace, oldLocaleId, fontFamily) => {
+          return `${whitespace}<Language xsi:type="CustomLanguage" Name="Merge_Key" LocaleId="${oldLocaleId}" FontFamily="${fontFamily}"/>\n${whitespace}<Language xsi:type="CustomLanguage" Name="${actualLanguage}" LocaleId="${localeId}" FontFamily="${defaultFont}" IsCurrent="true"/>`;
+        });
+        
+        // Check if the replacement was successful
+        if (data === originalData) {
+          throw new Error('The selected MAPX file does not contain the required Merge_Key language definition. Please use a version of the MAPX file that contains Merge_Key data.');
+        }
+
+        // For each location, insert a <Variant> element for the vernacular label
+        locations.forEach(loc => {
+          const mergeKey = loc.mergeKey;
+          const vernLabel = loc.vernLabel || '';
+          
+          if (mergeKey && vernLabel) {
+            // Find the Variant element with Language="Merge_Key" and Text matching the mergeKey
+            const variantRegex = new RegExp(
+              `^(\\s*)<Variant Language="Merge_Key">\\s*\\n\\s*<Text>${mergeKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</Text>\\s*\\n(\\s*)</Variant>`,
+              'gm'
+            );
+            
+            data = data.replace(variantRegex, (match, whitespace1, whitespace2) => {
+              return `${match}\n${whitespace1}<Variant Language="${actualLanguage}">\n${whitespace1}    <Text>${vernLabel}</Text>\n${whitespace2}</Variant>`;
+            });
+          }
+        });
+
       }
 
       // Generate suggested filename
       const projectName = settings.name;
-      const suggestedFilename = `${templateName} @${projectName}.${format}.txt`;
+      const suggestedFilename = `${templateName} @${projectName}` + (format==='mapx-full' ? '.mapx' : `${format}.txt`);
       const suggestedPath = path.join(defaultPath, suggestedFilename);
 
       // Show save dialog
@@ -1100,7 +1182,11 @@ ipcMain.handle(
         title: `Export ${fmtUpper} Data Merge`,
         defaultPath: suggestedPath,
         filters: [
+          format === 'mapx-full' ?
           {
+            name: `Map Creator File`,
+            extensions: [`mapx`],
+          } : {
             name: `${fmtUpper} Data Merge Files`,
             extensions: [`${format}.txt`],
           },
@@ -1123,7 +1209,7 @@ ipcMain.handle(
         // Write idml.txt file with BOM and UTF-16 LE encoding.
         await fs.promises.writeFile(result.filePath, '\uFEFF' + data, { encoding: 'utf16le' });
       } else {
-        // Write mapx.txt file with BOM and UTF-8 encoding
+        // Write mapx.txt or .mapx file with BOM and UTF-8 encoding
         await fs.promises.writeFile(result.filePath, '\uFEFF' + data, 'utf8');
       }
 
@@ -1136,7 +1222,9 @@ ipcMain.handle(
       console.error('Export data merge error:', error);
       return {
         success: false,
+        canceled: false,
         error: error.message,
+        message: `Export failed: ${error.message}`,
       };
     }
   }

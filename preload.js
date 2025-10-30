@@ -41,6 +41,14 @@ contextBridge.exposeInMainWorld('electronAPI', {
   discoverCollections: templateFolderPath =>
     ipcRenderer.invoke('discover-collections', templateFolderPath),
 
+  // Path utilities
+  path: {
+    join: (...paths) => ipcRenderer.invoke('path-join', ...paths),
+  },
+
+  // File system utilities
+  fileExists: (filePath) => ipcRenderer.invoke('file-exists', filePath),
+
   // Add listener for fit-map event from menu
   onFitMap: (callback) => ipcRenderer.on('fit-map', callback),
   
