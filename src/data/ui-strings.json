@@ -415,9 +415,9 @@
   },
   "exportToDataMergeFile": {
     "en": "Export",
-    "es": "Exportar a archivo de combinación de datos",
-    "fr": "Exporter vers un fichier de fusion de données",
-    "ne": "डाटा मर्ज फाइलमा निर्यात गर्नुहोस्"
+    "es": "Exportar",
+    "fr": "Exporter",
+    "ne": "निर्यात गर्नुहोस्"
   },
   "selectOutputFormat": {
     "en": "Select output format:",
