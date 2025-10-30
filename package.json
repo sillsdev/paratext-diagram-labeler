@@ -1,6 +1,6 @@
 {
   "name": "paratext-diagram-labeler",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "author": "SIL Scripture Publishing Services <paratextdiagramlabeler@gmail.com>",
   "description": "Paratext Diagram Labeler",
@@ -99,7 +99,9 @@
       {
         "from": "resources/_LabelerTemplates",
         "to": "_LabelerTemplates",
-        "filter": ["**/*"]
+        "filter": [
+          "**/*"
+        ]
       }
     ],
     "asar": true,
