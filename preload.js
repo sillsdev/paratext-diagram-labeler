@@ -10,6 +10,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   selectProjectFolder: () => ipcRenderer.invoke('select-project-folder'),
 
+  discoverParatextProjects: () => ipcRenderer.invoke('discover-paratext-projects'),
+
   getFilteredVerses: (folder, curRefs) =>
     ipcRenderer.invoke('get-filtered-verses', folder, curRefs),
 

@@ -576,6 +576,216 @@ ipcMain.handle('save-term-renderings', async (event, projectFolder, saveToDemo, 
   }
 });
 
+// Paratext project discovery functions
+function getParatextDirectories() {
+  const directories = [];
+  
+  if (process.platform === 'win32') {
+    // Windows - check registry and common locations
+    try {
+      // Try to use child_process to query registry directly
+      const { execSync } = require('child_process');
+      
+      // Try Paratext 9 first
+      try {
+        const pt9Result = execSync('reg query "HKLM\\SOFTWARE\\WOW6432Node\\Paratext\\9" /v Settings_Directory', { encoding: 'utf8' });
+        const pt9Match = pt9Result.match(/Settings_Directory\s+REG_SZ\s+(.+)/);
+        if (pt9Match && pt9Match[1]) {
+          const pt9Dir = pt9Match[1].trim();
+          if (fs.existsSync(pt9Dir) && !directories.includes(pt9Dir)) {
+            directories.push(pt9Dir);
+          }
+        }
+      } catch (e) {
+        console.log('Paratext 9 registry key not found');
+      }
+      
+      // Try Paratext 8
+      try {
+        const pt8Result = execSync('reg query "HKLM\\SOFTWARE\\WOW6432Node\\Paratext\\8" /v Settings_Directory', { encoding: 'utf8' });
+        const pt8Match = pt8Result.match(/Settings_Directory\s+REG_SZ\s+(.+)/);
+        if (pt8Match && pt8Match[1]) {
+          const pt8Dir = pt8Match[1].trim();
+          if (fs.existsSync(pt8Dir) && !directories.includes(pt8Dir)) {
+            directories.push(pt8Dir);
+          }
+        }
+      } catch (e) {
+        console.log('Paratext 8 registry key not found');
+      }
+    } catch (e) {
+      console.log('Registry access failed, checking common directories');
+    }
+    
+    // Fallback to common Windows locations
+    const commonLocations = [
+      'C:\\My Paratext 9 Projects',
+      'C:\\My Paratext 8 Projects',
+      'D:\\My Paratext 9 Projects',
+      'D:\\My Paratext 8 Projects',
+      'E:\\My Paratext 9 Projects',
+      'E:\\My Paratext 8 Projects'
+    ];
+    
+    for (const location of commonLocations) {
+      if (fs.existsSync(location) && !directories.includes(location)) {
+        directories.push(location);
+      }
+    }
+    
+  } else if (process.platform === 'darwin') {
+    // macOS
+    const homeDir = require('os').homedir();
+    const macLocations = [
+      path.join(homeDir, 'Library/Application Support/paratextlite/Paratext9Projects'),
+      path.join(homeDir, 'Library/Application Support/paratextlite/Paratext8Projects'),
+      path.join(homeDir, 'Paratext9Projects'),
+      path.join(homeDir, 'Paratext8Projects')
+    ];
+    
+    for (const location of macLocations) {
+      if (fs.existsSync(location) && !directories.includes(location)) {
+        directories.push(location);
+      }
+    }
+    
+  } else {
+    // Linux
+    const homeDir = require('os').homedir();
+    const linuxLocations = [
+      path.join(homeDir, 'Paratext9Projects'),
+      path.join(homeDir, 'Paratext8Projects'),
+      path.join(homeDir, '.config/paratext/projects/Paratext9Projects'),
+      path.join(homeDir, '.config/paratext/projects/Paratext8Projects')
+    ];
+    
+    for (const location of linuxLocations) {
+      if (fs.existsSync(location) && !directories.includes(location)) {
+        directories.push(location);
+      }
+    }
+  }
+  
+  return directories;
+}
+
+function isValidParatextProject(projectPath) {
+  // Check for required Paratext project files
+  const settingsXml = path.join(projectPath, 'Settings.xml');
+  const ptxSettingsXml = path.join(projectPath, 'ptxSettings.xml');
+  
+  if (!fs.existsSync(settingsXml) && !fs.existsSync(ptxSettingsXml)) {
+    return false;
+  }
+  
+  // Look for at least one .SFM file (case insensitive)
+  try {
+    const files = fs.readdirSync(projectPath);
+    const hasSfmFile = files.some(file => file.toLowerCase().endsWith('.sfm'));
+    return hasSfmFile;
+  } catch (e) {
+    return false;
+  }
+}
+
+function getProjectInfo(projectPath) {
+  const projectName = path.basename(projectPath);
+  const info = {
+    name: projectName,
+    path: projectPath,
+    fullName: projectName,
+    language: '',
+    version: ''
+  };
+  
+  // Try to read additional info from Settings.xml
+  const settingsPath = path.join(projectPath, 'Settings.xml');
+  if (fs.existsSync(settingsPath)) {
+    try {
+      const settingsContent = fs.readFileSync(settingsPath, 'utf8');
+      
+      // Extract full name
+      const nameMatch = settingsContent.match(/<Name>(.*?)<\/Name>/);
+      if (nameMatch) {
+        info.fullName = nameMatch[1];
+      }
+      
+      // Extract language code
+      const langMatch = settingsContent.match(/<LanguageIsoCode>(.*?)<\/LanguageIsoCode>/);
+      if (langMatch) {
+        info.language = langMatch[1];
+      }
+      
+      // Extract version info
+      const versionMatch = settingsContent.match(/<MinParatextVersion>(.*?)<\/MinParatextVersion>/);
+      if (versionMatch) {
+        info.version = versionMatch[1];
+      }
+    } catch (e) {
+      console.log(`Could not read settings for project ${projectName}:`, e.message);
+    }
+  }
+  
+  return info;
+}
+
+function discoverParatextProjects() {
+  const projects = [];
+  const projectPaths = new Set(); // Track unique project paths to avoid duplicates
+  const paratextDirectories = getParatextDirectories();
+  
+  console.log('Searching for Paratext projects in:', paratextDirectories);
+  
+  for (const directory of paratextDirectories) {
+    try {
+      const entries = fs.readdirSync(directory, { withFileTypes: true });
+      
+      for (const entry of entries) {
+        if (entry.isDirectory()) {
+          const projectPath = path.join(directory, entry.name);
+          
+          // Skip if we've already processed this project path
+          if (projectPaths.has(projectPath)) {
+            continue;
+          }
+          
+          // Skip common non-project directories
+          if (entry.name.startsWith('.') || 
+              entry.name === '_projectById' || 
+              entry.name === '_PTXprint' ||
+              entry.name.toLowerCase().includes('backup')) {
+            continue;
+          }
+          
+          if (isValidParatextProject(projectPath)) {
+            const projectInfo = getProjectInfo(projectPath);
+            projects.push(projectInfo);
+            projectPaths.add(projectPath); // Track this path as processed
+          }
+        }
+      }
+    } catch (e) {
+      console.log(`Could not read directory ${directory}:`, e.message);
+    }
+  }
+  
+  // Sort projects by name
+  projects.sort((a, b) => a.name.localeCompare(b.name));
+  
+  console.log(`Found ${projects.length} Paratext projects`);
+  return projects;
+}
+
+// IPC handler for discovering Paratext projects
+ipcMain.handle('discover-paratext-projects', async () => {
+  try {
+    return discoverParatextProjects();
+  } catch (error) {
+    console.error('Error discovering Paratext projects:', error);
+    return [];
+  }
+});
+
 ipcMain.handle('select-project-folder', async event => {
   const result = await dialog.showOpenDialog({
     properties: ['openDirectory'],

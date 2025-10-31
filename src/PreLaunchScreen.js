@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import './PreLaunchScreen.css';
 import uiStr from './data/ui-strings.json';
 import { inLang } from './Utils.js';
@@ -11,6 +11,27 @@ const ErrorIcon = () => <span className="status-icon invalid">✗</span>;
 const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch, language = 'en' }) => {
   // Use local state for editing but rely on parent for validated errors
   const [editedSettings, setEditedSettings] = useState({ ...settings });
+  const [paratextProjects, setParatextProjects] = useState([]);
+  const [loadingProjects, setLoadingProjects] = useState(false);
+
+  // Load Paratext projects on component mount
+  useEffect(() => {
+    const loadParatextProjects = async () => {
+      setLoadingProjects(true);
+      try {
+        const projects = await window.electronAPI.discoverParatextProjects();
+        setParatextProjects(projects);
+        console.log('Discovered Paratext projects:', projects);
+      } catch (error) {
+        console.error('Error discovering Paratext projects:', error);
+        setParatextProjects([]);
+      } finally {
+        setLoadingProjects(false);
+      }
+    };
+
+    loadParatextProjects();
+  }, []);
 
   const handleSettingChange = useCallback(
     (key, value) => {
@@ -40,7 +61,18 @@ const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch, languag
       }
     },
     [handleSettingChange]
-  ); // Save settings and launch app - use useCallback to prevent recreating on every render
+  ); // Handle Paratext project selection from dropdown
+
+  const handleParatextProjectSelect = useCallback(
+    (event) => {
+      const selectedPath = event.target.value;
+      if (selectedPath && selectedPath !== '') {
+        // Update the project folder setting when a project is selected
+        handleSettingChange('projectFolder', selectedPath);
+      }
+    },
+    [handleSettingChange]
+  );
 
   const handleLaunch = useCallback(() => {
     // Let the parent component handle all validation and saving
@@ -86,33 +118,47 @@ const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch, languag
         )}
       </div>
       <div className="settings-container">
-        {/* Template Folder Setting */}
-        <div className="setting-row">
-          <div className="setting-status">
-            {errors.templateFolder ? <ErrorIcon /> : <CheckIcon />}
-          </div>
-          <div className="setting-content">
-            <div className="setting-input-group">
-              <label>{inLang(uiStr.templateFolder, language)}</label>
-              <input
-                type="text"
-                value={editedSettings.templateFolder || ''}
-                onChange={e => handleSettingChange('templateFolder', e.target.value)}
-                className={errors.templateFolder ? 'error' : ''}
-                spellCheck={false}
-              />
-              <button onClick={() => handleSelectFolder('templateFolder')}>Browse...</button>
-            </div>
-            {errors.templateFolder && <div className="error-message">{errors.templateFolder}</div>}
-          </div>
-        </div>
-
         {/* Project Folder Setting */}
         <div className="setting-row">
           <div className="setting-status">
             {errors.projectFolder ? <ErrorIcon /> : <CheckIcon />}
           </div>
           <div className="setting-content">
+            {/* Paratext Project Dropdown */}
+            {paratextProjects.length > 0 && (
+              <div className="setting-input-group">
+                <label>{inLang(uiStr.selectParatextProject, language)}</label>
+                <select
+                  value={
+                    paratextProjects.find(p => p.path === editedSettings.projectFolder)?.path || ''
+                  }
+                  onChange={handleParatextProjectSelect}
+                  disabled={loadingProjects}
+                >
+                  <option value="">
+                    {loadingProjects 
+                      ? inLang(uiStr.loadingProjects, language) 
+                      : inLang(uiStr.chooseParatextProject, language)
+                    }
+                  </option>
+                  {paratextProjects.map(project => (
+                    <option key={project.path} value={project.path}>
+                      {project.fullName || project.name}
+                      {project.language && ` (${project.language})`}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+            
+            {/* Show helpful message when no projects found */}
+            {!loadingProjects && paratextProjects.length === 0 && (
+              <div className="setting-help-text">
+                {inLang(uiStr.noParatextProjectsFound, language)}
+              </div>
+            )}
+            
+            {/* Manual Project Folder Input */}
             <div className="setting-input-group">
               <label>{inLang(uiStr.projectFolder, language)}</label>
               <input
@@ -167,9 +213,30 @@ const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch, languag
             {errors.usfm && <div className="error-message">{errors.usfm}</div>}
           </div>
         </div>
+
+        {/* Template Folder Setting */}
+        <div className="setting-row">
+          <div className="setting-status">
+            {errors.templateFolder ? <ErrorIcon /> : <CheckIcon />}
+          </div>
+          <div className="setting-content">
+            <div className="setting-input-group">
+              <label>{inLang(uiStr.templateFolder, language)}</label>
+              <input
+                type="text"
+                value={editedSettings.templateFolder || ''}
+                onChange={e => handleSettingChange('templateFolder', e.target.value)}
+                className={errors.templateFolder ? 'error' : ''}
+                spellCheck={false}
+              />
+              <button onClick={() => handleSelectFolder('templateFolder')}>Browse...</button>
+            </div>
+            {errors.templateFolder && <div className="error-message">{errors.templateFolder}</div>}
+          </div>
+        </div>
       </div>{' '}
       {/* settings-container */}
-    </div> /* pre-launch-screen */
+    </div> {/* pre-launch-screen */}
   );
 };
 
