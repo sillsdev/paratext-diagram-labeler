@@ -197,6 +197,17 @@ select {
   margin-top: 5px;
 }
 
+.setting-help-text {
+  color: #7f8c8d;
+  font-size: 13px;
+  margin-bottom: 15px;
+  padding: 8px 12px;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 4px;
+  font-style: italic;
+}
+
 textarea {
   width: 100%;
   padding: 10px;

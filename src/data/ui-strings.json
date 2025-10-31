@@ -449,6 +449,30 @@
     "fr": "Dossier du Projet:",
     "ne": "परियोजना फोल्डर:"
   },
+  "selectParatextProject": {
+    "en": "Select Paratext Project:",
+    "es": "Seleccionar Proyecto de Paratext:",
+    "fr": "Sélectionner le Projet Paratext:",
+    "ne": "पेराटेक्स्ट परियोजना चयन गर्नुहोस्:"
+  },
+  "chooseParatextProject": {
+    "en": "Choose a Paratext project...",
+    "es": "Elegir un proyecto de Paratext...",
+    "fr": "Choisir un projet Paratext...",
+    "ne": "पेराटेक्स्ट परियोजना छान्नुहोस्..."
+  },
+  "loadingProjects": {
+    "en": "Loading projects...",
+    "es": "Cargando proyectos...",
+    "fr": "Chargement des projets...",
+    "ne": "परियोजनाहरू लोड हुँदै..."
+  },
+  "noParatextProjectsFound": {
+    "en": "No Paratext projects found. You can manually specify the project folder below.",
+    "es": "No se encontraron proyectos de Paratext. Puede especificar manualmente la carpeta del proyecto a continuación.",
+    "fr": "Aucun projet Paratext trouvé. Vous pouvez spécifier manuellement le dossier du projet ci-dessous.",
+    "ne": "कुनै पेराटेक्स्ट परियोजनाहरू फेला परेनन्। तपाईं तल म्यानुअल रूपमा परियोजना फोल्डर निर्दिष्ट गर्न सक्नुहुन्छ।"
+  },
   "saveRenderingsTo": {
     "en": "Save Renderings To:",
     "es": "Guardar traducciones en:",
