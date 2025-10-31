@@ -25,6 +25,7 @@ const { initialize, enable } = require('@electron/remote/main');
 const { ipcMain, dialog } = require('electron');
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 const xml2js = require('xml2js');
 
 // Linux-specific GTK compatibility fix - must be set before app.whenReady()
@@ -635,7 +636,7 @@ function getParatextDirectories() {
     
   } else if (process.platform === 'darwin') {
     // macOS
-    const homeDir = require('os').homedir();
+    const homeDir = os.homedir();
     const macLocations = [
       path.join(homeDir, 'Library/Application Support/paratextlite/Paratext9Projects'),
       path.join(homeDir, 'Library/Application Support/paratextlite/Paratext8Projects'),
@@ -651,7 +652,7 @@ function getParatextDirectories() {
     
   } else {
     // Linux
-    const homeDir = require('os').homedir();
+    const homeDir = os.homedir();
     const linuxLocations = [
       path.join(homeDir, 'Paratext9Projects'),
       path.join(homeDir, 'Paratext8Projects'),
