@@ -236,7 +236,7 @@ const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch, languag
         </div>
       </div>{' '}
       {/* settings-container */}
-    </div> /* pre-launch-screen */
+    </div> {/* pre-launch-screen */}
   );
 };
 
