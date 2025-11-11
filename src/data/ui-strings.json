@@ -329,29 +329,29 @@
     "fr": "Map Creator (MAPX)",
     "ne": "Map Creator (MAPX)"
   },
-  "mapxPaths": {
-    "en": "MAPX File Paths",
-    "es": "Rutas de archivos MAPX",
-    "fr": "Chemins de fichiers MAPX",
-    "ne": "MAPX फाइल पथहरू"
+  "templatePaths": {
+    "en": "Template File Paths",
+    "es": "Rutas de archivos de plantilla",
+    "fr": "Chemins de fichiers modèle",
+    "ne": "टेम्प्लेट फाइल पथहरू"
   },
-  "addMapxPath": {
-    "en": "Add MAPX Path",
-    "es": "Agregar ruta MAPX",
-    "fr": "Ajouter chemin MAPX",
-    "ne": "MAPX पथ थप्नुहोस्"
+  "addTemplatePath": {
+    "en": "Add Template Path",
+    "es": "Agregar ruta de plantilla",
+    "fr": "Ajouter chemin de modèle",
+    "ne": "टेम्प्लेट पथ थप्नुहोस्"
   },
-  "removeMapxPath": {
+  "removeTemplatePath": {
     "en": "Remove",
     "es": "Eliminar",
     "fr": "Supprimer",
     "ne": "हटाउनुहोस्"
   },
-  "browseForMapxPath": {
-    "en": "Browse for MAPX folder",
-    "es": "Buscar carpeta MAPX",
-    "fr": "Parcourir le dossier MAPX",
-    "ne": "MAPX फोल्डर खोज्नुहोस्"
+  "browseForTemplatePath": {
+    "en": "Browse for template folder",
+    "es": "Buscar carpeta de plantilla",
+    "fr": "Parcourir le dossier modèle",
+    "ne": "टेम्प्लेट फोल्डर खोज्नुहोस्"
   },
   "sendReferenceToParatext": {
     "en": "Send reference to Paratext",

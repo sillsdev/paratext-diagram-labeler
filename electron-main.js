@@ -1283,7 +1283,7 @@ ipcMain.handle('file-exists', async (event, filePath) => {
 // Handle IDML/MAPX data merge export
 ipcMain.handle(
   'export-data-merge',
-  async (event, { locations, templateName, format, projectFolder, mapxPath, language, languageCode }) => {
+  async (event, { locations, templateName, format, projectFolder, mapxPath, idmlPath, language, languageCode }) => {
     await loadSettings(projectFolder);
     try {
       // Automatically create shared/labeler folder structure
@@ -1310,12 +1310,12 @@ ipcMain.handle(
       const defaultPath = sharedLabelerPath;
 
       let data;
-      if (format === 'idml') {
+      if (format === 'idml-txt') {
         // Prepare IDML data merge content
         const dataMergeHeader = locations.map(loc => loc.mergeKey).join('\t');
         const dataMergeContent = locations.map(loc => loc.vernLabel || '').join('\t');
         data = dataMergeHeader + '\n' + dataMergeContent + '\n';
-      } else if (format === 'mapx') {        // Prepare MAPX data merge content
+      } else if (format === 'mapx-txt') {        // Prepare MAPX data merge content
         // For each location, use the provided mapxKey and vernacular label, separated by a tab.
         data = locations
           .map(loc => {
@@ -1324,7 +1324,10 @@ ipcMain.handle(
             return `${mapxKey}\t${vernacularLabel}`;
           })
           .join('\n');
-      } else { // mapx-full
+      } else if (format === 'idml-full') {
+        // IDML Full Export - to be implemented
+        throw new Error('IDML full export not yet implemented');
+      } else if (format === 'mapx-full') { // mapx-full
         // Use settings loaded from Settings.xml instead of frontend parameters
         const actualLanguage = settings.language || language;
         const actualLanguageCode = settings.languageCode || languageCode;
@@ -1384,23 +1387,44 @@ ipcMain.handle(
 
       // Generate suggested filename
       const projectName = settings.name;
-      const suggestedFilename = `${templateName} @${projectName}` + (format === 'mapx-full' ? '.mapx' : `${format}.txt`);
+      let suggestedFilename;
+      let fileExtension;
+      let dialogTitle;
+      let filterName;
+      
+      if (format === 'mapx-full') {
+        suggestedFilename = `${templateName} @${projectName}.mapx`;
+        fileExtension = 'mapx';
+        dialogTitle = 'Export Map Creator File';
+        filterName = 'Map Creator File';
+      } else if (format === 'idml-full') {
+        suggestedFilename = `${templateName} @${projectName}.idml`;
+        fileExtension = 'idml';
+        dialogTitle = 'Export InDesign File';
+        filterName = 'InDesign File';
+      } else if (format === 'idml-txt') {
+        suggestedFilename = `${templateName} @${projectName}.idml.txt`;
+        fileExtension = 'idml.txt';
+        dialogTitle = 'Export IDML Data Merge';
+        filterName = 'IDML Data Merge File';
+      } else { // mapx-txt
+        suggestedFilename = `${templateName} @${projectName}.mapx.txt`;
+        fileExtension = 'mapx.txt';
+        dialogTitle = 'Export MAPX Data Merge';
+        filterName = 'MAPX Data Merge File';
+      }
+      
       const suggestedPath = path.join(defaultPath, suggestedFilename);
 
       // Show save dialog
-      const fmtUpper = format.toUpperCase();
       const result = await dialog.showSaveDialog({
-        title: `Export ${fmtUpper} Data Merge`,
+        title: dialogTitle,
         defaultPath: suggestedPath,
         filters: [
-          format === 'mapx-full' ?
           {
-            name: `Map Creator File`,
-            extensions: [`mapx`],
-          } : {
-            name: `${fmtUpper} Data Merge Files`,
-            extensions: [`${format}.txt`],
-          },
+            name: filterName,
+            extensions: [fileExtension],
+          }
         ],
         // Force non-native dialog on Linux to avoid GTK conflicts
         ...(process.platform === 'linux' && { 
@@ -1416,11 +1440,11 @@ ipcMain.handle(
         };
       }
 
-      if (format === 'idml') {
+      if (format === 'idml-txt') {
         // Write idml.txt file with BOM and UTF-16 LE encoding.
         await fs.promises.writeFile(result.filePath, '\uFEFF' + data, { encoding: 'utf16le' });
       } else {
-        // Write mapx.txt or .mapx file with BOM and UTF-8 encoding
+        // Write mapx.txt or .mapx/.idml file with BOM and UTF-8 encoding
         await fs.promises.writeFile(result.filePath, '\uFEFF' + data, 'utf8');
       }
 
