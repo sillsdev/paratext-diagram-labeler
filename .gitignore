@@ -27,3 +27,4 @@ yarn-debug.log*
 yarn-error.log*
 src/services/SettingsService.js.new
 src/services/SettingsService.js.new
+label-tuner/

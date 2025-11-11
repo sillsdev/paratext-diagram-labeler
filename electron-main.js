@@ -376,7 +376,7 @@ function createMenuTemplate() {
         {
           label: 'Documentation',
           click: () => {
-            shell.openExternal('https://tiny.cc/labeler');
+            shell.openExternal('https://software.sil.org/labeler');
           }
         }
       ]

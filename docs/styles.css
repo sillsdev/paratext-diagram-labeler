@@ -628,6 +628,18 @@ body {
     text-decoration: underline;
 }
 
+/* Maroon Oval Badge - Used for numbered callouts in documentation */
+.maroonOval {
+    background-color: #980000;
+    color: #ffffff;
+    border-radius: 15px;
+    padding: 3px 8px;
+    display: inline-block;
+    font-size: 0.9em;
+    border: 1px solid #ddd;
+    font-weight: 500;
+}
+
 /* Warning Card Styling */
 .warning-card {
     background: #fff4e5;
