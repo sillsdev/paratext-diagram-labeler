@@ -27,6 +27,12 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const xml2js = require('xml2js');
+let AdmZip;
+try {
+  AdmZip = require('adm-zip');
+} catch (error) {
+  console.warn('adm-zip not installed. IDML full export will not be available.');
+}
 
 // Linux-specific GTK compatibility fix - must be set before app.whenReady()
 if (process.platform === 'linux') {
@@ -1325,8 +1331,324 @@ ipcMain.handle(
           })
           .join('\n');
       } else if (format === 'idml-full') {
-        // IDML Full Export - to be implemented
-        throw new Error('IDML full export not yet implemented');
+        // IDML Full Export
+        if (!AdmZip) {
+          throw new Error('adm-zip library not installed. Cannot perform IDML full export.');
+        }
+        
+        if (!idmlPath) {
+          throw new Error('IDML template file path not provided. Please configure template paths in Settings.');
+        }
+        
+        if (!fs.existsSync(idmlPath)) {
+          throw new Error(`IDML template file not found at: ${idmlPath}`);
+        }
+        
+        console.log(`Processing IDML template from: ${idmlPath}`);
+        
+        // Create temp directory for IDML processing
+        const tempDir = path.join(os.tmpdir(), `idml-export-${Date.now()}`);
+        fs.mkdirSync(tempDir, { recursive: true });
+        
+        try {
+          // Step 1: Unzip IDML to temp directory
+          const zip = new AdmZip(idmlPath);
+          zip.extractAllTo(tempDir, true);
+          console.log(`Extracted IDML to: ${tempDir}`);
+          
+          // Step 2: Parse designmap.xml to build hyperlink lookup
+          const designmapPath = path.join(tempDir, 'designmap.xml');
+          if (!fs.existsSync(designmapPath)) {
+            throw new Error('designmap.xml not found in IDML file');
+          }
+          
+          const designmapXml = fs.readFileSync(designmapPath, 'utf8');
+          const parser = new xml2js.Parser();
+          const builder = new xml2js.Builder();
+          const designmapData = await parser.parseStringPromise(designmapXml);
+          
+          // Build lookup: mergeKey -> { sourceId, storyFile }
+          const mergeKeyToHyperlink = {};
+          const storyFiles = new Set();
+          
+          // First, scan Story files to map sourceId -> storyFile
+          const storiesDir = path.join(tempDir, 'Stories');
+          if (!fs.existsSync(storiesDir)) {
+            throw new Error('Stories folder not found in IDML file');
+          }
+          
+          const sourceIdToStoryFile = {};
+          const storyFileList = fs.readdirSync(storiesDir).filter(f => f.startsWith('Story_') && f.endsWith('.xml'));
+          
+          for (const storyFile of storyFileList) {
+            const storyPath = path.join(storiesDir, storyFile);
+            const storyXml = fs.readFileSync(storyPath, 'utf8');
+            const storyData = await parser.parseStringPromise(storyXml);
+            
+            // Find all HyperlinkTextSource elements
+            const findHyperlinkSources = (obj) => {
+              if (!obj || typeof obj !== 'object') return;
+              
+              if (obj.HyperlinkTextSource && Array.isArray(obj.HyperlinkTextSource)) {
+                obj.HyperlinkTextSource.forEach(source => {
+                  if (source.$ && source.$.Self) {
+                    sourceIdToStoryFile[source.$.Self] = storyFile;
+                    storyFiles.add(storyFile);
+                  }
+                });
+              }
+              
+              for (const key in obj) {
+                if (Array.isArray(obj[key])) {
+                  obj[key].forEach(item => findHyperlinkSources(item));
+                } else if (typeof obj[key] === 'object') {
+                  findHyperlinkSources(obj[key]);
+                }
+              }
+            };
+            
+            findHyperlinkSources(storyData);
+          }
+          
+          console.log(`Found ${Object.keys(sourceIdToStoryFile).length} hyperlink sources across ${storyFiles.size} story files`);
+          
+          // Step 3a: Build mapping from HyperlinkURLDestination names to actual merge keys
+          // Example: "HyperlinkURLDestination/DBF_jordan_river_nt1" -> "jordan_river_nt"
+          const destinationToMergeKey = {};
+          
+          const findURLDestinations = (obj) => {
+            if (!obj || typeof obj !== 'object') return;
+            
+            if (obj.HyperlinkURLDestination && Array.isArray(obj.HyperlinkURLDestination)) {
+              obj.HyperlinkURLDestination.forEach(dest => {
+                if (dest.$ && dest.$.Self && dest.$.DestinationURL) {
+                  const selfValue = dest.$.Self; // e.g., "HyperlinkURLDestination/DBF_jordan_river_nt1"
+                  const urlValue = dest.$.DestinationURL; // e.g., "DBF_jordan_river_nt"
+                  
+                  // Extract merge key from DestinationURL (remove "DBF_" prefix)
+                  if (urlValue.startsWith('DBF_')) {
+                    const mergeKey = urlValue.substring(4);
+                    destinationToMergeKey[selfValue] = mergeKey;
+                    console.log(`Destination mapping: "${selfValue}" -> merge key "${mergeKey}"`);
+                  }
+                }
+              });
+            }
+            
+            for (const key in obj) {
+              if (Array.isArray(obj[key])) {
+                obj[key].forEach(item => findURLDestinations(item));
+              } else if (typeof obj[key] === 'object') {
+                findURLDestinations(obj[key]);
+              }
+            }
+          };
+          
+          findURLDestinations(designmapData);
+          console.log(`Found ${Object.keys(destinationToMergeKey).length} destination mappings`);
+          
+          // Step 3b: Parse designmap.xml to find Hyperlink Destination properties
+          const findHyperlinks = (obj) => {
+            if (!obj || typeof obj !== 'object') return;
+            
+            if (obj.Hyperlink && Array.isArray(obj.Hyperlink)) {
+              obj.Hyperlink.forEach(hyperlink => {
+                if (hyperlink.$ && hyperlink.$.Source && hyperlink.Properties) {
+                  const sourceId = hyperlink.$.Source;
+                  
+                  // Look for Destination property
+                  if (Array.isArray(hyperlink.Properties)) {
+                    hyperlink.Properties.forEach(props => {
+                      if (props.Destination && Array.isArray(props.Destination)) {
+                        props.Destination.forEach(dest => {
+                          if (dest.$ && dest.$.type === 'object' && dest._) {
+                            const destValue = dest._; // e.g., "HyperlinkURLDestination/DBF_jordan_river_nt1"
+                            
+                            // Look up the actual merge key using our mapping
+                            let mergeKey = destinationToMergeKey[destValue];
+                            
+                            // Fallback: try direct extraction if not in mapping
+                            if (!mergeKey) {
+                              const match = destValue.match(/HyperlinkURLDestination\/DBF_(.+)/);
+                              if (match) {
+                                mergeKey = match[1];
+                              }
+                            }
+                            
+                            if (mergeKey) {
+                              const storyFile = sourceIdToStoryFile[sourceId];
+                              
+                              if (storyFile) {
+                                mergeKeyToHyperlink[mergeKey] = {
+                                  sourceId: sourceId,
+                                  storyFile: storyFile,
+                                  destination: destValue
+                                };
+                                console.log(`Mapped merge field "${mergeKey}" to source ${sourceId} in ${storyFile} (via ${destValue})`);
+                              } else {
+                                console.warn(`Warning: Source ${sourceId} for merge field "${mergeKey}" not found in any story file`);
+                              }
+                            }
+                          }
+                        });
+                      }
+                    });
+                  }
+                }
+              });
+            }
+            
+            for (const key in obj) {
+              if (Array.isArray(obj[key])) {
+                obj[key].forEach(item => findHyperlinks(item));
+              } else if (typeof obj[key] === 'object') {
+                findHyperlinks(obj[key]);
+              }
+            }
+          };
+          
+          findHyperlinks(designmapData);
+          console.log(`Built lookup for ${Object.keys(mergeKeyToHyperlink).length} merge fields`);
+          console.log(`Merge keys in lookup: ${Object.keys(mergeKeyToHyperlink).join(', ')}`);
+          
+          // Step 4: Check for missing merge fields
+          const missingFields = [];
+          console.log(`Checking ${locations.length} locations for merge keys...`);
+          for (const location of locations) {
+            if (location.mergeKey && !mergeKeyToHyperlink[location.mergeKey]) {
+              missingFields.push(location.mergeKey);
+            }
+          }
+          
+          if (missingFields.length > 0) {
+            console.warn(`Warning: ${missingFields.length} merge fields not found in IDML: ${missingFields.join(', ')}`);
+            // Don't throw error, just warn - some fields might be intentionally absent
+          }
+          
+          // Step 5: Process each story file and replace content
+          const modifiedStoryFiles = new Set();
+          
+          for (const location of locations) {
+            const mergeKey = location.mergeKey;
+            // Get vernLabel, or use double FEFF for empty/blank fields (InDesign merge field preservation)
+            let vernLabel = location.vernLabel !== undefined && location.vernLabel !== null ? location.vernLabel : '';
+            
+            // If vernLabel is empty or only whitespace, use double FEFF to preserve merge field
+            if (!vernLabel || vernLabel.trim() === '') {
+              vernLabel = '\uFEFF\uFEFF';
+            }
+            
+            if (!mergeKey) continue;
+            
+            const hyperlinkInfo = mergeKeyToHyperlink[mergeKey];
+            if (!hyperlinkInfo) {
+              console.log(`Skipping location with merge key "${mergeKey}" - not found in IDML`);
+              continue;
+            }
+            
+            const storyPath = path.join(storiesDir, hyperlinkInfo.storyFile);
+            const storyXml = fs.readFileSync(storyPath, 'utf8');
+            const storyData = await parser.parseStringPromise(storyXml);
+            
+            // Find and replace Content in HyperlinkTextSource
+            let contentReplaced = false;
+            const replaceContent = (obj) => {
+              if (!obj || typeof obj !== 'object') return;
+              
+              if (obj.HyperlinkTextSource && Array.isArray(obj.HyperlinkTextSource)) {
+                obj.HyperlinkTextSource.forEach(source => {
+                  if (source.$ && source.$.Self === hyperlinkInfo.sourceId) {
+                    console.log(`Found HyperlinkTextSource with ID ${hyperlinkInfo.sourceId} for ${mergeKey}`);
+                    console.log(`Content structure:`, JSON.stringify(source.Content, null, 2));
+                    
+                    // Find Content element
+                    if (source.Content) {
+                      if (Array.isArray(source.Content)) {
+                        // Content is an array
+                        source.Content.forEach((content, idx) => {
+                          if (typeof content === 'string') {
+                            // Content is a direct string in the array
+                            console.log(`Replacing array string content[${idx}] for ${mergeKey}: "${content}" -> "${vernLabel}"`);
+                            source.Content[idx] = vernLabel;
+                            contentReplaced = true;
+                          } else if (content._) {
+                            // Content is an object with _ property
+                            console.log(`Replacing object content for ${mergeKey}: "${content._}" -> "${vernLabel}"`);
+                            content._ = vernLabel;
+                            contentReplaced = true;
+                          }
+                        });
+                      } else if (typeof source.Content === 'string') {
+                        // Content is a direct string property
+                        console.log(`Replacing direct string content for ${mergeKey}: "${source.Content}" -> "${vernLabel}"`);
+                        source.Content = vernLabel;
+                        contentReplaced = true;
+                      }
+                    } else {
+                      console.log(`No Content found in HyperlinkTextSource ${hyperlinkInfo.sourceId}`);
+                    }
+                  }
+                });
+              }
+              
+              for (const key in obj) {
+                if (Array.isArray(obj[key])) {
+                  obj[key].forEach(item => replaceContent(item));
+                } else if (typeof obj[key] === 'object') {
+                  replaceContent(obj[key]);
+                }
+              }
+            };
+            
+            replaceContent(storyData);
+            
+            if (contentReplaced) {
+              // Write modified story file back
+              const modifiedXml = builder.buildObject(storyData);
+              fs.writeFileSync(storyPath, modifiedXml, 'utf8');
+              modifiedStoryFiles.add(hyperlinkInfo.storyFile);
+              console.log(`Modified ${hyperlinkInfo.storyFile} for merge key "${mergeKey}"`);
+            } else {
+              console.warn(`Warning: Could not find Content to replace for merge key "${mergeKey}" in ${hyperlinkInfo.storyFile}`);
+            }
+          }
+          
+          console.log(`Modified ${modifiedStoryFiles.size} story files`);
+          
+          // Step 6: Re-zip the IDML
+          const outputZip = new AdmZip();
+          
+          // Add all files from temp directory
+          const addDirectory = (dirPath, zipPath = '') => {
+            const items = fs.readdirSync(dirPath);
+            for (const item of items) {
+              const fullPath = path.join(dirPath, item);
+              const zipItemPath = zipPath ? path.join(zipPath, item) : item;
+              
+              if (fs.statSync(fullPath).isDirectory()) {
+                addDirectory(fullPath, zipItemPath);
+              } else {
+                outputZip.addLocalFile(fullPath, zipPath);
+              }
+            }
+          };
+          
+          addDirectory(tempDir);
+          
+          // Get the buffer (we'll save it after user selects location)
+          data = outputZip.toBuffer();
+          
+          console.log('IDML processing complete');
+          
+        } finally {
+          // Clean up temp directory
+          try {
+            fs.rmSync(tempDir, { recursive: true, force: true });
+            console.log(`Cleaned up temp directory: ${tempDir}`);
+          } catch (cleanupError) {
+            console.warn(`Warning: Could not clean up temp directory: ${cleanupError.message}`);
+          }
+        }
       } else if (format === 'mapx-full') { // mapx-full
         // Use settings loaded from Settings.xml instead of frontend parameters
         const actualLanguage = settings.language || language;
@@ -1443,8 +1765,11 @@ ipcMain.handle(
       if (format === 'idml-txt') {
         // Write idml.txt file with BOM and UTF-16 LE encoding.
         await fs.promises.writeFile(result.filePath, '\uFEFF' + data, { encoding: 'utf16le' });
+      } else if (format === 'idml-full') {
+        // Write IDML file (binary Buffer, no BOM needed)
+        await fs.promises.writeFile(result.filePath, data);
       } else {
-        // Write mapx.txt or .mapx/.idml file with BOM and UTF-8 encoding
+        // Write mapx.txt or .mapx file with BOM and UTF-8 encoding
         await fs.promises.writeFile(result.filePath, '\uFEFF' + data, 'utf8');
       }
 

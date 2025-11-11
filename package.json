@@ -11,6 +11,7 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^13.5.0",
+    "adm-zip": "^0.5.16",
     "bootstrap": "^5.3.6",
     "electron-squirrel-startup": "^1.0.1",
     "leaflet": "^1.9.4",
