@@ -1546,7 +1546,31 @@ ipcMain.handle(
           
           if (missingFields.length > 0) {
             console.warn(`Warning: ${missingFields.length} merge fields not found in IDML: ${missingFields.join(', ')}`);
-            // Don't throw error, just warn - some fields might be intentionally absent
+            
+            // Show dialog warning user about missing fields and offer to cancel
+            const missingFieldsList = missingFields.slice(0, 10).join(', ') + (missingFields.length > 10 ? `, and ${missingFields.length - 10} more` : '');
+            const warningResult = await dialog.showMessageBox({
+              type: 'warning',
+              title: 'Missing Merge Fields',
+              message: `The selected IDML file is missing ${missingFields.length} merge field(s).`,
+              detail: `This may be the wrong IDML file or an outdated version.\n\nMissing fields: ${missingFieldsList}\n\nDo you want to continue anyway?`,
+              buttons: ['Cancel', 'Continue'],
+              defaultId: 0,
+              cancelId: 0,
+              // Force non-native dialog on Linux to avoid GTK conflicts
+              ...(process.platform === 'linux' && { 
+                noLink: true
+              })
+            });
+            
+            if (warningResult.response === 0) {
+              // User clicked Cancel
+              return {
+                success: false,
+                canceled: true,
+                message: 'Export canceled due to missing merge fields',
+              };
+            }
           }
           
           // Step 5: Process each story file and replace content
