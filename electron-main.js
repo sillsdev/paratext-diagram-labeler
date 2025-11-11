@@ -1344,7 +1344,31 @@ ipcMain.handle(
           throw new Error(`IDML template file not found at: ${idmlPath}`);
         }
         
-        console.log(`Processing IDML template from: ${idmlPath}`);
+        // Prompt user to select source IDML file (default to template, but allow choosing a different one)
+        const sourceIdmlResult = await dialog.showOpenDialog({
+          title: 'Select Source IDML File',
+          defaultPath: idmlPath,
+          message: 'Select the IDML file to use as source. This can be the template or a previously exported file you have modified.',
+          properties: ['openFile'],
+          filters: [
+            { name: 'InDesign Files', extensions: ['idml'] }
+          ],
+          // Force non-native dialog on Linux to avoid GTK conflicts
+          ...(process.platform === 'linux' && { 
+            showsTagField: false
+          })
+        });
+        
+        if (sourceIdmlResult.canceled) {
+          return {
+            success: false,
+            canceled: true,
+            message: 'IDML source selection canceled by user',
+          };
+        }
+        
+        const sourceIdmlPath = sourceIdmlResult.filePaths[0];
+        console.log(`Processing IDML from: ${sourceIdmlPath}`);
         
         // Create temp directory for IDML processing
         const tempDir = path.join(os.tmpdir(), `idml-export-${Date.now()}`);
@@ -1352,7 +1376,7 @@ ipcMain.handle(
         
         try {
           // Step 1: Unzip IDML to temp directory
-          const zip = new AdmZip(idmlPath);
+          const zip = new AdmZip(sourceIdmlPath);
           zip.extractAllTo(tempDir, true);
           console.log(`Extracted IDML to: ${tempDir}`);
           
