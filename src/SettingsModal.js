@@ -15,12 +15,12 @@ export default function SettingsModal({
   setLang, 
   showFrac, 
   setShowFrac,
-  mapxPaths,
-  setMapxPaths
+  templatePaths,
+  setTemplatePaths
 }) {
   const electronAPI = window.electronAPI;
   
-  const handleAddMapxPath = async () => {
+  const handleAddTemplatePath = async () => {
     if (!electronAPI) {
       alert('File selection not supported in web environment');
       return;
@@ -28,17 +28,17 @@ export default function SettingsModal({
     
     try {
       const selectedPath = await electronAPI.selectProjectFolder();
-      if (selectedPath && !mapxPaths.includes(selectedPath)) {
-        setMapxPaths([...mapxPaths, selectedPath]);
+      if (selectedPath && !templatePaths.includes(selectedPath)) {
+        setTemplatePaths([...templatePaths, selectedPath]);
       }
     } catch (error) {
-      console.error('Error selecting MAPX folder:', error);
+      console.error('Error selecting template folder:', error);
       alert('Error selecting folder: ' + error.message);
     }
   };
 
-  const handleRemoveMapxPath = (pathToRemove) => {
-    setMapxPaths(mapxPaths.filter(path => path !== pathToRemove));
+  const handleRemoveTemplatePath = (pathToRemove) => {
+    setTemplatePaths(templatePaths.filter(path => path !== pathToRemove));
   };
 
   if (!open) return null;
@@ -142,7 +142,7 @@ export default function SettingsModal({
         {/* MAPX Paths Section */}
         <div style={{ marginBottom: 16 }}>
           <div style={{ fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
-            {inLang(uiStr.mapxPaths, lang)}:
+            {inLang(uiStr.templatePaths, lang)}:
           </div>
           <div style={{ 
             border: '1px solid #ccc', 
@@ -154,12 +154,12 @@ export default function SettingsModal({
             backgroundColor: '#f9f9f9',
             marginBottom: 8
           }}>
-            {mapxPaths.length === 0 ? (
+            {templatePaths.length === 0 ? (
               <div style={{ color: '#666', fontStyle: 'italic', textAlign: 'center' }}>
-                No MAPX paths configured
+                No template paths configured
               </div>
             ) : (
-              mapxPaths.map((path, index) => (
+              templatePaths.map((path, index) => (
                 <div key={index} style={{ 
                   display: 'flex', 
                   alignItems: 'center', 
@@ -177,7 +177,7 @@ export default function SettingsModal({
                     {path}
                   </span>
                   <button
-                    onClick={() => handleRemoveMapxPath(path)}
+                    onClick={() => handleRemoveTemplatePath(path)}
                     style={{
                       marginLeft: 8,
                       padding: '2px 6px',
@@ -189,7 +189,7 @@ export default function SettingsModal({
                       cursor: 'pointer'
                     }}
                   >
-                    {inLang(uiStr.removeMapxPath, lang)}
+                    {inLang(uiStr.removeTemplatePath, lang)}
                   </button>
                 </div>
               ))
@@ -197,7 +197,7 @@ export default function SettingsModal({
           </div>
           <div style={{ textAlign: 'center' }}>
             <button
-              onClick={handleAddMapxPath}
+              onClick={handleAddTemplatePath}
               style={{
                 padding: '6px 12px',
                 fontSize: '0.9em',
@@ -208,7 +208,7 @@ export default function SettingsModal({
                 cursor: 'pointer'
               }}
             >
-              {inLang(uiStr.addMapxPath, lang)}
+              {inLang(uiStr.addTemplatePath, lang)}
             </button>
           </div>
         </div>

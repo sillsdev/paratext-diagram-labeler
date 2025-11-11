@@ -195,11 +195,12 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
     const saved = localStorage.getItem('showFrac'); // Persist showFrac in localStorage
     return saved === 'true';
   });
-  const [mapxPaths, setMapxPaths] = useState(() => {
-    const saved = localStorage.getItem('mapxPaths'); // Persist mapxPaths in localStorage
+  const [templatePaths, setTemplatePaths] = useState(() => {
+    const saved = localStorage.getItem('templatePaths'); // Persist templatePaths in localStorage
     return saved ? JSON.parse(saved) : [];
   });
   const [mapxPath, setMapxPath] = useState(''); // Current template's MAPX file path
+  const [idmlPath, setIdmlPath] = useState(''); // Current template's IDML file path
   const [showSettings, setShowSettings] = useState(false);
   const [selectedVariant, setSelectedVariant] = useState(0); // 0 means no variants, 1+ for actual variants
   const [resetZoomFlag, setResetZoomFlag] = useState(false); // For controlling Leaflet map
@@ -227,15 +228,15 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
     localStorage.setItem('showFrac', showFrac.toString());
   }, [showFrac]);
 
-  // Persist mapxPaths to localStorage
+  // Persist templatePaths to localStorage
   useEffect(() => {
-    localStorage.setItem('mapxPaths', JSON.stringify(mapxPaths));
-  }, [mapxPaths]);
+    localStorage.setItem('templatePaths', JSON.stringify(templatePaths));
+  }, [templatePaths]);
 
-  // Update mapxPath when template changes or mapxPaths change
+  // Update mapxPath when template changes or templatePaths change
   useEffect(() => {
     const findMapxPath = async () => {
-      if (!mapDef.template || mapxPaths.length === 0) {
+      if (!mapDef.template || templatePaths.length === 0) {
         setMapxPath('');
         return;
       }
@@ -254,7 +255,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
         mapxFilenames.push(`${templateWithoutPrefix}.mapx`);
       }
       
-      for (const folderPath of mapxPaths) {
+      for (const folderPath of templatePaths) {
         for (const mapxFilename of mapxFilenames) {
           try {
             const fullPath = electronAPI ? await electronAPI.path.join(folderPath, mapxFilename) : '';
@@ -277,7 +278,54 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
     };
 
     findMapxPath();
-  }, [mapDef.template, mapxPaths]);
+  }, [mapDef.template, templatePaths]);
+
+  // Update idmlPath when template changes or templatePaths change
+  useEffect(() => {
+    const findIdmlPath = async () => {
+      if (!mapDef.template || templatePaths.length === 0) {
+        setIdmlPath('');
+        return;
+      }
+
+      // Try to find IDML file with different naming conventions
+      const templateName = mapDef.template;
+      const idmlFilenames = [];
+      
+      // First try with the full template name (with collection prefix)
+      idmlFilenames.push(`${templateName}.idml`);
+      
+      // Then try without collection prefix (extract part after underscore)
+      const underscoreIndex = templateName.indexOf('_');
+      if (underscoreIndex !== -1 && underscoreIndex < templateName.length - 1) {
+        const templateWithoutPrefix = templateName.substring(underscoreIndex + 1);
+        idmlFilenames.push(`${templateWithoutPrefix}.idml`);
+      }
+      
+      for (const folderPath of templatePaths) {
+        for (const idmlFilename of idmlFilenames) {
+          try {
+            const fullPath = electronAPI ? await electronAPI.path.join(folderPath, idmlFilename) : '';
+            const exists = electronAPI ? await electronAPI.fileExists(fullPath) : false;
+            
+            if (exists) {
+              console.log(`Found IDML file: ${fullPath}`);
+              setIdmlPath(fullPath);
+              return;
+            }
+          } catch (error) {
+            console.log(`Error checking IDML file ${idmlFilename} in ${folderPath}:`, error);
+          }
+        }
+      }
+      
+      // No IDML file found with any naming convention
+      console.log(`No IDML file found for template: ${templateName}. Tried: ${idmlFilenames.join(', ')}`);
+      setIdmlPath('');
+    };
+
+    findIdmlPath();
+  }, [mapDef.template, templatePaths]);
 
   useEffect(() => {
     // Load collections on mount, and then never again.
@@ -1546,6 +1594,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
             selectedVariant={selectedVariant} // Pass selected variant
             onVariantChange={handleVariantChange} // Pass variant change handler
             mapxPath={mapxPath} // Pass current MAPX file path
+            idmlPath={idmlPath} // Pass current IDML file path
           />
         </div>
       </div>
@@ -1580,8 +1629,8 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
         setLang={setLang}
         showFrac={showFrac}
         setShowFrac={setShowFrac}
-        mapxPaths={mapxPaths}
-        setMapxPaths={setMapxPaths}
+        templatePaths={templatePaths}
+        setTemplatePaths={setTemplatePaths}
       />{' '}
     </div>
   );

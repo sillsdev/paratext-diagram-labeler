@@ -60,10 +60,10 @@
     "ne": "यहाँ अनुवादहरू प्रविष्ट गर्नुहोस्, प्रत्येक लाइनमा एक।\nवैकल्पिक रूपमा, '@' बाट सुरु हुने टिप्पणीको रूपमा अनुवादको नक्सा रूप स्पष्ट रूपमा चिन्ह लगाउनुहोस्।\nजस्तै: Misra* (@Misradesh)"
   },
   "export": {
-    "en": "Export to data merge file",
-    "es": "Exportar a archivo de combinación de datos",
-    "fr": "Exporter vers un fichier de fusion de données",
-    "ne": "डाटा मर्ज फाइलमा निर्यात गर्नुहोस्"
+    "en": "Export",
+    "es": "Exportar",
+    "fr": "Exporter",
+    "ne": "निर्यात गर्नुहोस्"
   },
   "fileFormats": {
     "en": "File formats",
@@ -329,29 +329,29 @@
     "fr": "Map Creator (MAPX)",
     "ne": "Map Creator (MAPX)"
   },
-  "mapxPaths": {
-    "en": "MAPX File Paths",
-    "es": "Rutas de archivos MAPX",
-    "fr": "Chemins de fichiers MAPX",
-    "ne": "MAPX फाइल पथहरू"
+  "templatePaths": {
+    "en": "Template File Paths",
+    "es": "Rutas de archivos de plantilla",
+    "fr": "Chemins de fichiers modèle",
+    "ne": "टेम्प्लेट फाइल पथहरू"
   },
-  "addMapxPath": {
-    "en": "Add MAPX Path",
-    "es": "Agregar ruta MAPX",
-    "fr": "Ajouter chemin MAPX",
-    "ne": "MAPX पथ थप्नुहोस्"
+  "addTemplatePath": {
+    "en": "Add Template Path",
+    "es": "Agregar ruta de plantilla",
+    "fr": "Ajouter chemin de modèle",
+    "ne": "टेम्प्लेट पथ थप्नुहोस्"
   },
-  "removeMapxPath": {
+  "removeTemplatePath": {
     "en": "Remove",
     "es": "Eliminar",
     "fr": "Supprimer",
     "ne": "हटाउनुहोस्"
   },
-  "browseForMapxPath": {
-    "en": "Browse for MAPX folder",
-    "es": "Buscar carpeta MAPX",
-    "fr": "Parcourir le dossier MAPX",
-    "ne": "MAPX फोल्डर खोज्नुहोस्"
+  "browseForTemplatePath": {
+    "en": "Browse for template folder",
+    "es": "Buscar carpeta de plantilla",
+    "fr": "Parcourir le dossier modèle",
+    "ne": "टेम्प्लेट फोल्डर खोज्नुहोस्"
   },
   "sendReferenceToParatext": {
     "en": "Send reference to Paratext",

@@ -43,20 +43,24 @@ export default function DetailsPane({
   selectedVariant = 0,
   onVariantChange,
   mapxPath,
+  idmlPath,
 }) {
   const [localIsApproved, setLocalIsApproved] = useState(isApproved);
   const [localRenderings, setLocalRenderings] = useState(renderings);
   const [showTemplateInfo, setShowTemplateInfo] = useState(false);
   const [templateData, setTemplateData] = useState({});
   const [showExportDialog, setShowExportDialog] = useState(false);
-  const [selectedExportFormat, setSelectedExportFormat] = useState('idml');
+  const [selectedExportFormat, setSelectedExportFormat] = useState('idml-txt');
 
-  // Reset export format if mapx-full is selected but no MAPX path is available
+  // Reset export format if selected format is unavailable
   useEffect(() => {
     if (selectedExportFormat === 'mapx-full' && !mapxPath) {
-      setSelectedExportFormat('idml');
+      setSelectedExportFormat('idml-txt');
     }
-  }, [mapxPath, selectedExportFormat]);
+    if (selectedExportFormat === 'idml-full' && !idmlPath) {
+      setSelectedExportFormat('idml-txt');
+    }
+  }, [mapxPath, idmlPath, selectedExportFormat]);
 
   // Load template data when mapDef.template changes
   useEffect(() => {
@@ -280,6 +284,7 @@ export default function DetailsPane({
         format: format,
         projectFolder: settingsService.getProjectFolder(),
         mapxPath: mapxPath,
+        idmlPath: idmlPath,
         language: settingsService.getLanguage(),
         languageCode: settingsService.getLanguageCode(),
       });
@@ -779,30 +784,59 @@ export default function DetailsPane({
             <h4 style={{ marginTop: 0 }}>{inLang(uiStr.export, lang)}</h4>
             <div style={{ marginBottom: 16 }}>
               <p style={{ marginBottom: 12 }}>{inLang(uiStr.selectOutputFormat, lang)}</p>
+              
+              {/* IDML Full Export */}
+              {idmlPath ? (
+                <label style={{ display: 'block', marginBottom: 8, cursor: 'pointer' }}>
+                  <input
+                    type="radio"
+                    name="exportFormat"
+                    value="idml-full"
+                    checked={selectedExportFormat === 'idml-full'}
+                    onChange={e => setSelectedExportFormat(e.target.value)}
+                    style={{ marginRight: 8 }}
+                  />
+                  InDesign file (.IDML)
+                </label>
+              ) : (
+                <div style={{ 
+                  display: 'block', 
+                  marginLeft: 28, 
+                  marginBottom: 8,
+                  padding: '8px 12px',
+                  backgroundColor: '#f8f9fa',
+                  border: '1px solid #dee2e6',
+                  borderRadius: '4px',
+                  fontSize: '0.9em',
+                  color: '#6c757d'
+                }}>
+                  {!templateData.formats || !templateData.formats.includes('idml') ? (
+                    <span>This diagram is currently only available in MAPX format.</span>
+                  ) : (
+                    <span>
+                      <b>IDML master file</b> not found.<br />
+                      Specify the folder in ⚙️ Settings.
+                    </span>
+                  )}
+                </div>
+              )}
+              
+              {/* IDML Data Merge Export */}
               <label style={{ display: 'block', marginBottom: 8, cursor: 'pointer' }}>
                 <input
                   type="radio"
                   name="exportFormat"
-                  value="idml"
-                  checked={selectedExportFormat === 'idml'}
+                  value="idml-txt"
+                  checked={selectedExportFormat === 'idml-txt'}
                   onChange={e => setSelectedExportFormat(e.target.value)}
                   style={{ marginRight: 8 }}
                 />
                 InDesign data merge file (.IDML.TXT)
               </label>
-              <label style={{ display: 'block', marginBottom: 8, cursor: 'pointer' }}>
-                <input
-                  type="radio"
-                  name="exportFormat"
-                  value="mapx"
-                  checked={selectedExportFormat === 'mapx'}
-                  onChange={e => setSelectedExportFormat(e.target.value)}
-                  style={{ marginRight: 8 }}
-                />
-                Map Creator data merge file (.MAPX.TXT)
-              </label>
+              
+              {/* MAPX Full Export */}
               {mapxPath ? (
-                <label style={{ display: 'block', cursor: 'pointer' }}>
+                <label style={{ display: 'block', marginBottom: 8, cursor: 'pointer' }}>
                   <input
                     type="radio"
                     name="exportFormat"
@@ -835,6 +869,19 @@ export default function DetailsPane({
                   )}
                 </div>
               )}
+              
+              {/* MAPX Data Merge Export */}
+              <label style={{ display: 'block', marginBottom: 8, cursor: 'pointer' }}>
+                <input
+                  type="radio"
+                  name="exportFormat"
+                  value="mapx-txt"
+                  checked={selectedExportFormat === 'mapx-txt'}
+                  onChange={e => setSelectedExportFormat(e.target.value)}
+                  style={{ marginRight: 8 }}
+                />
+                Map Creator data merge file (.MAPX.TXT)
+              </label>
             </div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
               <button

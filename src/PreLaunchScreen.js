@@ -92,8 +92,8 @@ const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch, languag
             <h1>{inLang(uiStr.paratextDiagramLabeler, language)} </h1>
             <h2>Paratext 9 standalone edition</h2>
             <p>
-              <a href="https://tiny.cc/labeler" target="_blank" rel="noopener noreferrer">
-                tiny.cc/labeler
+              <a href="https://software.sil.org/labeler" target="_blank" rel="noopener noreferrer">
+                software.sil.org/labeler
               </a>
             </p>
           </div>
@@ -141,12 +141,19 @@ const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch, languag
                       : inLang(uiStr.chooseParatextProject, language)
                     }
                   </option>
-                  {paratextProjects.map(project => (
-                    <option key={project.path} value={project.path}>
-                      {project.fullName || project.name}
-                      {project.language && ` (${project.language})`}
-                    </option>
-                  ))}
+                  {paratextProjects.map(project => {
+                    // Clean up language code display: collapse multiple colons and remove trailing colon
+                    const cleanLanguageCode = project.language 
+                      ? project.language.replace(/::+/g, ':').replace(/:$/, '')
+                      : '';
+                    
+                    return (
+                      <option key={project.path} value={project.path}>
+                        {project.fullName || project.name}
+                        {cleanLanguageCode && ` (${cleanLanguageCode})`}
+                      </option>
+                    );
+                  })}
                 </select>
               </div>
             )}
@@ -204,7 +211,7 @@ const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch, languag
               className={errors.usfm ? 'usfm-textarea error' : 'usfm-textarea'}
               value={editedSettings.usfm || ''}
               onChange={e => handleSettingChange('usfm', e.target.value)}
-              rows={10}
+              rows={5}
               placeholder="Enter USFM content here, or select a sample image or data merge file after launch..."
               style={{ whiteSpace: 'nowrap' }}
               wrap="off"
