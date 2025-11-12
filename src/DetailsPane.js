@@ -439,7 +439,7 @@ export default function DetailsPane({
           <button
             onClick={() => onSetView(1)}
             style={{
-              marginRight: 4,
+              marginRight: 32,
               background: mapPaneView === TABLE_VIEW ? '#d0eaff' : undefined,
               border: mapPaneView === TABLE_VIEW ? '2px inset #2196f3' : undefined,
               padding: '4px 8px',
@@ -473,45 +473,6 @@ export default function DetailsPane({
               <line x1="2" y1="12" x2="18" y2="12" stroke="#1976d2" strokeWidth="1.5" />
               <line x1="7" y1="4" x2="7" y2="16" stroke="#1976d2" strokeWidth="1.5" />
               <line x1="13" y1="4" x2="13" y2="16" stroke="#1976d2" strokeWidth="1.5" />
-            </svg>
-          </button>
-          <button
-            onClick={() => onSetView(2)}
-            style={{
-              marginRight: 32,
-              background: mapPaneView === USFM_VIEW ? '#d0eaff' : undefined,
-              border: mapPaneView === USFM_VIEW ? '2px inset #2196f3' : undefined,
-              padding: '4px 8px',
-              borderRadius: 4,
-              height: 32,
-              minWidth: 32,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-            title={inLang(uiStr.usfmView, lang)}
-          >
-            {/* USFM icon (document with text lines) */}
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <rect
-                x="4"
-                y="3"
-                width="12"
-                height="14"
-                rx="2"
-                fill="#fffde7"
-                stroke="#1976d2"
-                strokeWidth="1.5"
-              />
-              <line x1="6" y1="7" x2="14" y2="7" stroke="#1976d2" strokeWidth="1.2" />
-              <line x1="6" y1="10" x2="14" y2="10" stroke="#1976d2" strokeWidth="1.2" />
-              <line x1="6" y1="13" x2="12" y2="13" stroke="#1976d2" strokeWidth="1.2" />
             </svg>
           </button>
           <button
@@ -951,6 +912,49 @@ export default function DetailsPane({
                     >
                       {inLang(uiStr.statusValue[status].text, lang)}
                     </span>
+                  </td>
+                  <td style={{ paddingLeft: '8px' }}>
+                    {status === STATUS_GUESSED.toString() && (
+                      <button
+                        onClick={() => {
+                          // Find all locations with guessed status and approve them
+                          const updatedData = { ...termRenderings };
+                          let hasChanges = false;
+
+                          locations.forEach(loc => {
+                            if (loc.status === STATUS_GUESSED) {
+                              const termId = loc.termId;
+                              if (updatedData[termId]) {
+                                updatedData[termId] = {
+                                  ...updatedData[termId],
+                                  isGuessed: false,
+                                };
+                                hasChanges = true;
+                              }
+                            }
+                          });
+
+                          if (hasChanges) {
+                            setTermRenderings(updatedData);
+                            // If currently viewing a guessed item, update local state
+                            if (locations[selLocation]?.status === STATUS_GUESSED) {
+                              setLocalIsApproved(true);
+                            }
+                          }
+                        }}
+                        style={{
+                          padding: '2px 8px',
+                          fontSize: '0.9em',
+                          borderRadius: '4px',
+                          border: '1px solid #4caf50',
+                          background: '#e8f5e9',
+                          cursor: 'pointer',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {inLang(uiStr.approveAll, lang)}
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
