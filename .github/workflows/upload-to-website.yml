@@ -89,10 +89,7 @@ jobs:
           }
 
           # Process each installer file
-          for FILE in ./dist/*.{exe,deb,AppImage,dmg,tar.gz,zip} 2>/dev/null; do
-            # Skip if glob didn't match
-            [ -e "$FILE" ] || continue
-            
+          find ./dist -maxdepth 1 -type f \( -name "*.exe" -o -name "*.deb" -o -name "*.AppImage" -o -name "*.dmg" -o -name "*.tar.gz" -o -name "*.zip" \) | while read FILE; do
             FILENAME=$(basename "$FILE")
             SIZE=$(stat -c%s "$FILE")
             MD5=$(md5sum "$FILE" | cut -d' ' -f1)
