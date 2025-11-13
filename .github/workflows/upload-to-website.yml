@@ -74,22 +74,13 @@ jobs:
                 platform="mac"
                 type="dmg"
                 ;;
-              *.tar.gz)
-                platform="linux"
-                type="tar.gz"
-                ;;
-              *.zip)
-                # macOS zip files
-                platform="mac"
-                type="zip"
-                ;;
             esac
             
             echo "$platform|$type"
           }
 
-          # Process each installer file
-          find ./dist -maxdepth 1 -type f \( -name "*.exe" -o -name "*.deb" -o -name "*.AppImage" -o -name "*.dmg" -o -name "*.tar.gz" -o -name "*.zip" \) | while read FILE; do
+          # Process each installer file (exclude .tar.gz and .zip source archives)
+          find ./dist -maxdepth 1 -type f \( -name "*.exe" -o -name "*.deb" -o -name "*.AppImage" -o -name "*.dmg" \) | while read FILE; do
             FILENAME=$(basename "$FILE")
             SIZE=$(stat -c%s "$FILE")
             MD5=$(md5sum "$FILE" | cut -d' ' -f1)
