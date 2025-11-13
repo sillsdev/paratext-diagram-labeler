@@ -1292,28 +1292,55 @@ ipcMain.handle(
   async (event, { locations, templateName, format, projectFolder, mapxPath, idmlPath, language, languageCode }) => {
     await loadSettings(projectFolder);
     try {
-      // Automatically create shared/labeler folder structure
-      const sharedPath = path.join(projectFolder, 'shared');
-      const sharedLabelerPath = path.join(sharedPath, 'labeler');
+      // Automatically create local/figures folder structure for full exports
+      // or shared/labeler for data merge files
+      let defaultPath;
       
-      // Create 'shared' folder if it doesn't exist
-      try {
-        await fs.promises.access(sharedPath);
-      } catch {
-        console.log(`Creating shared folder: ${sharedPath}`);
-        await fs.promises.mkdir(sharedPath, { recursive: true });
+      if (format === 'idml-full' || format === 'mapx-full') {
+        // For full exports, use local/figures
+        const localPath = path.join(projectFolder, 'local');
+        const figuresPath = path.join(localPath, 'figures');
+        
+        // Create 'local' folder if it doesn't exist
+        try {
+          await fs.promises.access(localPath);
+        } catch {
+          console.log(`Creating local folder: ${localPath}`);
+          await fs.promises.mkdir(localPath, { recursive: true });
+        }
+        
+        // Create 'figures' folder if it doesn't exist
+        try {
+          await fs.promises.access(figuresPath);
+        } catch {
+          console.log(`Creating figures folder: ${figuresPath}`);
+          await fs.promises.mkdir(figuresPath, { recursive: true });
+        }
+        
+        defaultPath = figuresPath;
+      } else {
+        // For data merge files, use shared/labeler
+        const sharedPath = path.join(projectFolder, 'shared');
+        const sharedLabelerPath = path.join(sharedPath, 'labeler');
+        
+        // Create 'shared' folder if it doesn't exist
+        try {
+          await fs.promises.access(sharedPath);
+        } catch {
+          console.log(`Creating shared folder: ${sharedPath}`);
+          await fs.promises.mkdir(sharedPath, { recursive: true });
+        }
+        
+        // Create 'labeler' folder if it doesn't exist
+        try {
+          await fs.promises.access(sharedLabelerPath);
+        } catch {
+          console.log(`Creating labeler folder: ${sharedLabelerPath}`);
+          await fs.promises.mkdir(sharedLabelerPath, { recursive: true });
+        }
+        
+        defaultPath = sharedLabelerPath;
       }
-      
-      // Create 'labeler' folder if it doesn't exist
-      try {
-        await fs.promises.access(sharedLabelerPath);
-      } catch {
-        console.log(`Creating labeler folder: ${sharedLabelerPath}`);
-        await fs.promises.mkdir(sharedLabelerPath, { recursive: true });
-      }
-      
-      // Use the shared/labeler path as default
-      const defaultPath = sharedLabelerPath;
 
       let data;
       if (format === 'idml-txt') {
@@ -1819,6 +1846,29 @@ ipcMain.handle(
       } else {
         // Write mapx.txt or .mapx file with BOM and UTF-8 encoding
         await fs.promises.writeFile(result.filePath, '\uFEFF' + data, 'utf8');
+      }
+
+      // For full exports (IDML or MAPX), prompt user to open the folder
+      if (format === 'idml-full' || format === 'mapx-full') {
+        const filename = path.basename(result.filePath);
+        const openFolderResult = await dialog.showMessageBox({
+          type: 'info',
+          title: 'Export Successful',
+          message: `Exported ${filename}`,
+          detail: 'Would you like to open the folder?',
+          buttons: ['No', 'Yes'],
+          defaultId: 1,
+          cancelId: 0,
+          // Force non-native dialog on Linux to avoid GTK conflicts
+          ...(process.platform === 'linux' && { 
+            noLink: true
+          })
+        });
+        
+        if (openFolderResult.response === 1) {
+          // User clicked Yes - open the folder with the file selected
+          shell.showItemInFolder(result.filePath);
+        }
       }
 
       return {

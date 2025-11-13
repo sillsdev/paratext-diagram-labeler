@@ -23,6 +23,12 @@
     "fr": "Approuver le Rendu",
     "ne": "अनुमोदन गर्नुहोस्"
   },
+  "approveAll": {
+    "en": "Approve all",
+    "es": "Aprobar todos",
+    "fr": "Tout approuver",
+    "ne": "सबै अनुमोदन गर्नुहोस्"
+  },
   "baseLayerTypes": {
     "en": "Base layer types",
     "es": "Tipos de capa base",
