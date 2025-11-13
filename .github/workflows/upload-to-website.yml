@@ -14,6 +14,15 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      - name: Install GitHub CLI
+        run: |
+          type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+          sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+          sudo apt update
+          sudo apt install gh -y
+
       - name: Download release asset (.exe)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -52,8 +61,7 @@ jobs:
           # Build download URL
           BASE_URL="${{ secrets.DOWNLOAD_BASE_URL }}"
           if [ -z "$BASE_URL" ]; then
-            echo "Error: DOWNLOAD_BASE_URL secret is not set. Please configure this secret in your repository settings."
-            exit 1
+            BASE_URL="https://${{ secrets.SFTP_HOST }}/downloads/"
           fi
           URL="${BASE_URL}${FILENAME}"
 
@@ -61,9 +69,9 @@ jobs:
           DATE=$(date -u '+%Y-%m-%d')
 
           # Generate JSON
-          cat > "${FILENAME}.download_info" << EOF
+          cat > "./dist/${FILENAME}.download_info" << EOF
           {
-            "name": "${{ vars.PROJECT_NAME:-Paratext Diagram Labeler }}",  # Project name is configurable via repository variable PROJECT_NAME
+            "name": "Paratext Diagram Labeler",
             "version": "$VERSION",
             "date": "$DATE",
             "platform": "win",
@@ -78,17 +86,17 @@ jobs:
           EOF
 
           echo "Generated ${FILENAME}.download_info:"
-          cat "${FILENAME}.download_info"
+          cat "./dist/${FILENAME}.download_info"
 
       - name: Upload installer + .download_info via SFTP
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        uses: appleboy/scp-action@v1.0.3
         with:
-          server: ${{ secrets.SFTP_HOST }}
+          host: ${{ secrets.SFTP_HOST }}
           username: ${{ secrets.SFTP_USERNAME }}
-          ssh_private_key: ${{ secrets.SFTP_PRIVATE_KEY }}
+          key: ${{ secrets.SFTP_PRIVATE_KEY }}
           port: 22
-          local_path: |
+          source: |
             ./dist/${{ steps.installer.outputs.file }}
-            ./${{ steps.installer.outputs.file }}.download_info
-          remote_path: ${{ secrets.SFTP_TARGET_DIR }}
-          sftp_only: true
+            ./dist/${{ steps.installer.outputs.file }}.download_info
+          target: ${{ secrets.SFTP_TARGET_DIR }}
+          strip_components: 0
