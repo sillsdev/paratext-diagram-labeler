@@ -106,21 +106,19 @@ jobs:
             [ -z "$PLATFORM" ] && continue
             
             # Generate JSON
-            cat > "./dist/${FILENAME}.download_info" << EOF
-          {
-            "name": "${{ vars.PROJECT_NAME }}",
-            "version": "$VERSION",
-            "date": "$DATE",
-            "platform": "$PLATFORM",
-            "platform_version": "",
-            "architecture": "",
-            "stability": "stable",
-            "file": "$FILENAME",
-            "md5": "$MD5",
-            "type": "$TYPE",
-            "build": ""
-          }
-          EOF
+            printf '{\n' > "./dist/${FILENAME}.download_info"
+            printf '  "name": "${{ vars.PROJECT_NAME }}",\n' >> "./dist/${FILENAME}.download_info"
+            printf '  "version": "%s",\n' "$VERSION" >> "./dist/${FILENAME}.download_info"
+            printf '  "date": "%s",\n' "$DATE" >> "./dist/${FILENAME}.download_info"
+            printf '  "platform": "%s",\n' "$PLATFORM" >> "./dist/${FILENAME}.download_info"
+            printf '  "platform_version": "",\n' >> "./dist/${FILENAME}.download_info"
+            printf '  "architecture": "",\n' >> "./dist/${FILENAME}.download_info"
+            printf '  "stability": "stable",\n' >> "./dist/${FILENAME}.download_info"
+            printf '  "file": "%s",\n' "$FILENAME" >> "./dist/${FILENAME}.download_info"
+            printf '  "md5": "%s",\n' "$MD5" >> "./dist/${FILENAME}.download_info"
+            printf '  "type": "%s",\n' "$TYPE" >> "./dist/${FILENAME}.download_info"
+            printf '  "build": ""\n' >> "./dist/${FILENAME}.download_info"
+            printf '}\n' >> "./dist/${FILENAME}.download_info"
             
             echo "Generated ${FILENAME}.download_info for $PLATFORM ($TYPE)"
           done
