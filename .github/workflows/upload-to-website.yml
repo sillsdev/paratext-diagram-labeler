@@ -90,14 +90,14 @@ jobs:
           cat "${FILENAME}.download_info"
 
       - name: Upload installer + .download_info via SFTP
-        uses: appleboy/scp-action@v1.0.3
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
-          host: ${{ secrets.SFTP_HOST }}
+          server: ${{ secrets.SFTP_HOST }}
           username: ${{ secrets.SFTP_USERNAME }}
-          key: ${{ secrets.SFTP_PRIVATE_KEY }}
+          ssh_private_key: ${{ secrets.SFTP_PRIVATE_KEY }}
           port: 22
-          source: |
+          local_path: |
             ./dist/${{ steps.installer.outputs.file }}
-            ./dist/${{ steps.installer.outputs.file }}.download_info
-          target: ${{ secrets.SFTP_TARGET_DIR }}
-          strip_components: 0
+            ./${{ steps.installer.outputs.file }}.download_info
+          remote_path: ${{ secrets.SFTP_TARGET_DIR }}
+          sftp_only: true
