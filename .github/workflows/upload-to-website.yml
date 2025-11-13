@@ -69,7 +69,7 @@ jobs:
           DATE=$(date -u '+%Y-%m-%d')
 
           # Generate JSON
-          cat > "${FILENAME}.download_info" << EOF
+          cat > "./dist/${FILENAME}.download_info" << EOF
           {
             "name": "Paratext Diagram Labeler",
             "version": "$VERSION",
@@ -86,7 +86,7 @@ jobs:
           EOF
 
           echo "Generated ${FILENAME}.download_info:"
-          cat "${FILENAME}.download_info"
+          cat "./dist/${FILENAME}.download_info"
 
       - name: Upload installer + .download_info via SFTP
         uses: appleboy/scp-action@v1.0.3
@@ -97,6 +97,6 @@ jobs:
           port: 22
           source: |
             ./dist/${{ steps.installer.outputs.file }}
-            ./${{ steps.installer.outputs.file }}.download_info
+            ./dist/${{ steps.installer.outputs.file }}.download_info
           target: ${{ secrets.SFTP_TARGET_DIR }}
           strip_components: 0
