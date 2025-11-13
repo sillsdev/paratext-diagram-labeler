@@ -221,30 +221,18 @@ export default function DetailsPane({
     }
   };
 
-  // Helper function to generate USFM from the current map state // TODO: compare with usfmFromMap(). Could probably be consolidated.
+  // Helper function to generate USFM from the current map state
+  // USFM now only contains the \fig field - labels are stored in .idml.txt files
   const generateUsfm = () => {
-    console.log('Converting map to USFM:', mapDef);
-    // Reconstruct USFM string from current map state
-    let usfm = `\\zdiagram-s |template="${mapDef.template}"\\*\n`;
-
-    // Always include the \fig line if present, and ensure it is in correct USFM format
+    console.log('Converting map to USFM (only \\fig field):', mapDef);
+    // Only return the \fig...\fig* field
+    let usfm = '';
     if (mapDef.fig && !/^\\fig/.test(mapDef.fig)) {
-      usfm += `\\fig ${mapDef.fig}\\fig*\n`;
+      usfm = `\\fig ${mapDef.fig}\\fig*`;
     } else if (mapDef.fig) {
-      usfm += `${mapDef.fig}\n`;
+      usfm = mapDef.fig;
     }
-
-    // Add each label as a \zlabel entry
-    locations.forEach(label => {
-      usfm += `\\zlabel-s |key="${label.mergeKey}" termid="${label.termId}" gloss="${inLang(
-        label.gloss,
-        lang
-      )}"\\*${label.vernLabel || ''}\\zlabel-e\\*\n`;
-    });
-
-    usfm += '\\zdiagram-e \\*';
-    // Remove unnecessary escaping for output
-    return usfm.replace(/\\/g, '\\');
+    return usfm;
   };
 
   const handleOk = () => {

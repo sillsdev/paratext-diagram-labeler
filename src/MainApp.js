@@ -64,31 +64,27 @@ function decodeFileAsString(arrayBuffer) {
   return new TextDecoder('utf-8').decode(uint8);
 }
 
-async function mapFromUsfm(usfm) {
-  // Extract template and \fig field
+async function mapFromUsfm(usfm, projectFolder) {
+  // USFM now only contains the \fig field - it's used only to select the diagram
+  // Extract template name from \fig field
   const figMatch = usfm.match(/\\fig [^\\]*src="([^\\]+)"[^\\]*\\fig\*/);
-  const templateMatch = usfm.match(/\\zdiagram-s\s+\|template="([^"]*)"/);
-  let templateName = '';
-
-  if (templateMatch) {
-    templateName = templateMatch[1];
-  } else {
-    if (!figMatch) {
-      return {
-        template: '',
-        fig: '',
-        mapView: false,
-        imgFilename: '',
-        width: 1000,
-        height: 1000,
-        labels: [],
-      };
-    }
-    templateName = figMatch[1]
-      .replace(/\..*$/, '') // Remove file extension
-      .trim()
-      .replace(/\s*[@(].*/, ''); // Remove anything after @ or (
+  
+  if (!figMatch) {
+    return {
+      template: '',
+      fig: '',
+      mapView: false,
+      imgFilename: '',
+      width: 1000,
+      height: 1000,
+      labels: [],
+    };
   }
+  
+  const templateName = figMatch[1]
+    .replace(/\..*$/, '') // Remove file extension
+    .trim()
+    .replace(/\s*[@(].*/, ''); // Remove anything after @ or (
 
   let mapDefData;
   try {
@@ -104,7 +100,7 @@ async function mapFromUsfm(usfm) {
     console.error('Error loading map definition:', e);
     mapDefData = {
       template: templateName,
-      fig: figMatch ? figMatch[0] : '',
+      fig: figMatch[0],
       mapView: false,
       imgFilename: '',
       width: 1000,
@@ -113,57 +109,41 @@ async function mapFromUsfm(usfm) {
     };
   }
 
-  mapDefData.fig = figMatch ? figMatch[0] : '';
-  let maxIdx = mapDefData.labels.length;
-  const regex =
-    /\\zlabel-s\s+\|key="([^"]+)"\s+termid="([^"]+)"\s+gloss="([^"]+)"\s*\\\*\s*([^\\]*)/g;
-  let match;
-  while ((match = regex.exec(usfm)) !== null) {
-    // eslint-disable-next-line
-    const [_, mergeKey, termId, gloss, vernLabel] = match;
-    console.log(`Parsed label: mergeKey=${mergeKey}, termId=${termId}, gloss=${gloss}, vernLabel=${vernLabel}`);
-    // If mapDefData already has a label with this mergeKey, add vernLabel to it.
-    const existingLabel = mapDefData.labels.find(label => label.mergeKey === mergeKey);
-    if (existingLabel) {
-      if (vernLabel) {
-        existingLabel.vernLabel = vernLabel;
-      }
+  mapDefData.fig = figMatch[0];
+  
+  // Try to load labels from .idml.txt file if it exists
+  try {
+    const result = await window.electronAPI.loadLabelsFromIdmlTxt(projectFolder, templateName);
+    if (result.success && result.labels) {
+      console.log('Loaded labels from .idml.txt file:', result.labels);
+      // Merge saved labels with map definition
+      mapDefData.labels.forEach(label => {
+        if (result.labels[label.mergeKey]) {
+          label.vernLabel = result.labels[label.mergeKey];
+        }
+      });
     } else {
-      // If not, create a new label object
-      console.log(`Creating new label for mergeKey: ${mergeKey}`);
-      const label = {
-        mergeKey,
-        termId,
-        gloss: { en: gloss },
-        vernLabel: vernLabel || '',
-        idx: maxIdx++, // Assign an index for ordering
-      };
-      mapDefData.labels.push(label);
+      console.log('No saved .idml.txt file found, using default labels from term renderings');
     }
+  } catch (error) {
+    console.log('Could not load .idml.txt file, using default labels:', error);
   }
+  
   console.log('Parsed map definition:', mapDefData);
   return mapDefData;
 }
 
 function usfmFromMap(map, lang) {
-  console.log('Converting map to USFM:', map);
-  // Reconstruct USFM string from current map state
-  let usfm = `\\zdiagram-s |template="${map.template}"\\*\n`;
-  // Always include the \fig line if present, and ensure it is in correct USFM format
+  console.log('Converting map to USFM (only \\fig field):', map);
+  // Only return the \fig...\fig* field, not the full USFM with labels
+  // Labels are now stored in .idml.txt files
+  let usfm = '';
   if (map.fig && !/^\\fig/.test(map.fig)) {
-    usfm += `\\fig ${map.fig}\\fig*\n`;
+    usfm = `\\fig ${map.fig}\\fig*`;
   } else if (map.fig) {
-    usfm += `${map.fig}\n`;
+    usfm = map.fig;
   }
-  map.labels.forEach(label => {
-    usfm += `\\zlabel-s |key="${label.mergeKey}" termid="${label.termId}" gloss="${inLang(
-      label.gloss,
-      lang
-    )}"\\*${label.vernLabel || ''}\\zlabel-e\\*\n`;
-  });
-  usfm += '\\zdiagram-e \\*';
-  // Remove unnecessary escaping for output
-  return usfm.replace(/\\/g, '\\');
+  return usfm;
 }
 
 function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRenderings }) {
@@ -1024,7 +1004,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
           await handleBrowseMapTemplateRef.current();
         } else {
           // console.log("Initializing map from USFM:", settings.usfm);
-          const initialMap = await mapFromUsfm(settings.usfm);
+          const initialMap = await mapFromUsfm(settings.usfm, projectFolder);
           if (!initialMap.template) {
             console.log('No template specified in USFM, browsing for template instead.');  
             await handleBrowseMapTemplateRef.current();
@@ -1036,6 +1016,44 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
           // Initialize selectedVariant based on whether variants exist
           setSelectedVariant(initialMap.variants && Object.keys(initialMap.variants).length > 0 ? 1 : 0);
           setMapPaneView(initialMap.mapView ? MAP_VIEW : TABLE_VIEW);
+          
+          // Initialize locations with status information
+          const currentTermRenderings = { ...termRenderings };
+          const initialLocations = initialMap.labels.map(loc => {
+            if (!loc.vernLabel) {
+              const altTermIds = collectionManager.getAltTermIds(loc.mergeKey, getCollectionIdFromTemplate(initialMap.template));
+              loc.vernLabel = getMapForm(currentTermRenderings, loc.termId, altTermIds);
+            }
+            const status = getStatus(
+              currentTermRenderings,
+              loc.termId,
+              loc.vernLabel,
+              collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(initialMap.template)),
+              extractedVerses
+            );
+            return { ...loc, status };
+          });
+          
+          setLocations(initialLocations);
+          
+          // Set saved labels for revert functionality
+          const finalSavedLabels = {};
+          initialLocations.forEach(loc => {
+            if (loc.mergeKey && loc.vernLabel) {
+              finalSavedLabels[loc.mergeKey] = loc.vernLabel;
+            }
+          });
+          setSavedLabels(finalSavedLabels);
+          setHasUnsavedChanges(false);
+          
+          // Find first visible location for initial selection
+          const firstVisibleIndex = initialLocations.findIndex(loc =>
+            isLocationVisible(
+              loc,
+              initialMap.variants && Object.keys(initialMap.variants).length > 0 ? 1 : 0
+            )
+          );
+          setSelLocation(firstVisibleIndex >= 0 ? firstVisibleIndex : 0);
         }
       } catch (error) {
         console.log('Unable to initialize map:', error);
@@ -1044,7 +1062,8 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
       }
     };
     initializeMap();
-  }, [isInitialized, settings.usfm]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isInitialized, settings.usfm, projectFolder]);
 
   // USFM View component (editable, uncontrolled)
   const usfmTextareaRef = useRef();

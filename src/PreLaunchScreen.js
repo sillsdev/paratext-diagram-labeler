@@ -211,8 +211,8 @@ const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch, languag
               className={errors.usfm ? 'usfm-textarea error' : 'usfm-textarea'}
               value={editedSettings.usfm || ''}
               onChange={e => handleSettingChange('usfm', e.target.value)}
-              rows={5}
-              placeholder="Enter USFM content here, or select a sample image or data merge file after launch..."
+              rows={2}
+              placeholder="Enter USFM \\fig field here, or select a sample image or data merge file after launch..."
               style={{ whiteSpace: 'nowrap' }}
               wrap="off"
               spellCheck={false}
