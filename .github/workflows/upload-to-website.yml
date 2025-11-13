@@ -124,6 +124,11 @@ jobs:
           echo "All generated .download_info files:"
           ls -l ./dist/*.download_info
 
+      - name: List all files to upload
+        run: |
+          echo "Files in dist directory:"
+          ls -lh ./dist/
+
       - name: Upload all installers + .download_info files via SCP
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -131,6 +136,6 @@ jobs:
           username: ${{ secrets.SFTP_USERNAME }}
           key: ${{ secrets.SFTP_PRIVATE_KEY }}
           port: 22
-          source: "./dist/*"
+          source: "dist/*"
           target: ${{ secrets.SFTP_TARGET_DIR }}
-          strip_components: 2
+          strip_components: 1
