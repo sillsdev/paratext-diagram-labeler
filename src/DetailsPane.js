@@ -253,17 +253,9 @@ export default function DetailsPane({
 
   // Export to data merge file handler
   const handleExportDataMerge = async () => {
-    let outputFormat = templateData.formats;
-    console.log('Exporting data merge with format:', outputFormat);
-    if (outputFormat.includes('mapx')) {  // Even a mapx-only template can be exported to idml.txt so that it can be reloaded here later.
-      // Prompt user to select output format. Return if user cancels.
-      console.log('Prompting user to select export format');
-      setShowExportDialog(true);
-      return; // Exit here, the dialog will handle the rest
-    }
-
-    // Use the helper function for direct export
-    await handleExportWithFormat(outputFormat);
+    // Always show the export dialog to let users see all available options
+    console.log('Opening export dialog');
+    setShowExportDialog(true);
   };
   // Handle export after format selection
   const handleExportWithFormat = async format => {
@@ -832,17 +824,19 @@ export default function DetailsPane({
               )}
               
               {/* MAPX Data Merge Export */}
-              <label style={{ display: 'block', marginBottom: 8, cursor: 'pointer' }}>
-                <input
-                  type="radio"
-                  name="exportFormat"
-                  value="mapx-txt"
-                  checked={selectedExportFormat === 'mapx-txt'}
-                  onChange={e => setSelectedExportFormat(e.target.value)}
-                  style={{ marginRight: 8 }}
-                />
-                Map Creator data merge file (.MAPX.TXT)
-              </label>
+              {templateData.formats && templateData.formats.includes('mapx') ? (
+                <label style={{ display: 'block', marginBottom: 8, cursor: 'pointer' }}>
+                  <input
+                    type="radio"
+                    name="exportFormat"
+                    value="mapx-txt"
+                    checked={selectedExportFormat === 'mapx-txt'}
+                    onChange={e => setSelectedExportFormat(e.target.value)}
+                    style={{ marginRight: 8 }}
+                  />
+                  Map Creator data merge file (.MAPX.TXT)
+                </label>
+              ) : null}
             </div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
               <button
