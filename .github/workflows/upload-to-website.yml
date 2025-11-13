@@ -1,0 +1,83 @@
+name: Upload Release to Website
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repo (optional, for any helpers)
+        uses: actions/checkout@v4
+
+      - name: Install GitHub CLI
+        run: |
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+          sudo apt update
+          sudo apt install gh
+
+      - name: Download release assets
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release download ${{ github.event.release.tag_name }} --dir ./dist --pattern "*.exe"
+
+      - name: Get installer file
+        id: installer
+        run: |
+          INSTALLER=$(ls ./dist/*.exe | head -1)
+          if [ -z "$INSTALLER" ]; then
+            echo "No .exe installer found in release!"
+            exit 1
+          fi
+          BASENAME=$(basename "$INSTALLER")
+          echo "file=$BASENAME" >> $GITHUB_OUTPUT
+          echo "path=$INSTALLER" >> $GITHUB_OUTPUT
+          echo "basename=${BASENAME%.exe}" >> $GITHUB_OUTPUT
+
+      - name: Generate download_info file
+        id: metadata
+        run: |
+          FILE="${{ steps.installer.outputs.path }}"
+          BASENAME="${{ steps.installer.outputs.basename }}"
+          VERSION="${{ github.event.release.tag_name }}"
+          if [[ "$VERSION" == v* ]]; then
+            VERSION="${VERSION#v}"
+          fi
+          SIZE=$(stat -c%s "$FILE")
+          SHA256=$(sha256sum "$FILE" | cut -d' ' -f1)
+          DOWNLOAD_URL="https://${{ secrets.SFTP_HOST }}/downloads/$BASENAME.exe"  # Adjust base URL as needed
+
+          # Expected filename: Paratext.Diagram.Labeler.Setup.$VERSION.exe (for validation/logging)
+          EXPECTED="Paratext.Diagram.Labeler.Setup.$VERSION.exe"
+          if [[ "$BASENAME.exe" != "$EXPECTED" ]]; then
+            echo "Warning: Filename '$BASENAME.exe' doesn't match expected '$EXPECTED'"
+          fi
+
+          cat > "$BASENAME.exe.download_info" << EOF
+          {
+            "version": "$VERSION",
+            "sha256": "$SHA256",
+            "size": $SIZE,
+            "url": "$DOWNLOAD_URL"
+          }
+          EOF
+
+          echo "Generated $BASENAME.exe.download_info:"
+          cat "$BASENAME.exe.download_info"
+
+      - name: Upload to website via SFTP
+        uses: appleboy/scp-action@v1.0.3  # Updated to latest version
+        with:
+          host: ${{ secrets.SFTP_HOST }}
+          username: ${{ secrets.SFTP_USERNAME }}
+          key: ${{ secrets.SFTP_PRIVATE_KEY }}
+          port: 22
+          source: "./dist/${{ steps.installer.outputs.file }}, ./*.download_info"
+          target: "${{ secrets.SFTP_TARGET_DIR }}"
+          strip_components: 1
