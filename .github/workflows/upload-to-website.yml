@@ -29,25 +29,11 @@ jobs:
             echo "tag=${{ github.event.release.tag_name }}" >> $GITHUB_OUTPUT
           fi
 
-      - name: Download release asset (.exe)
+      - name: Download all release assets
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release download ${{ steps.release_tag.outputs.tag }} --dir ./dist --pattern "*.exe"
-
-      - name: Get installer file
-        id: installer
-        run: |
-          INSTALLER=$(ls ./dist/*.exe | head -1)
-          if [ -z "$INSTALLER" ]; then
-            echo "Error: No .exe file found in release assets!"
-            exit 1
-          fi
-          FILENAME=$(basename "$INSTALLER")
-          BASENAME="${FILENAME%.exe}"
-          echo "file=$FILENAME" >> $GITHUB_OUTPUT
-          echo "path=$INSTALLER" >> $GITHUB_OUTPUT
-          echo "basename=$BASENAME" >> $GITHUB_OUTPUT
+          gh release download ${{ steps.release_tag.outputs.tag }} --dir ./dist
 
       - name: Extract version from tag
         id: version
@@ -56,51 +42,100 @@ jobs:
           VERSION="${TAG#v}"  # Remove 'v' prefix if present
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Generate .download_info file
+      - name: Generate .download_info files for all installers
         run: |
-          FILE="./dist/${{ steps.installer.outputs.file }}"
-          FILENAME="${{ steps.installer.outputs.file }}"
           VERSION="${{ steps.version.outputs.version }}"
-          SIZE=$(stat -c%s "$FILE")
-          MD5=$(md5sum "$FILE" | cut -d' ' -f1)
-          
-          # Build download URL
+          DATE=$(date -u '+%Y-%m-%d')
           BASE_URL="${{ secrets.DOWNLOAD_BASE_URL }}"
           if [ -z "$BASE_URL" ]; then
             BASE_URL="https://${{ secrets.SFTP_HOST }}/downloads/"
           fi
-          URL="${BASE_URL}${FILENAME}"
 
-          # Current date in YYYY-MM-DD
-          DATE=$(date -u '+%Y-%m-%d')
+          # Function to determine platform and type from filename
+          get_platform_info() {
+            local filename="$1"
+            local platform=""
+            local type=""
+            
+            case "$filename" in
+              *.exe)
+                platform="win"
+                type="exe"
+                ;;
+              *.deb)
+                platform="linux"
+                type="deb"
+                ;;
+              *.AppImage)
+                platform="linux"
+                type="AppImage"
+                ;;
+              *.dmg)
+                platform="mac"
+                type="dmg"
+                ;;
+              *.tar.gz)
+                platform="linux"
+                type="tar.gz"
+                ;;
+              *.zip)
+                # macOS zip files
+                platform="mac"
+                type="zip"
+                ;;
+            esac
+            
+            echo "$platform|$type"
+          }
 
-          # Generate JSON
-          cat > "./dist/${FILENAME}.download_info" << EOF
+          # Process each installer file
+          for FILE in ./dist/*.{exe,deb,AppImage,dmg,tar.gz,zip} 2>/dev/null; do
+            # Skip if glob didn't match
+            [ -e "$FILE" ] || continue
+            
+            FILENAME=$(basename "$FILE")
+            SIZE=$(stat -c%s "$FILE")
+            MD5=$(md5sum "$FILE" | cut -d' ' -f1)
+            
+            # Get platform and type
+            PLATFORM_INFO=$(get_platform_info "$FILENAME")
+            PLATFORM=$(echo "$PLATFORM_INFO" | cut -d'|' -f1)
+            TYPE=$(echo "$PLATFORM_INFO" | cut -d'|' -f2)
+            
+            # Skip if we couldn't determine platform
+            [ -z "$PLATFORM" ] && continue
+            
+            # Generate JSON
+            cat > "./dist/${FILENAME}.download_info" << EOF
           {
-            "name": "Paratext Diagram Labeler",
+            "name": "${{ vars.PROJECT_NAME }}",
             "version": "$VERSION",
             "date": "$DATE",
-            "platform": "win",
+            "platform": "$PLATFORM",
             "platform_version": "",
             "architecture": "",
             "stability": "stable",
             "file": "$FILENAME",
             "md5": "$MD5",
-            "type": "exe",
+            "type": "$TYPE",
             "build": ""
           }
           EOF
+            
+            echo "Generated ${FILENAME}.download_info for $PLATFORM ($TYPE)"
+          done
+          
+          echo ""
+          echo "All generated .download_info files:"
+          ls -l ./dist/*.download_info
 
-          echo "Generated ${FILENAME}.download_info:"
-          cat "./dist/${FILENAME}.download_info"
-
-      - name: Upload installer + .download_info via SCP
+      - name: Upload all installers + .download_info files via SCP
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SFTP_HOST }}
           username: ${{ secrets.SFTP_USERNAME }}
           key: ${{ secrets.SFTP_PRIVATE_KEY }}
           port: 22
-          source: "./dist/${{ steps.installer.outputs.file }},./dist/${{ steps.installer.outputs.file }}.download_info"
+          source: "./dist/*"
           target: ${{ secrets.SFTP_TARGET_DIR }}
           strip_components: 2
