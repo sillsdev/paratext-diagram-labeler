@@ -949,7 +949,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
         });
         
         // Store the saved labels for revert functionality
-        // Use the final labels (from .txt file, DiagramLabels.xml, or generated)
+        // Use the final labels (from .idml.txt file, data merge file, or generated)
         const finalSavedLabels = {};
         initialLocations.forEach(loc => {
           if (loc.mergeKey && loc.vernLabel) {
