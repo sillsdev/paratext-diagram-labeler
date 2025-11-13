@@ -61,7 +61,8 @@ jobs:
           # Build download URL
           BASE_URL="${{ secrets.DOWNLOAD_BASE_URL }}"
           if [ -z "$BASE_URL" ]; then
-            BASE_URL="https://${{ secrets.SFTP_HOST }}/downloads/"
+            echo "Error: DOWNLOAD_BASE_URL secret is not set. Please configure this secret in your repository settings."
+            exit 1
           fi
           URL="${BASE_URL}${FILENAME}"
 
