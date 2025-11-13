@@ -58,6 +58,7 @@ export default function TemplateBrowser({
   const [savedFilesCache, setSavedFilesCache] = useState({});
   const [dividerPosition, setDividerPosition] = useState(50); // Percentage
   const isDragging = useRef(false);
+  const selectedRowRef = useRef(null);
 
   // Load saved files cache
   useEffect(() => {
@@ -192,15 +193,36 @@ export default function TemplateBrowser({
   }, [open, searchTerm, formatFilter, collectionFilter, colorFilter, textureFilter, 
       savedFilter, sortColumn, sortDirection, lang, savedFilesCache]);
 
+  // Auto-select first item when filtered list changes and current selection is not in the list
+  useEffect(() => {
+    if (!open || filteredTemplates.length === 0) {
+      setSelectedTemplate(null);
+      return;
+    }
+
+    // Check if current selection is in the filtered list
+    const currentStillExists = selectedTemplate && filteredTemplates.some(
+      t => t.templateName === selectedTemplate.templateName && 
+           t.collectionId === selectedTemplate.collectionId
+    );
+
+    // If no selection or current selection not in list, select first item
+    if (!currentStillExists) {
+      setSelectedTemplate(filteredTemplates[0]);
+    }
+  }, [open, filteredTemplates, selectedTemplate]);
+
   // Load preview image when selected template changes
   useEffect(() => {
     if (!selectedTemplate || !templateFolder) {
+      console.log('[TemplateBrowser] No selected template or templateFolder:', { selectedTemplate, templateFolder });
       setPreviewImageData(null);
       return;
     }
 
     const imageFilename = selectedTemplate.mapDef.imgFilename;
     if (!imageFilename) {
+      console.log('[TemplateBrowser] No imgFilename in mapDef');
       setPreviewImageData(null);
       return;
     }
@@ -212,16 +234,23 @@ export default function TemplateBrowser({
       imagePath = `${templateFolder}/${selectedTemplate.collectionId}/${imageFilename}`;
     }
 
+    console.log('[TemplateBrowser] Loading preview image from:', imagePath);
+    
     if (window.electronAPI) {
-      window.electronAPI.loadImage(imagePath).then(result => {
-        if (result.success) {
-          setPreviewImageData(result.dataUrl);
+      window.electronAPI.loadImage(imagePath).then(dataUrl => {
+        console.log('[TemplateBrowser] Image loaded:', dataUrl ? `${dataUrl.length} bytes` : 'null');
+        if (dataUrl) {
+          setPreviewImageData(dataUrl);
         } else {
+          console.log('[TemplateBrowser] Image load returned null');
           setPreviewImageData(null);
         }
-      }).catch(() => {
+      }).catch(error => {
+        console.log('[TemplateBrowser] Image load error:', error);
         setPreviewImageData(null);
       });
+    } else {
+      console.log('[TemplateBrowser] electronAPI not available');
     }
   }, [selectedTemplate, templateFolder]);
 
@@ -238,6 +267,22 @@ export default function TemplateBrowser({
   // Handle row click
   const handleRowClick = (template) => {
     setSelectedTemplate(template);
+  };
+
+  // Handle row double-click - equivalent to selecting and clicking "Select Diagram"
+  const handleRowDoubleClick = (template) => {
+    setSelectedTemplate(template);
+    handleSelectDiagram();
+  };
+
+  // Handle reset filters
+  const handleResetFilters = () => {
+    setSearchTerm('');
+    setFormatFilter('any');
+    setCollectionFilter('all');
+    setColorFilter('any');
+    setTextureFilter('any');
+    setSavedFilter('all');
   };
 
   // Handle select diagram
@@ -313,6 +358,16 @@ export default function TemplateBrowser({
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [open, filteredTemplates, selectedTemplate, handleSelectDiagram, onClose]);
+
+  // Scroll selected row into view
+  useEffect(() => {
+    if (selectedRowRef.current) {
+      selectedRowRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }
+  }, [selectedTemplate]);
 
   // Divider dragging
   const handleDividerMouseDown = useCallback((e) => {
@@ -406,6 +461,22 @@ export default function TemplateBrowser({
                 onChange={e => setSearchTerm(e.target.value)}
                 className="search-input"
               />
+              <button 
+                onClick={handleResetFilters}
+                className="reset-filters-button"
+                title="Reset all filters"
+                style={{
+                  background: 'none',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  cursor: 'pointer',
+                  padding: '5px 10px',
+                  marginLeft: '5px',
+                  fontSize: '16px',
+                }}
+              >
+                🔄
+              </button>
             </div>
             <div className="filter-row">
               <select value={formatFilter} onChange={e => setFormatFilter(e.target.value)}>
@@ -461,18 +532,23 @@ export default function TemplateBrowser({
                 </tr>
               </thead>
               <tbody>
-                {filteredTemplates.map((template, idx) => (
-                  <tr
-                    key={`${template.collectionId}-${template.templateName}`}
-                    className={selectedTemplate?.templateName === template.templateName && 
-                               selectedTemplate?.collectionId === template.collectionId ? 'selected' : ''}
-                    onClick={() => handleRowClick(template)}
-                  >
-                    <td>{template.collectionId}</td>
-                    <td>{template.templateName.replace(/^[^_]*_/, '')}</td>
-                    <td>{inLang(template.mapDef.title, lang) || ''}</td>
-                  </tr>
-                ))}
+                {filteredTemplates.map((template, idx) => {
+                  const isSelected = selectedTemplate?.templateName === template.templateName && 
+                                   selectedTemplate?.collectionId === template.collectionId;
+                  return (
+                    <tr
+                      key={`${template.collectionId}-${template.templateName}`}
+                      ref={isSelected ? selectedRowRef : null}
+                      className={isSelected ? 'selected' : ''}
+                      onClick={() => handleRowClick(template)}
+                      onDoubleClick={() => handleRowDoubleClick(template)}
+                    >
+                      <td>{template.collectionId}</td>
+                      <td>{template.templateName.replace(/^[^_]*_/, '')}</td>
+                      <td>{inLang(template.mapDef.title, lang) || ''}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

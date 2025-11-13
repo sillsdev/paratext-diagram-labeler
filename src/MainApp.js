@@ -1811,6 +1811,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
           open={true}
           lang={lang}
           projectFolder={projectFolder}
+          templateFolder={templateFolder}
           initialFilters={templateFilters}
           onSelectDiagram={handleSelectDiagram}
           onSelectGroup={handleSelectGroup}
