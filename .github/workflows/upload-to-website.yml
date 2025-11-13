@@ -1,0 +1,94 @@
+name: Upload Release to Website
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Download release asset (.exe)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release download ${{ github.event.release.tag_name }} --dir ./dist --pattern "*.exe"
+
+      - name: Get installer file
+        id: installer
+        run: |
+          INSTALLER=$(ls ./dist/*.exe | head -1)
+          if [ -z "$INSTALLER" ]; then
+            echo "Error: No .exe file found in release assets!"
+            exit 1
+          fi
+          FILENAME=$(basename "$INSTALLER")
+          BASENAME="${FILENAME%.exe}"
+          echo "file=$FILENAME" >> $GITHUB_OUTPUT
+          echo "path=$INSTALLER" >> $GITHUB_OUTPUT
+          echo "basename=$BASENAME" >> $GITHUB_OUTPUT
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          TAG="${{ github.event.release.tag_name }}"
+          VERSION="${TAG#v}"  # Remove 'v' prefix if present
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Generate .download_info file
+        run: |
+          FILE="./dist/${{ steps.installer.outputs.file }}"
+          FILENAME="${{ steps.installer.outputs.file }}"
+          VERSION="${{ steps.version.outputs.version }}"
+          SIZE=$(stat -c%s "$FILE")
+          MD5=$(md5sum "$FILE" | cut -d' ' -f1)
+          
+          # Build download URL
+          BASE_URL="${{ secrets.DOWNLOAD_BASE_URL }}"
+          if [ -z "$BASE_URL" ]; then
+            echo "Error: DOWNLOAD_BASE_URL secret is not set. Please configure this secret in your repository settings."
+            exit 1
+          fi
+          URL="${BASE_URL}${FILENAME}"
+
+          # Current date in YYYY-MM-DD
+          DATE=$(date -u '+%Y-%m-%d')
+
+          # Generate JSON
+          cat > "${FILENAME}.download_info" << EOF
+          {
+            "name": "${{ vars.PROJECT_NAME:-Paratext Diagram Labeler }}",  # Project name is configurable via repository variable PROJECT_NAME
+            "version": "$VERSION",
+            "date": "$DATE",
+            "platform": "win",
+            "platform_version": "",
+            "architecture": "",
+            "stability": "stable",
+            "file": "$FILENAME",
+            "md5": "$MD5",
+            "type": "exe",
+            "build": ""
+          }
+          EOF
+
+          echo "Generated ${FILENAME}.download_info:"
+          cat "${FILENAME}.download_info"
+
+      - name: Upload installer + .download_info via SFTP
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        with:
+          server: ${{ secrets.SFTP_HOST }}
+          username: ${{ secrets.SFTP_USERNAME }}
+          ssh_private_key: ${{ secrets.SFTP_PRIVATE_KEY }}
+          port: 22
+          local_path: |
+            ./dist/${{ steps.installer.outputs.file }}
+            ./${{ steps.installer.outputs.file }}.download_info
+          remote_path: ${{ secrets.SFTP_TARGET_DIR }}
+          sftp_only: true
