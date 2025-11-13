@@ -324,10 +324,10 @@
     "ne": "समतल"
   },
   "allTemplates": {
-    "en": "All",
-    "es": "Todos",
-    "fr": "Tous",
-    "ne": "सबै"
+    "en": "Saved or not",
+    "es": "Guardado o no",
+    "fr": "Enregistré ou non",
+    "ne": "बचत गरिएको वा छैन"
   },
   "savedOnly": {
     "en": "Saved Only",

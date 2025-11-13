@@ -950,13 +950,16 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
   }, [loadTemplate]);
 
   const handlePreviousTemplate = useCallback(async () => {
-    if (!templateGroup || templateGroupIndex <= 0) return;
+    if (!templateGroup || templateGroup.length === 0) return;
     
     // Check for unsaved changes
     const canProceed = await promptUnsavedChanges();
     if (!canProceed) return;
     
-    const newIndex = templateGroupIndex - 1;
+    // Wrap around: if at first item, go to last
+    const newIndex = templateGroupIndex <= 0 
+      ? templateGroup.length - 1 
+      : templateGroupIndex - 1;
     const template = templateGroup[newIndex];
     setTemplateGroupIndex(newIndex);
     
@@ -965,13 +968,16 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
   }, [templateGroup, templateGroupIndex, promptUnsavedChanges, loadTemplate]);
 
   const handleNextTemplate = useCallback(async () => {
-    if (!templateGroup || templateGroupIndex >= templateGroup.length - 1) return;
+    if (!templateGroup || templateGroup.length === 0) return;
     
     // Check for unsaved changes
     const canProceed = await promptUnsavedChanges();
     if (!canProceed) return;
     
-    const newIndex = templateGroupIndex + 1;
+    // Wrap around: if at last item, go to first
+    const newIndex = templateGroupIndex >= templateGroup.length - 1 
+      ? 0 
+      : templateGroupIndex + 1;
     const template = templateGroup[newIndex];
     setTemplateGroupIndex(newIndex);
     

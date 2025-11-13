@@ -59,6 +59,14 @@ export default function TemplateBrowser({
   const [dividerPosition, setDividerPosition] = useState(50); // Percentage
   const isDragging = useRef(false);
   const selectedRowRef = useRef(null);
+  const searchInputRef = useRef(null);
+
+  // Focus search input when browser opens
+  useEffect(() => {
+    if (open && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [open]);
 
   // Load saved files cache
   useEffect(() => {
@@ -419,19 +427,24 @@ export default function TemplateBrowser({
           <div className="template-details-section">
             {selectedTemplate ? (
               <>
-                <h3>{inLang(selectedTemplate.mapDef.title, lang) || selectedTemplate.templateName}</h3>
-                <div className="template-info">
-                  <div><strong>Template:</strong> {selectedTemplate.templateName}</div>
-                  <div><strong>Collection:</strong> {selectedTemplate.collectionId}</div>
-                  {selectedTemplate.mapDef.owner && (
-                    <div><strong>Owner:</strong> {selectedTemplate.mapDef.owner}</div>
-                  )}
-                  {selectedTemplate.mapDef.mapTypes && (
-                    <div><strong>Base Layers:</strong> {selectedTemplate.mapDef.mapTypes}</div>
-                  )}
-                  {selectedTemplate.mapDef.formats && (
-                    <div><strong>Formats:</strong> {selectedTemplate.mapDef.formats.toUpperCase()}</div>
-                  )}
+                <h3 style={{ marginBottom: '8px', fontSize: '16px' }}>
+                  {inLang(selectedTemplate.mapDef.title, lang) || selectedTemplate.templateName}
+                </h3>
+                <div className="template-info" style={{ marginBottom: '8px' }}>
+                  <div style={{ marginBottom: '4px', fontSize: '13px', color: '#666' }}>
+                    {selectedTemplate.templateName}
+                    {selectedTemplate.mapDef.owner && (
+                      <> ({selectedTemplate.mapDef.owner})</>
+                    )}
+                  </div>
+                  <div style={{ display: 'flex', gap: '20px', fontSize: '12px', color: '#888' }}>
+                    {selectedTemplate.mapDef.formats && (
+                      <div><strong>Formats:</strong> {selectedTemplate.mapDef.formats.toUpperCase()}</div>
+                    )}
+                    {selectedTemplate.mapDef.mapTypes && (
+                      <div><strong>Base Layers:</strong> {selectedTemplate.mapDef.mapTypes.toUpperCase()}</div>
+                    )}
+                  </div>
                 </div>
                 <div className="template-actions">
                   <button onClick={handleSelectDiagram} className="select-button">
@@ -445,9 +458,21 @@ export default function TemplateBrowser({
                 </div>
               </>
             ) : (
-              <div className="no-selection">
-                {inLang(uiStr.noTemplateSelected, lang) || 'Select a template from the list below'}
-              </div>
+              <>
+                <h3 style={{ marginBottom: '8px', fontSize: '16px', color: '#999' }}>
+                  {filteredTemplates.length === 0 ? 'No matching items found' : 'Select a template'}
+                </h3>
+                <div className="template-info" style={{ marginBottom: '8px', minHeight: '40px' }}>
+                  <div style={{ marginBottom: '4px', fontSize: '13px', color: '#999' }}>
+                    {filteredTemplates.length === 0 
+                      ? 'Try adjusting your search or filters'
+                      : 'Click a row below to see details'}
+                  </div>
+                </div>
+                <div className="template-actions" style={{ visibility: 'hidden' }}>
+                  <button className="select-button">Placeholder</button>
+                </div>
+              </>
             )}
           </div>
 
@@ -455,6 +480,7 @@ export default function TemplateBrowser({
           <div className="template-filters-section">
             <div className="filter-row">
               <input
+                ref={searchInputRef}
                 type="text"
                 placeholder={inLang(uiStr.searchTemplates, lang) || 'Search templates...'}
                 value={searchTerm}
@@ -487,7 +513,9 @@ export default function TemplateBrowser({
               <select value={collectionFilter} onChange={e => setCollectionFilter(e.target.value)}>
                 <option value="all">{inLang(uiStr.allCollections, lang) || 'All Collections'}</option>
                 {allCollections.map(coll => (
-                  <option key={coll} value={coll}>{coll}</option>
+                  <option key={coll} value={coll}>
+                    {collectionManager.getCollectionName(coll)} ({coll})
+                  </option>
                 ))}
               </select>
             </div>
@@ -506,7 +534,7 @@ export default function TemplateBrowser({
             </div>
             <div className="filter-row">
               <select value={savedFilter} onChange={e => setSavedFilter(e.target.value)}>
-                <option value="all">{inLang(uiStr.allTemplates, lang) || 'All'}</option>
+                <option value="all">{inLang(uiStr.allTemplates, lang) || 'Saved or not'}</option>
                 <option value="saved">{inLang(uiStr.savedOnly, lang) || 'Saved Only'}</option>
               </select>
               <div className="results-count">
