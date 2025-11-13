@@ -47,6 +47,10 @@ export default function DetailsPane({
   hasUnsavedChanges = false,
   onSaveLabels,
   onRevertLabels,
+  templateGroup = null,
+  templateGroupIndex = -1,
+  onPreviousTemplate,
+  onNextTemplate,
 }) {
   const [localIsApproved, setLocalIsApproved] = useState(isApproved);
   const [localRenderings, setLocalRenderings] = useState(renderings);
@@ -584,6 +588,44 @@ export default function DetailsPane({
               📂
             </span>
           </button>
+          {templateGroupIndex >= 0 && (
+            <>
+              <button
+                onClick={onPreviousTemplate}
+                disabled={templateGroupIndex === 0}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: templateGroupIndex > 0 ? 'pointer' : 'not-allowed',
+                  padding: 0,
+                  marginLeft: 1,
+                  opacity: templateGroupIndex > 0 ? 1 : 0.3,
+                }}
+                title={inLang(uiStr.previousTemplate, lang)}
+              >
+                <span style={{ fontSize: '1.2em', color: templateGroupIndex > 0 ? '#4a90e2' : '#999' }}>
+                  ◀
+                </span>
+              </button>
+              <button
+                onClick={onNextTemplate}
+                disabled={!templateGroup || templateGroupIndex >= templateGroup.length - 1}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: templateGroup && templateGroupIndex < templateGroup.length - 1 ? 'pointer' : 'not-allowed',
+                  padding: 0,
+                  marginLeft: 1,
+                  opacity: templateGroup && templateGroupIndex < templateGroup.length - 1 ? 1 : 0.3,
+                }}
+                title={inLang(uiStr.nextTemplate, lang)}
+              >
+                <span style={{ fontSize: '1.2em', color: templateGroup && templateGroupIndex < templateGroup.length - 1 ? '#4a90e2' : '#999' }}>
+                  ▶
+                </span>
+              </button>
+            </>
+          )}
           <button
             onClick={onRevertLabels}
             disabled={!hasUnsavedChanges}

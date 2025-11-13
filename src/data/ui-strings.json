@@ -245,6 +245,138 @@
     "fr": "Infos du modèle",
     "ne": "टेम्प्लेट जानकारी"
   },
+  "selectDiagram": {
+    "en": "Select Diagram",
+    "es": "Seleccionar diagrama",
+    "fr": "Sélectionner le diagramme",
+    "ne": "रेखाचित्र चयन गर्नुहोस्"
+  },
+  "selectGroup": {
+    "en": "Select Group",
+    "es": "Seleccionar grupo",
+    "fr": "Sélectionner le groupe",
+    "ne": "समूह चयन गर्नुहोस्"
+  },
+  "noTemplateSelected": {
+    "en": "Select a template from the list below",
+    "es": "Seleccione una plantilla de la lista a continuación",
+    "fr": "Sélectionnez un modèle dans la liste ci-dessous",
+    "ne": "तलको सूचीबाट टेम्प्लेट चयन गर्नुहोस्"
+  },
+  "searchTemplates": {
+    "en": "Search templates...",
+    "es": "Buscar plantillas...",
+    "fr": "Rechercher des modèles...",
+    "ne": "टेम्प्लेटहरू खोज्नुहोस्..."
+  },
+  "anyFormat": {
+    "en": "Any Format",
+    "es": "Cualquier formato",
+    "fr": "Tout format",
+    "ne": "कुनै पनि ढाँचा"
+  },
+  "allCollections": {
+    "en": "All Collections",
+    "es": "Todas las colecciones",
+    "fr": "Toutes les collections",
+    "ne": "सबै सङ्ग्रहहरू"
+  },
+  "anyColorMode": {
+    "en": "Any Color Mode",
+    "es": "Cualquier modo de color",
+    "fr": "Tout mode de couleur",
+    "ne": "कुनै पनि रङ मोड"
+  },
+  "fullColor": {
+    "en": "Full Color",
+    "es": "Color completo",
+    "fr": "Couleur complète",
+    "ne": "पूर्ण रङ"
+  },
+  "blueBrown": {
+    "en": "Blue & Brown",
+    "es": "Azul y marrón",
+    "fr": "Bleu et marron",
+    "ne": "नीलो र खैरो"
+  },
+  "grayscale": {
+    "en": "Grayscale",
+    "es": "Escala de grises",
+    "fr": "Niveaux de gris",
+    "ne": "खरानी स्केल"
+  },
+  "anyTexture": {
+    "en": "Any Texture",
+    "es": "Cualquier textura",
+    "fr": "Toute texture",
+    "ne": "कुनै पनि बनावट"
+  },
+  "relief": {
+    "en": "Relief",
+    "es": "Relieve",
+    "fr": "Relief",
+    "ne": "राहत"
+  },
+  "flat": {
+    "en": "Flat",
+    "es": "Plano",
+    "fr": "Plat",
+    "ne": "समतल"
+  },
+  "allTemplates": {
+    "en": "All",
+    "es": "Todos",
+    "fr": "Tous",
+    "ne": "सबै"
+  },
+  "savedOnly": {
+    "en": "Saved Only",
+    "es": "Solo guardados",
+    "fr": "Enregistrés uniquement",
+    "ne": "बचत गरिएको मात्र"
+  },
+  "results": {
+    "en": "results",
+    "es": "resultados",
+    "fr": "résultats",
+    "ne": "परिणामहरू"
+  },
+  "collection": {
+    "en": "Coll",
+    "es": "Col",
+    "fr": "Coll",
+    "ne": "सङ्ग्रह"
+  },
+  "template": {
+    "en": "Template",
+    "es": "Plantilla",
+    "fr": "Modèle",
+    "ne": "टेम्प्लेट"
+  },
+  "mapTitle": {
+    "en": "Map Title",
+    "es": "Título del mapa",
+    "fr": "Titre de la carte",
+    "ne": "नक्सा शीर्षक"
+  },
+  "noPreviewAvailable": {
+    "en": "No preview available",
+    "es": "Vista previa no disponible",
+    "fr": "Aucun aperçu disponible",
+    "ne": "पूर्वावलोकन उपलब्ध छैन"
+  },
+  "previousTemplate": {
+    "en": "Previous template",
+    "es": "Plantilla anterior",
+    "fr": "Modèle précédent",
+    "ne": "अघिल्लो टेम्प्लेट"
+  },
+  "nextTemplate": {
+    "en": "Next template",
+    "es": "Siguiente plantilla",
+    "fr": "Modèle suivant",
+    "ne": "अर्को टेम्प्लेट"
+  },
   "termRenderings": {
     "en": "Term Renderings",
     "es": "Traducciones de términos",
