@@ -3,6 +3,12 @@ name: Upload Release to Website
 on:
   release:
     types: [published, edited]
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Release tag to upload (e.g., v0.1.5)'
+        required: true
+        type: string
 
 jobs:
   upload:
@@ -13,6 +19,15 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+
+      - name: Set release tag
+        id: release_tag
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "tag=${{ inputs.tag_name }}" >> $GITHUB_OUTPUT
+          else
+            echo "tag=${{ github.event.release.tag_name }}" >> $GITHUB_OUTPUT
+          fi
 
       - name: Install GitHub CLI
         run: |
@@ -27,7 +42,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release download ${{ github.event.release.tag_name }} --dir ./dist --pattern "*.exe"
+          gh release download ${{ steps.release_tag.outputs.tag }} --dir ./dist --pattern "*.exe"
 
       - name: Get installer file
         id: installer
@@ -46,7 +61,7 @@ jobs:
       - name: Extract version from tag
         id: version
         run: |
-          TAG="${{ github.event.release.tag_name }}"
+          TAG="${{ steps.release_tag.outputs.tag }}"
           VERSION="${TAG#v}"  # Remove 'v' prefix if present
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
