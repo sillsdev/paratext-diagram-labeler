@@ -193,7 +193,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
   // const [termRenderings, setTermRenderings] = useState(); 
   // const [termRenderingsLoading, setTermRenderingsLoading] = useState(false); // Guard against multiple loads
   
-  // Track unsaved changes and saved state for DiagramLabels.xml
+  // Track unsaved changes and saved state for .idml.txt files
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [savedLabels, setSavedLabels] = useState({}); // Store the last saved state to allow reverting
 
