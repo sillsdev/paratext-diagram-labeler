@@ -1,0 +1,102 @@
+name: Upload Release to Website
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install GitHub CLI
+        run: |
+          type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+          sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+          sudo apt update
+          sudo apt install gh -y
+
+      - name: Download release asset (.exe)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release download ${{ github.event.release.tag_name }} --dir ./dist --pattern "*.exe"
+
+      - name: Get installer file
+        id: installer
+        run: |
+          INSTALLER=$(ls ./dist/*.exe | head -1)
+          if [ -z "$INSTALLER" ]; then
+            echo "Error: No .exe file found in release assets!"
+            exit 1
+          fi
+          FILENAME=$(basename "$INSTALLER")
+          BASENAME="${FILENAME%.exe}"
+          echo "file=$FILENAME" >> $GITHUB_OUTPUT
+          echo "path=$INSTALLER" >> $GITHUB_OUTPUT
+          echo "basename=$BASENAME" >> $GITHUB_OUTPUT
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          TAG="${{ github.event.release.tag_name }}"
+          VERSION="${TAG#v}"  # Remove 'v' prefix if present
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Generate .download_info file
+        run: |
+          FILE="./dist/${{ steps.installer.outputs.file }}"
+          FILENAME="${{ steps.installer.outputs.file }}"
+          VERSION="${{ steps.version.outputs.version }}"
+          SIZE=$(stat -c%s "$FILE")
+          MD5=$(md5sum "$FILE" | cut -d' ' -f1)
+          
+          # Build download URL
+          BASE_URL="${{ secrets.DOWNLOAD_BASE_URL }}"
+          if [ -z "$BASE_URL" ]; then
+            BASE_URL="https://${{ secrets.SFTP_HOST }}/downloads/"
+          fi
+          URL="${BASE_URL}${FILENAME}"
+
+          # Current date in YYYY-MM-DD
+          DATE=$(date -u '+%Y-%m-%d')
+
+          # Generate JSON
+          cat > "${FILENAME}.download_info" << EOF
+          {
+            "name": "Paratext Diagram Labeler",
+            "version": "$VERSION",
+            "date": "$DATE",
+            "platform": "win",
+            "platform_version": "",
+            "architecture": "",
+            "stability": "stable",
+            "file": "$FILENAME",
+            "md5": "$MD5",
+            "type": "exe",
+            "build": ""
+          }
+          EOF
+
+          echo "Generated ${FILENAME}.download_info:"
+          cat "${FILENAME}.download_info"
+
+      - name: Upload installer + .download_info via SFTP
+        uses: appleboy/scp-action@v1.0.3
+        with:
+          host: ${{ secrets.SFTP_HOST }}
+          username: ${{ secrets.SFTP_USERNAME }}
+          key: ${{ secrets.SFTP_PRIVATE_KEY }}
+          port: 22
+          source: |
+            ./dist/${{ steps.installer.outputs.file }}
+            ./${{ steps.installer.outputs.file }}.download_info
+          target: ${{ secrets.SFTP_TARGET_DIR }}
+          strip_components: 0
