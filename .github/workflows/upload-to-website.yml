@@ -88,15 +88,13 @@ jobs:
           echo "Generated ${FILENAME}.download_info:"
           cat "./dist/${FILENAME}.download_info"
 
-      - name: Upload installer + .download_info via SFTP
-        uses: appleboy/scp-action@v1.0.3
+      - name: Upload installer + .download_info via SCP
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SFTP_HOST }}
           username: ${{ secrets.SFTP_USERNAME }}
           key: ${{ secrets.SFTP_PRIVATE_KEY }}
           port: 22
-          source: |
-            ./dist/${{ steps.installer.outputs.file }}
-            ./dist/${{ steps.installer.outputs.file }}.download_info
+          source: "./dist/${{ steps.installer.outputs.file }},./dist/${{ steps.installer.outputs.file }}.download_info"
           target: ${{ secrets.SFTP_TARGET_DIR }}
-          strip_components: 0
+          strip_components: 1
