@@ -64,31 +64,27 @@ function decodeFileAsString(arrayBuffer) {
   return new TextDecoder('utf-8').decode(uint8);
 }
 
-async function mapFromUsfm(usfm) {
-  // Extract template and \fig field
+async function mapFromUsfm(usfm, projectFolder) {
+  // USFM now only contains the \fig field - it's used only to select the diagram
+  // Extract template name from \fig field
   const figMatch = usfm.match(/\\fig [^\\]*src="([^\\]+)"[^\\]*\\fig\*/);
-  const templateMatch = usfm.match(/\\zdiagram-s\s+\|template="([^"]*)"/);
-  let templateName = '';
-
-  if (templateMatch) {
-    templateName = templateMatch[1];
-  } else {
-    if (!figMatch) {
-      return {
-        template: '',
-        fig: '',
-        mapView: false,
-        imgFilename: '',
-        width: 1000,
-        height: 1000,
-        labels: [],
-      };
-    }
-    templateName = figMatch[1]
-      .replace(/\..*$/, '') // Remove file extension
-      .trim()
-      .replace(/\s*[@(].*/, ''); // Remove anything after @ or (
+  
+  if (!figMatch) {
+    return {
+      template: '',
+      fig: '',
+      mapView: false,
+      imgFilename: '',
+      width: 1000,
+      height: 1000,
+      labels: [],
+    };
   }
+  
+  const templateName = figMatch[1]
+    .replace(/\..*$/, '') // Remove file extension
+    .trim()
+    .replace(/\s*[@(].*/, ''); // Remove anything after @ or (
 
   let mapDefData;
   try {
@@ -104,7 +100,7 @@ async function mapFromUsfm(usfm) {
     console.error('Error loading map definition:', e);
     mapDefData = {
       template: templateName,
-      fig: figMatch ? figMatch[0] : '',
+      fig: figMatch[0],
       mapView: false,
       imgFilename: '',
       width: 1000,
@@ -113,57 +109,41 @@ async function mapFromUsfm(usfm) {
     };
   }
 
-  mapDefData.fig = figMatch ? figMatch[0] : '';
-  let maxIdx = mapDefData.labels.length;
-  const regex =
-    /\\zlabel-s\s+\|key="([^"]+)"\s+termid="([^"]+)"\s+gloss="([^"]+)"\s*\\\*\s*([^\\]*)/g;
-  let match;
-  while ((match = regex.exec(usfm)) !== null) {
-    // eslint-disable-next-line
-    const [_, mergeKey, termId, gloss, vernLabel] = match;
-    console.log(`Parsed label: mergeKey=${mergeKey}, termId=${termId}, gloss=${gloss}, vernLabel=${vernLabel}`);
-    // If mapDefData already has a label with this mergeKey, add vernLabel to it.
-    const existingLabel = mapDefData.labels.find(label => label.mergeKey === mergeKey);
-    if (existingLabel) {
-      if (vernLabel) {
-        existingLabel.vernLabel = vernLabel;
-      }
+  mapDefData.fig = figMatch[0];
+  
+  // Try to load labels from .idml.txt file if it exists
+  try {
+    const result = await window.electronAPI.loadLabelsFromIdmlTxt(projectFolder, templateName);
+    if (result.success && result.labels) {
+      console.log('Loaded labels from .idml.txt file:', result.labels);
+      // Merge saved labels with map definition
+      mapDefData.labels.forEach(label => {
+        if (result.labels[label.mergeKey]) {
+          label.vernLabel = result.labels[label.mergeKey];
+        }
+      });
     } else {
-      // If not, create a new label object
-      console.log(`Creating new label for mergeKey: ${mergeKey}`);
-      const label = {
-        mergeKey,
-        termId,
-        gloss: { en: gloss },
-        vernLabel: vernLabel || '',
-        idx: maxIdx++, // Assign an index for ordering
-      };
-      mapDefData.labels.push(label);
+      console.log('No saved .idml.txt file found, using default labels from term renderings');
     }
+  } catch (error) {
+    console.log('Could not load .idml.txt file, using default labels:', error);
   }
+  
   console.log('Parsed map definition:', mapDefData);
   return mapDefData;
 }
 
 function usfmFromMap(map, lang) {
-  console.log('Converting map to USFM:', map);
-  // Reconstruct USFM string from current map state
-  let usfm = `\\zdiagram-s |template="${map.template}"\\*\n`;
-  // Always include the \fig line if present, and ensure it is in correct USFM format
+  console.log('Converting map to USFM (only \\fig field):', map);
+  // Only return the \fig...\fig* field, not the full USFM with labels
+  // Labels are now stored in .idml.txt files
+  let usfm = '';
   if (map.fig && !/^\\fig/.test(map.fig)) {
-    usfm += `\\fig ${map.fig}\\fig*\n`;
+    usfm = `\\fig ${map.fig}\\fig*`;
   } else if (map.fig) {
-    usfm += `${map.fig}\n`;
+    usfm = map.fig;
   }
-  map.labels.forEach(label => {
-    usfm += `\\zlabel-s |key="${label.mergeKey}" termid="${label.termId}" gloss="${inLang(
-      label.gloss,
-      lang
-    )}"\\*${label.vernLabel || ''}\\zlabel-e\\*\n`;
-  });
-  usfm += '\\zdiagram-e \\*';
-  // Remove unnecessary escaping for output
-  return usfm.replace(/\\/g, '\\');
+  return usfm;
 }
 
 function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRenderings }) {
@@ -212,6 +192,10 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
   const [extractedVerses, setExtractedVerses] = useState({});
   // const [termRenderings, setTermRenderings] = useState(); 
   // const [termRenderingsLoading, setTermRenderingsLoading] = useState(false); // Guard against multiple loads
+  
+  // Track unsaved changes and saved state for .idml.txt files
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [savedLabels, setSavedLabels] = useState({}); // Store the last saved state to allow reverting
 
   // Persist labelScale to localStorage
   useEffect(() => {
@@ -497,6 +481,9 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
           return loc;
         })
       );
+      
+      // Mark as having unsaved changes
+      setHasUnsavedChanges(true);
     },
     [termRenderings, extractedVerses, mapDef.template]
   ); // is just renderings enough here?
@@ -671,8 +658,135 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
     );
   };
 
+  // Handler to save labels to .IDML.TXT file
+  const handleSaveLabels = useCallback(async () => {
+    try {
+      // Build labels object: mergeKey -> vernLabel
+      const labelsToSave = {};
+      locations.forEach(loc => {
+        if (loc.mergeKey && loc.vernLabel) {
+          labelsToSave[loc.mergeKey] = loc.vernLabel;
+        }
+      });
+      
+      const result = await electronAPI.saveLabelsToIdmlTxt(
+        projectFolder,
+        mapDef.template,
+        labelsToSave
+      );
+      
+      if (result.success) {
+        setSavedLabels({ ...labelsToSave });
+        setHasUnsavedChanges(false);
+        console.log('Labels saved successfully to .IDML.TXT file:', result.filePath);
+      } else {
+        console.error('Failed to save labels:', result.error);
+        alert(inLang(uiStr.errorSavingLabels, lang) + ': ' + result.error);
+      }
+    } catch (error) {
+      console.error('Error saving labels:', error);
+      alert(inLang(uiStr.errorSavingLabels, lang) + ': ' + error.message);
+    }
+  }, [mapDef.template, locations, projectFolder, lang]);
+
+  // Handler to revert labels to last saved state
+  const handleRevertLabels = useCallback(() => {
+    if (!hasUnsavedChanges) return;
+    
+    // Restore locations from saved labels
+    const currentTermRenderings = { ...termRenderings };
+    const restoredLocations = locations.map(loc => {
+      const savedLabel = savedLabels[loc.mergeKey] || '';
+      const status = getStatus(
+        currentTermRenderings,
+        loc.termId,
+        savedLabel,
+        collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+        extractedVerses
+      );
+      return { ...loc, vernLabel: savedLabel, status };
+    });
+    
+    setLocations(restoredLocations);
+    setHasUnsavedChanges(false);
+    console.log('Labels reverted to last saved state');
+    // Optional: Show message to user
+    alert(inLang(uiStr.labelsReverted, lang));
+  }, [hasUnsavedChanges, savedLabels, locations, termRenderings, extractedVerses, mapDef.template, lang]);
+
+  // Helper function to prompt user about unsaved changes
+  const promptUnsavedChanges = useCallback(async () => {
+    if (!hasUnsavedChanges) return true; // No changes, proceed
+    
+    // Create a three-button custom dialog
+    const choice = await new Promise(resolve => {
+      const overlay = document.createElement('div');
+      overlay.style.cssText = 'position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:10000;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;';
+      
+      const dialog = document.createElement('div');
+      dialog.style.cssText = 'background:white;border-radius:10px;padding:24px;min-width:400px;box-shadow:0 4px 24px rgba(0,0,0,0.3);';
+      
+      const title = document.createElement('h3');
+      title.textContent = inLang(uiStr.unsavedChanges, lang);
+      title.style.marginTop = '0';
+      
+      const message = document.createElement('p');
+      message.textContent = inLang(uiStr.unsavedChangesPrompt, lang);
+      message.style.marginBottom = '20px';
+      
+      const buttonContainer = document.createElement('div');
+      buttonContainer.style.cssText = 'display:flex;justify-content:flex-end;gap:8px;';
+      
+      const cancelBtn = document.createElement('button');
+      cancelBtn.textContent = inLang(uiStr.cancel, lang);
+      cancelBtn.style.cssText = 'padding:8px 16px;border-radius:4px;border:1px solid #ccc;background:#f5f5f5;cursor:pointer;';
+      cancelBtn.onclick = () => { document.body.removeChild(overlay); resolve('cancel'); };
+      
+      const discardBtn = document.createElement('button');
+      discardBtn.textContent = inLang(uiStr.discard, lang);
+      discardBtn.style.cssText = 'padding:8px 16px;border-radius:4px;border:1px solid #ff9800;background:#fff3e0;cursor:pointer;';
+      discardBtn.onclick = () => { document.body.removeChild(overlay); resolve('discard'); };
+      
+      const saveBtn = document.createElement('button');
+      saveBtn.textContent = inLang(uiStr.save, lang);
+      saveBtn.style.cssText = 'padding:8px 16px;border-radius:4px;border:1px solid #4caf50;background:#4caf50;color:white;cursor:pointer;';
+      saveBtn.onclick = () => { document.body.removeChild(overlay); resolve('save'); };
+      
+      buttonContainer.appendChild(cancelBtn);
+      buttonContainer.appendChild(discardBtn);
+      buttonContainer.appendChild(saveBtn);
+      
+      dialog.appendChild(title);
+      dialog.appendChild(message);
+      dialog.appendChild(buttonContainer);
+      overlay.appendChild(dialog);
+      document.body.appendChild(overlay);
+    });
+    
+    if (choice === 'cancel') {
+      return false; // Cancel the action
+    } else if (choice === 'save') {
+      await handleSaveLabels(); // Save first
+      return true; // Proceed
+    } else {
+      return true; // Discard and proceed
+    }
+  }, [hasUnsavedChanges, lang, handleSaveLabels]);
+
+  // Wrapped exit handler to check for unsaved changes
+  const handleExitWithPrompt = useCallback(async () => {
+    const canProceed = await promptUnsavedChanges();
+    if (canProceed) {
+      onExit();
+    }
+  }, [promptUnsavedChanges, onExit]);
+
   // Handler for map image browse
   const handleBrowseMapTemplate = useCallback(async () => {
+    // Check for unsaved changes before browsing
+    const canProceed = await promptUnsavedChanges();
+    if (!canProceed) return;
+    
     try {
       // Use Electron's file picker instead of web API
       const result = await electronAPI.selectTemplateFile();
@@ -799,9 +913,26 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
           );
           return { ...loc, vernLabel: loc.vernLabel || '', status };
         });
+        
+        // Load saved labels from .IDML.TXT file if no data merge file was loaded
+        let savedIdmlLabels = {};
+        if (Object.keys(labels).length === 0) {
+          try {
+            const result = await electronAPI.loadLabelsFromIdmlTxt(projectFolder, newTemplateBase);
+            if (result.success && result.labels) {
+              savedIdmlLabels = result.labels;
+              console.log('Loaded saved labels from .IDML.TXT file:', savedIdmlLabels);
+            }
+          } catch (error) {
+            console.error('Error loading .IDML.TXT file:', error);
+          }
+        }
+        
         const initialLocations = newLocations.map(loc => {
           if (labels[loc.mergeKey]) {
             loc.vernLabel = labels[loc.mergeKey]; // Use label from data merge if available
+          } else if (savedIdmlLabels[loc.mergeKey]) {
+            loc.vernLabel = savedIdmlLabels[loc.mergeKey]; // Use saved label from .IDML.TXT file
           } else if (!loc.vernLabel) {
             const altTermIds = collectionManager.getAltTermIds(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template));
             loc.vernLabel = getMapForm(currentTermRenderings, loc.termId, altTermIds);
@@ -816,6 +947,17 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
           );
           return { ...loc, status };
         });
+        
+        // Store the saved labels for revert functionality
+        // Use the final labels (from .idml.txt file, data merge file, or generated)
+        const finalSavedLabels = {};
+        initialLocations.forEach(loc => {
+          if (loc.mergeKey && loc.vernLabel) {
+            finalSavedLabels[loc.mergeKey] = loc.vernLabel;
+          }
+        });
+        setSavedLabels(finalSavedLabels);
+        setHasUnsavedChanges(false);
         console.log('Initial locations:', initialLocations);
         setLocations(initialLocations);
 
@@ -844,6 +986,8 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
     handleSelectLocation,
     extractedVerses,
     mapDef.template,
+    projectFolder,
+    promptUnsavedChanges,
   ]);
 
   // Store the function in a ref for stable reference
@@ -860,7 +1004,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
           await handleBrowseMapTemplateRef.current();
         } else {
           // console.log("Initializing map from USFM:", settings.usfm);
-          const initialMap = await mapFromUsfm(settings.usfm);
+          const initialMap = await mapFromUsfm(settings.usfm, projectFolder);
           if (!initialMap.template) {
             console.log('No template specified in USFM, browsing for template instead.');  
             await handleBrowseMapTemplateRef.current();
@@ -872,6 +1016,44 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
           // Initialize selectedVariant based on whether variants exist
           setSelectedVariant(initialMap.variants && Object.keys(initialMap.variants).length > 0 ? 1 : 0);
           setMapPaneView(initialMap.mapView ? MAP_VIEW : TABLE_VIEW);
+          
+          // Initialize locations with status information
+          const currentTermRenderings = { ...termRenderings };
+          const initialLocations = initialMap.labels.map(loc => {
+            if (!loc.vernLabel) {
+              const altTermIds = collectionManager.getAltTermIds(loc.mergeKey, getCollectionIdFromTemplate(initialMap.template));
+              loc.vernLabel = getMapForm(currentTermRenderings, loc.termId, altTermIds);
+            }
+            const status = getStatus(
+              currentTermRenderings,
+              loc.termId,
+              loc.vernLabel,
+              collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(initialMap.template)),
+              extractedVerses
+            );
+            return { ...loc, status };
+          });
+          
+          setLocations(initialLocations);
+          
+          // Set saved labels for revert functionality
+          const finalSavedLabels = {};
+          initialLocations.forEach(loc => {
+            if (loc.mergeKey && loc.vernLabel) {
+              finalSavedLabels[loc.mergeKey] = loc.vernLabel;
+            }
+          });
+          setSavedLabels(finalSavedLabels);
+          setHasUnsavedChanges(false);
+          
+          // Find first visible location for initial selection
+          const firstVisibleIndex = initialLocations.findIndex(loc =>
+            isLocationVisible(
+              loc,
+              initialMap.variants && Object.keys(initialMap.variants).length > 0 ? 1 : 0
+            )
+          );
+          setSelLocation(firstVisibleIndex >= 0 ? firstVisibleIndex : 0);
         }
       } catch (error) {
         console.log('Unable to initialize map:', error);
@@ -880,7 +1062,8 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
       }
     };
     initializeMap();
-  }, [isInitialized, settings.usfm]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isInitialized, settings.usfm, projectFolder]);
 
   // USFM View component (editable, uncontrolled)
   const usfmTextareaRef = useRef();
@@ -1590,11 +1773,14 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
             lang={lang} // <-- pass lang
             setTermRenderings={setTermRenderings} // <-- pass setter
             onCreateRendering={handleReplaceRendering} // <-- pass handler
-            onExit={onExit}
+            onExit={handleExitWithPrompt}
             selectedVariant={selectedVariant} // Pass selected variant
             onVariantChange={handleVariantChange} // Pass variant change handler
             mapxPath={mapxPath} // Pass current MAPX file path
             idmlPath={idmlPath} // Pass current IDML file path
+            hasUnsavedChanges={hasUnsavedChanges} // Pass unsaved changes state
+            onSaveLabels={handleSaveLabels} // Pass save handler
+            onRevertLabels={handleRevertLabels} // Pass revert handler
           />
         </div>
       </div>

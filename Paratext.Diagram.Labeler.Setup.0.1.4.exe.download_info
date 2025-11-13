@@ -1,13 +1,13 @@
 {
   "name": "Paratext Diagram Labeler",
-  "version": "0.1.3",
-  "date": "2025-11-11",
+  "version": "0.1.4",
+  "date": "2025-11-12",
   "platform": "win",
   "platform_version": "",
   "architecture": "",
   "stability": "stable",
-  "file": "Paratext.Diagram.Labeler.Setup.0.1.3.exe",
-  "md5": "1f39069d5f8b74eb86ed8f53b6b02953",
+  "file": "Paratext.Diagram.Labeler.Setup.0.1.4.exe",
+  "md5": "",
   "type": "exe",
   "build": ""
 }

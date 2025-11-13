@@ -44,23 +44,40 @@ export default function DetailsPane({
   onVariantChange,
   mapxPath,
   idmlPath,
+  hasUnsavedChanges = false,
+  onSaveLabels,
+  onRevertLabels,
 }) {
   const [localIsApproved, setLocalIsApproved] = useState(isApproved);
   const [localRenderings, setLocalRenderings] = useState(renderings);
   const [showTemplateInfo, setShowTemplateInfo] = useState(false);
   const [templateData, setTemplateData] = useState({});
   const [showExportDialog, setShowExportDialog] = useState(false);
-  const [selectedExportFormat, setSelectedExportFormat] = useState('idml-txt');
+  const [selectedExportFormat, setSelectedExportFormat] = useState('idml-full');
+  const [lastUsedExportFormat, setLastUsedExportFormat] = useState(null);
 
-  // Reset export format if selected format is unavailable
+  // Set export format based on last-used or precedence order when dialog opens
   useEffect(() => {
-    if (selectedExportFormat === 'mapx-full' && !mapxPath) {
-      setSelectedExportFormat('idml-txt');
+    if (!showExportDialog) return;
+    
+    // Determine available options
+    const availableFormats = [];
+    if (idmlPath) availableFormats.push('idml-full');
+    if (mapxPath) availableFormats.push('mapx-full');
+    if (templateData.formats && templateData.formats.includes('mapx')) availableFormats.push('mapx-txt');
+    
+    // If last-used format is available, use it
+    if (lastUsedExportFormat && availableFormats.includes(lastUsedExportFormat)) {
+      setSelectedExportFormat(lastUsedExportFormat);
+    } else {
+      // Otherwise, use precedence order: idml-full > mapx-full > mapx-txt
+      if (availableFormats.length > 0) {
+        setSelectedExportFormat(availableFormats[0]);
+      } else {
+        setSelectedExportFormat(null);
+      }
     }
-    if (selectedExportFormat === 'idml-full' && !idmlPath) {
-      setSelectedExportFormat('idml-txt');
-    }
-  }, [mapxPath, idmlPath, selectedExportFormat]);
+  }, [showExportDialog, mapxPath, idmlPath, templateData.formats, lastUsedExportFormat]);
 
   // Load template data when mapDef.template changes
   useEffect(() => {
@@ -204,30 +221,18 @@ export default function DetailsPane({
     }
   };
 
-  // Helper function to generate USFM from the current map state // TODO: compare with usfmFromMap(). Could probably be consolidated.
+  // Helper function to generate USFM from the current map state
+  // USFM now only contains the \fig field - labels are stored in .idml.txt files
   const generateUsfm = () => {
-    console.log('Converting map to USFM:', mapDef);
-    // Reconstruct USFM string from current map state
-    let usfm = `\\zdiagram-s |template="${mapDef.template}"\\*\n`;
-
-    // Always include the \fig line if present, and ensure it is in correct USFM format
+    console.log('Converting map to USFM (only \\fig field):', mapDef);
+    // Only return the \fig...\fig* field
+    let usfm = '';
     if (mapDef.fig && !/^\\fig/.test(mapDef.fig)) {
-      usfm += `\\fig ${mapDef.fig}\\fig*\n`;
+      usfm = `\\fig ${mapDef.fig}\\fig*`;
     } else if (mapDef.fig) {
-      usfm += `${mapDef.fig}\n`;
+      usfm = mapDef.fig;
     }
-
-    // Add each label as a \zlabel entry
-    locations.forEach(label => {
-      usfm += `\\zlabel-s |key="${label.mergeKey}" termid="${label.termId}" gloss="${inLang(
-        label.gloss,
-        lang
-      )}"\\*${label.vernLabel || ''}\\zlabel-e\\*\n`;
-    });
-
-    usfm += '\\zdiagram-e \\*';
-    // Remove unnecessary escaping for output
-    return usfm.replace(/\\/g, '\\');
+    return usfm;
   };
 
   const handleOk = () => {
@@ -580,6 +585,85 @@ export default function DetailsPane({
             </span>
           </button>
           <button
+            onClick={onRevertLabels}
+            disabled={!hasUnsavedChanges}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: hasUnsavedChanges ? 'pointer' : 'not-allowed',
+              padding: 0,
+              marginLeft: 1,
+              opacity: hasUnsavedChanges ? 1 : 0.3,
+            }}
+            title={inLang(uiStr.revertChanges, lang)}
+          >
+            {/* Revert icon: curved arrow going left */}
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 22 22"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M8 11h8M8 11l3 3m-3-3l3-3M16 11a5 5 0 1 1-5-5"
+                stroke={hasUnsavedChanges ? '#ff9800' : '#999'}
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+          <button
+            onClick={onSaveLabels}
+            disabled={!hasUnsavedChanges}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: hasUnsavedChanges ? 'pointer' : 'not-allowed',
+              padding: 0,
+              marginLeft: 1,
+              opacity: hasUnsavedChanges ? 1 : 0.3,
+            }}
+            title={inLang(uiStr.saveChanges, lang)}
+          >
+            {/* Save icon: floppy disk */}
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 22 22"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                x="4"
+                y="3"
+                width="14"
+                height="16"
+                rx="2"
+                stroke={hasUnsavedChanges ? '#4caf50' : '#999'}
+                strokeWidth="1.5"
+                fill="none"
+              />
+              <rect
+                x="7"
+                y="3"
+                width="8"
+                height="5"
+                fill={hasUnsavedChanges ? '#4caf50' : '#999'}
+              />
+              <rect
+                x="6"
+                y="12"
+                width="10"
+                height="7"
+                fill="none"
+                stroke={hasUnsavedChanges ? '#4caf50' : '#999'}
+                strokeWidth="1.2"
+              />
+            </svg>
+          </button>
+          <button
             onClick={handleExportDataMerge}
             style={{
               background: 'none',
@@ -774,19 +858,6 @@ export default function DetailsPane({
                 </div>
               )}
               
-              {/* IDML Data Merge Export */}
-              <label style={{ display: 'block', marginBottom: 8, cursor: 'pointer' }}>
-                <input
-                  type="radio"
-                  name="exportFormat"
-                  value="idml-txt"
-                  checked={selectedExportFormat === 'idml-txt'}
-                  onChange={e => setSelectedExportFormat(e.target.value)}
-                  style={{ marginRight: 8 }}
-                />
-                InDesign data merge file (.IDML.TXT)
-              </label>
-              
               {/* MAPX Full Export */}
               {mapxPath ? (
                 <label style={{ display: 'block', marginBottom: 8, cursor: 'pointer' }}>
@@ -853,16 +924,19 @@ export default function DetailsPane({
               </button>
               <button
                 onClick={async () => {
+                  if (!selectedExportFormat) return;
+                  setLastUsedExportFormat(selectedExportFormat);
                   setShowExportDialog(false);
                   await handleExportWithFormat(selectedExportFormat);
                 }}
+                disabled={!selectedExportFormat}
                 style={{
                   padding: '8px 16px',
                   borderRadius: 4,
-                  border: '1px solid #1976d2',
-                  background: '#1976d2',
-                  color: 'white',
-                  cursor: 'pointer',
+                  border: selectedExportFormat ? '1px solid #1976d2' : '1px solid #ccc',
+                  background: selectedExportFormat ? '#1976d2' : '#e0e0e0',
+                  color: selectedExportFormat ? 'white' : '#999',
+                  cursor: selectedExportFormat ? 'pointer' : 'not-allowed',
                 }}
               >
                 {inLang(uiStr.ok, lang)}

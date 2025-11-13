@@ -485,6 +485,66 @@
     "fr": "Enregistrer les Rendus Dans:",
     "ne": "अनुवादहरू यहाँ बचत गर्नुहोस्:"
   },
+  "save": {
+    "en": "Save",
+    "es": "Guardar",
+    "fr": "Enregistrer",
+    "ne": "बचत गर्नुहोस्"
+  },
+  "revert": {
+    "en": "Revert",
+    "es": "Revertir",
+    "fr": "Rétablir",
+    "ne": "पूर्ववत गर्नुहोस्"
+  },
+  "saveChanges": {
+    "en": "Save Changes",
+    "es": "Guardar Cambios",
+    "fr": "Enregistrer les Modifications",
+    "ne": "परिवर्तनहरू बचत गर्नुहोस्"
+  },
+  "revertChanges": {
+    "en": "Revert Changes",
+    "es": "Revertir Cambios",
+    "fr": "Annuler les Modifications",
+    "ne": "परिवर्तनहरू पूर्ववत गर्नुहोस्"
+  },
+  "unsavedChanges": {
+    "en": "Unsaved Changes",
+    "es": "Cambios sin Guardar",
+    "fr": "Modifications non Enregistrées",
+    "ne": "बचत नगरिएका परिवर्तनहरू"
+  },
+  "unsavedChangesPrompt": {
+    "en": "You have unsaved changes. Would you like to save them?",
+    "es": "Tiene cambios sin guardar. ¿Desea guardarlos?",
+    "fr": "Vous avez des modifications non enregistrées. Voulez-vous les enregistrer?",
+    "ne": "तपाईंसँग बचत नगरिएका परिवर्तनहरू छन्। के तपाईं तिनीहरूलाई बचत गर्न चाहनुहुन्छ?"
+  },
+  "discard": {
+    "en": "Discard",
+    "es": "Descartar",
+    "fr": "Abandonner",
+    "ne": "त्याग्नुहोस्"
+  },
+  "labelsSaved": {
+    "en": "Labels saved successfully",
+    "es": "Etiquetas guardadas exitosamente",
+    "fr": "Étiquettes enregistrées avec succès",
+    "ne": "लेबलहरू सफलतापूर्वक बचत गरियो"
+  },
+  "labelsReverted": {
+    "en": "Labels reverted to last saved state",
+    "es": "Etiquetas revertidas al último estado guardado",
+    "fr": "Étiquettes rétablies au dernier état enregistré",
+    "ne": "लेबलहरू अन्तिम बचत अवस्थामा पूर्ववत गरियो"
+  },
+  "errorSavingLabels": {
+    "en": "Error saving labels",
+    "es": "Error al guardar etiquetas",
+    "fr": "Erreur lors de l'enregistrement des étiquettes",
+    "ne": "लेबलहरू बचत गर्दा त्रुटि"
+  },
   "usfmInOut": {
     "en": "USFM In/Out:",
     "es": "USFM Entrada/Salida:",

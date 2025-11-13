@@ -43,6 +43,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
   discoverCollections: templateFolderPath =>
     ipcRenderer.invoke('discover-collections', templateFolderPath),
 
+  loadLabelsFromIdmlTxt: (projectFolder, templateName) =>
+    ipcRenderer.invoke('load-labels-from-idml-txt', projectFolder, templateName),
+
+  saveLabelsToIdmlTxt: (projectFolder, templateName, labels) =>
+    ipcRenderer.invoke('save-labels-to-idml-txt', projectFolder, templateName, labels),
+
   // Path utilities
   path: {
     join: (...paths) => ipcRenderer.invoke('path-join', ...paths),

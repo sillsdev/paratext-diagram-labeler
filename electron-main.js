@@ -583,6 +583,101 @@ ipcMain.handle('save-term-renderings', async (event, projectFolder, saveToDemo, 
   }
 });
 
+// Load labels from .IDML.TXT file in shared/labeler folder
+ipcMain.handle('load-labels-from-idml-txt', async (event, projectFolder, templateName) => {
+  await loadSettings(projectFolder);
+  try {
+    const projectName = settings.name;
+    const filename = `${templateName} @${projectName}.idml.txt`;
+    const sharedLabelerPath = path.join(projectFolder, 'shared', 'labeler');
+    const filePath = path.join(sharedLabelerPath, filename);
+    
+    if (!fs.existsSync(filePath)) {
+      console.log(`.IDML.TXT file not found: ${filePath}`);
+      return { success: true, labels: null };
+    }
+    
+    // Read and decode the file
+    const fileBuffer = fs.readFileSync(filePath);
+    const uint8 = new Uint8Array(fileBuffer);
+    
+    let fileText;
+    // UTF-16LE BOM: FF FE
+    if (uint8[0] === 0xff && uint8[1] === 0xfe) {
+      fileText = new TextDecoder('utf-16le').decode(uint8.subarray(2));
+    } else if (uint8[0] === 0xef && uint8[1] === 0xbb && uint8[2] === 0xbf) {
+      // UTF-8 BOM
+      fileText = new TextDecoder('utf-8').decode(uint8.subarray(3));
+    } else {
+      // Default: utf-8
+      fileText = new TextDecoder('utf-8').decode(uint8);
+    }
+    
+    // Parse IDML data merge format
+    const lines = fileText.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+    if (lines.length < 2) {
+      console.log('Invalid .IDML.TXT file format');
+      return { success: true, labels: null };
+    }
+    
+    const mergeKeys = lines[0].split('\t');
+    const verns = lines[1].split('\t');
+    
+    const labels = {};
+    if (verns.length === mergeKeys.length) {
+      for (let i = 0; i < mergeKeys.length; i++) {
+        labels[mergeKeys[i]] = verns[i];
+      }
+      console.log(`Loaded labels from ${filename}:`, labels);
+      return { success: true, labels };
+    } else {
+      console.log('Mismatch between merge keys and vernacular labels');
+      return { success: true, labels: null };
+    }
+  } catch (e) {
+    console.error('Error loading .IDML.TXT file:', e);
+    return { success: false, error: e.message };
+  }
+});
+
+// Save labels to .IDML.TXT file in shared/labeler folder
+ipcMain.handle('save-labels-to-idml-txt', async (event, projectFolder, templateName, labels) => {
+  await loadSettings(projectFolder);
+  try {
+    const projectName = settings.name;
+    const filename = `${templateName} @${projectName}.idml.txt`;
+    const sharedPath = path.join(projectFolder, 'shared');
+    const sharedLabelerPath = path.join(sharedPath, 'labeler');
+    
+    // Create folders if they don't exist
+    if (!fs.existsSync(sharedPath)) {
+      fs.mkdirSync(sharedPath, { recursive: true });
+    }
+    if (!fs.existsSync(sharedLabelerPath)) {
+      fs.mkdirSync(sharedLabelerPath, { recursive: true });
+    }
+    
+    const filePath = path.join(sharedLabelerPath, filename);
+    
+    // Build IDML data merge format
+    const mergeKeys = Object.keys(labels);
+    const vernLabels = mergeKeys.map(key => labels[key] || '');
+    
+    const dataMergeHeader = mergeKeys.join('\t');
+    const dataMergeContent = vernLabels.join('\t');
+    const data = dataMergeHeader + '\n' + dataMergeContent + '\n';
+    
+    // Write with BOM and UTF-16 LE encoding
+    await fs.promises.writeFile(filePath, '\uFEFF' + data, { encoding: 'utf16le' });
+    
+    console.log(`Labels saved to ${filename}`);
+    return { success: true, filePath };
+  } catch (e) {
+    console.error('Error saving .IDML.TXT file:', e);
+    return { success: false, error: e.message };
+  }
+});
+
 // Paratext project discovery functions
 function getParatextDirectories() {
   const directories = [];
