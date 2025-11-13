@@ -2,7 +2,7 @@ name: Upload Release to Website
 
 on:
   release:
-    types: [published]
+    types: [published, edited]
 
 jobs:
   upload:
