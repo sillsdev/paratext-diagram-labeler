@@ -112,4 +112,4 @@ jobs:
           port: 22
           source: "./dist/${{ steps.installer.outputs.file }},./dist/${{ steps.installer.outputs.file }}.download_info"
           target: ${{ secrets.SFTP_TARGET_DIR }}
-          strip_components: 1
+          strip_components: 2
