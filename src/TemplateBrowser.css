@@ -9,15 +9,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 15px;
 }
 
 .template-browser-content {
   background: white;
   border-radius: 8px;
-  width: 90vw;
-  height: 85vh;
-  max-width: 1400px;
+  width: 95vw;
+  height: 92vh;
+  max-width: 1800px;
   display: flex;
   overflow: hidden;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
@@ -31,13 +31,13 @@
 }
 
 .template-details-section {
-  padding: 16px;
+  padding: 10px 12px;
   border-bottom: 1px solid #e0e0e0;
   background: #f8f9fa;
 }
 
 .template-details-section h3 {
-  margin: 0 0 12px 0;
+  margin: 0 0 4px 0;
   font-size: 18px;
   color: #333;
 }
@@ -45,33 +45,39 @@
 .template-info {
   font-size: 13px;
   color: #666;
-  line-height: 1.6;
+  line-height: 1.4;
 }
 
 .template-info > div {
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .template-actions {
-  margin-top: 12px;
   display: flex;
-  gap: 8px;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 130px;
 }
 
 .select-button {
-  flex: 1;
-  padding: 10px 16px;
+  padding: 6px 12px;
   background: #1976d2;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
+  white-space: nowrap;
 }
 
-.select-button:hover {
+.select-button:hover:not(:disabled) {
   background: #1565c0;
+}
+
+.select-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
 }
 
 .no-selection {
@@ -82,15 +88,15 @@
 }
 
 .template-filters-section {
-  padding: 12px;
+  padding: 8px 12px;
   border-bottom: 1px solid #e0e0e0;
   background: white;
 }
 
 .filter-row {
   display: flex;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 6px;
+  margin-bottom: 6px;
 }
 
 .filter-row:last-child {
@@ -99,7 +105,7 @@
 
 .search-input {
   flex: 1;
-  padding: 8px;
+  padding: 5px 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 14px;
@@ -107,23 +113,25 @@
 
 .filter-row select {
   flex: 1;
-  padding: 8px;
+  padding: 5px 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: 13px;
   background: white;
 }
 
 .results-count {
-  padding: 8px 12px;
+  padding: 5px 10px;
   background: #e3f2fd;
   border-radius: 4px;
-  font-size: 13px;
+  font-size: 12px;
   color: #1976d2;
   font-weight: 500;
   white-space: nowrap;
   display: flex;
   align-items: center;
+  min-width: 70px;
+  justify-content: center;
 }
 
 .template-results-section {
@@ -146,7 +154,7 @@
 }
 
 .template-table th {
-  padding: 10px 12px;
+  padding: 6px 10px;
   text-align: left;
   border-bottom: 2px solid #ddd;
   font-weight: 600;
@@ -163,7 +171,7 @@
 }
 
 .template-table td {
-  padding: 10px 12px;
+  padding: 5px 10px;
   border-bottom: 1px solid #eee;
 }
 
