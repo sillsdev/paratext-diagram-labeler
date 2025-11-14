@@ -202,22 +202,30 @@ export default function TemplateBrowser({
       savedFilter, sortColumn, sortDirection, lang, savedFilesCache]);
 
   // Auto-select first item when filtered list changes and current selection is not in the list
+  const prevFilteredTemplatesRef = useRef(filteredTemplates);
   useEffect(() => {
     if (!open || filteredTemplates.length === 0) {
-      setSelectedTemplate(null);
+      if (selectedTemplate !== null) {
+        setSelectedTemplate(null);
+      }
+      prevFilteredTemplatesRef.current = filteredTemplates;
       return;
     }
 
-    // Check if current selection is in the filtered list
-    const currentStillExists = selectedTemplate && filteredTemplates.some(
-      t => t.templateName === selectedTemplate.templateName && 
-           t.collectionId === selectedTemplate.collectionId
-    );
+    // Only run selection logic if filteredTemplates changed
+    if (prevFilteredTemplatesRef.current !== filteredTemplates) {
+      // Check if current selection is in the filtered list
+      const currentStillExists = selectedTemplate && filteredTemplates.some(
+        t => t.templateName === selectedTemplate.templateName && 
+             t.collectionId === selectedTemplate.collectionId
+      );
 
-    // If no selection or current selection not in list, select first item
-    if (!currentStillExists) {
-      setSelectedTemplate(filteredTemplates[0]);
+      // If no selection or current selection not in list, select first item
+      if (!currentStillExists && filteredTemplates[0] !== selectedTemplate) {
+        setSelectedTemplate(filteredTemplates[0]);
+      }
     }
+    prevFilteredTemplatesRef.current = filteredTemplates;
   }, [open, filteredTemplates, selectedTemplate]);
 
   // Load preview image when selected template changes
@@ -240,16 +248,23 @@ export default function TemplateBrowser({
       imagePath = `${templateFolder}/${selectedTemplate.collectionId}/${imageFilename}`;
     }
 
+    console.log('[TemplateBrowser] Loading preview image from:', imagePath);
+    
     if (window.electronAPI) {
       window.electronAPI.loadImage(imagePath).then(dataUrl => {
+        console.log('[TemplateBrowser] Image loaded:', dataUrl ? `${dataUrl.length} bytes` : 'null');
         if (dataUrl) {
           setPreviewImageData(dataUrl);
         } else {
+          console.log('[TemplateBrowser] Image load returned null');
           setPreviewImageData(null);
         }
       }).catch(error => {
+        console.log('[TemplateBrowser] Image load error:', error);
         setPreviewImageData(null);
       });
+    } else {
+      console.log('[TemplateBrowser] electronAPI not available');
     }
   }, [selectedTemplate, templateFolder]);
 
@@ -460,8 +475,7 @@ export default function TemplateBrowser({
                       : 'Click a row below to see details'}
                   </div>
                 </div>
-                <div className="template-actions" style={{ visibility: 'hidden' }}>
-                  <button className="select-button">Placeholder</button>
+                <div className="template-actions" style={{ minHeight: '38px' }}>
                 </div>
               </>
             )}
