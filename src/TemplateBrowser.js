@@ -475,8 +475,7 @@ export default function TemplateBrowser({
                       : 'Click a row below to see details'}
                   </div>
                 </div>
-                <div className="template-actions" style={{ visibility: 'hidden' }}>
-                  <button className="select-button">Placeholder</button>
+                <div className="template-actions" style={{ minHeight: '38px' }}>
                 </div>
               </>
             )}
