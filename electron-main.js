@@ -61,7 +61,7 @@ if (process.platform === 'linux') {
 // Settings relating to Settings.xml
 let curProjectFolder = '';
 let settings = {};
-let templatesDir = path.join(app.getPath('pictures'), '!All Map Samples');
+// let templatesDir = path.join(app.getPath('pictures'), '!All Map Samples');
 
 // Reference to the main window for focus restoration
 let mainWindow = null;
@@ -904,79 +904,79 @@ ipcMain.handle('select-project-folder', async event => {
 });
 
 // Handler for selecting template files (images or IDML merge files)
-ipcMain.handle('select-template-file', async (event) => {
-  try {
-    const result = await dialog.showOpenDialog({
-      title: 'Select a template image or an IDML merge file',
-      properties: ['openFile'],
-      defaultPath: templatesDir,
-      filters: [
-        {
-          name: 'All Template Files',
-          extensions: ['jpg', 'jpeg', 'idml.txt']
-        },
-        {
-          name: 'JPEG Images',
-          extensions: ['jpg', 'jpeg']
-        },
-        {
-          name: 'IDML Merge Files',
-          extensions: ['idml.txt']
-        },
-        {
-          name: 'All Files',
-          extensions: ['*']
-        }
-      ],
-      // Force non-native dialog on Linux to avoid GTK conflicts
-      ...(process.platform === 'linux' && { 
-        defaultPath: require('os').homedir()
-      })
-    });
+// ipcMain.handle('select-template-file', async (event) => {
+//   try {
+//     const result = await dialog.showOpenDialog({
+//       title: 'Select a template image or an IDML merge file',
+//       properties: ['openFile'],
+//       defaultPath: templatesDir,
+//       filters: [
+//         {
+//           name: 'All Template Files',
+//           extensions: ['jpg', 'jpeg', 'idml.txt']
+//         },
+//         {
+//           name: 'JPEG Images',
+//           extensions: ['jpg', 'jpeg']
+//         },
+//         {
+//           name: 'IDML Merge Files',
+//           extensions: ['idml.txt']
+//         },
+//         {
+//           name: 'All Files',
+//           extensions: ['*']
+//         }
+//       ],
+//       // Force non-native dialog on Linux to avoid GTK conflicts
+//       ...(process.platform === 'linux' && { 
+//         defaultPath: require('os').homedir()
+//       })
+//     });
 
-    if (result.canceled || !result.filePaths.length) {
-      return { canceled: true };
-    }
+//     if (result.canceled || !result.filePaths.length) {
+//       return { canceled: true };
+//     }
 
-    const filePath = result.filePaths[0];
-    const fileName = path.basename(filePath);
+//     const filePath = result.filePaths[0];
+//     const fileName = path.basename(filePath);
     
-    // Update templatesDir to the directory of the selected file
-    const selectedDirectory = path.dirname(filePath);
-    if (selectedDirectory !== templatesDir) {
-      templatesDir = selectedDirectory;
-      console.log(`Updated templatesDir to: ${templatesDir}`);
-    }
+//     // Update templatesDir to the directory of the selected file
+//     const selectedDirectory = path.dirname(filePath);
+//     if (selectedDirectory !== templatesDir) {
+//       templatesDir = selectedDirectory;
+//       console.log(`Updated templatesDir to: ${templatesDir}`);
+//     }
     
-    // Read file content if it's a text file
-    let fileContent = null;
-    if (fileName.toLowerCase().endsWith('.txt')) {
-      try {
-        const buffer = await fs.promises.readFile(filePath);
-        fileContent = buffer;
-      } catch (error) {
-        console.error('Error reading file content:', error);
-        return { 
-          success: false, 
-          error: `Failed to read file: ${error.message}` 
-        };
-      }
-    }
+//     // Read file content if it's a text file
+//     let fileContent = null;
+//     if (fileName.toLowerCase().endsWith('.txt')) {
+//       try {
+//         const buffer = await fs.promises.readFile(filePath);
+//         fileContent = buffer;
+//       } catch (error) {
+//         console.error('Error reading file content:', error);
+//         return { 
+//           success: false, 
+//           error: `Failed to read file: ${error.message}` 
+//         };
+//       }
+//     }
 
-    return {
-      success: true,
-      filePath,
-      fileName,
-      fileContent // Will be null for non-text files
-    };
-  } catch (error) {
-    console.error('Error in select-template-file:', error);
-    return { 
-      success: false, 
-      error: error.message 
-    };
-  }
-});
+//     return {
+//       success: true,
+//       filePath,
+//       fileName,
+//       fileContent // Will be null for non-text files
+//     };
+//   } catch (error) {
+//     console.error('Error in select-template-file:', error);
+//     return { 
+//       success: false, 
+//       error: error.message 
+//     };
+//   }
+// });
 
 function getVerseText(usfmChapterText, verseNum) {
   // Handle verse 0 - content after chapter marker but before first verse
@@ -2353,117 +2353,117 @@ function cleanReference(reference) {
   return reference; // Return as-is if no match
 }
 
-// On first run (or if not present), copy Sample Maps to user's Pictures folder.
-// If destination exists, check for newer files and update them.
-function copySampleMaps() {
-  try {
-    if (process.env.NODE_ENV === 'development') return;  // Skip in development mode
+// // On first run (or if not present), copy Sample Maps to user's Pictures folder.
+// // If destination exists, check for newer files and update them.
+// function copySampleMaps() {
+//   try {
+//     if (process.env.NODE_ENV === 'development') return;  // Skip in development mode
 
-    const picturesDir = app.getPath('pictures');
-    const destDir = path.join(picturesDir, '!All Map Samples');
-    const srcDir = process.resourcesPath
-      ? path.join(process.resourcesPath, 'Sample Maps')
-      : path.join(__dirname, 'resources', 'Sample Maps');
+//     const picturesDir = app.getPath('pictures');
+//     const destDir = path.join(picturesDir, '!All Map Samples');
+//     const srcDir = process.resourcesPath
+//       ? path.join(process.resourcesPath, 'Sample Maps')
+//       : path.join(__dirname, 'resources', 'Sample Maps');
 
-    // Check if source directory exists first
-    if (!fs.existsSync(srcDir)) {
-      console.warn(`[Sample Maps] Source directory not found: ${srcDir}`);
-      return;
-    }
+//     // Check if source directory exists first
+//     if (!fs.existsSync(srcDir)) {
+//       console.warn(`[Sample Maps] Source directory not found: ${srcDir}`);
+//       return;
+//     }
 
-    // Enhanced copy function that checks file modification times
-    const copyWithTimeCheck = (src, dst) => {
-      let filesUpdated = 0;
-      let filesSkipped = 0;
+//     // Enhanced copy function that checks file modification times
+//     const copyWithTimeCheck = (src, dst) => {
+//       let filesUpdated = 0;
+//       let filesSkipped = 0;
       
-      const processDirectory = (srcPath, dstPath) => {
-        try {
-          if (!fs.existsSync(dstPath)) {
-            fs.mkdirSync(dstPath, { recursive: true });
-          }
+//       const processDirectory = (srcPath, dstPath) => {
+//         try {
+//           if (!fs.existsSync(dstPath)) {
+//             fs.mkdirSync(dstPath, { recursive: true });
+//           }
           
-          for (const entry of fs.readdirSync(srcPath)) {
-            const srcFile = path.join(srcPath, entry);
-            const dstFile = path.join(dstPath, entry);
-            const srcStat = fs.statSync(srcFile);
+//           for (const entry of fs.readdirSync(srcPath)) {
+//             const srcFile = path.join(srcPath, entry);
+//             const dstFile = path.join(dstPath, entry);
+//             const srcStat = fs.statSync(srcFile);
             
-            if (srcStat.isDirectory()) {
-              processDirectory(srcFile, dstFile);
-            } else {
-              let shouldCopy = true;
+//             if (srcStat.isDirectory()) {
+//               processDirectory(srcFile, dstFile);
+//             } else {
+//               let shouldCopy = true;
               
-              // Check if destination file exists and compare modification times
-              if (fs.existsSync(dstFile)) {
-                const dstStat = fs.statSync(dstFile);
-                if (srcStat.mtime <= dstStat.mtime) {
-                  shouldCopy = false;
-                  filesSkipped++;
-                }
-              }
+//               // Check if destination file exists and compare modification times
+//               if (fs.existsSync(dstFile)) {
+//                 const dstStat = fs.statSync(dstFile);
+//                 if (srcStat.mtime <= dstStat.mtime) {
+//                   shouldCopy = false;
+//                   filesSkipped++;
+//                 }
+//               }
               
-              if (shouldCopy) {
-                fs.copyFileSync(srcFile, dstFile);
-                filesUpdated++;
-                console.log(`[Sample Maps] Updated: ${path.relative(dst, dstFile)}`);
-              }
-            }
-          }
-        } catch (err) {
-          console.error(`[Sample Maps] Error processing "${srcPath}" to "${dstPath}":`, err);
-          throw err;
-        }
-      };
+//               if (shouldCopy) {
+//                 fs.copyFileSync(srcFile, dstFile);
+//                 filesUpdated++;
+//                 console.log(`[Sample Maps] Updated: ${path.relative(dst, dstFile)}`);
+//               }
+//             }
+//           }
+//         } catch (err) {
+//           console.error(`[Sample Maps] Error processing "${srcPath}" to "${dstPath}":`, err);
+//           throw err;
+//         }
+//       };
       
-      processDirectory(src, dst);
-      return { filesUpdated, filesSkipped };
-    };
+//       processDirectory(src, dst);
+//       return { filesUpdated, filesSkipped };
+//     };
 
-    // Check if destination exists
-    try {
-      const st = fs.statSync(destDir);
-      if (!st.isDirectory()) {
-        console.warn(`[Sample Maps] Destination exists but is not a directory: ${destDir}`);
-        return;
-      } else {
-        console.log(`[Sample Maps] Checking for updates in ${destDir}`);
-        const { filesUpdated, filesSkipped } = copyWithTimeCheck(srcDir, destDir);
-        console.log(`[Sample Maps] Update complete: ${filesUpdated} files updated, ${filesSkipped} files skipped (already current)`);
-      }
-    } catch {
-      // dest doesn't exist -> full copy
-      try {
-        console.log(`[Sample Maps] Creating new Sample Maps folder at ${destDir}`);
-        // Recursively copy folder (Node 16+: cpSync supports recursive)
-        if (fs.cpSync) {
-          fs.cpSync(srcDir, destDir, { recursive: true });
-        } else {
-          // Fallback if cpSync missing
-          const copyRecursive = (src, dst) => {
-            try {
-              if (!fs.existsSync(dst)) fs.mkdirSync(dst, { recursive: true });
-              for (const entry of fs.readdirSync(src)) {
-                const s = path.join(src, entry);
-                const d = path.join(dst, entry);
-                const stat = fs.statSync(s);
-                if (stat.isDirectory()) copyRecursive(s, d);
-                else fs.copyFileSync(s, d);
-              }
-            } catch (err) {
-              console.error(`[Sample Maps] Error copying from "${src}" to "${dst}":`, err);
-              throw err;
-            }
-          };
-          copyRecursive(srcDir, destDir);
-        }
-        console.log(`[Sample Maps] Initial copy completed to ${destDir}`);
-      } catch (copyErr) {
-        console.error('[Sample Maps] Failed to copy to Pictures folder:', copyErr);
-      }
-    }
-  } catch (e) {
-    console.error('[Sample Maps] Unexpected error preparing pictures copy:', e);
-  }
-}
+//     // Check if destination exists
+//     try {
+//       const st = fs.statSync(destDir);
+//       if (!st.isDirectory()) {
+//         console.warn(`[Sample Maps] Destination exists but is not a directory: ${destDir}`);
+//         return;
+//       } else {
+//         console.log(`[Sample Maps] Checking for updates in ${destDir}`);
+//         const { filesUpdated, filesSkipped } = copyWithTimeCheck(srcDir, destDir);
+//         console.log(`[Sample Maps] Update complete: ${filesUpdated} files updated, ${filesSkipped} files skipped (already current)`);
+//       }
+//     } catch {
+//       // dest doesn't exist -> full copy
+//       try {
+//         console.log(`[Sample Maps] Creating new Sample Maps folder at ${destDir}`);
+//         // Recursively copy folder (Node 16+: cpSync supports recursive)
+//         if (fs.cpSync) {
+//           fs.cpSync(srcDir, destDir, { recursive: true });
+//         } else {
+//           // Fallback if cpSync missing
+//           const copyRecursive = (src, dst) => {
+//             try {
+//               if (!fs.existsSync(dst)) fs.mkdirSync(dst, { recursive: true });
+//               for (const entry of fs.readdirSync(src)) {
+//                 const s = path.join(src, entry);
+//                 const d = path.join(dst, entry);
+//                 const stat = fs.statSync(s);
+//                 if (stat.isDirectory()) copyRecursive(s, d);
+//                 else fs.copyFileSync(s, d);
+//               }
+//             } catch (err) {
+//               console.error(`[Sample Maps] Error copying from "${src}" to "${dst}":`, err);
+//               throw err;
+//             }
+//           };
+//           copyRecursive(srcDir, destDir);
+//         }
+//         console.log(`[Sample Maps] Initial copy completed to ${destDir}`);
+//       } catch (copyErr) {
+//         console.error('[Sample Maps] Failed to copy to Pictures folder:', copyErr);
+//       }
+//     }
+//   } catch (e) {
+//     console.error('[Sample Maps] Unexpected error preparing pictures copy:', e);
+//   }
+// }
 
 app.whenReady().then(() => {
   console.log('=== Paratext Diagram Labeler Starting ===');
@@ -2477,7 +2477,7 @@ app.whenReady().then(() => {
   console.log(`Log file location: ${path.join(app.getPath('userData'), 'electron-main.log')}`);
   console.log('=====================================');
   
-  copySampleMaps();
+  // copySampleMaps();
   createWindow();
 });
 
