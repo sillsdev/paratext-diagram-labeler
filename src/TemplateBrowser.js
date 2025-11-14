@@ -202,35 +202,41 @@ export default function TemplateBrowser({
       savedFilter, sortColumn, sortDirection, lang, savedFilesCache]);
 
   // Auto-select first item when filtered list changes and current selection is not in the list
+  const prevFilteredTemplatesRef = useRef(filteredTemplates);
   useEffect(() => {
     if (!open || filteredTemplates.length === 0) {
-      setSelectedTemplate(null);
+      if (selectedTemplate !== null) {
+        setSelectedTemplate(null);
+      }
+      prevFilteredTemplatesRef.current = filteredTemplates;
       return;
     }
 
-    // Check if current selection is in the filtered list
-    const currentStillExists = selectedTemplate && filteredTemplates.some(
-      t => t.templateName === selectedTemplate.templateName && 
-           t.collectionId === selectedTemplate.collectionId
-    );
+    // Only run selection logic if filteredTemplates changed
+    if (prevFilteredTemplatesRef.current !== filteredTemplates) {
+      // Check if current selection is in the filtered list
+      const currentStillExists = selectedTemplate && filteredTemplates.some(
+        t => t.templateName === selectedTemplate.templateName && 
+             t.collectionId === selectedTemplate.collectionId
+      );
 
-    // If no selection or current selection not in list, select first item
-    if (!currentStillExists) {
-      setSelectedTemplate(filteredTemplates[0]);
+      // If no selection or current selection not in list, select first item
+      if (!currentStillExists && filteredTemplates[0] !== selectedTemplate) {
+        setSelectedTemplate(filteredTemplates[0]);
+      }
     }
+    prevFilteredTemplatesRef.current = filteredTemplates;
   }, [open, filteredTemplates, selectedTemplate]);
 
   // Load preview image when selected template changes
   useEffect(() => {
     if (!selectedTemplate || !templateFolder) {
-      console.log('[TemplateBrowser] No selected template or templateFolder:', { selectedTemplate, templateFolder });
       setPreviewImageData(null);
       return;
     }
 
     const imageFilename = selectedTemplate.mapDef.imgFilename;
     if (!imageFilename) {
-      console.log('[TemplateBrowser] No imgFilename in mapDef');
       setPreviewImageData(null);
       return;
     }
@@ -469,8 +475,7 @@ export default function TemplateBrowser({
                       : 'Click a row below to see details'}
                   </div>
                 </div>
-                <div className="template-actions" style={{ visibility: 'hidden' }}>
-                  <button className="select-button">Placeholder</button>
+                <div className="template-actions" style={{ minHeight: '38px' }}>
                 </div>
               </>
             )}

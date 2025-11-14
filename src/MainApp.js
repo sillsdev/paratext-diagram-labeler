@@ -928,6 +928,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
 
   // Template browser selection handlers
   const handleSelectDiagram = useCallback(async (template, filters) => {
+    console.log('Selected diagram:', template);
     setShowTemplateBrowser(false);
     setTemplateFilters(filters);
     setTemplateGroup(null);
@@ -938,6 +939,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
   }, [loadTemplate]);
 
   const handleSelectGroup = useCallback(async (template, filters, group, index) => {
+    console.log('Selected group:', template, 'at index:', index, 'of', group.length);
     setShowTemplateBrowser(false);
     setTemplateFilters(filters);
     setTemplateGroup(group);
