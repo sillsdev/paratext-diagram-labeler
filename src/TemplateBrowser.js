@@ -243,7 +243,7 @@ export default function TemplateBrowser({
       return;
     }
 
-    // Use templateName (e.g., "SMR/template-name") to determine collection
+    // Use templateName (e.g., "SMR_005wbt - Gen10 Descendants Of Noah") to determine collection
     const templateName = selectedTemplate.templateName;
     
     console.log('[TemplateBrowser] Loading preview image:', { 
