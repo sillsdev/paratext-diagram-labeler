@@ -10,6 +10,7 @@ import MapPane from './MapPane.js';
 import TableView from './TableView.js';
 import DetailsPane from './DetailsPane.js';
 import SettingsModal from './SettingsModal.js';
+import TemplateBrowser from './TemplateBrowser.js';
 // import { useInitialization, InitializationProvider } from './InitializationProvider';
 import { settingsService } from './services/SettingsService';
 import { autocorrectService } from './services/AutocorrectService';
@@ -40,28 +41,6 @@ function getRefList(labels, collectionId = 'SMR') {
     `getRefList(): ${rl.length} refs for ${labels.length} labels from collection ${collectionId}`
   );
   return rl;
-}
-
-function decodeFileAsString(arrayBuffer) {
-  const uint8 = new Uint8Array(arrayBuffer);
-  // UTF-8 BOM: EF BB BF
-  if (uint8[0] === 0xef && uint8[1] === 0xbb && uint8[2] === 0xbf) {
-    // console.log('Detected UTF-8 BOM');
-    return new TextDecoder('utf-8').decode(uint8.subarray(3));
-  }
-  // UTF-16LE BOM: FF FE
-  if (uint8[0] === 0xff && uint8[1] === 0xfe) {
-    // console.log('Detected UTF-16LE BOM');
-    return new TextDecoder('utf-16le').decode(uint8.subarray(2));
-  }
-  // UTF-16BE BOM: FE FF
-  if (uint8[0] === 0xfe && uint8[1] === 0xff) {
-    // console.log('Detected UTF-16BE BOM');
-    return new TextDecoder('utf-16be').decode(uint8.subarray(2));
-  }
-  // Default: utf-8
-  // console.log('Assuming UTF-8 encoding');
-  return new TextDecoder('utf-8').decode(uint8);
 }
 
 async function mapFromUsfm(usfm, projectFolder) {
@@ -196,6 +175,18 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
   // Track unsaved changes and saved state for .idml.txt files
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [savedLabels, setSavedLabels] = useState({}); // Store the last saved state to allow reverting
+
+  // Template Browser state
+  const [showTemplateBrowser, setShowTemplateBrowser] = useState(false);
+  const [templateFilters, setTemplateFilters] = useState({
+    format: 'any',
+    collection: 'all',
+    colorMode: 'any',
+    texture: 'any',
+    saved: 'all'
+  });
+  const [templateGroup, setTemplateGroup] = useState(null); // Array of templates in current group
+  const [templateGroupIndex, setTemplateGroupIndex] = useState(-1); // -1 means no group navigation
 
   // Persist labelScale to localStorage
   useEffect(() => {
@@ -787,196 +778,132 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
     const canProceed = await promptUnsavedChanges();
     if (!canProceed) return;
     
+    // Open template browser instead of file picker
+    setShowTemplateBrowser(true);
+  }, [promptUnsavedChanges]);
+
+  // Extract template loading logic into a reusable function
+  const loadTemplate = useCallback(async (templateName, labels = {}, figFilename = null, isJpg = false, imgPath = null) => {
     try {
-      // Use Electron's file picker instead of web API
-      const result = await electronAPI.selectTemplateFile();
+      // Get collection ID and exact template name
+      const [collectionId, exactTemplateName] = findCollectionIdAndTemplate(templateName);
       
-      if (result.canceled || !result.success) {
-        if (result.error) {
-          console.error('File selection error:', result.error);
-          alert(inLang(uiStr.errorSelectingFile, lang) + ': ' + result.error);
-        }
+      // Try to get the map definition
+      const foundTemplate = await getMapDef(exactTemplateName, collectionId);
+
+      if (!foundTemplate) {
+        console.error(
+          'Template not found. Looking for:',
+          exactTemplateName,
+          'in collection:',
+          collectionId
+        );
+
+        // Examine available templates for debugging
+        const availableTemplates = Object.keys(collectionManager.getMapDefs(collectionId));
+        console.log('Available templates in collection:', availableTemplates);
+
+        alert(inLang(uiStr.noTemplate, lang) + ': ' + exactTemplateName);
         return;
       }
-
-      const fileName = result.fileName;
-      const filePath = result.filePath;
-      let figFilename = '';
-      let isJpg = false;
-      const labels = {};
-
-      if (fileName) {
-        // Extract template name from filename and log the process
-        // console.log("Original file name:", fileName);
-        let newTemplateBase = fileName.replace(/\..*$/, ''); // Remove file extension
-        // console.log("After removing extension:", newTemplateBase);
-        newTemplateBase = newTemplateBase.trim();
-        // console.log("After trim:", newTemplateBase);
-        newTemplateBase = newTemplateBase.replace(/\s*[@(].*/, ''); // Remove anything after @ or (
-        // console.log("Final template base name:", newTemplateBase);
-
-        if (fileName.toLowerCase().endsWith('.txt')) {
-          // Handle data merge file
-          const fileContent = result.fileContent;
-          if (!fileContent) {
-            alert(inLang(uiStr.failedToReadFile, lang));
-            return;
-          }
-          
-          // console.log("Reading data merge file:", fileName);
-          const fileText = decodeFileAsString(fileContent);
-          // console.log(
-          //   "Imported data merge file:",
-          //   fileName,
-          //   ">" + fileText + "<",
-          // );
-          // For now, assume it's an IDML data merge file //TODO: Handle mapx merge
-          const lines = fileText.split('\n');
-          const mergeKeys = lines[0].split('\t');
-          const verns = lines[1].split('\t');
-          if (verns.length === mergeKeys.length) {
-            // Create labels from merge keys and vernaculars
-            for (let i = 0; i < mergeKeys.length; i++) {
-              labels[mergeKeys[i]] = verns[i];
-            }
-            // console.log("Labels from data merge:", labels);
-          } else {
-            alert(inLang(uiStr.invalidDataMerge, lang));
-            return;
-          }
-        } else if (fileName.toLowerCase().endsWith('.jpg') || fileName.toLowerCase().endsWith('.jpeg')) {
-          // Handle map image file
-          figFilename = fileName;
-          isJpg = true;
-        } else {
-          return;
-        }
-
-        if (!figFilename) {
-          // If no figFilename, use the template base name as figFilename
-          figFilename = newTemplateBase + '.jpg'; // Default to .jpg
-        }
-        // Add diagnostic logs to see what's happening
-        // console.log("Template base name:", newTemplateBase);
-        const [collectionId, templateName] = findCollectionIdAndTemplate(newTemplateBase);
-        newTemplateBase = templateName; // Use the exact template name from the collection
-        // console.log("Detected collection ID:", collectionId);
-        // console.log("Collections loaded:", collectionManager.collectionsData);
-        // console.log(
-        //   "Is collection loaded?",
-        //   collectionManager.isCollectionLoaded(collectionId),
-        // );
-
-        // Try to get the map definition
-        const foundTemplate = await getMapDef(newTemplateBase, collectionId);
-        // console.log("Found template:", foundTemplate);
-
-        if (!foundTemplate) {
-          console.error(
-            'Template not found. Looking for:',
-            newTemplateBase,
-            'in collection:',
-            collectionId
-          );
-
-          // Examine available templates for debugging
-          const availableTemplates = Object.keys(collectionManager.getMapDefs(collectionId));
-          console.log('Available templates in collection:', availableTemplates);
-
-          alert(inLang(uiStr.noTemplate, lang) + ': ' + newTemplateBase);
-          return;
-        } // Set mapDef and locations
-        setMapDef({
-          template: newTemplateBase,
-          fig: '\\fig | src="' + figFilename + '" size="span" ref="-"\\fig*',
-          mapView: true,
-          imgFilename: isJpg ? filePath : foundTemplate.imgFilename,
-          width: foundTemplate.width,
-          height: foundTemplate.height,
-          labels: foundTemplate.labels,
-          variants: foundTemplate.variants, // Include variants if they exist
-        });
-
-        // Initialize selectedVariant based on whether variants exist
-        setSelectedVariant(
-          foundTemplate.variants && Object.keys(foundTemplate.variants).length > 0 ? 1 : 0
-        ); // Make a local copy to ensure we're using the latest state
-        const currentTermRenderings = { ...termRenderings };
-
-        const newLocations = foundTemplate.labels.map(loc => {
-          const status = getStatus(
-            currentTermRenderings,
-            loc.termId,
-            loc.vernLabel || '',
-            collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
-            extractedVerses
-          );
-          return { ...loc, vernLabel: loc.vernLabel || '', status };
-        });
-        
-        // Load saved labels from .IDML.TXT file if no data merge file was loaded
-        let savedIdmlLabels = {};
-        if (Object.keys(labels).length === 0) {
-          try {
-            const result = await electronAPI.loadLabelsFromIdmlTxt(projectFolder, newTemplateBase);
-            if (result.success && result.labels) {
-              savedIdmlLabels = result.labels;
-              console.log('Loaded saved labels from .IDML.TXT file:', savedIdmlLabels);
-            }
-          } catch (error) {
-            console.error('Error loading .IDML.TXT file:', error);
-          }
-        }
-        
-        const initialLocations = newLocations.map(loc => {
-          if (labels[loc.mergeKey]) {
-            loc.vernLabel = labels[loc.mergeKey]; // Use label from data merge if available
-          } else if (savedIdmlLabels[loc.mergeKey]) {
-            loc.vernLabel = savedIdmlLabels[loc.mergeKey]; // Use saved label from .IDML.TXT file
-          } else if (!loc.vernLabel) {
-            const altTermIds = collectionManager.getAltTermIds(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template));
-            loc.vernLabel = getMapForm(currentTermRenderings, loc.termId, altTermIds);
-          }
-
-          const status = getStatus(
-            currentTermRenderings,
-            loc.termId,
-            loc.vernLabel,
-            collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
-            extractedVerses
-          );
-          return { ...loc, status };
-        });
-        
-        // Store the saved labels for revert functionality
-        // Use the final labels (from .idml.txt file, data merge file, or generated)
-        const finalSavedLabels = {};
-        initialLocations.forEach(loc => {
-          if (loc.mergeKey && loc.vernLabel) {
-            finalSavedLabels[loc.mergeKey] = loc.vernLabel;
-          }
-        });
-        setSavedLabels(finalSavedLabels);
-        setHasUnsavedChanges(false);
-        console.log('Initial locations:', initialLocations);
-        setLocations(initialLocations);
-
-        // Find first visible location for initial selection
-        const firstVisibleIndex = initialLocations.findIndex(loc =>
-          isLocationVisible(
-            loc,
-            foundTemplate.variants && Object.keys(foundTemplate.variants).length > 0 ? 1 : 0
-          )
-        );
-        if (firstVisibleIndex !== -1) {
-          handleSelectLocation(initialLocations[firstVisibleIndex]); // Auto-select first visible location
-        }
-        setMapPaneView(MAP_VIEW); // Map View
-        setResetZoomFlag(true); // Reset zoom on new map
+      
+      // Determine the figure filename
+      if (!figFilename) {
+        figFilename = exactTemplateName + '.jpg'; // Default to .jpg
       }
+
+      // Set mapDef and locations
+      setMapDef({
+        template: exactTemplateName,
+        fig: '\\fig | src="' + figFilename + '" size="span" ref="-"\\fig*',
+        mapView: true,
+        imgFilename: isJpg && imgPath ? imgPath : foundTemplate.imgFilename,
+        width: foundTemplate.width,
+        height: foundTemplate.height,
+        labels: foundTemplate.labels,
+        variants: foundTemplate.variants, // Include variants if they exist
+      });
+
+      // Initialize selectedVariant based on whether variants exist
+      setSelectedVariant(
+        foundTemplate.variants && Object.keys(foundTemplate.variants).length > 0 ? 1 : 0
+      );
+      
+      // Make a local copy to ensure we're using the latest state
+      const currentTermRenderings = { ...termRenderings };
+
+      const newLocations = foundTemplate.labels.map(loc => {
+        const status = getStatus(
+          currentTermRenderings,
+          loc.termId,
+          loc.vernLabel || '',
+          collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+          extractedVerses
+        );
+        return { ...loc, vernLabel: loc.vernLabel || '', status };
+      });
+      
+      // Load saved labels from .IDML.TXT file if no data merge file was loaded
+      let savedIdmlLabels = {};
+      if (Object.keys(labels).length === 0) {
+        try {
+          const result = await electronAPI.loadLabelsFromIdmlTxt(projectFolder, exactTemplateName);
+          if (result.success && result.labels) {
+            savedIdmlLabels = result.labels;
+            console.log('Loaded saved labels from .IDML.TXT file:', savedIdmlLabels);
+          }
+        } catch (error) {
+          console.error('Error loading .IDML.TXT file:', error);
+        }
+      }
+      
+      const initialLocations = newLocations.map(loc => {
+        if (labels[loc.mergeKey]) {
+          loc.vernLabel = labels[loc.mergeKey]; // Use label from data merge if available
+        } else if (savedIdmlLabels[loc.mergeKey]) {
+          loc.vernLabel = savedIdmlLabels[loc.mergeKey]; // Use saved label from .IDML.TXT file
+        } else if (!loc.vernLabel) {
+          const altTermIds = collectionManager.getAltTermIds(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template));
+          loc.vernLabel = getMapForm(currentTermRenderings, loc.termId, altTermIds);
+        }
+
+        const status = getStatus(
+          currentTermRenderings,
+          loc.termId,
+          loc.vernLabel,
+          collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+          extractedVerses
+        );
+        return { ...loc, status };
+      });
+      
+      // Store the saved labels for revert functionality
+      const finalSavedLabels = {};
+      initialLocations.forEach(loc => {
+        if (loc.mergeKey && loc.vernLabel) {
+          finalSavedLabels[loc.mergeKey] = loc.vernLabel;
+        }
+      });
+      setSavedLabels(finalSavedLabels);
+      setHasUnsavedChanges(false);
+      console.log('Initial locations:', initialLocations);
+      setLocations(initialLocations);
+
+      // Find first visible location for initial selection
+      const firstVisibleIndex = initialLocations.findIndex(loc =>
+        isLocationVisible(
+          loc,
+          foundTemplate.variants && Object.keys(foundTemplate.variants).length > 0 ? 1 : 0
+        )
+      );
+      if (firstVisibleIndex !== -1) {
+        handleSelectLocation(initialLocations[firstVisibleIndex]); // Auto-select first visible location
+      }
+      setMapPaneView(MAP_VIEW); // Map View
+      setResetZoomFlag(true); // Reset zoom on new map
     } catch (e) {
-      // User cancelled or not supported
-      console.log('Map template browse cancelled or not supported:', e);
+      console.error('Error loading template:', e);
+      alert(inLang(uiStr.errorLoadingTemplate, lang) + ': ' + e.message);
     }
   }, [
     setMapDef,
@@ -985,15 +912,78 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
     lang,
     handleSelectLocation,
     extractedVerses,
-    mapDef.template,
     projectFolder,
-    promptUnsavedChanges,
+    mapDef.template,
+    setSelectedVariant,
+    setSavedLabels,
+    setHasUnsavedChanges,
+    setMapPaneView,
+    setResetZoomFlag
   ]);
 
   // Store the function in a ref for stable reference
   useEffect(() => {
     handleBrowseMapTemplateRef.current = handleBrowseMapTemplate;
   }, [handleBrowseMapTemplate]);
+
+  // Template browser selection handlers
+  const handleSelectDiagram = useCallback(async (template, filters, group, index) => {
+    console.log('Selected diagram:', template);
+    setShowTemplateBrowser(false);
+    setTemplateFilters(filters);
+    setTemplateGroup(null);
+    setTemplateGroupIndex(-1); // No group navigation
+    
+    // Load the selected template
+    await loadTemplate(template.templateName);
+  }, [loadTemplate]);
+
+  const handleSelectGroup = useCallback(async (template, filters, group, index) => {
+    console.log('Selected group:', template, 'at index:', index, 'of', group.length);
+    setShowTemplateBrowser(false);
+    setTemplateFilters(filters);
+    setTemplateGroup(group);
+    setTemplateGroupIndex(index);
+    
+    // Load the selected template
+    await loadTemplate(template.templateName);
+  }, [loadTemplate]);
+
+  const handlePreviousTemplate = useCallback(async () => {
+    if (!templateGroup || templateGroup.length === 0) return;
+    
+    // Check for unsaved changes
+    const canProceed = await promptUnsavedChanges();
+    if (!canProceed) return;
+    
+    // Wrap around: if at first item, go to last
+    const newIndex = templateGroupIndex <= 0 
+      ? templateGroup.length - 1 
+      : templateGroupIndex - 1;
+    const template = templateGroup[newIndex];
+    setTemplateGroupIndex(newIndex);
+    
+    // Load the previous template
+    await loadTemplate(template.templateName);
+  }, [templateGroup, templateGroupIndex, promptUnsavedChanges, loadTemplate]);
+
+  const handleNextTemplate = useCallback(async () => {
+    if (!templateGroup || templateGroup.length === 0) return;
+    
+    // Check for unsaved changes
+    const canProceed = await promptUnsavedChanges();
+    if (!canProceed) return;
+    
+    // Wrap around: if at last item, go to first
+    const newIndex = templateGroupIndex >= templateGroup.length - 1 
+      ? 0 
+      : templateGroupIndex + 1;
+    const template = templateGroup[newIndex];
+    setTemplateGroupIndex(newIndex);
+    
+    // Load the next template
+    await loadTemplate(template.templateName);
+  }, [templateGroup, templateGroupIndex, promptUnsavedChanges, loadTemplate]);
 
   // Initialize map from USFM once settings and collections are loaded
   useEffect(() => {
@@ -1781,6 +1771,10 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
             hasUnsavedChanges={hasUnsavedChanges} // Pass unsaved changes state
             onSaveLabels={handleSaveLabels} // Pass save handler
             onRevertLabels={handleRevertLabels} // Pass revert handler
+            templateGroup={templateGroup} // Pass template group for navigation
+            templateGroupIndex={templateGroupIndex} // Pass current index in group
+            onPreviousTemplate={handlePreviousTemplate} // Pass previous handler
+            onNextTemplate={handleNextTemplate} // Pass next handler
           />
         </div>
       </div>
@@ -1818,6 +1812,18 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
         templatePaths={templatePaths}
         setTemplatePaths={setTemplatePaths}
       />{' '}
+      {showTemplateBrowser && (
+        <TemplateBrowser
+          open={true}
+          lang={lang}
+          projectFolder={projectFolder}
+          templateFolder={templateFolder}
+          initialFilters={templateFilters}
+          onSelectDiagram={handleSelectDiagram}
+          onSelectGroup={handleSelectGroup}
+          onClose={() => setShowTemplateBrowser(false)}
+        />
+      )}
     </div>
   );
 }

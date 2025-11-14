@@ -47,6 +47,10 @@ export default function DetailsPane({
   hasUnsavedChanges = false,
   onSaveLabels,
   onRevertLabels,
+  templateGroup = null,
+  templateGroupIndex = -1,
+  onPreviousTemplate,
+  onNextTemplate,
 }) {
   const [localIsApproved, setLocalIsApproved] = useState(isApproved);
   const [localRenderings, setLocalRenderings] = useState(renderings);
@@ -584,6 +588,40 @@ export default function DetailsPane({
               📂
             </span>
           </button>
+          {templateGroupIndex >= 0 && (
+            <>
+              <button
+                onClick={onPreviousTemplate}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: 0,
+                  marginLeft: 1,
+                }}
+                title={inLang(uiStr.previousTemplate, lang)}
+              >
+                <span style={{ fontSize: '1.2em', color: '#4a90e2' }}>
+                  ◀
+                </span>
+              </button>
+              <button
+                onClick={onNextTemplate}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: 0,
+                  marginLeft: 1,
+                }}
+                title={inLang(uiStr.nextTemplate, lang)}
+              >
+                <span style={{ fontSize: '1.2em', color: '#4a90e2' }}>
+                  ▶
+                </span>
+              </button>
+            </>
+          )}
           <button
             onClick={onRevertLabels}
             disabled={!hasUnsavedChanges}
