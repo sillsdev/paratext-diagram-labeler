@@ -231,14 +231,12 @@ export default function TemplateBrowser({
   // Load preview image when selected template changes
   useEffect(() => {
     if (!selectedTemplate || !templateFolder) {
-      console.log('[TemplateBrowser] No selected template or templateFolder:', { selectedTemplate, templateFolder });
       setPreviewImageData(null);
       return;
     }
 
     const imageFilename = selectedTemplate.mapDef.imgFilename;
     if (!imageFilename) {
-      console.log('[TemplateBrowser] No imgFilename in mapDef');
       setPreviewImageData(null);
       return;
     }
