@@ -205,7 +205,9 @@ export default function TemplateBrowser({
   const prevFilteredTemplatesRef = useRef(filteredTemplates);
   useEffect(() => {
     if (!open || filteredTemplates.length === 0) {
-      setSelectedTemplate(null);
+      if (selectedTemplate !== null) {
+        setSelectedTemplate(null);
+      }
       prevFilteredTemplatesRef.current = filteredTemplates;
       return;
     }
@@ -219,13 +221,12 @@ export default function TemplateBrowser({
       );
 
       // If no selection or current selection not in list, select first item
-      if (!currentStillExists) {
+      if (!currentStillExists && filteredTemplates[0] !== selectedTemplate) {
         setSelectedTemplate(filteredTemplates[0]);
       }
     }
     prevFilteredTemplatesRef.current = filteredTemplates;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, filteredTemplates]);
+  }, [open, filteredTemplates, selectedTemplate]);
 
   // Load preview image when selected template changes
   useEffect(() => {
