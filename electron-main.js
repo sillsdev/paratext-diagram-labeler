@@ -175,75 +175,75 @@ function getIconPath() {
   }
 }
 
-// Add IPC handler for loading images
-ipcMain.handle('load-image', async (event, imagePath) => {
-  try {
-    console.log(`[IPC] Attempting to load image from: ${imagePath}`);
+// // Add IPC handler for loading images
+// ipcMain.handle('load-image', async (event, imagePath) => {
+//   try {
+//     console.log(`[IPC] Attempting to load image from: ${imagePath}`);
 
-    // Check if path is valid
-    if (!imagePath) {
-      console.error('[IPC] Image path is empty or invalid');
-      throw new Error('Image path is empty or invalid');
-    }
+//     // Check if path is valid
+//     if (!imagePath) {
+//       console.error('[IPC] Image path is empty or invalid');
+//       throw new Error('Image path is empty or invalid');
+//     }
 
-    // Normalize path to handle any potential issues with slashes
-    const normalizedPath = path.normalize(imagePath);
-    console.log(`[IPC] Normalized image path: ${normalizedPath}`);
+//     // Normalize path to handle any potential issues with slashes
+//     const normalizedPath = path.normalize(imagePath);
+//     console.log(`[IPC] Normalized image path: ${normalizedPath}`);
 
-    // Check if file exists with more detailed error
-    try {
-      const stats = fs.statSync(normalizedPath);
-      if (!stats.isFile()) {
-        console.error(`[IPC] Path exists but is not a file: ${normalizedPath}`);
-        throw new Error(`Path exists but is not a file: ${normalizedPath}`);
-      }
-    } catch (err) {
-      console.error(`[IPC] Image not found at path: ${normalizedPath}`, err.message);
-      throw new Error(`Image file not found: ${path.basename(normalizedPath)}`);
-    }
+//     // Check if file exists with more detailed error
+//     try {
+//       const stats = fs.statSync(normalizedPath);
+//       if (!stats.isFile()) {
+//         console.error(`[IPC] Path exists but is not a file: ${normalizedPath}`);
+//         throw new Error(`Path exists but is not a file: ${normalizedPath}`);
+//       }
+//     } catch (err) {
+//       console.error(`[IPC] Image not found at path: ${normalizedPath}`, err.message);
+//       throw new Error(`Image file not found: ${path.basename(normalizedPath)}`);
+//     }
 
-    // Read the file and convert to base64
-    const buffer = await fs.promises.readFile(normalizedPath);
+//     // Read the file and convert to base64
+//     const buffer = await fs.promises.readFile(normalizedPath);
 
-    // Verify that we have actual data
-    if (!buffer || buffer.length === 0) {
-      console.error(`[IPC] Read zero bytes from file: ${normalizedPath}`);
-      throw new Error(`Image file is empty: ${path.basename(normalizedPath)}`);
-    }
+//     // Verify that we have actual data
+//     if (!buffer || buffer.length === 0) {
+//       console.error(`[IPC] Read zero bytes from file: ${normalizedPath}`);
+//       throw new Error(`Image file is empty: ${path.basename(normalizedPath)}`);
+//     }
 
-    // Determine mime type based on file extension
-    const ext = path.extname(normalizedPath).toLowerCase();
-    let mimeType = 'image/jpeg'; // Default
+//     // Determine mime type based on file extension
+//     const ext = path.extname(normalizedPath).toLowerCase();
+//     let mimeType = 'image/jpeg'; // Default
 
-    switch (ext) {
-      case '.png':
-        mimeType = 'image/png';
-        break;
-      case '.gif':
-        mimeType = 'image/gif';
-        break;
-      case '.svg':
-        mimeType = 'image/svg+xml';
-        break;
-      case '.webp':
-        mimeType = 'image/webp';
-        break;
-      case '.bmp':
-        mimeType = 'image/bmp';
-        break;
-      default:
-        // Use default image/jpeg for all other cases
-        break;
-    }
+//     switch (ext) {
+//       case '.png':
+//         mimeType = 'image/png';
+//         break;
+//       case '.gif':
+//         mimeType = 'image/gif';
+//         break;
+//       case '.svg':
+//         mimeType = 'image/svg+xml';
+//         break;
+//       case '.webp':
+//         mimeType = 'image/webp';
+//         break;
+//       case '.bmp':
+//         mimeType = 'image/bmp';
+//         break;
+//       default:
+//         // Use default image/jpeg for all other cases
+//         break;
+//     }
 
-    const dataUrl = `data:${mimeType};base64,${buffer.toString('base64')}`;
-    console.log(`[IPC] Successfully loaded image (${buffer.length} bytes) from: ${normalizedPath}`);
-    return dataUrl;
-  } catch (error) {
-    console.error(`[IPC] Error loading image: ${imagePath}`, error);
-    return null;
-  }
-});
+//     const dataUrl = `data:${mimeType};base64,${buffer.toString('base64')}`;
+//     console.log(`[IPC] Successfully loaded image (${buffer.length} bytes) from: ${normalizedPath}`);
+//     return dataUrl;
+//   } catch (error) {
+//     console.error(`[IPC] Error loading image: ${imagePath}`, error);
+//     return null;
+//   }
+// });
 
 // Helper function to extract collection ID from template name
 // Template names are like "SMR_005wbt - Gen10 Descendants Of Noah"
@@ -347,7 +347,7 @@ ipcMain.handle('load-image-with-fallback', async (event, { templateFolder, templ
 
           // Determine mime type based on file extension
           const ext = path.extname(normalizedPath).toLowerCase();
-          let mimeType = 'image/jpeg'; // Default
+          let mimeType; // Default is jpeg
 
           switch (ext) {
             case '.png':

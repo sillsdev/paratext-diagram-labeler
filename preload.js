@@ -26,7 +26,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   statPath: path => ipcRenderer.invoke('stat-path', path),
 
-  loadImage: imagePath => ipcRenderer.invoke('load-image', imagePath),
+  // loadImage: imagePath => ipcRenderer.invoke('load-image', imagePath),
 
   loadImageWithFallback: (templateFolder, templateName, filename, languageCode, isPreview) =>
     ipcRenderer.invoke('load-image-with-fallback', { templateFolder, templateName, filename, languageCode, isPreview }),
