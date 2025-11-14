@@ -223,14 +223,12 @@ export default function TemplateBrowser({
   // Load preview image when selected template changes
   useEffect(() => {
     if (!selectedTemplate || !templateFolder) {
-      console.log('[TemplateBrowser] No selected template or templateFolder:', { selectedTemplate, templateFolder });
       setPreviewImageData(null);
       return;
     }
 
     const imageFilename = selectedTemplate.mapDef.imgFilename;
     if (!imageFilename) {
-      console.log('[TemplateBrowser] No imgFilename in mapDef');
       setPreviewImageData(null);
       return;
     }
@@ -242,23 +240,16 @@ export default function TemplateBrowser({
       imagePath = `${templateFolder}/${selectedTemplate.collectionId}/${imageFilename}`;
     }
 
-    console.log('[TemplateBrowser] Loading preview image from:', imagePath);
-    
     if (window.electronAPI) {
       window.electronAPI.loadImage(imagePath).then(dataUrl => {
-        console.log('[TemplateBrowser] Image loaded:', dataUrl ? `${dataUrl.length} bytes` : 'null');
         if (dataUrl) {
           setPreviewImageData(dataUrl);
         } else {
-          console.log('[TemplateBrowser] Image load returned null');
           setPreviewImageData(null);
         }
       }).catch(error => {
-        console.log('[TemplateBrowser] Image load error:', error);
         setPreviewImageData(null);
       });
-    } else {
-      console.log('[TemplateBrowser] electronAPI not available');
     }
   }, [selectedTemplate, templateFolder]);
 
