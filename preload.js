@@ -28,6 +28,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   loadImage: imagePath => ipcRenderer.invoke('load-image', imagePath),
 
+  loadImageWithFallback: (templateFolder, templateName, filename, languageCode, isPreview) =>
+    ipcRenderer.invoke('load-image-with-fallback', { templateFolder, templateName, filename, languageCode, isPreview }),
+
   exportDataMerge: data => ipcRenderer.invoke('export-data-merge', data),
 
   getDefaultTemplateFolder: () => ipcRenderer.invoke('getDefaultTemplateFolder'),

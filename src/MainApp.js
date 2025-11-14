@@ -1518,50 +1518,50 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
     setImageData(undefined);
     setImageError(null);
 
-    let imagePath;
-    if (imageFilename.includes('/') || imageFilename.includes('\\')) {
-      // If imageFilename is already an absolute path (contains a slash), use it directly
-      imagePath = imageFilename;
-    } else {
-      // Append filename to tempate folder path.
-      // Use the template folder passed as prop instead of from settings service
-      // This ensures we always use the latest version that's in memory
-      imagePath = (templateFolder || settings.templateFolder) + '/' + currentCollectionId + '/' + imageFilename;
-    }
-    console.log('Loading image from path:', imagePath, '; templatefolder:', templateFolder, '; variant:', selectedVariant);
+    const templateName = memoizedMapDef.template;
+    const folder = templateFolder || settings.templateFolder;
 
-    // Use the IPC function to load the image
-    if (window.electronAPI) {
+    console.log('Loading image:', { 
+      templateName, 
+      imageFilename, 
+      templateFolder: folder, 
+      lang, 
+      variant: selectedVariant 
+    });
+
+    // Use the new IPC function to load the image with language fallback
+    if (window.electronAPI && window.electronAPI.loadImageWithFallback) {
       window.electronAPI
-        .loadImage(imagePath)
+        .loadImageWithFallback(folder, templateName, imageFilename, lang, false) // isPreview = false for Map View
         .then(data => {
           if (data) {
             setImageData(data);
-            console.log('Image loaded successfully through IPC');
+            console.log('Image loaded successfully through IPC with fallback');
           } else {
-            console.error(`Failed to load image through IPC from path: ${imagePath}`);
+            console.error(`Failed to load image: ${imageFilename} for template: ${templateName}`);
             setImageData(null); // null indicates error
-            setImageError(`Could not load map image: ${imagePath}`);
+            setImageError(`Could not load map image: ${imageFilename}`);
           }
         })
         .catch(err => {
-          console.error(`Error loading image through IPC from path: ${imagePath}`, err);
+          console.error(`Error loading image: ${imageFilename}`, err);
           setImageData(null); // null indicates error
           setImageError(`Error loading map image: ${err.message || 'Unknown error'}`);
         });
     } else {
-      console.error('electronAPI not available');
+      console.error('electronAPI.loadImageWithFallback not available');
       setImageData(null); // null indicates error
       setImageError('Electron API not available. Cannot load images.');
     }
   }, [
     memoizedMapDef.imgFilename, 
     memoizedMapDef.variants,
+    memoizedMapDef.template,
     selectedVariant,
     isInitialized, 
     settings, 
-    templateFolder, 
-    currentCollectionId
+    templateFolder,
+    lang
   ]);
   // For debugging - keep track of the original path with proper Windows path separators
   //   const imgPath = memoizedMapDef.imgFilename ?
