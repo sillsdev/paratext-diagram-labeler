@@ -243,32 +243,37 @@ export default function TemplateBrowser({
       return;
     }
 
-    let imagePath;
-    if (imageFilename.includes('/') || imageFilename.includes('\\')) {
-      imagePath = imageFilename;
-    } else {
-      imagePath = `${templateFolder}/${selectedTemplate.collectionId}/${imageFilename}`;
-    }
-
-    console.log('[TemplateBrowser] Loading preview image from:', imagePath);
+    // Use templateName (e.g., "SMR_005wbt - Gen10 Descendants Of Noah") to determine collection
+    const templateName = selectedTemplate.templateName;
     
-    if (window.electronAPI) {
-      window.electronAPI.loadImage(imagePath).then(dataUrl => {
-        console.log('[TemplateBrowser] Image loaded:', dataUrl ? `${dataUrl.length} bytes` : 'null');
-        if (dataUrl) {
-          setPreviewImageData(dataUrl);
-        } else {
-          console.log('[TemplateBrowser] Image load returned null');
+    console.log('[TemplateBrowser] Loading preview image:', { 
+      templateFolder, 
+      templateName, 
+      imageFilename, 
+      lang 
+    });
+    
+    if (window.electronAPI && window.electronAPI.loadImageWithFallback) {
+      window.electronAPI
+        .loadImageWithFallback(templateFolder, templateName, imageFilename, lang, true) // isPreview = true
+        .then(dataUrl => {
+          console.log('[TemplateBrowser] Image loaded:', dataUrl ? `${dataUrl.length} bytes` : 'null');
+          if (dataUrl) {
+            setPreviewImageData(dataUrl);
+          } else {
+            console.log('[TemplateBrowser] Image load returned null');
+            setPreviewImageData(null);
+          }
+        })
+        .catch(error => {
+          console.log('[TemplateBrowser] Image load error:', error);
           setPreviewImageData(null);
-        }
-      }).catch(error => {
-        console.log('[TemplateBrowser] Image load error:', error);
-        setPreviewImageData(null);
-      });
+        });
     } else {
-      console.log('[TemplateBrowser] electronAPI not available');
+      console.log('[TemplateBrowser] electronAPI.loadImageWithFallback not available');
+      setPreviewImageData(null);
     }
-  }, [selectedTemplate, templateFolder]);
+  }, [selectedTemplate, templateFolder, lang]);
 
   // Handle sorting
   const handleSort = (column) => {
