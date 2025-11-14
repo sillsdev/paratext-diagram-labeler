@@ -231,12 +231,14 @@ export default function TemplateBrowser({
   // Load preview image when selected template changes
   useEffect(() => {
     if (!selectedTemplate || !templateFolder) {
+      console.log('[TemplateBrowser] No selected template or templateFolder:', { selectedTemplate, templateFolder });
       setPreviewImageData(null);
       return;
     }
 
     const imageFilename = selectedTemplate.mapDef.imgFilename;
     if (!imageFilename) {
+      console.log('[TemplateBrowser] No imgFilename in mapDef');
       setPreviewImageData(null);
       return;
     }
@@ -286,7 +288,7 @@ export default function TemplateBrowser({
   // Handle row double-click - equivalent to selecting and clicking "Select Diagram"
   const handleRowDoubleClick = (template) => {
     setSelectedTemplate(template);
-    handleSelectDiagram();
+    handleSelectDiagram(template);
   };
 
   // Handle reset filters
@@ -300,8 +302,9 @@ export default function TemplateBrowser({
   };
 
   // Handle select diagram
-  const handleSelectDiagram = useCallback(() => {
-    if (!selectedTemplate) return;
+  const handleSelectDiagram = useCallback((template = null) => {
+    const templateToUse = template || selectedTemplate;
+    if (!templateToUse) return;
     
     const currentFilters = {
       searchTerm,
@@ -312,7 +315,7 @@ export default function TemplateBrowser({
       savedFilter
     };
     
-    onSelectDiagram(selectedTemplate, currentFilters, filteredTemplates, -1); // -1 means no group navigation
+    onSelectDiagram(templateToUse, currentFilters, filteredTemplates, -1); // -1 means no group navigation
   }, [selectedTemplate, searchTerm, formatFilter, collectionFilter, colorFilter, 
       textureFilter, savedFilter, filteredTemplates, onSelectDiagram]);
 

@@ -927,7 +927,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
   }, [handleBrowseMapTemplate]);
 
   // Template browser selection handlers
-  const handleSelectDiagram = useCallback(async (template, filters) => {
+  const handleSelectDiagram = useCallback(async (template, filters, group, index) => {
     console.log('Selected diagram:', template);
     setShowTemplateBrowser(false);
     setTemplateFilters(filters);
