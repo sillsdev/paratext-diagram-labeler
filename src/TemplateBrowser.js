@@ -224,6 +224,7 @@ export default function TemplateBrowser({
       }
     }
     prevFilteredTemplatesRef.current = filteredTemplates;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, filteredTemplates]);
 
   // Load preview image when selected template changes
@@ -286,7 +287,7 @@ export default function TemplateBrowser({
   // Handle row double-click - equivalent to selecting and clicking "Select Diagram"
   const handleRowDoubleClick = (template) => {
     setSelectedTemplate(template);
-    handleSelectDiagram();
+    handleSelectDiagram(template);
   };
 
   // Handle reset filters
@@ -300,8 +301,9 @@ export default function TemplateBrowser({
   };
 
   // Handle select diagram
-  const handleSelectDiagram = useCallback(() => {
-    if (!selectedTemplate) return;
+  const handleSelectDiagram = useCallback((template = null) => {
+    const templateToUse = template || selectedTemplate;
+    if (!templateToUse) return;
     
     const currentFilters = {
       searchTerm,
@@ -312,7 +314,7 @@ export default function TemplateBrowser({
       savedFilter
     };
     
-    onSelectDiagram(selectedTemplate, currentFilters, filteredTemplates, -1); // -1 means no group navigation
+    onSelectDiagram(templateToUse, currentFilters, filteredTemplates, -1); // -1 means no group navigation
   }, [selectedTemplate, searchTerm, formatFilter, collectionFilter, colorFilter, 
       textureFilter, savedFilter, filteredTemplates, onSelectDiagram]);
 
