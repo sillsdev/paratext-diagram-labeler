@@ -654,14 +654,13 @@ export default function DetailsPane({
           </button>
           <button
             onClick={onSaveLabels}
-            disabled={!hasUnsavedChanges}
             style={{
               background: 'none',
               border: 'none',
-              cursor: hasUnsavedChanges ? 'pointer' : 'not-allowed',
+              cursor: 'pointer',
               padding: 0,
               marginLeft: 1,
-              opacity: hasUnsavedChanges ? 1 : 0.3,
+              opacity: 1,
             }}
             title={inLang(uiStr.saveChanges, lang)}
           >
@@ -679,7 +678,7 @@ export default function DetailsPane({
                 width="14"
                 height="16"
                 rx="2"
-                stroke={hasUnsavedChanges ? '#4caf50' : '#999'}
+                stroke={hasUnsavedChanges ? '#4caf50' : 'rgba(15, 72, 15, 1)'}
                 strokeWidth="1.5"
                 fill="none"
               />
@@ -688,7 +687,7 @@ export default function DetailsPane({
                 y="3"
                 width="8"
                 height="5"
-                fill={hasUnsavedChanges ? '#4caf50' : '#999'}
+                fill={hasUnsavedChanges ? '#4caf50' : 'rgba(15, 72, 15, 1)'}
               />
               <rect
                 x="6"
@@ -696,7 +695,7 @@ export default function DetailsPane({
                 width="10"
                 height="7"
                 fill="none"
-                stroke={hasUnsavedChanges ? '#4caf50' : '#999'}
+                stroke={hasUnsavedChanges ? '#4caf50' : 'rgba(15, 72, 15, 1)'}
                 strokeWidth="1.2"
               />
             </svg>

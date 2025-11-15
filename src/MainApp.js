@@ -701,9 +701,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
     setLocations(restoredLocations);
     setHasUnsavedChanges(false);
     console.log('Labels reverted to last saved state');
-    // Optional: Show message to user
-    alert(inLang(uiStr.labelsReverted, lang));
-  }, [hasUnsavedChanges, savedLabels, locations, termRenderings, extractedVerses, mapDef.template, lang]);
+  }, [hasUnsavedChanges, savedLabels, locations, termRenderings, extractedVerses, mapDef.template]);
 
   // Helper function to prompt user about unsaved changes
   const promptUnsavedChanges = useCallback(async () => {
