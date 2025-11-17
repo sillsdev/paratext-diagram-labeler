@@ -19,15 +19,15 @@ import { AutocorrectTextarea } from './components/AutocorrectTextarea';
 import { useAutocorrect } from './hooks/useAutocorrect';
 
 export default function DetailsPane({
-  selLocation,
+  selectedLabelIndex,
   onUpdateVernacular,
-  onNextLocation,
+  onNextLabel,
   renderings,
   isApproved,
   onRenderingsChange,
   onApprovedChange,
   termRenderings,
-  locations,
+  labels,
   onSwitchView,
   mapPaneView,
   onSetView,
@@ -106,7 +106,7 @@ export default function DetailsPane({
   }, [mapDef.template]);
 
   // Simplified vernacular state management for debugging
-  // const [localVernacular, setLocalVernacular] = useState(locations[selLocation]?.vernLabel || '');
+  // const [localVernacular, setLocalVernacular] = useState(labels[selectedLabelIndex]?.vernLabel || '');
 
   // Re-enable autocorrect hook for vernacular input
   const {
@@ -114,14 +114,14 @@ export default function DetailsPane({
     setValue: setVernacularValue,
     handleChange: handleVernacularChange,
     textareaRef: vernacularAutocorrectRef,
-  } = useAutocorrect(locations[selLocation]?.vernLabel || '', text => {
+  } = useAutocorrect(labels[selectedLabelIndex]?.vernLabel || '', text => {
     // console.log('DetailsPane: Vernacular changing to', text);
-    onUpdateVernacular(locations[selLocation].termId, text);
+    onUpdateVernacular(labels[selectedLabelIndex].termId, text);
   });
 
   // const vernacularAutocorrectRef = useRef(null);
 
-  const prevSelLocationRef = useRef(selLocation);
+  const prevSelectedLabelRef = useRef(selectedLabelIndex);
   
   // Forward the ref from useAutocorrect to the external vernacularInputRef
   useEffect(() => {
@@ -132,50 +132,50 @@ export default function DetailsPane({
   
   useEffect(() => {
     // Sync local vernacular when selection changes
-    const newVernacular = locations[selLocation]?.vernLabel || '';
+    const newVernacular = labels[selectedLabelIndex]?.vernLabel || '';
     setVernacularValue(newVernacular);
     setLocalIsApproved(isApproved);
     setLocalRenderings(renderings);
-  }, [selLocation, isApproved, renderings, locations, setVernacularValue]);
+  }, [selectedLabelIndex, isApproved, renderings, labels, setVernacularValue]);
 
   useEffect(() => {
-    // Only focus when selLocation actually changes and we're in MAP_VIEW
-    if (prevSelLocationRef.current !== selLocation && mapPaneView === MAP_VIEW) {
-      prevSelLocationRef.current = selLocation;
+    // Only focus when selectedLabelIndex actually changes and we're in MAP_VIEW
+    if (prevSelectedLabelRef.current !== selectedLabelIndex && mapPaneView === MAP_VIEW) {
+      prevSelectedLabelRef.current = selectedLabelIndex;
       if (vernacularAutocorrectRef && vernacularAutocorrectRef.current) {
-        console.log('Focusing vernacular input for location:', selLocation);
+        console.log('Focusing vernacular input for label:', selectedLabelIndex);
         vernacularAutocorrectRef.current.focus();
       }
-    } else if (prevSelLocationRef.current !== selLocation) {
-      prevSelLocationRef.current = selLocation;
+    } else if (prevSelectedLabelRef.current !== selectedLabelIndex) {
+      prevSelectedLabelRef.current = selectedLabelIndex;
     }
-  }, [selLocation, mapPaneView, vernacularAutocorrectRef]);
+  }, [selectedLabelIndex, mapPaneView, vernacularAutocorrectRef]);
 
-  // Use the status from the location object which is already calculated in App.js
+  // Use the status from the label object which is already calculated in App.js
   // This is more reliable than recalculating it here
-  const status = locations[selLocation]?.status || 0;
+  const status = labels[selectedLabelIndex]?.status || 0;
   const collectionId = getCollectionIdFromTemplate(mapDef.template);
   let transliteration = collectionManager.getTransliteration(
-    locations[selLocation]?.mergeKey,
+    labels[selectedLabelIndex]?.mergeKey,
     collectionId
   );
   if (transliteration) {
     transliteration = ` /${transliteration}/`;
   }
 
-  // Tally status counts for all locations
+  // Tally status counts for all labels
   const statusTallies = useMemo(() => {
     const tally = {};
-    if (locations && locations.length > 0) {
-      locations.forEach(loc => {
-        // Use the status already stored in the location object
-        const status = loc.status || 0;
+    if (labels && labels.length > 0) {
+      labels.forEach(label => {
+        // Use the status already stored in the label object
+        const status = label.status || 0;
         if (!tally[status]) tally[status] = 0;
         tally[status]++;
       });
     }
     return tally;
-  }, [locations]);
+  }, [labels]);
 
   // --- Button Row Handlers (implement as needed) ---
   const handleCancel = () => {
@@ -215,13 +215,13 @@ export default function DetailsPane({
   const onRefreshLabel = () => {
     // This function is called when the user clicks the "Refresh Labels" button.
     // Update the vernacular input using getMapForm
-    if (selLocation >= 0 && selLocation < locations.length) {
-      const currentLocation = locations[selLocation];
-      const altTermIds = collectionManager.getAltTermIds(currentLocation?.mergeKey, getCollectionIdFromTemplate(mapDef.template));
-      const mapForm = getMapForm(termRenderings, currentLocation.termId, altTermIds);
-      console.log('Refreshing label for location:', currentLocation.mergeKey, 'Map form:', mapForm);
+    if (selectedLabelIndex >= 0 && selectedLabelIndex < labels.length) {
+      const currentLabel = labels[selectedLabelIndex];
+      const altTermIds = collectionManager.getAltTermIds(currentLabel?.mergeKey, getCollectionIdFromTemplate(mapDef.template));
+      const mapForm = getMapForm(termRenderings, currentLabel.termId, altTermIds);
+      console.log('Refreshing label:', currentLabel.mergeKey, 'Map form:', mapForm);
       setVernacularValue(mapForm);
-      onUpdateVernacular(currentLocation.termId, mapForm);
+      onUpdateVernacular(currentLabel.termId, mapForm);
     }
   };
 
@@ -269,18 +269,18 @@ export default function DetailsPane({
   // Handle export after format selection
   const handleExportWithFormat = async format => {
     try {
-      // Prepare locations with mapxKey computed for each location
-      const locationsWithMapxKey = locations.map(location => {
-        const mapxKey = collectionManager.getMapxKey(location.mergeKey, collectionId);
+      // Prepare labels with mapxKey computed for each label
+      const labelsWithMapxKey = labels.map(label => {
+        const mapxKey = collectionManager.getMapxKey(label.mergeKey, collectionId);
         return {
-          ...location,
+          ...label,
           mapxKey: mapxKey,
-          vernLabel: location.vernLabel.replace(/[❪{]/g, '(').replace(/[❫}]/g, ')'), // Replace { and } with ( and )
+          vernLabel: label.vernLabel.replace(/[❪{]/g, '(').replace(/[❫}]/g, ')'), // Replace { and } with ( and )
         };
       });
 
       const result = await window.electronAPI.exportDataMerge({
-        locations: locationsWithMapxKey,
+        labels: labelsWithMapxKey,
         templateName: templateName,
         format: format,
         projectFolder: settingsService.getProjectFolder(),
@@ -1022,13 +1022,13 @@ export default function DetailsPane({
                     {status === STATUS_GUESSED.toString() && (
                       <button
                         onClick={() => {
-                          // Find all locations with guessed status and approve them
+                          // Find all labels with guessed status and approve them
                           const updatedData = { ...termRenderings };
                           let hasChanges = false;
 
-                          locations.forEach(loc => {
-                            if (loc.status === STATUS_GUESSED) {
-                              const termId = loc.termId;
+                          labels.forEach(label => {
+                            if (label.status === STATUS_GUESSED) {
+                              const termId = label.termId;
                               if (updatedData[termId]) {
                                 updatedData[termId] = {
                                   ...updatedData[termId],
@@ -1042,7 +1042,7 @@ export default function DetailsPane({
                           if (hasChanges) {
                             setTermRenderings(updatedData);
                             // If currently viewing a guessed item, update local state
-                            if (locations[selLocation]?.status === STATUS_GUESSED) {
+                            if (labels[selectedLabelIndex]?.status === STATUS_GUESSED) {
                               setLocalIsApproved(true);
                             }
                           }
@@ -1075,16 +1075,16 @@ export default function DetailsPane({
           background: '#f9f9f9',
         }}
       >
-        <h2>{inLang(locations[selLocation]?.gloss, lang)}</h2>{' '}
+        <h2>{inLang(labels[selectedLabelIndex]?.gloss, lang)}</h2>{' '}
         <p>
           <span style={{ fontStyle: 'italic' }}>
-            ({locations[selLocation]?.termId}){' '}
+            ({labels[selectedLabelIndex]?.termId}){' '}
             <span style={{ display: 'inline-block', width: 12 }} />
             {transliteration}
           </span>
           <br />
           {inLang(
-            collectionManager.getDefinition(locations[selLocation]?.mergeKey, collectionId),
+            collectionManager.getDefinition(labels[selectedLabelIndex]?.mergeKey, collectionId),
             lang
           )}
         </p>
@@ -1157,7 +1157,7 @@ export default function DetailsPane({
               <button
                 style={{ marginLeft: 8 }}
                 onClick={() => {
-                  const termId = locations[selLocation].termId;
+                  const termId = labels[selectedLabelIndex].termId;
 
                   // Update local state
                   setLocalIsApproved(true);
@@ -1190,7 +1190,7 @@ export default function DetailsPane({
             value={localRenderings}
             onChange={e => {
               console.log('Renderings onChange called with:', e.target.value);
-              const termId = locations[selLocation].termId;
+              const termId = labels[selectedLabelIndex].termId;
               const newValue = e.target.value;
 
               // Update local state

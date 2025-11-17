@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import Leaf from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { inLang, statusValue, getMatchTally, isLocationVisible } from './Utils.js';
+import { inLang, statusValue, getMatchTally, isLabelVisible } from './Utils.js';
 import { collectionManager } from './CollectionManager';
 import uiStr from './data/ui-strings.json';
 
@@ -9,8 +9,8 @@ import uiStr from './data/ui-strings.json';
 function MapController({
   resetZoomFlag,
   setResetZoomFlag,
-  selLocation,
-  transformedLocations,
+  selectedLabelIndex,
+  transformedLabels,
   imageHeight,
   imageWidth,
 }) {
@@ -39,26 +39,26 @@ function MapController({
     }, 50); // Small delay to ensure map is ready
 
     return () => clearTimeout(timeoutId);
-  }, [resetZoomFlag, setResetZoomFlag, map, imageHeight, imageWidth]); // Effect for smart panning to selected location
+  }, [resetZoomFlag, setResetZoomFlag, map, imageHeight, imageWidth]); // Effect for smart panning to selected label
 
   useEffect(() => {
-    if (selLocation === null || selLocation === undefined || !map || !transformedLocations.length)
+    if (selectedLabelIndex === null || selectedLabelIndex === undefined || !map || !transformedLabels.length)
       return;
 
     const timeoutId = setTimeout(() => {
       try {
-        // console.log('Looking for selLocation index:', selLocation);
-        // console.log('Available transformedLocations length:', transformedLocations.length);
+        // console.log('Looking for selectedLabelIndex:', selectedLabelIndex);
+        // console.log('Available transformedLabels length:', transformedLabels.length);
 
-        // selLocation is an index into the transformedLocations array
-        const selectedLoc = transformedLocations[selLocation];
-        if (!selectedLoc) {
-          console.log('No location found at index:', selLocation);
+        // selectedLabelIndex is an index into the transformedLabels array
+        const selectedLbl = transformedLabels[selectedLabelIndex];
+        if (!selectedLbl) {
+          console.log('No label found at index:', selectedLabelIndex);
           return;
         }
 
-        const locationPoint = [selectedLoc.yLeaflet, selectedLoc.x];
-        // console.log('Selected location point:', locationPoint);
+        const labelPoint = [selectedLbl.yLeaflet, selectedLbl.x];
+        // console.log('Selected label point:', labelPoint);
 
         // Get current map size and center
         const mapSize = map.getSize();
@@ -66,9 +66,9 @@ function MapController({
         // console.log('Map size (pixels):', mapSize);
         // console.log('Current center:', currentCenter);
 
-        // Convert location to pixel coordinates
-        const locationPixel = map.latLngToContainerPoint(locationPoint);
-        // console.log('Location in pixels:', locationPixel);
+        // Convert label to pixel coordinates
+        const labelPixel = map.latLngToContainerPoint(labelPoint);
+        // console.log('Label in pixels:', labelPixel);
 
         // Calculate 6% buffer zone in pixels
         const bufferX = mapSize.x * 0.06;
@@ -87,13 +87,13 @@ function MapController({
         //   comfortableBottom
         // });        // Calculate label endpoints based on alignment and rotation
         // Optimization: use simple point-based logic for centered, non-rotated labels
-        const angle = selectedLoc.angle || 0;
-        const align = selectedLoc.align || 'center';
+        const angle = selectedLbl.angle || 0;
+        const align = selectedLbl.align || 'center';
         let startPoint, endPoint;
 
         // Calculate start and end points based on alignment and angle.
         const labelLengthPixels = mapSize.x * 0.2; // Approximate label length as 20% of horizontal viewable area
-        startPoint = endPoint = locationPixel;
+        startPoint = endPoint = labelPixel;
         if (!angle) {
           if (align === 'center') {
             startPoint.x -= labelLengthPixels / 2;
@@ -123,29 +123,29 @@ function MapController({
           // Calculate start and end points based on alignment
           if (align === 'left') {
             // Label extends rightward from anchor
-            startPoint = locationPixel;
+            startPoint = labelPixel;
             endPoint = {
-              x: locationPixel.x + labelLengthPixels * labelDirX,
-              y: locationPixel.y + labelLengthPixels * labelDirY,
+              x: labelPixel.x + labelLengthPixels * labelDirX,
+              y: labelPixel.y + labelLengthPixels * labelDirY,
             };
           } else if (align === 'right') {
             // Label extends leftward from anchor
-            endPoint = locationPixel;
+            endPoint = labelPixel;
             startPoint = {
-              x: locationPixel.x - labelLengthPixels * labelDirX,
-              y: locationPixel.y - labelLengthPixels * labelDirY,
+              x: labelPixel.x - labelLengthPixels * labelDirX,
+              y: labelPixel.y - labelLengthPixels * labelDirY,
             };
           } else {
             // center
             // Label extends both ways from anchor
             const halfLength = labelLengthPixels / 2;
             startPoint = {
-              x: locationPixel.x - halfLength * labelDirX,
-              y: locationPixel.y - halfLength * labelDirY,
+              x: labelPixel.x - halfLength * labelDirX,
+              y: labelPixel.y - halfLength * labelDirY,
             };
             endPoint = {
-              x: locationPixel.x + halfLength * labelDirX,
-              y: locationPixel.y + halfLength * labelDirY,
+              x: labelPixel.x + halfLength * labelDirX,
+              y: labelPixel.y + halfLength * labelDirY,
             };
           }
 
@@ -224,21 +224,21 @@ function MapController({
           map.panTo(newCenter, { animate: true, duration: 0.5 });
         }
       } catch (error) {
-        // console.error('Error panning to selected location:', error);
+        // console.error('Error panning to selected label:', error);
       }
     }, 100); // Small delay to ensure selection state is stable
 
     return () => clearTimeout(timeoutId);
-  }, [selLocation, map, transformedLocations]);
+  }, [selectedLabelIndex, map, transformedLabels]);
 
   return null; // This component doesn't render anything
 }
 
 export default function MapPane({
   imageUrl,
-  locations,
-  onSelectLocation,
-  selLocation,
+  labels,
+  onSelectLabel,
+  selectedLabelIndex,
   labelScale,
   labelOpacity = 85,
   mapDef,
@@ -262,11 +262,11 @@ export default function MapPane({
     [imageHeight, imageWidth]
   );
   const crs = Leaf.CRS.Simple;
-  const transformedLocations = locations
-    .filter(loc => isLocationVisible(loc, selectedVariant))
-    .map(loc => {
-      const yLeaflet = imageHeight - loc.y;
-      return { ...loc, yLeaflet };
+  const transformedLabels = labels
+    .filter(label => isLabelVisible(label, selectedVariant))
+    .map(label => {
+      const yLeaflet = imageHeight - label.y;
+      return { ...label, yLeaflet };
     });
   return (
     <MapContainer
@@ -286,8 +286,8 @@ export default function MapPane({
       <MapController
         resetZoomFlag={resetZoomFlag}
         setResetZoomFlag={setResetZoomFlag}
-        selLocation={selLocation}
-        transformedLocations={transformedLocations}
+        selectedLabelIndex={selectedLabelIndex}
+        transformedLabels={transformedLabels}
         imageHeight={imageHeight}
         imageWidth={imageWidth}
       />
@@ -321,32 +321,32 @@ export default function MapPane({
             : inLang(uiStr.imageLoadingFailed, lang)}
         </div>
       )}
-      {transformedLocations.length > 0
-        ? transformedLocations.map(loc => (
+      {transformedLabels.length > 0
+        ? transformedLabels.map(label => (
             <Marker
-              key={loc.termId}
-              position={[loc.yLeaflet, loc.x]}
+              key={label.termId}
+              position={[label.yLeaflet, label.x]}
               icon={createLabel(
-                loc.vernLabel || `(${inLang(loc.gloss, lang)})`,
-                loc.align,
-                loc.angle,
-                loc.size,
-                loc.status,
-                selLocation === loc.idx,
+                label.vernLabel || `(${inLang(label.gloss, lang)})`,
+                label.align,
+                label.angle,
+                label.size,
+                label.status,
+                selectedLabelIndex === label.idx,
                 labelScale,
                 labelOpacity,
                 showFrac
                   ? frac(
                       getMatchTally(
-                        termRenderings[loc.termId],
-                        collectionManager.getRefs(loc.mergeKey, collectionId),
+                        termRenderings[label.termId],
+                        collectionManager.getRefs(label.mergeKey, collectionId),
                         extractedVerses
                       ),
                       true
                     )
                   : ''
               )}
-              eventHandlers={{ click: () => onSelectLocation(loc) }}
+              eventHandlers={{ click: () => onSelectLabel(label) }}
               tabIndex={0}
             ></Marker>
           ))
