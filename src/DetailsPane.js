@@ -167,9 +167,9 @@ export default function DetailsPane({
   const statusTallies = useMemo(() => {
     const tally = {};
     if (labels && labels.length > 0) {
-      labels.forEach(loc => {
+      labels.forEach(label => {
         // Use the status already stored in the label object
-        const status = loc.status || 0;
+        const status = label.status || 0;
         if (!tally[status]) tally[status] = 0;
         tally[status]++;
       });
@@ -1026,9 +1026,9 @@ export default function DetailsPane({
                           const updatedData = { ...termRenderings };
                           let hasChanges = false;
 
-                          labels.forEach(loc => {
-                            if (loc.status === STATUS_GUESSED) {
-                              const termId = loc.termId;
+                          labels.forEach(label => {
+                            if (label.status === STATUS_GUESSED) {
+                              const termId = label.termId;
                               if (updatedData[termId]) {
                                 updatedData[termId] = {
                                   ...updatedData[termId],

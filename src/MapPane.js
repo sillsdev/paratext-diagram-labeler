@@ -263,10 +263,10 @@ export default function MapPane({
   );
   const crs = Leaf.CRS.Simple;
   const transformedLabels = labels
-    .filter(loc => isLabelVisible(loc, selectedVariant))
-    .map(loc => {
-      const yLeaflet = imageHeight - loc.y;
-      return { ...loc, yLeaflet };
+    .filter(label => isLabelVisible(label, selectedVariant))
+    .map(label => {
+      const yLeaflet = imageHeight - label.y;
+      return { ...label, yLeaflet };
     });
   return (
     <MapContainer
@@ -322,31 +322,31 @@ export default function MapPane({
         </div>
       )}
       {transformedLabels.length > 0
-        ? transformedLabels.map(loc => (
+        ? transformedLabels.map(label => (
             <Marker
-              key={loc.termId}
-              position={[loc.yLeaflet, loc.x]}
+              key={label.termId}
+              position={[label.yLeaflet, label.x]}
               icon={createLabel(
-                loc.vernLabel || `(${inLang(loc.gloss, lang)})`,
-                loc.align,
-                loc.angle,
-                loc.size,
-                loc.status,
-                selectedLabelIndex === loc.idx,
+                label.vernLabel || `(${inLang(label.gloss, lang)})`,
+                label.align,
+                label.angle,
+                label.size,
+                label.status,
+                selectedLabelIndex === label.idx,
                 labelScale,
                 labelOpacity,
                 showFrac
                   ? frac(
                       getMatchTally(
-                        termRenderings[loc.termId],
-                        collectionManager.getRefs(loc.mergeKey, collectionId),
+                        termRenderings[label.termId],
+                        collectionManager.getRefs(label.mergeKey, collectionId),
                         extractedVerses
                       ),
                       true
                     )
                   : ''
               )}
-              eventHandlers={{ click: () => onSelectLabel(loc) }}
+              eventHandlers={{ click: () => onSelectLabel(label) }}
               tabIndex={0}
             ></Marker>
           ))

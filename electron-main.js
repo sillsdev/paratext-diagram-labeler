@@ -1587,15 +1587,15 @@ ipcMain.handle(
       let data;
       if (format === 'idml-txt') {
         // Prepare IDML data merge content
-        const dataMergeHeader = labels.map(loc => loc.mergeKey).join('\t');
-        const dataMergeContent = labels.map(loc => loc.vernLabel || '').join('\t');
+        const dataMergeHeader = labels.map(label => label.mergeKey).join('\t');
+        const dataMergeContent = labels.map(label => label.vernLabel || '').join('\t');
         data = dataMergeHeader + '\n' + dataMergeContent + '\n';
       } else if (format === 'mapx-txt') {        // Prepare MAPX data merge content
         // For each label, use the provided mapxKey and vernacular label, separated by a tab.
         data = labels
-          .map(loc => {
-            const mapxKey = loc.mapxKey;
-            const vernacularLabel = loc.vernLabel || '';
+          .map(label => {
+            const mapxKey = label.mapxKey;
+            const vernacularLabel = label.vernLabel || '';
             return `${mapxKey}\t${vernacularLabel}`;
           })
           .join('\n');
@@ -2005,9 +2005,9 @@ ipcMain.handle(
         }
 
         // For each label, insert a <Variant> element for the vernacular label
-        labels.forEach(loc => {
-          const mergeKey = loc.mergeKey;
-          const vernLabel = loc.vernLabel || '';
+        labels.forEach(label => {
+          const mergeKey = label.mergeKey;
+          const vernLabel = label.vernLabel || '';
           
           if (mergeKey && vernLabel) {
             // Find the Variant element with Language="Merge_Key" and Text matching the mergeKey

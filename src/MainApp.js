@@ -336,37 +336,37 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
         if (prevLabels.length === 0) {
           // If no previous labels, initialize from mapDef
           console.log('No previous labels found, initializing from mapDef');
-          return mapDef.labels.map(loc => {
-            if (!loc.vernLabel) {
-              const altTermIds = collectionManager.getAltTermIds(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template));
-              loc.vernLabel = getMapForm(termRenderings, loc.termId, altTermIds);
+          return mapDef.labels.map(label => {
+            if (!label.vernLabel) {
+              const altTermIds = collectionManager.getAltTermIds(label.mergeKey, getCollectionIdFromTemplate(mapDef.template));
+              label.vernLabel = getMapForm(termRenderings, label.termId, altTermIds);
             }
             const status = getStatus(
               termRenderings,
-              loc.termId,
-              loc.vernLabel,
+              label.termId,
+              label.vernLabel,
               collectionManager.getRefs(
-                loc.mergeKey,
+                label.mergeKey,
                 getCollectionIdFromTemplate(mapDef.template)
               ),
               extractedVerses
             );
-            return { ...loc, status };
+            return { ...label, status };
           });
         } else {
           // Update existing labels, preserving vernLabel values
-          return prevLabels.map(loc => {
+          return prevLabels.map(label => {
             const status = getStatus(
               termRenderings,
-              loc.termId,
-              loc.vernLabel || '', // Use existing vernLabel or empty string
+              label.termId,
+              label.vernLabel || '', // Use existing vernLabel or empty string
               collectionManager.getRefs(
-                loc.mergeKey,
+                label.mergeKey,
                 getCollectionIdFromTemplate(mapDef.template)
               ),
               extractedVerses
             );
-            return { ...loc, status };
+            return { ...label, status };
           });
         }
       });
@@ -458,18 +458,18 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
       const currentTermRenderings = { ...termRenderings };
 
       setLabels(prevLabels =>
-        prevLabels.map(loc => {
-          if (loc.termId === termId) {
+        prevLabels.map(label => {
+          if (label.termId === termId) {
             const status = getStatus(
               currentTermRenderings,
-              loc.termId,
+              label.termId,
               newVernacular,
-              collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+              collectionManager.getRefs(label.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
               extractedVerses
             );
-            return { ...loc, vernLabel: newVernacular, status };
+            return { ...label, vernLabel: newVernacular, status };
           }
-          return loc;
+          return label;
         })
       );
       
@@ -595,11 +595,11 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
 
     // Update the status of the affected label
     setLabels(prevLabels =>
-      prevLabels.map(loc => {
-        if (loc.termId === termId) {
-          return { ...loc, status };
+      prevLabels.map(label => {
+        if (label.termId === termId) {
+          return { ...label, status };
         }
-        return loc;
+        return label;
       })
     );
   };
@@ -640,11 +640,11 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
       extractedVerses
     );
     setLabels(prevLabels =>
-      prevLabels.map(loc => {
-        if (loc.termId === termId) {
-          return { ...loc, status };
+      prevLabels.map(label => {
+        if (label.termId === termId) {
+          return { ...label, status };
         }
-        return loc;
+        return label;
       })
     );
   };
@@ -654,9 +654,9 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
     try {
       // Build labels object: mergeKey -> vernLabel
       const labelsToSave = {};
-      labels.forEach(loc => {
-        if (loc.mergeKey && loc.vernLabel) {
-          labelsToSave[loc.mergeKey] = loc.vernLabel;
+      labels.forEach(label => {
+        if (label.mergeKey && label.vernLabel) {
+          labelsToSave[label.mergeKey] = label.vernLabel;
         }
       });
       
@@ -686,16 +686,16 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
     
     // Restore labels from saved labels
     const currentTermRenderings = { ...termRenderings };
-    const restoredLabels = labels.map(loc => {
-      const savedLabel = savedLabels[loc.mergeKey] || '';
+    const restoredLabels = labels.map(label => {
+      const savedLabel = savedLabels[label.mergeKey] || '';
       const status = getStatus(
         currentTermRenderings,
-        loc.termId,
+        label.termId,
         savedLabel,
-        collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+        collectionManager.getRefs(label.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
         extractedVerses
       );
-      return { ...loc, vernLabel: savedLabel, status };
+      return { ...label, vernLabel: savedLabel, status };
     });
     
     setLabels(restoredLabels);
@@ -830,15 +830,15 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
       // Make a local copy to ensure we're using the latest state
       const currentTermRenderings = { ...termRenderings };
 
-      const newLabels = foundTemplate.labels.map(loc => {
+      const newLabels = foundTemplate.labels.map(label => {
         const status = getStatus(
           currentTermRenderings,
-          loc.termId,
-          loc.vernLabel || '',
-          collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+          label.termId,
+          label.vernLabel || '',
+          collectionManager.getRefs(label.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
           extractedVerses
         );
-        return { ...loc, vernLabel: loc.vernLabel || '', status };
+        return { ...label, vernLabel: label.vernLabel || '', status };
       });
       
       // Load saved labels from .IDML.TXT file if no data merge file was loaded
@@ -855,31 +855,31 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
         }
       }
       
-      const initialLabels = newLabels.map(loc => {
-        if (labels[loc.mergeKey]) {
-          loc.vernLabel = labels[loc.mergeKey]; // Use label from data merge if available
-        } else if (savedIdmlLabels[loc.mergeKey]) {
-          loc.vernLabel = savedIdmlLabels[loc.mergeKey]; // Use saved label from .IDML.TXT file
-        } else if (!loc.vernLabel) {
-          const altTermIds = collectionManager.getAltTermIds(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template));
-          loc.vernLabel = getMapForm(currentTermRenderings, loc.termId, altTermIds);
+      const initialLabels = newLabels.map(label => {
+        if (labels[label.mergeKey]) {
+          label.vernLabel = labels[label.mergeKey]; // Use label from data merge if available
+        } else if (savedIdmlLabels[label.mergeKey]) {
+          label.vernLabel = savedIdmlLabels[label.mergeKey]; // Use saved label from .IDML.TXT file
+        } else if (!label.vernLabel) {
+          const altTermIds = collectionManager.getAltTermIds(label.mergeKey, getCollectionIdFromTemplate(mapDef.template));
+          label.vernLabel = getMapForm(currentTermRenderings, label.termId, altTermIds);
         }
 
         const status = getStatus(
           currentTermRenderings,
-          loc.termId,
-          loc.vernLabel,
-          collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+          label.termId,
+          label.vernLabel,
+          collectionManager.getRefs(label.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
           extractedVerses
         );
-        return { ...loc, status };
+        return { ...label, status };
       });
       
       // Store the saved labels for revert functionality
       const finalSavedLabels = {};
-      initialLabels.forEach(loc => {
-        if (loc.mergeKey && loc.vernLabel) {
-          finalSavedLabels[loc.mergeKey] = loc.vernLabel;
+      initialLabels.forEach(label => {
+        if (label.mergeKey && label.vernLabel) {
+          finalSavedLabels[label.mergeKey] = label.vernLabel;
         }
       });
       setSavedLabels(finalSavedLabels);
@@ -888,9 +888,9 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
       setLabels(initialLabels);
 
       // Find first visible label for initial selection
-      const firstVisibleIndex = initialLabels.findIndex(loc =>
+      const firstVisibleIndex = initialLabels.findIndex(label =>
         isLabelVisible(
-          loc,
+          label,
           foundTemplate.variants && Object.keys(foundTemplate.variants).length > 0 ? 1 : 0
         )
       );
@@ -1007,37 +1007,37 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
           
           // Initialize labels with status information
           const currentTermRenderings = { ...termRenderings };
-          const initialLabels = initialMap.labels.map(loc => {
-            if (!loc.vernLabel) {
-              const altTermIds = collectionManager.getAltTermIds(loc.mergeKey, getCollectionIdFromTemplate(initialMap.template));
-              loc.vernLabel = getMapForm(currentTermRenderings, loc.termId, altTermIds);
+          const initialLabels = initialMap.labels.map(label => {
+            if (!label.vernLabel) {
+              const altTermIds = collectionManager.getAltTermIds(label.mergeKey, getCollectionIdFromTemplate(initialMap.template));
+              label.vernLabel = getMapForm(currentTermRenderings, label.termId, altTermIds);
             }
             const status = getStatus(
               currentTermRenderings,
-              loc.termId,
-              loc.vernLabel,
-              collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(initialMap.template)),
+              label.termId,
+              label.vernLabel,
+              collectionManager.getRefs(label.mergeKey, getCollectionIdFromTemplate(initialMap.template)),
               extractedVerses
             );
-            return { ...loc, status };
+            return { ...label, status };
           });
           
           setLabels(initialLabels);
           
           // Set saved labels for revert functionality
           const finalSavedLabels = {};
-          initialLabels.forEach(loc => {
-            if (loc.mergeKey && loc.vernLabel) {
-              finalSavedLabels[loc.mergeKey] = loc.vernLabel;
+          initialLabels.forEach(label => {
+            if (label.mergeKey && label.vernLabel) {
+              finalSavedLabels[label.mergeKey] = label.vernLabel;
             }
           });
           setSavedLabels(finalSavedLabels);
           setHasUnsavedChanges(false);
           
           // Find first visible label for initial selection
-          const firstVisibleIndex = initialLabels.findIndex(loc =>
+          const firstVisibleIndex = initialLabels.findIndex(label =>
             isLabelVisible(
-              loc,
+              label,
               initialMap.variants && Object.keys(initialMap.variants).length > 0 ? 1 : 0
             )
           );
@@ -1091,19 +1091,19 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
       // Re-init labels and selection      // Create a local copy of termRenderings to ensure we're using the latest state
       const currentTermRenderings = { ...termRenderings };
 
-      const initialLabels = newMap.labels.map(loc => {
-        if (!loc.vernLabel) {
-          const altTermIds = collectionManager.getAltTermIds(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template));
-          loc.vernLabel = getMapForm(currentTermRenderings, loc.termId, altTermIds);
+      const initialLabels = newMap.labels.map(label => {
+        if (!label.vernLabel) {
+          const altTermIds = collectionManager.getAltTermIds(label.mergeKey, getCollectionIdFromTemplate(mapDef.template));
+          label.vernLabel = getMapForm(currentTermRenderings, label.termId, altTermIds);
         }
         const status = getStatus(
           currentTermRenderings,
-          loc.termId,
-          loc.vernLabel,
-          collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+          label.termId,
+          label.vernLabel,
+          collectionManager.getRefs(label.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
           extractedVerses
         );
-        return { ...loc, status };
+        return { ...label, status };
       });
       console.log('Initial labels from USFM:', initialLabels);
       setSelectedLabelIndex(0);
@@ -1177,18 +1177,18 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
       setTermRenderings(updatedData);
       setIsApproved(true);
       setLabels(prevLabels =>
-        prevLabels.map(loc => {
-          if (loc.termId === termId) {
+        prevLabels.map(label => {
+          if (label.termId === termId) {
             const status = getStatus(
               updatedData,
-              loc.termId,
-              loc.vernLabel,
-              collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+              label.termId,
+              label.vernLabel,
+              collectionManager.getRefs(label.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
               extractedVerses
             );
-            return { ...loc, status };
+            return { ...label, status };
           }
-          return loc;
+          return label;
         })
       );
       setTimeout(() => {
@@ -1217,19 +1217,19 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
       setTermRenderings(updatedData);
       setIsApproved(true);
       setLabels(prevLabels =>
-        prevLabels.map(loc => {
-          if (loc.termId === termId) {
+        prevLabels.map(label => {
+          if (label.termId === termId) {
             const vernLabel = newRenderings;
             const status = getStatus(
               updatedData,
-              loc.termId,
+              label.termId,
               vernLabel,
-              collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+              collectionManager.getRefs(label.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
               extractedVerses
             );
-            return { ...loc, status, vernLabel };
+            return { ...label, status, vernLabel };
           }
-          return loc;
+          return label;
         })
       );
       setTimeout(() => {
@@ -1439,15 +1439,15 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
     const currentTermRenderings = { ...termRenderings };
 
     setLabels(prevLabels =>
-      prevLabels.map(loc => {
+      prevLabels.map(label => {
         const status = getStatus(
           currentTermRenderings,
-          loc.termId,
-          loc.vernLabel || '',
-          collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+          label.termId,
+          label.vernLabel || '',
+          collectionManager.getRefs(label.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
           extractedVerses
         );
-        return { ...loc, status };
+        return { ...label, status };
       })
     );
   }, [termRenderings, extractedVerses, mapDef.template]);
@@ -1635,15 +1635,15 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
 
     // Update all label statuses based on the current extractedVerses
     setLabels(prevLabels => {
-      return prevLabels.map(loc => {
+      return prevLabels.map(label => {
         const status = getStatus(
           termRenderings,
-          loc.termId,
-          loc.vernLabel || '',
-          collectionManager.getRefs(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
+          label.termId,
+          label.vernLabel || '',
+          collectionManager.getRefs(label.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
           extractedVerses
         );
-        return { ...loc, status };
+        return { ...label, status };
       });
     });
 
