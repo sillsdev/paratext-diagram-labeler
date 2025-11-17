@@ -1531,7 +1531,7 @@ ipcMain.handle('file-exists', async (event, filePath) => {
 // Handle IDML/MAPX data merge export
 ipcMain.handle(
   'export-data-merge',
-  async (event, { locations, templateName, format, projectFolder, mapxPath, idmlPath, language, languageCode }) => {
+  async (event, { labels, templateName, format, projectFolder, mapxPath, idmlPath, language, languageCode }) => {
     await loadSettings(projectFolder);
     try {
       // Automatically create local/figures folder structure for full exports
@@ -1587,12 +1587,12 @@ ipcMain.handle(
       let data;
       if (format === 'idml-txt') {
         // Prepare IDML data merge content
-        const dataMergeHeader = locations.map(loc => loc.mergeKey).join('\t');
-        const dataMergeContent = locations.map(loc => loc.vernLabel || '').join('\t');
+        const dataMergeHeader = labels.map(loc => loc.mergeKey).join('\t');
+        const dataMergeContent = labels.map(loc => loc.vernLabel || '').join('\t');
         data = dataMergeHeader + '\n' + dataMergeContent + '\n';
       } else if (format === 'mapx-txt') {        // Prepare MAPX data merge content
-        // For each location, use the provided mapxKey and vernacular label, separated by a tab.
-        data = locations
+        // For each label, use the provided mapxKey and vernacular label, separated by a tab.
+        data = labels
           .map(loc => {
             const mapxKey = loc.mapxKey;
             const vernacularLabel = loc.vernLabel || '';
@@ -1806,10 +1806,10 @@ ipcMain.handle(
           
           // Step 4: Check for missing merge fields
           const missingFields = [];
-          console.log(`Checking ${locations.length} locations for merge keys...`);
-          for (const location of locations) {
-            if (location.mergeKey && !mergeKeyToHyperlink[location.mergeKey]) {
-              missingFields.push(location.mergeKey);
+          console.log(`Checking ${labels.length} labels for merge keys...`);
+          for (const label of labels) {
+            if (label.mergeKey && !mergeKeyToHyperlink[label.mergeKey]) {
+              missingFields.push(label.mergeKey);
             }
           }
           
@@ -1845,10 +1845,10 @@ ipcMain.handle(
           // Step 5: Process each story file and replace content
           const modifiedStoryFiles = new Set();
           
-          for (const location of locations) {
-            const mergeKey = location.mergeKey;
+          for (const label of labels) {
+            const mergeKey = label.mergeKey;
             // Get vernLabel, or use double FEFF for empty/blank fields (InDesign merge field preservation)
-            let vernLabel = location.vernLabel !== undefined && location.vernLabel !== null ? location.vernLabel : '';
+            let vernLabel = label.vernLabel !== undefined && label.vernLabel !== null ? label.vernLabel : '';
             
             // If vernLabel is empty or only whitespace, use double FEFF to preserve merge field
             if (!vernLabel || vernLabel.trim() === '') {
@@ -1859,7 +1859,7 @@ ipcMain.handle(
             
             const hyperlinkInfo = mergeKeyToHyperlink[mergeKey];
             if (!hyperlinkInfo) {
-              console.log(`Skipping location with merge key "${mergeKey}" - not found in IDML`);
+              console.log(`Skipping label with merge key "${mergeKey}" - not found in IDML`);
               continue;
             }
             
@@ -2004,8 +2004,8 @@ ipcMain.handle(
           throw new Error('The selected MAPX file does not contain the required Merge_Key language definition. Please use a version of the MAPX file that contains Merge_Key data.');
         }
 
-        // For each location, insert a <Variant> element for the vernacular label
-        locations.forEach(loc => {
+        // For each label, insert a <Variant> element for the vernacular label
+        labels.forEach(loc => {
           const mergeKey = loc.mergeKey;
           const vernLabel = loc.vernLabel || '';
           

@@ -384,7 +384,7 @@ function BottomPane({
                     setTermRenderings(updatedData);
                     if (typeof setRenderings === 'function') setRenderings(r => r + '');
                     setDenialToggle(t => !t);
-                    if (typeof onDenialsChanged === 'function') onDenialsChanged(); // <-- update locations in App
+                    if (typeof onDenialsChanged === 'function') onDenialsChanged(); // <-- update labels in App
                   };
                   return (
                     <tr

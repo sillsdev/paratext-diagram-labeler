@@ -3,38 +3,38 @@ import './MainApp.css';
 import uiStr from './data/ui-strings.json';
 import { CheckmarkIcon, DeniedCheckmarkIcon, WarningIcon } from './TermIcons';
 import { collectionManager } from './CollectionManager';
-import { inLang, statusValue, getMatchTally, isLocationVisible } from './Utils.js';
+import { inLang, statusValue, getMatchTally, isLabelVisible } from './Utils.js';
 import { AutocorrectInput } from './components/AutocorrectInput';
 
 // Table View component
 export default function TableView({
-  locations,
-  selLocation,
+  labels,
+  selectedLabelIndex,
   onUpdateVernacular,
-  onNextLocation,
+  onNextLabel,
   termRenderings,
-  onSelectLocation,
+  onSelectLabel,
   lang,
   extractedVerses,
   collectionId = 'SMR',
   selectedVariant = 0,
 }) {
   const inputRefs = useRef([]);
-  const prevSelLocationRef = useRef(selLocation);
+  const prevSelectedLabelRef = useRef(selectedLabelIndex);
   
   useEffect(() => {
-    // Only focus when selLocation actually changes, not when locations array is updated
-    if (prevSelLocationRef.current !== selLocation) {
-      prevSelLocationRef.current = selLocation;
+    // Only focus when selectedLabelIndex actually changes, not when labels array is updated
+    if (prevSelectedLabelRef.current !== selectedLabelIndex) {
+      prevSelectedLabelRef.current = selectedLabelIndex;
       
       // Focus the input for the selected row
-      const idx = selLocation;
+      const idx = selectedLabelIndex;
       if (idx >= 0 && inputRefs.current[idx]) {
         inputRefs.current[idx].focus();
-        console.log('TableView: Focus set on input for location:', selLocation);  
+        console.log('TableView: Focus set on input for label:', selectedLabelIndex);  
       }
     }
-  }, [selLocation]);
+  }, [selectedLabelIndex]);
   return (
     <div className="table-view-scroll-wrapper">
       <table className="table-view" style={{ borderCollapse: 'collapse' }}>
@@ -48,13 +48,13 @@ export default function TableView({
           </tr>
         </thead>
         <tbody>
-          {locations
-            .filter(loc => isLocationVisible(loc, selectedVariant))
+          {labels
+            .filter(loc => isLabelVisible(loc, selectedVariant))
             .map((loc, i) => {
               // Use loc.status which is already calculated in App.js
               // This avoids inconsistencies with status calculations
               const status = loc.status;
-              const isSelected = selLocation === loc.idx;
+              const isSelected = selectedLabelIndex === loc.idx;
               return (
                 <tr
                   key={loc.termId}
@@ -65,7 +65,7 @@ export default function TableView({
                     paddingTop: isSelected ? 12 : undefined,
                     paddingBottom: isSelected ? 12 : undefined,
                   }}
-                  onClick={() => onSelectLocation(loc)}
+                  onClick={() => onSelectLabel(loc)}
                 >
                   <td style={isSelected ? { paddingTop: 4, paddingBottom: 4 } : {}}>
                     {inLang(loc.gloss, lang)}
@@ -76,14 +76,14 @@ export default function TableView({
                       type="text"
                       value={loc.vernLabel || ''}
                       onChange={e => onUpdateVernacular(loc.termId, e.target.value)}
-                      onFocus={() => onSelectLocation(loc)}
+                      onFocus={() => onSelectLabel(loc)}
                       onKeyDown={e => {
                         if (e.key === 'ArrowDown') {
-                          onNextLocation(true);
+                          onNextLabel(true);
                           e.preventDefault();
                           e.stopPropagation();
                         } else if (e.key === 'ArrowUp') {
-                          onNextLocation(false);
+                          onNextLabel(false);
                           e.preventDefault();
                           e.stopPropagation();
                         }

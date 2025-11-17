@@ -272,12 +272,12 @@ function convertParatextWildcardsToRegex(rendering) {
   return regexParts.join('');
 }
 
-// Utility function to determine if a location is visible based on selected variant
-export function isLocationVisible(location, selectedVariant) {
-  // If no variants defined (selectedVariant = 0), or location variant is 0, always visible
-  if (selectedVariant === 0 || !location.variant || location.variant === 0) {
+// Utility function to determine if a label is visible based on selected variant
+export function isLabelVisible(label, selectedVariant) {
+  // If no variants defined (selectedVariant = 0), or label variant is 0, always visible
+  if (selectedVariant === 0 || !label.variant || label.variant === 0) {
     return true;
   }
   // Bitwise AND check
-  return (selectedVariant & location.variant) !== 0;
+  return (selectedVariant & label.variant) !== 0;
 }

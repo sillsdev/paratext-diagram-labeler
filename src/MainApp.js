@@ -5,7 +5,7 @@ import uiStr from './data/ui-strings.json';
 import { MAP_VIEW, TABLE_VIEW, USFM_VIEW } from './constants.js';
 import { collectionManager, getCollectionIdFromTemplate, findCollectionIdAndTemplate } from './CollectionManager';
 import { getMapDef } from './MapData';
-import { inLang, getStatus, getMapForm, isLocationVisible } from './Utils.js';
+import { inLang, getStatus, getMapForm, isLabelVisible } from './Utils.js';
 import MapPane from './MapPane.js';
 import TableView from './TableView.js';
 import DetailsPane from './DetailsPane.js';
@@ -135,8 +135,8 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
     return settings?.language || 'en';
   });
   const [mapDef, setMapDef] = useState(emptyInitialMap);
-  const [locations, setLocations] = useState([]);
-  const [selLocation, setSelLocation] = useState(0);
+  const [labels, setLabels] = useState([]);
+  const [selectedLabelIndex, setSelectedLabelIndex] = useState(0);
   const [mapWidth, setMapWidth] = useState(70);
   const [topHeight, setTopHeight] = useState(80);
   const [renderings, setRenderings] = useState('');
@@ -325,17 +325,17 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
     initializeColls();
   }, [settings, templateFolder, projectFolder]);
 
-  // Set initial locations
+  // Set initial labels
   useEffect(() => {
     if (!electronAPI || !projectFolder || !isInitialized || !mapDef || !mapDef.labels?.length)
       return;
 
     try {
-      // Update existing locations with termRenderings, preserving vernLabel values
-      setLocations(prevLocations => {
-        if (prevLocations.length === 0) {
-          // If no previous locations, initialize from mapDef
-          console.log('No previous locations found, initializing from mapDef');
+      // Update existing labels with termRenderings, preserving vernLabel values
+      setLabels(prevLabels => {
+        if (prevLabels.length === 0) {
+          // If no previous labels, initialize from mapDef
+          console.log('No previous labels found, initializing from mapDef');
           return mapDef.labels.map(loc => {
             if (!loc.vernLabel) {
               const altTermIds = collectionManager.getAltTermIds(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template));
@@ -354,8 +354,8 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
             return { ...loc, status };
           });
         } else {
-          // Update existing locations, preserving vernLabel values
-          return prevLocations.map(loc => {
+          // Update existing labels, preserving vernLabel values
+          return prevLabels.map(loc => {
             const status = getStatus(
               termRenderings,
               loc.termId,
@@ -374,16 +374,16 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
       if (
         mapDef.labels &&
         mapDef.labels.length > 0 &&
-        (selLocation >= mapDef.labels.length || selLocation < 0)
+        (selectedLabelIndex >= mapDef.labels.length || selectedLabelIndex < 0)
       ) {
-        setSelLocation(0); // Select first location only if current selection is invalid
+        setSelectedLabelIndex(0); // Select first label only if current selection is invalid
       }
     } catch (e) {
-      console.log(`Error updating locations:`, e);
+      console.log(`Error updating labels:`, e);
     }
 
     
-  }, [projectFolder, mapDef, isInitialized,  extractedVerses, selLocation, termRenderings]); 
+  }, [projectFolder, mapDef, isInitialized,  extractedVerses, selectedLabelIndex, termRenderings]); 
 
   // setExtractedVerses when projectFolder or mapDef.labels change
   useEffect(() => {
@@ -415,14 +415,14 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
     }
   }, [projectFolder, isInitialized]);
 
-  // Update renderings and approval status when selected location or term renderings change
+  // Update renderings and approval status when selected label or term renderings change
   useEffect(() => {
-    if (!termRenderings || !locations.length || selLocation >= locations.length) return;
+    if (!termRenderings || !labels.length || selectedLabelIndex >= labels.length) return;
 
-    const currentLocation = locations[selLocation];
-    if (!currentLocation) return;
+    const currentLabel = labels[selectedLabelIndex];
+    if (!currentLabel) return;
 
-    const entry = termRenderings[currentLocation.termId];
+    const entry = termRenderings[currentLabel.termId];
     if (entry) {
       setRenderings(entry.renderings);
       setIsApproved(!entry.isGuessed);
@@ -430,35 +430,35 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
       setRenderings('');
       setIsApproved(false);
     }
-  }, [selLocation, termRenderings, locations]);
+  }, [selectedLabelIndex, termRenderings, labels]);
 
-  // Handler to set the selected location (e.g. Label clicked)
-  const handleSelectLocation = useCallback(
-    location => {
-      console.log('Selected location:', location);
-      if (!location) return;
-      setSelLocation(location.idx);
-      const entry = termRenderings[location.termId];
+  // Handler to set the selected label (e.g. Label clicked)
+  const handleSelectLabel = useCallback(
+    label => {
+      console.log('Selected label:', label);
+      if (!label) return;
+      setSelectedLabelIndex(label.idx);
+      const entry = termRenderings[label.termId];
       if (entry) {
         setRenderings(entry.renderings);
         setIsApproved(!entry.isGuessed);
       } else {
         setRenderings('');
         setIsApproved(false);
-        //console.warn(`No term renderings entry for termId: ${location.termId}`);
+        //console.warn(`No term renderings entry for termId: ${label.termId}`);
       }
     },
-    [termRenderings, setRenderings, setIsApproved, setSelLocation]
+    [termRenderings, setRenderings, setIsApproved, setSelectedLabelIndex]
   );
 
-  // Handler to update label of selected location with new vernacular and status
+  // Handler to update label of selected label with new vernacular and status
   const handleUpdateVernacular = useCallback(
     (termId, newVernacular) => {
       // Create a copy of the current state to ensure we're using the latest data
       const currentTermRenderings = { ...termRenderings };
 
-      setLocations(prevLocations =>
-        prevLocations.map(loc => {
+      setLabels(prevLabels =>
+        prevLabels.map(loc => {
           if (loc.termId === termId) {
             const status = getStatus(
               currentTermRenderings,
@@ -479,18 +479,18 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
     [termRenderings, extractedVerses, mapDef.template]
   ); // is just renderings enough here?
 
-  // Handler to cycle forward or backward through locations
-  const handleNextLocation = useCallback(
+  // Handler to cycle forward or backward through labels
+  const handleNextLabel = useCallback(
     fwd => {
-      // Find all visible location indices
-      const visibleIndices = locations
-        .map((loc, idx) => ({ loc, idx }))
-        .filter(({ loc }) => isLocationVisible(loc, selectedVariant))
+      // Find all visible label indices
+      const visibleIndices = labels
+        .map((lbl, idx) => ({ lbl, idx }))
+        .filter(({ lbl }) => isLabelVisible(lbl, selectedVariant))
         .map(({ idx }) => idx);
 
-      if (visibleIndices.length === 0) return; // No visible locations
+      if (visibleIndices.length === 0) return; // No visible labels
 
-      const currentVisibleIndex = visibleIndices.indexOf(selLocation);
+      const currentVisibleIndex = visibleIndices.indexOf(selectedLabelIndex);
       let nextVisibleIndex;
 
       if (fwd) {
@@ -500,12 +500,12 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
           (currentVisibleIndex - 1 + visibleIndices.length) % visibleIndices.length;
       }
 
-      const nextLocationIndex = visibleIndices[nextVisibleIndex];
-      const nextLocation = locations[nextLocationIndex];
-      setSelLocation(nextLocationIndex);
-      handleSelectLocation(nextLocation);
+      const nextLabelIndex = visibleIndices[nextVisibleIndex];
+      const nextLabel = labels[nextLabelIndex];
+      setSelectedLabelIndex(nextLabelIndex);
+      handleSelectLabel(nextLabel);
     },
-    [locations, selLocation, handleSelectLocation, selectedVariant]
+    [labels, selectedLabelIndex, handleSelectLabel, selectedVariant]
   );
 
   // Handlers for resizing panes
@@ -559,7 +559,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
   // Handler for change in renderings textarea
   const handleRenderingsChange = e => {
     const newRenderings = e.target.value;
-    const termId = locations[selLocation].termId;
+    const termId = labels[selectedLabelIndex].termId;
 
     // Update local state
     setRenderings(newRenderings);
@@ -581,21 +581,21 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
     // Update termRenderings state
     setTermRenderings(updatedData);
 
-    // The renderings change might affect the status of the location indexed by selLocation
+    // The renderings change might affect the status of the label indexed by selectedLabelIndex
     const status = getStatus(
       updatedData,
       termId,
-      locations[selLocation].vernLabel || '',
+      labels[selectedLabelIndex].vernLabel || '',
       collectionManager.getRefs(
-        locations[selLocation].mergeKey,
+        labels[selectedLabelIndex].mergeKey,
         getCollectionIdFromTemplate(mapDef.template)
       ),
       extractedVerses
     );
 
-    // Update the status of the affected location
-    setLocations(prevLocations =>
-      prevLocations.map(loc => {
+    // Update the status of the affected label
+    setLabels(prevLabels =>
+      prevLabels.map(loc => {
         if (loc.termId === termId) {
           return { ...loc, status };
         }
@@ -607,7 +607,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
   // Handler for change in approved status.
   const handleApprovedChange = e => {
     const approved = e.target.checked;
-    const termId = locations[selLocation].termId;
+    const termId = labels[selectedLabelIndex].termId;
 
     // Update local state
     setIsApproved(approved);
@@ -628,19 +628,19 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
     // Update termRenderings state
     setTermRenderings(updatedData);
 
-    // Update the status of the affected location
+    // Update the status of the affected label
     const status = getStatus(
       updatedData,
       termId,
-      locations[selLocation].vernLabel || '',
+      labels[selectedLabelIndex].vernLabel || '',
       collectionManager.getRefs(
-        locations[selLocation].mergeKey,
+        labels[selectedLabelIndex].mergeKey,
         getCollectionIdFromTemplate(mapDef.template)
       ),
       extractedVerses
     );
-    setLocations(prevLocations =>
-      prevLocations.map(loc => {
+    setLabels(prevLabels =>
+      prevLabels.map(loc => {
         if (loc.termId === termId) {
           return { ...loc, status };
         }
@@ -654,7 +654,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
     try {
       // Build labels object: mergeKey -> vernLabel
       const labelsToSave = {};
-      locations.forEach(loc => {
+      labels.forEach(loc => {
         if (loc.mergeKey && loc.vernLabel) {
           labelsToSave[loc.mergeKey] = loc.vernLabel;
         }
@@ -678,15 +678,15 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
       console.error('Error saving labels:', error);
       alert(inLang(uiStr.errorSavingLabels, lang) + ': ' + error.message);
     }
-  }, [mapDef.template, locations, projectFolder, lang]);
+  }, [mapDef.template, labels, projectFolder, lang]);
 
   // Handler to revert labels to last saved state
   const handleRevertLabels = useCallback(() => {
     if (!hasUnsavedChanges) return;
     
-    // Restore locations from saved labels
+    // Restore labels from saved labels
     const currentTermRenderings = { ...termRenderings };
-    const restoredLocations = locations.map(loc => {
+    const restoredLabels = labels.map(loc => {
       const savedLabel = savedLabels[loc.mergeKey] || '';
       const status = getStatus(
         currentTermRenderings,
@@ -698,10 +698,10 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
       return { ...loc, vernLabel: savedLabel, status };
     });
     
-    setLocations(restoredLocations);
+    setLabels(restoredLabels);
     setHasUnsavedChanges(false);
     console.log('Labels reverted to last saved state');
-  }, [hasUnsavedChanges, savedLabels, locations, termRenderings, extractedVerses, mapDef.template]);
+  }, [hasUnsavedChanges, savedLabels, labels, termRenderings, extractedVerses, mapDef.template]);
 
   // Helper function to prompt user about unsaved changes
   const promptUnsavedChanges = useCallback(async () => {
@@ -810,7 +810,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
         figFilename = exactTemplateName + '.jpg'; // Default to .jpg
       }
 
-      // Set mapDef and locations
+      // Set mapDef and labels
       setMapDef({
         template: exactTemplateName,
         fig: '\\fig | src="' + figFilename + '" size="span" ref="-"\\fig*',
@@ -830,7 +830,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
       // Make a local copy to ensure we're using the latest state
       const currentTermRenderings = { ...termRenderings };
 
-      const newLocations = foundTemplate.labels.map(loc => {
+      const newLabels = foundTemplate.labels.map(loc => {
         const status = getStatus(
           currentTermRenderings,
           loc.termId,
@@ -855,7 +855,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
         }
       }
       
-      const initialLocations = newLocations.map(loc => {
+      const initialLabels = newLabels.map(loc => {
         if (labels[loc.mergeKey]) {
           loc.vernLabel = labels[loc.mergeKey]; // Use label from data merge if available
         } else if (savedIdmlLabels[loc.mergeKey]) {
@@ -877,25 +877,25 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
       
       // Store the saved labels for revert functionality
       const finalSavedLabels = {};
-      initialLocations.forEach(loc => {
+      initialLabels.forEach(loc => {
         if (loc.mergeKey && loc.vernLabel) {
           finalSavedLabels[loc.mergeKey] = loc.vernLabel;
         }
       });
       setSavedLabels(finalSavedLabels);
       setHasUnsavedChanges(false);
-      console.log('Initial locations:', initialLocations);
-      setLocations(initialLocations);
+      console.log('Initial labels:', initialLabels);
+      setLabels(initialLabels);
 
-      // Find first visible location for initial selection
-      const firstVisibleIndex = initialLocations.findIndex(loc =>
-        isLocationVisible(
+      // Find first visible label for initial selection
+      const firstVisibleIndex = initialLabels.findIndex(loc =>
+        isLabelVisible(
           loc,
           foundTemplate.variants && Object.keys(foundTemplate.variants).length > 0 ? 1 : 0
         )
       );
       if (firstVisibleIndex !== -1) {
-        handleSelectLocation(initialLocations[firstVisibleIndex]); // Auto-select first visible location
+        handleSelectLabel(initialLabels[firstVisibleIndex]); // Auto-select first visible label
       }
       setMapPaneView(MAP_VIEW); // Map View
       setResetZoomFlag(true); // Reset zoom on new map
@@ -905,10 +905,10 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
     }
   }, [
     setMapDef,
-    setLocations,
+    setLabels,
     termRenderings,
     lang,
-    handleSelectLocation,
+    handleSelectLabel,
     extractedVerses,
     projectFolder,
     mapDef.template,
@@ -1005,9 +1005,9 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
           setSelectedVariant(initialMap.variants && Object.keys(initialMap.variants).length > 0 ? 1 : 0);
           setMapPaneView(initialMap.mapView ? MAP_VIEW : TABLE_VIEW);
           
-          // Initialize locations with status information
+          // Initialize labels with status information
           const currentTermRenderings = { ...termRenderings };
-          const initialLocations = initialMap.labels.map(loc => {
+          const initialLabels = initialMap.labels.map(loc => {
             if (!loc.vernLabel) {
               const altTermIds = collectionManager.getAltTermIds(loc.mergeKey, getCollectionIdFromTemplate(initialMap.template));
               loc.vernLabel = getMapForm(currentTermRenderings, loc.termId, altTermIds);
@@ -1022,11 +1022,11 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
             return { ...loc, status };
           });
           
-          setLocations(initialLocations);
+          setLabels(initialLabels);
           
           // Set saved labels for revert functionality
           const finalSavedLabels = {};
-          initialLocations.forEach(loc => {
+          initialLabels.forEach(loc => {
             if (loc.mergeKey && loc.vernLabel) {
               finalSavedLabels[loc.mergeKey] = loc.vernLabel;
             }
@@ -1034,14 +1034,14 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
           setSavedLabels(finalSavedLabels);
           setHasUnsavedChanges(false);
           
-          // Find first visible location for initial selection
-          const firstVisibleIndex = initialLocations.findIndex(loc =>
-            isLocationVisible(
+          // Find first visible label for initial selection
+          const firstVisibleIndex = initialLabels.findIndex(loc =>
+            isLabelVisible(
               loc,
               initialMap.variants && Object.keys(initialMap.variants).length > 0 ? 1 : 0
             )
           );
-          setSelLocation(firstVisibleIndex >= 0 ? firstVisibleIndex : 0);
+          setSelectedLabelIndex(firstVisibleIndex >= 0 ? firstVisibleIndex : 0);
         }
       } catch (error) {
         console.log('Unable to initialize map:', error);
@@ -1068,30 +1068,30 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
 
   // --- USFM state for editing ---
   const [usfmText, setUsfmText] = useState(() =>
-    usfmFromMap({ ...mapDef, labels: locations }, lang)
+    usfmFromMap({ ...mapDef, labels }, lang)
   );
 
-  // Only update USFM text when switching TO USFM view (not on every locations change)
+  // Only update USFM text when switching TO USFM view (not on every labels change)
   const prevMapPaneView = useRef();
   useEffect(() => {
     if (prevMapPaneView.current !== USFM_VIEW && mapPaneView === USFM_VIEW) {
-      setUsfmText(usfmFromMap({ ...mapDef, labels: locations }, lang));
+      setUsfmText(usfmFromMap({ ...mapDef, labels }, lang));
     }
     prevMapPaneView.current = mapPaneView;
-  }, [mapPaneView, locations, mapDef, lang]);
+  }, [mapPaneView, labels, mapDef, lang]);
 
-  // --- USFM to map/locations sync ---
-  // Helper to update map/locations from USFM text
+  // --- USFM to map/labels sync ---
+  // Helper to update map/labels from USFM text
   const updateMapFromUsfm = useCallback(async () => {
     if (!usfmTextareaRef.current) return;
     const text = usfmTextareaRef.current.value;
     try {
       const newMap = await mapFromUsfm(text);
       console.log('Parsed map from USFM:', newMap);
-      // Re-init locations and selection      // Create a local copy of termRenderings to ensure we're using the latest state
+      // Re-init labels and selection      // Create a local copy of termRenderings to ensure we're using the latest state
       const currentTermRenderings = { ...termRenderings };
 
-      const initialLocations = newMap.labels.map(loc => {
+      const initialLabels = newMap.labels.map(loc => {
         if (!loc.vernLabel) {
           const altTermIds = collectionManager.getAltTermIds(loc.mergeKey, getCollectionIdFromTemplate(mapDef.template));
           loc.vernLabel = getMapForm(currentTermRenderings, loc.termId, altTermIds);
@@ -1105,9 +1105,9 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
         );
         return { ...loc, status };
       });
-      console.log('Initial locations from USFM:', initialLocations);
-      setSelLocation(0);
-      setLocations(initialLocations);
+      console.log('Initial labels from USFM:', initialLabels);
+      setSelectedLabelIndex(0);
+      setLabels(initialLabels);
       //  update map object      // Update map data in state
       setMapDef({
         ...mapDef,
@@ -1127,7 +1127,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
       alert(inLang(uiStr.invalidUsfm, lang));
       return false; // Indicate failure
     }
-  }, [termRenderings, setLocations, setSelLocation, lang, mapDef, extractedVerses]);
+  }, [termRenderings, setLabels, setSelectedLabelIndex, lang, mapDef, extractedVerses]);
   // Intercept view switch to update map if leaving USFM view
   const handleSwitchViewWithUsfm = useCallback(async () => {
     if (mapPaneView === USFM_VIEW) {
@@ -1161,8 +1161,8 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
   // Add rendering from bottom pane selection
   const handleAddRendering = useCallback(
     text => {
-      if (!locations[selLocation]) return;
-      const termId = locations[selLocation].termId;
+      if (!labels[selectedLabelIndex]) return;
+      const termId = labels[selectedLabelIndex].termId;
       let currentRenderings = renderings || '';
       let newRenderings = currentRenderings.trim()
         ? `${currentRenderings.trim()}\n${text.trim()}`
@@ -1176,8 +1176,8 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
       };
       setTermRenderings(updatedData);
       setIsApproved(true);
-      setLocations(prevLocations =>
-        prevLocations.map(loc => {
+      setLabels(prevLabels =>
+        prevLabels.map(loc => {
           if (loc.termId === termId) {
             const status = getStatus(
               updatedData,
@@ -1198,14 +1198,14 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
         }
       }, 0);
     },
-    [renderings, selLocation, locations, termRenderings, extractedVerses, mapDef.template, setTermRenderings]
+    [renderings, selectedLabelIndex, labels, termRenderings, extractedVerses, mapDef.template, setTermRenderings]
   );
 
   // Replace all renderings with selected text (from bottom pane) or create new rendering (from details pane)
   const handleReplaceRendering = useCallback(
     text => {
-      if (!locations[selLocation]) return;
-      const termId = locations[selLocation].termId;
+      if (!labels[selectedLabelIndex]) return;
+      const termId = labels[selectedLabelIndex].termId;
       const newRenderings = text.trim();
       setRenderings(newRenderings);
       const updatedData = { ...termRenderings };
@@ -1216,8 +1216,8 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
       };
       setTermRenderings(updatedData);
       setIsApproved(true);
-      setLocations(prevLocations =>
-        prevLocations.map(loc => {
+      setLabels(prevLabels =>
+        prevLabels.map(loc => {
           if (loc.termId === termId) {
             const vernLabel = newRenderings;
             const status = getStatus(
@@ -1239,7 +1239,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
         }
       }, 0);
     },
-    [selLocation, locations, termRenderings, extractedVerses, mapDef.template, setTermRenderings]
+    [selectedLabelIndex, labels, termRenderings, extractedVerses, mapDef.template, setTermRenderings]
   );
 
   // Reload extracted verses for all terms (after Paratext edits)
@@ -1363,16 +1363,16 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
         return;
       }
       if (e.key === 'PageDown') {
-        handleNextLocation(true);
+        handleNextLabel(true);
         e.preventDefault();
       } else if (e.key === 'PageUp') {
-        handleNextLocation(false);
+        handleNextLabel(false);
         e.preventDefault();
       }
     }
     window.addEventListener('keydown', handleGlobalKeyDown);
     return () => window.removeEventListener('keydown', handleGlobalKeyDown);
-  }, [mapPaneView, handleNextLocation]); // Remove mapDef, mapRef from deps
+  }, [mapPaneView, handleNextLabel]); // Remove mapDef, mapRef from deps
 
   // Add listener for fit-map event from menu
   useEffect(() => {
@@ -1395,38 +1395,38 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
   // Add listeners for navigation events from menu
   useEffect(() => {
     if (electronAPI && electronAPI.onNextLabel && electronAPI.onPreviousLabel) {
-      const handleNextLabel = () => {
+      const handleNextLabelMenu = () => {
         if (mapPaneView !== USFM_VIEW) {
           console.log('Next Label triggered from menu');
-          handleNextLocation(true);
+          handleNextLabel(true);
         }
       };
       
-      const handlePreviousLabel = () => {
+      const handlePreviousLabelMenu = () => {
         if (mapPaneView !== USFM_VIEW) {
           console.log('Previous Label triggered from menu');
-          handleNextLocation(false);
+          handleNextLabel(false);
         }
       };
       
-      electronAPI.onNextLabel(handleNextLabel);
-      electronAPI.onPreviousLabel(handlePreviousLabel);
+      electronAPI.onNextLabel(handleNextLabelMenu);
+      electronAPI.onPreviousLabel(handlePreviousLabelMenu);
       
       return () => {
         if (electronAPI.removeNextLabelListener) {
-          electronAPI.removeNextLabelListener(handleNextLabel);
+          electronAPI.removeNextLabelListener(handleNextLabelMenu);
         }
         if (electronAPI.removePreviousLabelListener) {
-          electronAPI.removePreviousLabelListener(handlePreviousLabel);
+          electronAPI.removePreviousLabelListener(handlePreviousLabelMenu);
         }
       };
     }
-  }, [mapPaneView, handleNextLocation]);
+  }, [mapPaneView, handleNextLabel]);
 
-  // Memoize locations and mapDef to prevent MapPane remounts
-  const memoizedLocations = useMemo(() => locations, [locations]);
+  // Memoize labels and mapDef to prevent MapPane remounts
+  const memoizedLabels = useMemo(() => labels, [labels]);
   const memoizedMapDef = useMemo(() => mapDef, [mapDef]);
-  const memoizedHandleSelectLocation = useCallback(handleSelectLocation, [handleSelectLocation]);
+  const memoizedHandleSelectLabel = useCallback(handleSelectLabel, [handleSelectLabel]);
 
   // Extract the current collection ID from the template name
   const currentCollectionId = useMemo(() => {
@@ -1438,8 +1438,8 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
     // Make sure we're using the latest term renderings state
     const currentTermRenderings = { ...termRenderings };
 
-    setLocations(prevLocations =>
-      prevLocations.map(loc => {
+    setLabels(prevLabels =>
+      prevLabels.map(loc => {
         const status = getStatus(
           currentTermRenderings,
           loc.termId,
@@ -1617,25 +1617,25 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
       setSelectedVariant(newVariantId);
 
       // Check if current selection is still visible
-      const currentLocation = locations[selLocation];
-      if (!currentLocation || !isLocationVisible(currentLocation, newVariantId)) {
-        // Find first visible location
-        const firstVisibleIndex = locations.findIndex(loc => isLocationVisible(loc, newVariantId));
+      const currentLabel = labels[selectedLabelIndex];
+      if (!currentLabel || !isLabelVisible(currentLabel, newVariantId)) {
+        // Find first visible label
+        const firstVisibleIndex = labels.findIndex(lbl => isLabelVisible(lbl, newVariantId));
         if (firstVisibleIndex !== -1) {
-          setSelLocation(firstVisibleIndex);
+          setSelectedLabelIndex(firstVisibleIndex);
         }
       }
     },
-    [locations, selLocation]
+    [labels, selectedLabelIndex]
   );
 
-  // Update location statuses when extractedVerses change (without affecting selection)
+  // Update label statuses when extractedVerses change (without affecting selection)
   useEffect(() => {
-    if (!termRenderings || !locations.length || !mapDef.template) return;
+    if (!termRenderings || !labels.length || !mapDef.template) return;
 
-    // Update all location statuses based on the current extractedVerses
-    setLocations(prevLocations => {
-      return prevLocations.map(loc => {
+    // Update all label statuses based on the current extractedVerses
+    setLabels(prevLabels => {
+      return prevLabels.map(loc => {
         const status = getStatus(
           termRenderings,
           loc.termId,
@@ -1648,7 +1648,7 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
     });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [extractedVerses, termRenderings, mapDef.template]); // locations intentionally omitted to prevent infinite loop
+  }, [extractedVerses, termRenderings, mapDef.template]); // labels intentionally omitted to prevent infinite loop
 
   return (
     <div className="app-container">
@@ -1696,9 +1696,9 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
               )}{' '}
               <MapPane
                 imageUrl={imageData}
-                locations={memoizedLocations}
-                onSelectLocation={memoizedHandleSelectLocation}
-                selLocation={selLocation}
+                labels={memoizedLabels}
+                onSelectLabel={memoizedHandleSelectLabel}
+                selectedLabelIndex={selectedLabelIndex}
                 labelScale={labelScale}
                 labelOpacity={labelOpacity}
                 mapDef={memoizedMapDef}
@@ -1715,12 +1715,12 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
           )}{' '}
           {mapPaneView === TABLE_VIEW && (
             <TableView
-              locations={locations}
-              selLocation={selLocation}
-              onSelectLocation={handleSelectLocation}
+              labels={labels}
+              selectedLabelIndex={selectedLabelIndex}
+              onSelectLabel={handleSelectLabel}
               onUpdateVernacular={handleUpdateVernacular}
               termRenderings={termRenderings}
-              onNextLocation={handleNextLocation}
+              onNextLabel={handleNextLabel}
               lang={lang} // <-- pass lang
               extractedVerses={extractedVerses}
               collectionId={currentCollectionId} // Pass the collection ID
@@ -1737,15 +1737,15 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
         <div className="details-pane" style={{ flex: `0 0 ${100 - mapWidth}%` }}>
           {' '}
           <DetailsPane
-            selLocation={selLocation}
+            selectedLabelIndex={selectedLabelIndex}
             onUpdateVernacular={handleUpdateVernacular}
-            onNextLocation={handleNextLocation}
+            onNextLabel={handleNextLabel}
             renderings={renderings}
             isApproved={isApproved}
             onRenderingsChange={handleRenderingsChange}
             onApprovedChange={handleApprovedChange}
             termRenderings={termRenderings}
-            locations={locations}
+            labels={labels}
             onSwitchView={handleSwitchViewWithUsfm}
             mapPaneView={mapPaneView}
             onSetView={async viewIdx => {
@@ -1781,8 +1781,8 @@ function MainApp({ settings, templateFolder, onExit, termRenderings, setTermRend
       </div>{' '}
       <div className="bottom-pane" style={{ flex: `0 0 ${100 - topHeight}%` }}>
         <BottomPane
-          termId={locations[selLocation]?.termId}
-          mergeKey={locations[selLocation]?.mergeKey}
+          termId={labels[selectedLabelIndex]?.termId}
+          mergeKey={labels[selectedLabelIndex]?.mergeKey}
           renderings={renderings}
           onAddRendering={handleAddRendering}
           onReplaceRendering={handleReplaceRendering}
