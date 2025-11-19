@@ -29,7 +29,7 @@ class SettingsService {
           language: 'en',
           projectFolder: null,
           usfm: null,
-          templateFolder: null,
+          collectionsFolder: null,
           saveToDemo: false,
         };
         await this.saveSettings(); // Save the default settings
@@ -84,9 +84,9 @@ class SettingsService {
   getProjectFolder() {
     return this.settings?.projectFolder || null;
   }
-  // Enhanced getter for templateFolder with proper path normalization
-  getTemplateFolder() {
-    return this.settings?.templateFolder || null;
+  // Enhanced getter for collectionsFolder with proper path normalization
+  getCollectionsFolder() {
+    return this.settings?.collectionsFolder || null;
   }
 
   // Get language setting (defaults to 'en')

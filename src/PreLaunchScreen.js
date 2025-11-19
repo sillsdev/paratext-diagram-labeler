@@ -221,24 +221,24 @@ const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch, languag
           </div>
         </div>
 
-        {/* Template Folder Setting */}
+        {/* Collections Folder Setting */}
         <div className="setting-row">
           <div className="setting-status">
-            {errors.templateFolder ? <ErrorIcon /> : <CheckIcon />}
+            {errors.collectionsFolder ? <ErrorIcon /> : <CheckIcon />}
           </div>
           <div className="setting-content">
             <div className="setting-input-group">
               <label>{inLang(uiStr.templateFolder, language)}</label>
               <input
                 type="text"
-                value={editedSettings.templateFolder || ''}
-                onChange={e => handleSettingChange('templateFolder', e.target.value)}
-                className={errors.templateFolder ? 'error' : ''}
+                value={editedSettings.collectionsFolder || ''}
+                onChange={e => handleSettingChange('collectionsFolder', e.target.value)}
+                className={errors.collectionsFolder ? 'error' : ''}
                 spellCheck={false}
               />
-              <button onClick={() => handleSelectFolder('templateFolder')}>Browse...</button>
+              <button onClick={() => handleSelectFolder('collectionsFolder')}>Browse...</button>
             </div>
-            {errors.templateFolder && <div className="error-message">{errors.templateFolder}</div>}
+            {errors.collectionsFolder && <div className="error-message">{errors.collectionsFolder}</div>}
           </div>
         </div>
       </div>{' '}

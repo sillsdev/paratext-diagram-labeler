@@ -3,29 +3,25 @@ import {
   MATCH_PRE_B,
   MATCH_POST_B,
   MATCH_W,
-  STATUS_BLANK,
   STATUS_MULTIPLE,
+  STATUS_BLANK,
   STATUS_NO_RENDERINGS,
   STATUS_UNMATCHED,
-  STATUS_MATCHED,
   STATUS_GUESSED,
-  STATUS_RENDERING_SHORT,
-  STATUS_BAD_EXPLICIT_FORM,
-  STATUS_INCOMPLETE,
   STATUS_MULTIPLE_RENDERINGS,
+  STATUS_INCOMPLETE,
+  STATUS_MATCHED,
 } from './constants.js';
 
 export const statusValue = [
-  { bkColor: 'dimgray', textColor: 'white', sort: 1 }, // 0  - blank
-  { bkColor: 'cyan', textColor: 'black', sort: 5 }, // 1 - multiple
-  { bkColor: 'blue', textColor: 'white', sort: 3 }, // 2 - no renderings
-  { bkColor: 'yellow', textColor: 'black', sort: 4 }, // 3 - unmatched
-  { bkColor: 'white', textColor: 'black', sort: 0 }, // 4 - matched
-  { bkColor: '#FF8000', textColor: 'black', sort: 2 }, // 5 - guessed : #FF8000 : #e56300
-  { bkColor: 'crimson', textColor: 'white', sort: 6 }, // 6 - Rendering shorter than label
-  { bkColor: 'magenta', textColor: 'black', sort: 7 }, // 7 - Bad explicit form
-  { bkColor: '#80FF00', textColor: 'black', sort: 8 }, // 8 - Incomplete : #80FF00
-  { bkColor: 'purple', textColor: 'white', sort: 9 }, // 9 - Multiple renderings
+  { bkColor: 'cyan', textColor: 'black', sort: 0 }, // 0 - Multiple Options (most severe)
+  { bkColor: 'dimgray', textColor: 'white', sort: 1 }, // 1 - Blank
+  { bkColor: 'blue', textColor: 'white', sort: 2 }, // 2 - No renderings
+  { bkColor: 'yellow', textColor: 'black', sort: 3 }, // 3 - Unmatched label
+  { bkColor: '#FF8000', textColor: 'black', sort: 4 }, // 4 - Guessed
+  { bkColor: 'purple', textColor: 'white', sort: 5 }, // 5 - Multiple renderings
+  { bkColor: '#80FF00', textColor: 'black', sort: 6 }, // 6 - Incomplete
+  { bkColor: 'white', textColor: 'black', sort: 7 }, // 7 - Matched (OK)
 ];
 
 export function prettyRef(ref) {
@@ -136,14 +132,7 @@ export function getStatus(termRenderings, termId, vernLabel, refs, extractedVers
   if (vernLabel === mapForm) {
     if (entry.isGuessed) return STATUS_GUESSED; // "Guessed rendering not yet approved"
     // console.log(`Non-guessed Vernacular label matches map form: ${vernLabel}`);
-    if (/\(@.+\)/.test(entry.renderings)) {
-      // If mapForm came from an explicit rendering (e.g., (@misradesh))
-      // console.log(`Explicit map form: ${vernLabel}`);
-      if (!wordMatchesRenderings(mapForm, entry.renderings, false)) {
-        // console.log(`Explicit map form '${vernLabel}' does not match renderings.`);
-        return STATUS_BAD_EXPLICIT_FORM; // Explicit map form does not match rendering
-      }
-    }
+    // Note: Explicit map form validation removed in new architecture
     const matchedTally = getMatchTally(entry, refs, extractedVerses);
     if (matchedTally[0] === matchedTally[1]) {
       return STATUS_MATCHED; // : "Approved"
@@ -154,9 +143,7 @@ export function getStatus(termRenderings, termId, vernLabel, refs, extractedVers
 
   // vernLabel !== mapForm
   return wordMatchesRenderings(vernLabel, entry.renderings, false)
-    ? /\S\s*\n\s*\S/.test(entry.renderings)
-      ? STATUS_MULTIPLE_RENDERINGS
-      : STATUS_RENDERING_SHORT
+    ? STATUS_MULTIPLE_RENDERINGS  // Multiple patterns detected
     : STATUS_UNMATCHED;
 }
 

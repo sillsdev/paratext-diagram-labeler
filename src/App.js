@@ -20,17 +20,17 @@ function App() {
   const validateSettings = useCallback(async settingsToValidate => {
     const errors = {};
 
-    // Check templateFolder exists
-    if (!settingsToValidate.templateFolder) {
-      errors.templateFolder = inLang(uiStr.specifyTemplateFolder, currentLanguage);
+    // Check collectionsFolder exists
+    if (!settingsToValidate.collectionsFolder) {
+      errors.collectionsFolder = inLang(uiStr.specifyTemplateFolder, currentLanguage);
     } else {
       try {
-        const exists = await window.electronAPI.statPath(settingsToValidate.templateFolder);
+        const exists = await window.electronAPI.statPath(settingsToValidate.collectionsFolder);
         if (!exists || !exists.isDirectory) {
-          errors.templateFolder = inLang(uiStr.templateFolderNotFound, currentLanguage);
+          errors.collectionsFolder = inLang(uiStr.templateFolderNotFound, currentLanguage);
         }
       } catch (error) {
-        errors.templateFolder = `${inLang(uiStr.errorCheckingTemplateFolder, currentLanguage)}: ${error.message}`;
+        errors.collectionsFolder = `${inLang(uiStr.errorCheckingTemplateFolder, currentLanguage)}: ${error.message}`;
       }
     }
 
@@ -77,8 +77,8 @@ function App() {
       // Re-validate after clearing term renderings - use inline validation to avoid dependency loop
       const errors = {};
       errors.projectFolder = inLang(uiStr.specifyProjectFolder, currentLanguage);
-      if (!settings.templateFolder) {
-        errors.templateFolder = inLang(uiStr.specifyTemplateFolder, currentLanguage);
+      if (!settings.collectionsFolder) {
+        errors.collectionsFolder = inLang(uiStr.specifyTemplateFolder, currentLanguage);
       }
       setSettingsErrors(errors);
       return;
@@ -91,8 +91,8 @@ function App() {
         // Re-validate after clearing term renderings
         const errors = {};
         errors.projectFolder = inLang(uiStr.projectFolderNotFound, currentLanguage);
-        if (!settings.templateFolder) {
-          errors.templateFolder = inLang(uiStr.specifyTemplateFolder, currentLanguage);
+        if (!settings.collectionsFolder) {
+          errors.collectionsFolder = inLang(uiStr.specifyTemplateFolder, currentLanguage);
         }
         setSettingsErrors(errors);
         return;
@@ -128,8 +128,8 @@ function App() {
       // Re-validate after error
       const errors = {};
       errors.projectFolder = `${inLang(uiStr.errorCheckingProjectFolder, currentLanguage)}: ${error.message}`;
-      if (!settings.templateFolder) {
-        errors.templateFolder = inLang(uiStr.specifyTemplateFolder, currentLanguage);
+      if (!settings.collectionsFolder) {
+        errors.collectionsFolder = inLang(uiStr.specifyTemplateFolder, currentLanguage);
       }
       setSettingsErrors(errors);
     }
@@ -145,8 +145,8 @@ function App() {
       setCurrentLanguage(newSettings.language || 'en');
 
       // Validate settings
-      if (!newSettings.templateFolder) {
-        newSettings.templateFolder = await window.electronAPI.getDefaultTemplateFolder();
+      if (!newSettings.collectionsFolder) {
+        newSettings.collectionsFolder = await window.electronAPI.getDefaultTemplateFolder();
       }
       const errors = await validateSettings(newSettings);
       setSettingsErrors(errors);
@@ -247,7 +247,7 @@ function App() {
           <MainApp
             key="main-app-instance" // Adding a key forces recreation when re-rendering
             settings={settingsService.getSettings()}
-            templateFolder={settingsService.getSettings().templateFolder}
+            collectionsFolder={settingsService.getSettings().collectionsFolder}
             onExit={handleExit}
             termRenderings={termRenderings}
             setTermRenderings={setTermRenderings} // Pass setter to allow MainApp to update term renderings

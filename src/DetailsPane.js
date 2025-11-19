@@ -7,7 +7,6 @@ import {
   USFM_VIEW,
   STATUS_NO_RENDERINGS,
   STATUS_GUESSED,
-  STATUS_RENDERING_SHORT,
   STATUS_MULTIPLE_RENDERINGS,
   STATUS_UNMATCHED,
 } from './constants.js';
@@ -15,6 +14,7 @@ import { collectionManager, getCollectionIdFromTemplate, findCollectionIdAndTemp
 import { getMapDef } from './MapData';
 import { inLang, statusValue, getMapForm, wordMatchesRenderings } from './Utils.js';
 import { settingsService } from './services/SettingsService.js';
+import labelDictionaryService from './services/LabelDictionaryService.js';
 import { AutocorrectTextarea } from './components/AutocorrectTextarea';
 import { useAutocorrect } from './hooks/useAutocorrect';
 
@@ -51,6 +51,8 @@ export default function DetailsPane({
   templateGroupIndex = -1,
   onPreviousTemplate,
   onNextTemplate,
+  activeTab = 0,
+  onActiveTabChange,
 }) {
   const [localIsApproved, setLocalIsApproved] = useState(isApproved);
   const [localRenderings, setLocalRenderings] = useState(renderings);
@@ -116,7 +118,13 @@ export default function DetailsPane({
     textareaRef: vernacularAutocorrectRef,
   } = useAutocorrect(labels[selectedLabelIndex]?.vernLabel || '', text => {
     // console.log('DetailsPane: Vernacular changing to', text);
-    onUpdateVernacular(labels[selectedLabelIndex].termId, text);
+    const currentLabel = labels[selectedLabelIndex];
+    onUpdateVernacular(
+      currentLabel.mergeKey, 
+      currentLabel.lblTemplate || currentLabel.mergeKey, 
+      text,
+      currentLabel.opCode || 'sync'
+    );
   });
 
   // const vernacularAutocorrectRef = useRef(null);
@@ -214,14 +222,31 @@ export default function DetailsPane({
 
   const onRefreshLabel = () => {
     // This function is called when the user clicks the "Refresh Labels" button.
-    // Update the vernacular input using getMapForm
+    // Update the vernacular input using resolved template or getMapForm
     if (selectedLabelIndex >= 0 && selectedLabelIndex < labels.length) {
       const currentLabel = labels[selectedLabelIndex];
-      const altTermIds = collectionManager.getAltTermIds(currentLabel?.mergeKey, getCollectionIdFromTemplate(mapDef.template));
-      const mapForm = getMapForm(termRenderings, currentLabel.termId, altTermIds);
+      const collectionId = getCollectionIdFromTemplate(mapDef.template);
+      
+      // Try to resolve template first
+      let mapForm = '';
+      if (currentLabel.lblTemplate) {
+        mapForm = collectionManager.resolveTemplate(currentLabel.lblTemplate, collectionId, termRenderings) || '';
+      }
+      
+      // Fallback to old method if needed
+      if (!mapForm) {
+        const altTermIds = collectionManager.getAltTermIds(currentLabel?.mergeKey, collectionId);
+        mapForm = getMapForm(termRenderings, currentLabel.termId, altTermIds);
+      }
+      
       console.log('Refreshing label:', currentLabel.mergeKey, 'Map form:', mapForm);
       setVernacularValue(mapForm);
-      onUpdateVernacular(currentLabel.termId, mapForm);
+      onUpdateVernacular(
+        currentLabel.mergeKey, 
+        currentLabel.lblTemplate || currentLabel.mergeKey, 
+        mapForm,
+        currentLabel.opCode || 'sync'
+      );
     }
   };
 
@@ -1075,19 +1100,29 @@ export default function DetailsPane({
           background: '#f9f9f9',
         }}
       >
-        <h2>{inLang(labels[selectedLabelIndex]?.gloss, lang)}</h2>{' '}
-        <p>
-          <span style={{ fontStyle: 'italic' }}>
-            ({labels[selectedLabelIndex]?.termId}){' '}
-            <span style={{ display: 'inline-block', width: 12 }} />
-            {transliteration}
-          </span>
-          <br />
-          {inLang(
-            collectionManager.getDefinition(labels[selectedLabelIndex]?.mergeKey, collectionId),
-            lang
-          )}
+        {/* Large gloss from mergekeys or placenames */}
+        <h2 style={{ margin: '8px', marginBottom: 4 }}>
+          {inLang(labels[selectedLabelIndex]?.gloss || { en: labels[selectedLabelIndex]?.mergeKey || '' }, lang)}
+        </h2>
+        {/* Smaller context/definition */}
+        <p style={{ margin: '8px', marginTop: 4, fontSize: '0.9em', color: '#555' }}>
+          {(() => {
+            const currentLabel = labels[selectedLabelIndex];
+            // Priority 1: Get from mergekeys
+            const mergeKeyDef = collectionManager.getMergeKeyDefinition(currentLabel?.mergeKey, collectionId);
+            if (mergeKeyDef && Object.values(mergeKeyDef).some(v => v)) {
+              return inLang(mergeKeyDef, lang);
+            }
+            // Priority 2: Get from first placeName
+            const placeNameIds = currentLabel?.placeNameIds || [];
+            if (placeNameIds.length > 0) {
+              const firstPlaceNameId = placeNameIds[0];
+              return inLang(collectionManager.getDefinition(firstPlaceNameId, collectionId), lang);
+            }
+            return '';
+          })()}
         </p>
+        {/* Label vernacular box */}
         <div
           className="vernacularGroup"
           style={{
@@ -1099,10 +1134,72 @@ export default function DetailsPane({
           }}
         >
           {' '}
+          {/* OpCode radio buttons */}
+          <div style={{ marginBottom: 8, display: 'flex', gap: 12, alignItems: 'center' }}>
+            <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+              <input
+                type="radio"
+                name="opCode"
+                value="sync"
+                checked={(labels[selectedLabelIndex]?.opCode || 'sync') === 'sync'}
+                onChange={() => {
+                  const currentLabel = labels[selectedLabelIndex];
+                  onUpdateVernacular(
+                    currentLabel.mergeKey,
+                    currentLabel.lblTemplate || currentLabel.mergeKey,
+                    currentLabel.vernLabel,
+                    'sync'
+                  );
+                }}
+                style={{ marginRight: 4 }}
+              />
+              {inLang(uiStr.opCodeSync, lang)}
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+              <input
+                type="radio"
+                name="opCode"
+                value="override"
+                checked={labels[selectedLabelIndex]?.opCode === 'override'}
+                onChange={() => {
+                  const currentLabel = labels[selectedLabelIndex];
+                  onUpdateVernacular(
+                    currentLabel.mergeKey,
+                    currentLabel.lblTemplate || currentLabel.mergeKey,
+                    currentLabel.vernLabel,
+                    'override'
+                  );
+                }}
+                style={{ marginRight: 4 }}
+              />
+              {inLang(uiStr.opCodeOverride, lang)}
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+              <input
+                type="radio"
+                name="opCode"
+                value="omit"
+                checked={labels[selectedLabelIndex]?.opCode === 'omit'}
+                onChange={() => {
+                  const currentLabel = labels[selectedLabelIndex];
+                  onUpdateVernacular(
+                    currentLabel.mergeKey,
+                    currentLabel.lblTemplate || currentLabel.mergeKey,
+                    '',
+                    'omit'
+                  );
+                  setVernacularValue('');
+                }}
+                style={{ marginRight: 4 }}
+              />
+              {inLang(uiStr.opCodeOmit, lang)}
+            </label>
+          </div>
           <textarea
             ref={vernacularAutocorrectRef}
             value={vernacularValue}
             onChange={handleVernacularChange}
+            disabled={labels[selectedLabelIndex]?.opCode === 'omit'}
             onKeyDown={e => {
               // Prevent line breaks but allow other keys
               if (e.key === 'Enter') {
@@ -1137,11 +1234,36 @@ export default function DetailsPane({
             <span style={{ fontWeight: 'bold' }}>
               {inLang(uiStr.statusValue[status].text, lang) + ': '}
             </span>
-            {inLang(uiStr.statusValue[status].help, lang)}
-            {(status === STATUS_RENDERING_SHORT || status === STATUS_MULTIPLE_RENDERINGS) && ( // If status is "short", show Add Map Form button
-              <button style={{ marginLeft: 8 }} onClick={() => onAddMapForm()}>
-                {inLang(uiStr.addMapForm, lang)}
-              </button>
+            {inLang(uiStr.statusValue[status].help, lang)
+              .replace('{listOfRenderingPatterns}', localRenderings.split('\n').filter(l => l.trim()).join(', '))}
+            {status === STATUS_MULTIPLE_RENDERINGS && (
+              <>
+                <button style={{ marginLeft: 8 }} onClick={() => onAddMapForm()}>
+                  {inLang(uiStr.addMapForm, lang)}
+                </button>
+                <button 
+                  style={{ marginLeft: 8 }}
+                  onClick={() => {
+                    // Get active placeNameId
+                    const currentLabel = labels[selectedLabelIndex];
+                    const placeNameIds = currentLabel?.placeNameIds || [];
+                    const activePlaceNameId = placeNameIds[activeTab] || placeNameIds[0];
+                    
+                    if (activePlaceNameId) {
+                      labelDictionaryService.setConfirmed(activePlaceNameId, true);
+                      // Trigger re-render by updating vernacular (no change to text)
+                      onUpdateVernacular(
+                        currentLabel.mergeKey,
+                        currentLabel.lblTemplate || currentLabel.mergeKey,
+                        currentLabel.vernLabel,
+                        currentLabel.opCode || 'sync'
+                      );
+                    }
+                  }}
+                >
+                  {inLang(uiStr.confirmPatterns, lang)}
+                </button>
+              </>
             )}
             {status === STATUS_UNMATCHED && (
               <button style={{ marginLeft: 8 }} onClick={() => onRefreshLabel()}>
@@ -1179,60 +1301,165 @@ export default function DetailsPane({
             )}
           </span>
         </div>
-        <h5>
-          {inLang(uiStr.termRenderings, lang)}{' '}
-          {localRenderings && !localIsApproved ? '(' + inLang(uiStr.guessed, lang) + ')' : ''}
-        </h5>
-        <div className="term-renderings" style={{ margin: '8px' }}>
-          {' '}
-          <AutocorrectTextarea
-            ref={renderingsTextareaRef}
-            value={localRenderings}
-            onChange={e => {
-              console.log('Renderings onChange called with:', e.target.value);
-              const termId = labels[selectedLabelIndex].termId;
-              const newValue = e.target.value;
+        {/* Tabbed section for placeNames */}
+        {(() => {
+          const currentLabel = labels[selectedLabelIndex];
+          const placeNameIds = currentLabel?.placeNameIds || [];
+          
+          if (placeNameIds.length === 0) return null;
+          
+          const showTabs = placeNameIds.length > 1;
+          
+          return (
+            <div style={{ margin: '8px', marginTop: 12 }}>
+              {/* Tabs if multiple placeNames */}
+              {showTabs && (
+                <div style={{ display: 'flex', gap: 4, marginBottom: 8 }}>
+                  {placeNameIds.map((placeNameId, index) => {
+                    const placeName = collectionManager.getPlaceName(placeNameId, collectionId);
+                    const placeStatus = currentLabel.perPlaceStatus?.[placeNameId] || 0;
+                    const statusColor = statusValue[placeStatus]?.textColor || '#000';
+                    return (
+                      <button
+                        key={placeNameId}
+                        style={{
+                          padding: '4px 12px',
+                          background: activeTab === index ? '#d0eaff' : '#f0f0f0',
+                          border: `2px solid ${statusColor}`,
+                          borderRadius: 4,
+                          cursor: 'pointer',
+                          fontSize: '0.9em',
+                        }}
+                        onClick={() => onActiveTabChange(index)}
+                      >
+                        {inLang(placeName?.gloss, lang) || placeNameId}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+              
+              {/* Content for active placeName */}
+              {placeNameIds.map((placeNameId, index) => {
+                if (showTabs && index !== activeTab) return null;
+                
+                const placeName = collectionManager.getPlaceName(placeNameId, collectionId);
+                const terms = placeName?.terms || [];
+                const isJoined = labelDictionaryService.isJoined(placeNameId);
+                
+                return (
+                  <div key={placeNameId} style={{ marginTop: showTabs ? 0 : 8 }}>
+                    {/* Join checkbox for multi-term placeNames */}
+                    {terms.length > 1 && (
+                      <div style={{ marginBottom: 8 }}>
+                        <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+                          <input
+                            type="checkbox"
+                            checked={isJoined}
+                            onChange={(e) => {
+                              labelDictionaryService.setJoined(placeNameId, e.target.checked);
+                              // Trigger re-render
+                              onUpdateVernacular(
+                                currentLabel.mergeKey,
+                                currentLabel.lblTemplate || currentLabel.mergeKey,
+                                currentLabel.vernLabel,
+                                currentLabel.opCode || 'sync'
+                              );
+                            }}
+                            style={{ marginRight: 6 }}
+                          />
+                          <span style={{ fontSize: '0.9em' }}>{inLang(uiStr.joinCheckbox, lang)}</span>
+                        </label>
+                      </div>
+                    )}
+                    
+                    {/* If joined, show term names above single textarea */}
+                    {isJoined && terms.length > 1 ? (
+                      <div>
+                        {terms.map(term => {
+                          const termGloss = inLang(term.gloss, lang);
+                          const termTranslit = term.transliteration ? ` /${term.transliteration}/` : '';
+                          return (
+                            <div key={term.termId} style={{ fontSize: '0.9em', marginBottom: 4, fontWeight: 'bold' }}>
+                              {term.termId} {termGloss}{termTranslit}
+                            </div>
+                          );
+                        })}
 
-              // Update local state
-              setLocalRenderings(newValue);
-
-              // Create updated renderings data
-              const updatedData = { ...termRenderings };
-
-              // Create entry if it doesn't exist
-              if (!updatedData[termId]) {
-                updatedData[termId] = { renderings: newValue };
-              } else {
-                updatedData[termId] = {
-                  ...updatedData[termId],
-                  renderings: newValue,
-                };
-              }
-
-              // If not approved, auto-approve on edit
-              if (!localIsApproved) {
-                setLocalIsApproved(true);
-                updatedData[termId].isGuessed = false;
-                onApprovedChange({ target: { checked: true } });
-              }
-
-              // Update parent state
-              setTermRenderings(updatedData);
-              onRenderingsChange({ target: { value: newValue } });
-            }}
-            style={{
-              width: '100%',
-              minHeight: '100px',
-              border: '1px solid black',
-              borderRadius: '0.5em',
-              padding: '8px',
-              fontSize: '12px',
-              backgroundColor: localRenderings && !localIsApproved ? '#ffbf8f' : 'white',
-            }}
-            placeholder={inLang(uiStr.enterRenderings, lang)}
-            spellCheck={false}
-          />
-        </div>
+                        {/* Single textarea for joined terms */}
+                        <div style={{ marginTop: 8 }}>
+                          <AutocorrectTextarea
+                            value={termRenderings[terms[0].termId]?.renderings?.replace(/\|\|/g, '\n') || ''}
+                            onChange={e => {
+                              const newValue = e.target.value.replace(/\n/g, '||');
+                              const updatedData = { ...termRenderings };
+                              updatedData[terms[0].termId] = {
+                                ...updatedData[terms[0].termId],
+                                renderings: newValue,
+                                isGuessed: false,
+                              };
+                              setTermRenderings(updatedData);
+                            }}
+                            style={{
+                              width: '100%',
+                              minHeight: '80px',
+                              border: '1px solid #999',
+                              borderRadius: '0.5em',
+                              padding: '6px',
+                              fontSize: '11px',
+                              backgroundColor: termRenderings[terms[0].termId]?.isGuessed ? '#ffbf8f' : 'white',
+                            }}
+                            placeholder={inLang(uiStr.enterRenderings, lang)}
+                            spellCheck={false}
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      /* Not joined or single term - show each term with its own textarea */
+                      terms.map(term => {
+                        const termGloss = inLang(term.gloss, lang);
+                        const termTranslit = term.transliteration ? ` /${term.transliteration}/` : '';
+                        const termData = termRenderings[term.termId] || {};
+                        
+                        return (
+                          <div key={term.termId} style={{ marginBottom: 12 }}>
+                            <div style={{ fontSize: '0.9em', marginBottom: 4, fontWeight: 'bold' }}>
+                              {term.termId} {termGloss}{termTranslit}
+                            </div>
+                            <AutocorrectTextarea
+                              value={termData.renderings?.replace(/\|\|/g, '\n') || ''}
+                              onChange={e => {
+                                const newValue = e.target.value.replace(/\n/g, '||');
+                                const updatedData = { ...termRenderings };
+                                updatedData[term.termId] = {
+                                  ...updatedData[term.termId],
+                                  renderings: newValue,
+                                  isGuessed: false,
+                                };
+                                setTermRenderings(updatedData);
+                              }}
+                              style={{
+                                width: '100%',
+                                minHeight: '80px',
+                                border: '1px solid #999',
+                                borderRadius: '0.5em',
+                                padding: '6px',
+                                fontSize: '11px',
+                                backgroundColor: termData.isGuessed ? '#ffbf8f' : 'white',
+                              }}
+                              placeholder={inLang(uiStr.enterRenderings, lang)}
+                              spellCheck={false}
+                            />
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })()}
       </div>
     </div>
   );

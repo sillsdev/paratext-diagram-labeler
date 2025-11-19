@@ -2151,14 +2151,14 @@ ipcMain.handle('getDefaultTemplateFolder', async (event) => {
       const contents = fs.readdirSync(workingDir);
       debugInfo.push(`Working dir contents (${contents.length} items): ${contents.slice(0, 10).join(', ')}${contents.length > 10 ? '...' : ''}`);
       
-      // Specifically check for _LabelerTemplates in the list
-      const hasTemplateFolder = contents.includes('_LabelerTemplates');
-      debugInfo.push(`_LabelerTemplates in directory listing: ${hasTemplateFolder}`);
+      // Specifically check for _LabelerCollections in the list
+      const hasTemplateFolder = contents.includes('_LabelerCollections');
+      debugInfo.push(`_LabelerCollections in directory listing: ${hasTemplateFolder}`);
     } catch (err) {
       debugInfo.push(`Failed to read working dir: ${err.message}`);
     }
     
-    const templateFolderPath = path.join(workingDir, '_LabelerTemplates');
+    const templateFolderPath = path.join(workingDir, '_LabelerCollections');
     debugInfo.push(`Template folder path: ${templateFolderPath}`);
     
     try {

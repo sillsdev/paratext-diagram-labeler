@@ -1,7 +1,8 @@
 import packageInfo from '../package.json';
+import labelTemplateParser from './services/LabelTemplateParser';
 
 const mergeKeysFile = "mergekeys.json";
-const termListFile = "termlist.json";
+const placeNamesFile = "placenames.json";
 const mapDefsFile = "map-defs.json";
 
 export function getCollectionIdFromTemplate(templateName) {
@@ -71,12 +72,13 @@ export function findCollectionIdAndTemplate(templateName) {
 class CollectionManager {
   constructor() {
     this.availableCollections = new Map(); // id -> collection config from collection.json
-    this.collectionsData = new Map(); // id -> loaded JSON data (mergeKeys, termlist, mapDefs)
+    this.collectionsData = new Map(); // id -> loaded JSON data (mergeKeys, placenames, mapDefs)
     this.appVersion = packageInfo.version; // from package.json 
     this.isInitialized = false;
     this.isLoading = false;
     this.loadError = null;
-    this.coreTermlist = null;
+    this.corePlaceNames = null;
+    this.templateParser = labelTemplateParser;
   }
 
   // Helper functions for collections
@@ -125,13 +127,13 @@ class CollectionManager {
         }
       }
 
-      // 3. Load core termlist (if it exists)
+      // 3. Load core placenames (if it exists)
       try {
-        this.coreTermlist = await window.electronAPI.loadTermsFromJson(templateFolderPath, 'core-termlist.json', projectFolder);
-        console.log('Core termlist loaded successfully:', Object.keys(this.coreTermlist).length, 'terms');
+        this.corePlaceNames = await window.electronAPI.loadFromJson(templateFolderPath, 'core-placenames.json');
+        console.log('Core placenames loaded successfully:', Object.keys(this.corePlaceNames).length, 'place names');
       } catch (error) {
-        console.warn('Core termlist not found or failed to load:', error.message);
-        this.coreTermlist = {};
+        console.warn('Core placenames not found or failed to load:', error.message);
+        this.corePlaceNames = {};
       }
 
       // 4. Load all compatible collections
@@ -165,9 +167,9 @@ class CollectionManager {
 
     try {
       // Load the three standard JSON files in parallel
-      const [mergeKeys, termlist, mapDefs] = await Promise.all([
+      const [mergeKeys, placenames, mapDefs] = await Promise.all([
         window.electronAPI.loadFromJson(config.path, mergeKeysFile),
-        window.electronAPI.loadTermsFromJson(config.path, termListFile, projectFolder),
+        window.electronAPI.loadFromJson(config.path, placeNamesFile),
         window.electronAPI.loadFromJson(config.path, mapDefsFile)
       ]);
 
@@ -179,11 +181,9 @@ class CollectionManager {
         throw new Error(`Empty or missing map definitions in ${mapDefsFile}`);
       }
 
-
-
-      // termlist can be empty, just warn
-      if (!termlist || Object.keys(termlist).length === 0) {
-        console.warn(`Empty or missing term list in ${termListFile} for collection ${collectionId}`);
+      // placenames can be empty, just warn
+      if (!placenames || Object.keys(placenames).length === 0) {
+        console.warn(`Empty or missing placenames in ${placeNamesFile} for collection ${collectionId}`);
       }
 
       // Validate and clean up map definitions - remove duplicate merge keys and labels without merge keys
@@ -223,12 +223,12 @@ class CollectionManager {
         isLoaded: true,
         config: config, // Store the collection.json config
         mergeKeys,
-        termlist: termlist || {},
+        placenames: placenames || {},
         mapDefs,
         normalizedMapDefs,
       });
 
-      console.log(`Collection ${config.name} loaded: ${Object.keys(mapDefs).length} map definitions, ${Object.keys(mergeKeys).length} merge keys, ${Object.keys(termlist).length} terms`);
+      console.log(`Collection ${config.name} loaded: ${Object.keys(mapDefs).length} map definitions, ${Object.keys(mergeKeys).length} merge keys, ${Object.keys(placenames || {}).length} place names`);
       
     } catch (error) {
       console.error(`Failed to load collection ${config.name}:`, error);
@@ -256,11 +256,17 @@ class CollectionManager {
     return data?.mergeKeys || {};
   }
 
-  getTermlist(collectionId) {
+  getMergeKeyDefinition(mergeKey, collectionId) {
+    const mergeKeys = this.getMergeKeys(collectionId);
+    const entry = mergeKeys[mergeKey];
+    return entry?.definition || { en: '' };
+  }
+
+  getPlaceNames(collectionId) {
     // Ensure uppercase collection ID for consistency
     const normalizedId = (collectionId || '').toUpperCase();
     const data = this.collectionsData.get(normalizedId);
-    return data?.termlist || {};
+    return data?.placenames || {};
   }
 
   getMapDefs(collectionId) {
@@ -326,44 +332,146 @@ class CollectionManager {
       return mapDef;
     }
 
-    mapDef.labels = mapDef.labels.map((label, idx) => ({
-      ...label,
-      idx,
-      gloss: this.getGloss(label.mergeKey, collectionId),
-      termId: this.getTermId(label.mergeKey, collectionId),
-    }));
+    mapDef.labels = mapDef.labels.map((label, idx) => {
+      const lblTemplate = this.getLabelTemplate(label.mergeKey, collectionId);
+      const placeNameIds = lblTemplate ? this.templateParser.getPlaceNameIds(lblTemplate) : [];
+      const primaryPlaceNameId = placeNameIds.length > 0 ? placeNameIds[0] : null;
+      
+      return {
+        ...label,
+        idx,
+        lblTemplate,
+        gloss: primaryPlaceNameId ? this.getGloss(primaryPlaceNameId, collectionId) : '',
+      };
+    });
 
     return mapDef;
   }
 
-  getTermEntry(termId, collectionId) {
-    let termlist = this.getTermlist(collectionId);
-    if (termlist[termId]) {
-      return termlist[termId];
+  getPlaceName(placeNameId, collectionId) {
+    if (!placeNameId) return null;
+    
+    const placenames = this.getPlaceNames(collectionId);
+    if (placenames[placeNameId]) {
+      return placenames[placeNameId];
     }
-    if (this.coreTermlist[termId]) {
-      return this.coreTermlist[termId];
+    if (this.corePlaceNames && this.corePlaceNames[placeNameId]) {
+      return this.corePlaceNames[placeNameId];
     }
     return null;
   }
 
-  // MergeKeys and Termlist access methods with collection ID parameter
-  getGloss(mergeKey, collectionId) {
-    if (!mergeKey) { return ''; }
-    const termId = this.getTermId(mergeKey, collectionId);
-    if (!termId) {
-      console.warn(`termId not found for mergeKey "${mergeKey}" in ${collectionId} collection`);
+  // Get all terms for a specific place name
+  getTermsForPlace(placeNameId, collectionId) {
+    const placeName = this.getPlaceName(placeNameId, collectionId);
+    if (!placeName || !placeName.terms) {
+      return [];
+    }
+    return placeName.terms;
+  }
+
+  // Get label template from mergeKey
+  getLabelTemplate(mergeKey, collectionId = 'SMR') {
+    if (!mergeKey) return '';
+    
+    const mergeKeys = this.getMergeKeys(collectionId);
+    const entry = mergeKeys[mergeKey];
+    if (!entry) {
+      console.warn(`mergeKey "${mergeKey}" not found in ${collectionId} collection merge keys`);
       return '';
     }
-    const termEntry = this.getTermEntry(termId, collectionId);
-    if (!termEntry) {
-      console.warn(
-        `term ID "${termId}" not found in ${collectionId} collection term list`,
-        this.getTermlist(collectionId)
-      );
+    return entry.lblTemplate || '';
+  }
+
+  // Resolve template to get all placeNameIds and references
+  resolveTemplate(lblTemplate, collectionId, termRenderings = {}) {
+    if (!lblTemplate) return { placeNameIds: [], references: [], literalText: '', hasMultiplePlaceNames: false };
+    
+    const parsed = this.templateParser.parseTemplate(lblTemplate);
+    
+    // Resolve the template by looking up vernacular for each placeNameId
+    let resolvedText = lblTemplate;
+    parsed.placeNameIds.forEach(placeNameId => {
+      const placeName = this.getPlaceName(placeNameId, collectionId);
+      if (placeName && placeName.terms && placeName.terms.length > 0) {
+        // Get vernacular from first term
+        const firstTerm = placeName.terms[0];
+        const termData = termRenderings[firstTerm.termId];
+        if (termData && termData.renderings) {
+          let renderingsStr = termData.renderings || '';
+          // Strip all asterisks (wildcards)
+          renderingsStr = renderingsStr.replace(/\*/g, '');
+          
+          // Check for explicit map form (e.g., (@misradesh) or (map: misradesh))
+          const mapFormMatch = renderingsStr.match(/\((?:@|map:\s*)([^)]+)\)/);
+          if (mapFormMatch) {
+            // Replace {placeNameId} with the explicit map form
+            resolvedText = resolvedText.replace(new RegExp(`\\{${placeNameId}\\}`, 'gi'), mapFormMatch[1]);
+          } else {
+            // Split into separate rendering items
+            const items = renderingsStr.replace(/\|\|/g, '\n').split(/(\r?\n)/);
+            // Process each item: remove parentheses and their contents, trim space
+            const processedItems = items
+              .map(item => item.replace(/\([^)]*\)/g, '').trim())
+              .filter(item => item.length > 0);
+            // Join with em-dash
+            const mapForm = processedItems.join('—');
+            if (mapForm) {
+              // Replace {placeNameId} with the processed map form
+              resolvedText = resolvedText.replace(new RegExp(`\\{${placeNameId}\\}`, 'gi'), mapForm);
+            }
+          }
+        }
+      }
+    });
+    
+    return {
+      placeNameIds: parsed.placeNameIds,
+      references: parsed.references,
+      hasMultiplePlaceNames: parsed.hasMultiplePlaceNames,
+      literalText: resolvedText === lblTemplate ? '' : resolvedText
+    };
+  }
+
+  // Get gloss for a placeNameId
+  getGloss(placeNameId, collectionId) {
+    if (!placeNameId) return '';
+    
+    const placeName = this.getPlaceName(placeNameId, collectionId);
+    if (!placeName) {
+      console.warn(`placeNameId "${placeNameId}" not found in ${collectionId} collection`);
       return '';
     }
-    return termEntry.gloss || '';
+    return placeName.gloss || '';
+  }
+
+  // Get gloss for a mergeKey with priority: mergekeys.gloss > placenames.gloss > core-placenames.gloss
+  getGlossForMergeKey(mergeKey, collectionId) {
+    if (!mergeKey) return { en: '' };
+    
+    // Priority 1: Check mergekeys.json for gloss override
+    const mergeKeys = this.getMergeKeys(collectionId);
+    const entry = mergeKeys[mergeKey];
+    if (entry && entry.gloss) {
+      return entry.gloss;
+    }
+    
+    // Priority 2-3: Get gloss from placenames (collection-specific) or core-placenames
+    const lblTemplate = entry ? entry.lblTemplate : '';
+    if (lblTemplate) {
+      const parsed = this.templateParser.parseTemplate(lblTemplate);
+      const placeNameIds = parsed.placeNameIds || [];
+      if (placeNameIds.length > 0) {
+        const firstPlaceNameId = placeNameIds[0];
+        const placeName = this.getPlaceName(firstPlaceNameId, collectionId);
+        if (placeName && placeName.gloss) {
+          return placeName.gloss;
+        }
+      }
+    }
+    
+    // Fallback: return mergeKey as English gloss
+    return { en: mergeKey };
   }
 
   getMapxKey(mergeKey, collectionId = 'SMR') {
@@ -376,76 +484,56 @@ class CollectionManager {
     return entry.mapxKey || mergeKey;
   }
 
-  getTermId(mergeKey, collectionId = 'SMR') {
-    if (!mergeKey) { return ''; }
-    const mergeKeys = this.getMergeKeys(collectionId);
-    const entry = mergeKeys[mergeKey];
-    if (!entry) {
-      console.warn(`mergeKey "${mergeKey}" not found in ${collectionId} collection merge keys`);
-      return '';
+  // Get definition (context) for a placeNameId
+  getDefinition(placeNameId, collectionId = 'SMR') {
+    if (!placeNameId) return { en: '' };
+    
+    const placeName = this.getPlaceName(placeNameId, collectionId);
+    if (!placeName) {
+      console.warn(`placeNameId "${placeNameId}" not found in ${collectionId} collection`);
+      return { en: '' };
     }
-    return entry.termId || '';
+    return placeName.context || { en: '' };
   }
 
-  getDefinition(mergeKey, collectionId = 'SMR') {
-    const termId = this.getTermId(mergeKey, collectionId);
-    if (!termId) {
-      console.warn(`termId not found for mergeKey "${mergeKey}" in ${collectionId} collection`);
+  // Get alternative term IDs for a placeNameId
+  getAltTermIds(placeNameId, collectionId = 'SMR') {
+    const placeName = this.getPlaceName(placeNameId, collectionId);
+    if (!placeName || !placeName.altTermIds) {
       return '';
     }
-    const termEntry = this.getTermEntry(termId, collectionId);
-    if (!termEntry) {
-      console.warn(
-        `term ID "${termId}" not found in ${collectionId} collection term list`,
-        this.getTermlist(collectionId)
-      );
-      return '';
-    }
-    return termEntry.context || '';
+    return placeName.altTermIds;
   }
 
-  getAltTermIds(mergeKey, collectionId = 'SMR') {
-    const mergeKeys = this.getMergeKeys(collectionId);
-    const entry = mergeKeys[mergeKey];
-    if (!entry || !entry.altTermIds) {
+  // Get transliteration for a specific term within a placeName
+  getTransliteration(placeNameId, collectionId = 'SMR') {
+    if (!placeNameId) return '';
+    
+    const terms = this.getTermsForPlace(placeNameId, collectionId);
+    if (!terms || terms.length === 0) {
       return '';
     }
-    return entry.altTermIds;
+    // Return transliteration from first term
+    return terms[0].transliteration || '';
   }
 
-  getTransliteration(mergeKey, collectionId = 'SMR') {
-    if (!mergeKey) { return ''; }
-    const termId = this.getTermId(mergeKey, collectionId);
-    if (!termId) {
-      console.warn(`termId not found for mergeKey "${mergeKey}" in ${collectionId} collection`);
-      return '';
-    }
-    const termEntry = this.getTermEntry(termId, collectionId);
-    if (!termEntry) {
-      console.warn(
-        `term ID "${termId}" not found in ${collectionId} collection term list`,
-        this.getTermlist(collectionId)
-      );
-      return '';
-    }
-    return termEntry.transliteration || '';
-  }
-
-  getRefs(mergeKey, collectionId = 'SMR') {
-    const termId = this.getTermId(mergeKey, collectionId);
-    if (!termId) {
-      console.warn(`termId not found for mergeKey "${mergeKey}" in ${collectionId} collection`);
+  // Get all references for a placeNameId (merged from all terms)
+  getRefs(placeNameId, collectionId = 'SMR') {
+    if (!placeNameId) return [];
+    
+    const terms = this.getTermsForPlace(placeNameId, collectionId);
+    if (!terms || terms.length === 0) {
       return [];
     }
-    const termEntry = this.getTermEntry(termId, collectionId);
-    if (!termEntry) {
-      console.warn(
-        `term ID "${termId}" not found in ${collectionId} collection term list`,
-        this.getTermlist(collectionId)
-      );
-      return [];
+    
+    // Merge all refs from all terms (already sorted: NT first, then OT)
+    const allRefs = [];
+    for (const term of terms) {
+      if (term.refs && Array.isArray(term.refs)) {
+        allRefs.push(...term.refs);
+      }
     }
-    return termEntry.refs || [];
+    return allRefs;
   }
 
   async discoverCollections(templateFolderPath) {

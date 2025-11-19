@@ -98,8 +98,8 @@
     ],
     "extraFiles": [
       {
-        "from": "resources/_LabelerTemplates",
-        "to": "_LabelerTemplates",
+        "from": "resources/_LabelerCollections",
+        "to": "_LabelerCollections",
         "filter": [
           "**/*"
         ]

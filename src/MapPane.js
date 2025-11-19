@@ -268,6 +268,13 @@ export default function MapPane({
       const yLeaflet = imageHeight - label.y;
       return { ...label, yLeaflet };
     });
+  
+  // Debug: Log first 3 labels to see their status values
+  if (transformedLabels.length > 0) {
+    const labelInfo = transformedLabels.slice(0, 3).map(l => `${l.mergeKey}:${l.status}`).join(', ');
+    console.log('[MapPane] Rendering with labels:', labelInfo);
+  }
+  
   return (
     <MapContainer
       crs={crs}
@@ -324,7 +331,7 @@ export default function MapPane({
       {transformedLabels.length > 0
         ? transformedLabels.map(label => (
             <Marker
-              key={label.termId}
+              key={`${label.mergeKey}-${label.status}`}
               position={[label.yLeaflet, label.x]}
               icon={createLabel(
                 label.vernLabel || `(${inLang(label.gloss, lang)})`,
@@ -335,15 +342,31 @@ export default function MapPane({
                 selectedLabelIndex === label.idx,
                 labelScale,
                 labelOpacity,
-                showFrac
-                  ? frac(
-                      getMatchTally(
-                        termRenderings[label.termId],
-                        collectionManager.getRefs(label.mergeKey, collectionId),
-                        extractedVerses
-                      ),
-                      true
-                    )
+                showFrac && label.placeNameIds?.length > 0
+                  ? (() => {
+                      // Aggregate match tallies from all terms in all placeNames
+                      let totalMatches = 0;
+                      let totalRefs = 0;
+                      let anyDenials = false;
+                      
+                      label.placeNameIds.forEach(placeNameId => {
+                        const terms = collectionManager.getTermsForPlace(placeNameId, collectionId) || [];
+                        terms.forEach(term => {
+                          if (termRenderings[term.termId]) {
+                            const [matches, refs, denials] = getMatchTally(
+                              termRenderings[term.termId],
+                              term.refs || [],
+                              extractedVerses
+                            );
+                            totalMatches += matches;
+                            totalRefs += refs;
+                            anyDenials = anyDenials || denials;
+                          }
+                        });
+                      });
+                      
+                      return frac([totalMatches, totalRefs, anyDenials], true);
+                    })()
                   : ''
               )}
               eventHandlers={{ click: () => onSelectLabel(label) }}

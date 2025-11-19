@@ -1,0 +1,20 @@
+🔍 Starting validation of _LabelerCollections
+
+============================================================
+
+📁 Validating collection: SMR
+
+  Validating map-defs.json...
+  Validating mergekeys.json...
+  No placenames.json found (optional)
+
+📁 Validating core-placenames.json
+
+============================================================
+
+📊 VALIDATION SUMMARY
+
+Total Errors: 0
+Total Warnings: 0
+
+✅ All validations passed!
