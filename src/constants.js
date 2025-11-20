@@ -10,7 +10,7 @@ export const STATUS_UNMATCHED = 3;          // Unmatched label - doesn't match r
 export const STATUS_GUESSED = 4;            // Guessed - needs approval
 export const STATUS_MULTIPLE_RENDERINGS = 5; // Multiple renderings - needs pattern confirmation
 export const STATUS_INCOMPLETE = 6;         // Incomplete - missing in some verses
-export const STATUS_MATCHED = 7;            // Matched - all OK
+export const STATUS_MATCHED = 7;            // Perfect - all OK
 
 // export const MATCH_PRE_B = '\\b';
 // export const MATCH_POST_B = '\\b';

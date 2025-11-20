@@ -60,10 +60,10 @@
     "ne": "अनुवादित लेबल प्रविष्ट गर्नुहोस्"
   },
   "enterRenderings": {
-    "en": "Enter renderings here, one per line.\nOptionally, explicitly mark the map form of the rendering by adding it as a comment that begins with '@'.\ne.g. Misra* (@Misradesh)",
-    "es": "Ingrese los traducciones aquí, uno por línea.\nOpcionalmente, marque explícitamente la forma del mapa agregándola como un comentario que comience con '@'.\np.ej. Misra* (@Misradesh)",
-    "fr": "Entrez les rendus ici, un par ligne.\nOptionnellement, marquez explicitement la forme de la carte en l'ajoutant comme un commentaire commençant par '@'.\np.ex. Misra* (@Misradesh)",
-    "ne": "यहाँ अनुवादहरू प्रविष्ट गर्नुहोस्, प्रत्येक लाइनमा एक।\nवैकल्पिक रूपमा, '@' बाट सुरु हुने टिप्पणीको रूपमा अनुवादको नक्सा रूप स्पष्ट रूपमा चिन्ह लगाउनुहोस्।\nजस्तै: Misra* (@Misradesh)"
+    "en": "Enter renderings here, one per line.",
+    "es": "Ingrese los traducciones aquí, uno por línea.",
+    "fr": "Entrez les rendus ici, un par ligne.",
+    "ne": "यहाँ अनुवादहरू प्रविष्ट गर्नुहोस्, प्रत्येक लाइनमा एक।"
   },
   "export": {
     "en": "Export",
@@ -856,10 +856,10 @@
     },
     {
       "text": {
-        "en": "Matched",
-        "es": "Coincidente",
-        "fr": "Correspondant",
-        "ne": "मिल्यो"
+        "en": "Perfect",
+        "es": "Perfecto",
+        "fr": "Parfait",
+        "ne": "उत्तम"
       },
       "help": {
         "en": "The term renderings will be able to supply this label to any other map in the project that needs it.",

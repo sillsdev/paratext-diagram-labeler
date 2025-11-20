@@ -1486,6 +1486,29 @@ ipcMain.handle('save-to-json', async (event, jsonPath, jsonFilename, settings) =
   return saveToJson(jsonPath, jsonFilename, settings);
 });
 
+// Handler to save JSON file
+ipcMain.handle('save-json-file', async (event, filePath, data) => {
+  try {
+    const normalizedPath = path.normalize(filePath);
+    console.log(`Saving JSON file to: ${normalizedPath}`);
+    
+    // Ensure directory exists
+    const dir = path.dirname(normalizedPath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    
+    // Write JSON file
+    fs.writeFileSync(normalizedPath, JSON.stringify(data, null, 2), 'utf8');
+    console.log(`Successfully saved JSON file: ${normalizedPath}`);
+    
+    return { success: true };
+  } catch (error) {
+    console.error(`Error saving JSON file: ${error.message}`);
+    return { success: false, error: error.message };
+  }
+});
+
 // Handler to check path status
 ipcMain.handle('stat-path', async (event, filePath) => {
   try {

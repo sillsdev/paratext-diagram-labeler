@@ -5,7 +5,7 @@ import uiStr from './data/ui-strings.json';
 import { MAP_VIEW, TABLE_VIEW, USFM_VIEW } from './constants.js';
 import { collectionManager, getCollectionIdFromTemplate, findCollectionIdAndTemplate } from './CollectionManager';
 import { getMapDef } from './MapData';
-import { inLang, getStatus, getMapForm, isLabelVisible } from './Utils.js';
+import { inLang, getStatus, getPlaceNameStatus, getMapForm, isLabelVisible } from './Utils.js';
 import MapPane from './MapPane.js';
 import TableView from './TableView.js';
 import DetailsPane from './DetailsPane.js';
@@ -375,16 +375,12 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
               label.placeNameIds.forEach(placeNameId => {
                 const terms = collectionManager.getTermsForPlace(placeNameId, collectionId) || [];
                 if (terms.length > 0) {
-                  const statuses = terms.map(term => 
-                    getStatus(
-                      termRenderings,
-                      term.termId,
-                      label.vernLabel || '',
-                      term.refs || [],
-                      extractedVerses
-                    )
+                  perPlaceStatus[placeNameId] = getPlaceNameStatus(
+                    termRenderings,
+                    terms,
+                    label.vernLabel || '',
+                    extractedVerses
                   );
-                  perPlaceStatus[placeNameId] = Math.min(...statuses);
                 }
               });
             }
@@ -409,16 +405,12 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
               label.placeNameIds.forEach(placeNameId => {
                 const terms = collectionManager.getTermsForPlace(placeNameId, collectionId) || [];
                 if (terms.length > 0) {
-                  const statuses = terms.map(term => 
-                    getStatus(
-                      termRenderings,
-                      term.termId,
-                      label.vernLabel || '',
-                      term.refs || [],
-                      extractedVerses
-                    )
+                  perPlaceStatus[placeNameId] = getPlaceNameStatus(
+                    termRenderings,
+                    terms,
+                    label.vernLabel || '',
+                    extractedVerses
                   );
-                  perPlaceStatus[placeNameId] = Math.min(...statuses);
                 }
               });
             }
@@ -497,16 +489,12 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
       label.placeNameIds.forEach(placeNameId => {
         const terms = collectionManager.getTermsForPlace(placeNameId, collectionId) || [];
         if (terms.length > 0) {
-          const statuses = terms.map(term =>
-            getStatus(
-              termRenderings,
-              term.termId,
-              label.vernLabel || '',
-              term.refs || [],
-              extractedVerses
-            )
+          perPlaceStatus[placeNameId] = getPlaceNameStatus(
+            termRenderings,
+            terms,
+            label.vernLabel || '',
+            extractedVerses
           );
-          perPlaceStatus[placeNameId] = Math.min(...statuses);
         }
       });
 
@@ -575,16 +563,12 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
             label.placeNameIds.forEach(placeNameId => {
               const terms = collectionManager.getTermsForPlace(placeNameId, collectionId) || [];
               if (terms.length > 0) {
-                const statuses = terms.map(term => 
-                  getStatus(
-                    currentTermRenderings,
-                    term.termId,
-                    newVernacular,
-                    term.refs || [],
-                    extractedVerses
-                  )
+                perPlaceStatus[placeNameId] = getPlaceNameStatus(
+                  currentTermRenderings,
+                  terms,
+                  newVernacular,
+                  extractedVerses
                 );
-                perPlaceStatus[placeNameId] = Math.min(...statuses);
               }
             });
             
@@ -604,7 +588,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
         })
       );
       
-      // If opCode is 'sync', update Label Dictionary
+      // If opCode is 'sync', update Label Dictionary (in memory only - not saved to disk yet)
       if (opCode === 'sync' && lblTemplate) {
         labelDictionaryService.setVernacular(lblTemplate, newVernacular, 'sync');
       }
@@ -727,6 +711,15 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
         setSavedLabels({ ...labelsToSave });
         setHasUnsavedChanges(false);
         console.log('Labels saved successfully to .IDML.TXT file:', result.filePath);
+        
+        // Sync all labels with opCode='sync' to the Label Dictionary
+        try {
+          await labelDictionaryService.syncLabelsToDict(labels);
+          console.log('Label Dictionary synced successfully');
+        } catch (dictError) {
+          console.error('Error syncing Label Dictionary:', dictError);
+          // Don't fail the entire save operation if dictionary sync fails
+        }
       } else {
         console.error('Failed to save labels:', result.error);
         alert(inLang(uiStr.errorSavingLabels, lang) + ': ' + result.error);
@@ -908,17 +901,12 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
         placeNameIds.forEach(placeNameId => {
           const terms = collectionManager.getTermsForPlace(placeNameId, collectionId) || [];
           if (terms.length > 0) {
-            // Calculate status for each term, take most severe (minimum value)
-            const statuses = terms.map(term => 
-              getStatus(
-                currentTermRenderings,
-                term.termId,
-                dictVernacular || '',
-                term.refs || [],
-                extractedVerses
-              )
+            perPlaceStatus[placeNameId] = getPlaceNameStatus(
+              currentTermRenderings,
+              terms,
+              dictVernacular || '',
+              extractedVerses
             );
-            perPlaceStatus[placeNameId] = Math.min(...statuses);
           }
         });
         
@@ -1200,16 +1188,12 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
           label.placeNameIds.forEach(placeNameId => {
             const terms = collectionManager.getTermsForPlace(placeNameId, collectionId) || [];
             if (terms.length > 0) {
-              const statuses = terms.map(term => 
-                getStatus(
-                  currentTermRenderings,
-                  term.termId,
-                  label.vernLabel || '',
-                  term.refs || [],
-                  extractedVerses
-                )
+              perPlaceStatus[placeNameId] = getPlaceNameStatus(
+                currentTermRenderings,
+                terms,
+                label.vernLabel || '',
+                extractedVerses
               );
-              perPlaceStatus[placeNameId] = Math.min(...statuses);
             }
           });
         }

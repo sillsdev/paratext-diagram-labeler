@@ -21,7 +21,7 @@ export const statusValue = [
   { bkColor: '#FF8000', textColor: 'black', sort: 4 }, // 4 - Guessed
   { bkColor: 'purple', textColor: 'white', sort: 5 }, // 5 - Multiple renderings
   { bkColor: '#80FF00', textColor: 'black', sort: 6 }, // 6 - Incomplete
-  { bkColor: 'white', textColor: 'black', sort: 7 }, // 7 - Matched (OK)
+  { bkColor: 'white', textColor: 'black', sort: 7 }, // 7 - Perfect (OK)
 ];
 
 export function prettyRef(ref) {
@@ -145,6 +145,115 @@ export function getStatus(termRenderings, termId, vernLabel, refs, extractedVers
   return wordMatchesRenderings(vernLabel, entry.renderings, false)
     ? STATUS_MULTIPLE_RENDERINGS  // Multiple patterns detected
     : STATUS_UNMATCHED;
+}
+
+/**
+ * Calculate status for a placeName by considering all its terms together.
+ * This handles multi-term placeNames (e.g., NT + OT) where terms may have
+ * different renderings or one term may have no rendering (auto-join case).
+ */
+export function getPlaceNameStatus(termRenderings, terms, vernLabel, extractedVerses) {
+  // Ensure vernLabel is a string
+  vernLabel = (vernLabel && typeof vernLabel === 'string') ? vernLabel.trim() : '';
+  if (!vernLabel) {
+    return STATUS_BLANK;
+  }
+
+  if (vernLabel.includes('—')) {
+    return STATUS_MULTIPLE;
+  }
+
+  // Check if any terms have refs - if not, no renderings status doesn't apply
+  const hasAnyRefs = terms.some(term => term.refs && term.refs.length > 0);
+  
+  // Collect renderings from all terms that have them
+  const termMapForms = [];
+  const termIsGuessed = [];
+  const termsWithRefs = [];
+
+  for (const term of terms) {
+    const entry = termRenderings[term.termId];
+    if (!entry) continue; // No renderings for this term - auto-join case
+    
+    const mapForm = getMapFormStrict(termRenderings, term.termId);
+    if (!mapForm) continue; // No renderings for this term - auto-join case
+    
+    termMapForms.push(mapForm);
+    termIsGuessed.push(entry.isGuessed || false);
+    if (term.refs && term.refs.length > 0) {
+      termsWithRefs.push({ entry, refs: term.refs });
+    }
+  }
+
+  // If NO terms have renderings AND at least one term has refs, return STATUS_NO_RENDERINGS
+  // If no terms have refs at all, STATUS_NO_RENDERINGS doesn't apply - return STATUS_MATCHED
+  if (termMapForms.length === 0) {
+    return hasAnyRefs ? STATUS_NO_RENDERINGS : STATUS_MATCHED;
+  }
+
+  // Check if all terms with renderings have the SAME rendering
+  const uniqueMapForms = [...new Set(termMapForms)];
+  
+  if (uniqueMapForms.length > 1) {
+    // Multiple different renderings across terms
+    return STATUS_MULTIPLE_RENDERINGS;
+  }
+
+  // All terms have same rendering (or only one term has rendering)
+  const mapForm = uniqueMapForms[0];
+  
+  // Check if label matches the rendering (exact match or pattern match)
+  const exactMatch = vernLabel === mapForm;
+  let isMatch = exactMatch;
+  
+  if (!exactMatch) {
+    // Check if vernLabel matches the rendering pattern(s)
+    // We need to check all terms' renderings to see if any pattern matches
+    let anyPatternMatch = false;
+    for (const term of terms) {
+      const entry = termRenderings[term.termId];
+      if (entry && entry.renderings) {
+        if (wordMatchesRenderings(vernLabel, entry.renderings, false)) {
+          anyPatternMatch = true;
+          break;
+        }
+      }
+    }
+    
+    if (anyPatternMatch) {
+      // Label matches a pattern but not exact mapForm - could be multiple renderings
+      return STATUS_MULTIPLE_RENDERINGS;
+    } else {
+      // Label doesn't match any rendering or pattern
+      return STATUS_UNMATCHED;
+    }
+  }
+
+  // Label matches the rendering exactly - check if guessed or approved
+  const anyGuessed = termIsGuessed.some(g => g);
+  if (anyGuessed) {
+    return STATUS_GUESSED;
+  }
+
+  // Check match tally across all terms with refs
+  if (termsWithRefs.length === 0) {
+    return STATUS_MATCHED; // No refs to check
+  }
+
+  // Aggregate match tallies
+  let totalMatched = 0;
+  let totalRefs = 0;
+  for (const { entry, refs } of termsWithRefs) {
+    const [matched, total] = getMatchTally(entry, refs, extractedVerses);
+    totalMatched += matched;
+    totalRefs += total;
+  }
+
+  if (totalMatched === totalRefs) {
+    return STATUS_MATCHED;
+  } else {
+    return STATUS_INCOMPLETE;
+  }
 }
 
 export function getMapForm(termRenderings, termId, altTermIds) {

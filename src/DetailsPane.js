@@ -190,36 +190,6 @@ export default function DetailsPane({
     onExit();
   };
 
-  const onAddMapForm = () => {
-    // This function is called when the user clicks the "Add Map" button
-    // Append the contents of the vernacular input to the renderings textarea
-    if (vernacularAutocorrectRef && vernacularAutocorrectRef.current) {
-      const vernacularText = vernacularValue.trim();
-      // Append the vernacular text to the renderings textarea
-      if (renderingsTextareaRef && renderingsTextareaRef.current) {
-        const currentRenderings = renderingsTextareaRef.current.value
-          .split('\n')
-          .map(line => line.trim())
-          .filter(line => line.length > 0)
-          .join('\n');
-        console.log(`Current renderings: "${currentRenderings}"`);
-
-        const whichRendering = wordMatchesRenderings(vernacularText, currentRenderings, false);
-        console.log(`Matched rendering index: ${whichRendering}`);
-        const mapForm = ` (@${vernacularText})`;
-        try {
-          // insert mapForm into renderingsTextareaRef.current.value at the end of the rendering whose 1-based index is whichRendering
-          const lines = currentRenderings.split('\n');
-          lines[whichRendering - 1] += mapForm;
-          renderingsTextareaRef.current.value = lines.join('\n');
-        } catch (e) {
-          renderingsTextareaRef.current.value = currentRenderings + mapForm;
-        }
-        onRenderingsChange({ target: { value: renderingsTextareaRef.current.value } });
-      }
-    }
-  };
-
   const onRefreshLabel = () => {
     // This function is called when the user clicks the "Refresh Labels" button.
     // Update the vernacular input using resolved template or getMapForm
@@ -230,10 +200,11 @@ export default function DetailsPane({
       // Try to resolve template first
       let mapForm = '';
       if (currentLabel.lblTemplate) {
-        mapForm = collectionManager.resolveTemplate(currentLabel.lblTemplate, collectionId, termRenderings) || '';
+        const resolved = collectionManager.resolveTemplate(currentLabel.lblTemplate, collectionId, termRenderings);
+        mapForm = resolved?.literalText || '';
       }
       
-      // Fallback to old method if needed
+      // Fallback to old method if needed (shouldn't happen with new architecture)
       if (!mapForm) {
         const altTermIds = collectionManager.getAltTermIds(currentLabel?.mergeKey, collectionId);
         mapForm = getMapForm(termRenderings, currentLabel.termId, altTermIds);
@@ -1135,7 +1106,7 @@ export default function DetailsPane({
         >
           {' '}
           {/* OpCode radio buttons */}
-          <div style={{ marginBottom: 8, display: 'flex', gap: 12, alignItems: 'center' }}>
+          <div style={{ marginBottom: 8, display: 'flex', gap: 12, alignItems: 'center', color: statusValue[status].textColor }}>
             <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
               <input
                 type="radio"
@@ -1238,9 +1209,6 @@ export default function DetailsPane({
               .replace('{listOfRenderingPatterns}', localRenderings.split('\n').filter(l => l.trim()).join(', '))}
             {status === STATUS_MULTIPLE_RENDERINGS && (
               <>
-                <button style={{ marginLeft: 8 }} onClick={() => onAddMapForm()}>
-                  {inLang(uiStr.addMapForm, lang)}
-                </button>
                 <button 
                   style={{ marginLeft: 8 }}
                   onClick={() => {
@@ -1279,21 +1247,41 @@ export default function DetailsPane({
               <button
                 style={{ marginLeft: 8 }}
                 onClick={() => {
-                  const termId = labels[selectedLabelIndex].termId;
-
-                  // Update local state
-                  setLocalIsApproved(true);
-
-                  // Create a proper updated termRenderings object
+                  // Get active placeNameId from the current tab
+                  const currentLabel = labels[selectedLabelIndex];
+                  const placeNameIds = currentLabel?.placeNameIds || [];
+                  const activePlaceNameId = placeNameIds[activeTab] || placeNameIds[0];
+                  
+                  if (!activePlaceNameId) return;
+                  
+                  // Get all terms for this placeName
+                  const terms = collectionManager.getTermsForPlace(activePlaceNameId, collectionId) || [];
+                  
+                  // Approve all guessed renderings for all terms in this placeName
                   const updatedData = { ...termRenderings };
-                  updatedData[termId] = {
-                    ...updatedData[termId],
-                    isGuessed: false,
-                  };
-
-                  // Update state via parent component handlers
-                  setTermRenderings(updatedData);
-                  onApprovedChange({ target: { checked: true } });
+                  let anyUpdated = false;
+                  
+                  terms.forEach(term => {
+                    if (updatedData[term.termId]?.isGuessed) {
+                      updatedData[term.termId] = {
+                        ...updatedData[term.termId],
+                        isGuessed: false,
+                      };
+                      anyUpdated = true;
+                    }
+                  });
+                  
+                  if (anyUpdated) {
+                    // Update state via parent component handlers
+                    setTermRenderings(updatedData);
+                    // Trigger re-render by updating vernacular (no change to text)
+                    onUpdateVernacular(
+                      currentLabel.mergeKey,
+                      currentLabel.lblTemplate || currentLabel.mergeKey,
+                      currentLabel.vernLabel,
+                      currentLabel.opCode || 'sync'
+                    );
+                  }
                 }}
               >
                 {inLang(uiStr.approveRendering, lang)}
@@ -1416,15 +1404,17 @@ export default function DetailsPane({
                       </div>
                     ) : (
                       /* Not joined or single term - show each term with its own textarea */
-                      terms.map(term => {
+                      terms
+                        .filter(term => term.refs && term.refs.length > 0)
+                        .map(term => {
                         const termGloss = inLang(term.gloss, lang);
                         const termTranslit = term.transliteration ? ` /${term.transliteration}/` : '';
                         const termData = termRenderings[term.termId] || {};
                         
                         return (
                           <div key={term.termId} style={{ marginBottom: 12 }}>
-                            <div style={{ fontSize: '0.9em', marginBottom: 4, fontWeight: 'bold' }}>
-                              {term.termId} {termGloss}{termTranslit}
+                            <div style={{ fontSize: '0.9em', marginBottom: 4 }}>
+                              <span style={{ fontWeight: 'bold' }}>{term.termId}</span> {termGloss}{termTranslit}
                             </div>
                             <AutocorrectTextarea
                               value={termData.renderings?.replace(/\|\|/g, '\n') || ''}
@@ -1440,7 +1430,7 @@ export default function DetailsPane({
                               }}
                               style={{
                                 width: '100%',
-                                minHeight: '80px',
+                                minHeight: '50px',
                                 border: '1px solid #999',
                                 borderRadius: '0.5em',
                                 padding: '6px',

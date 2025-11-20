@@ -52,6 +52,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   saveLabelsToIdmlTxt: (projectFolder, templateName, labels) =>
     ipcRenderer.invoke('save-labels-to-idml-txt', projectFolder, templateName, labels),
 
+  saveJsonFile: (filePath, data) =>
+    ipcRenderer.invoke('save-json-file', filePath, data),
+
   // Path utilities
   path: {
     join: (...paths) => ipcRenderer.invoke('path-join', ...paths),

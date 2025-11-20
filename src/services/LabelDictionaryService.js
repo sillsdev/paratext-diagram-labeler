@@ -105,17 +105,30 @@ class LabelDictionaryService {
   }
 
   /**
-   * Set vernacular label for a template
+   * Set vernacular label for a template (in memory only - does not save to disk)
    * @param {string} lblTemplate - Template string like "{Jerusalem}"
    * @param {string} vernacular - Vernacular label text
    * @param {string} opCode - Operation code: 'sync', 'override', or 'omit'
    */
-  async setVernacular(lblTemplate, vernacular, opCode = 'sync') {
+  setVernacular(lblTemplate, vernacular, opCode = 'sync') {
     // Only store in dictionary if opCode is 'sync'
     if (opCode === 'sync') {
       this.labelDictionary[lblTemplate] = vernacular;
-      await this.saveLabelDictionary();
+      // Note: Does not auto-save - call saveLabelDictionary() explicitly when ready
     }
+  }
+  
+  /**
+   * Sync all labels with opCode='sync' to the dictionary and save to disk
+   * @param {Array} labels - Array of label objects
+   */
+  async syncLabelsToDict(labels) {
+    labels.forEach(label => {
+      if (label.opCode === 'sync' && label.lblTemplate && label.vernLabel) {
+        this.labelDictionary[label.lblTemplate] = label.vernLabel;
+      }
+    });
+    await this.saveLabelDictionary();
   }
 
   /**
