@@ -394,33 +394,46 @@ class CollectionManager {
     parsed.placeNameIds.forEach(placeNameId => {
       const placeName = this.getPlaceName(placeNameId, collectionId);
       if (placeName && placeName.terms && placeName.terms.length > 0) {
-        // Get vernacular from first term
-        const firstTerm = placeName.terms[0];
-        const termData = termRenderings[firstTerm.termId];
-        if (termData && termData.renderings) {
-          let renderingsStr = termData.renderings || '';
-          // Strip all asterisks (wildcards)
-          renderingsStr = renderingsStr.replace(/\*/g, '');
-          
-          // Check for explicit map form (e.g., (@misradesh) or (map: misradesh))
-          const mapFormMatch = renderingsStr.match(/\((?:@|map:\s*)([^)]+)\)/);
-          if (mapFormMatch) {
-            // Replace {placeNameId} with the explicit map form
-            resolvedText = resolvedText.replace(new RegExp(`\\{${placeNameId}\\}`, 'gi'), mapFormMatch[1]);
-          } else {
-            // Split into separate rendering items
-            const items = renderingsStr.replace(/\|\|/g, '\n').split(/(\r?\n)/);
-            // Process each item: remove parentheses and their contents, trim space
-            const processedItems = items
-              .map(item => item.replace(/\([^)]*\)/g, '').trim())
-              .filter(item => item.length > 0);
-            // Join with em-dash
-            const mapForm = processedItems.join('—');
-            if (mapForm) {
-              // Replace {placeNameId} with the processed map form
-              resolvedText = resolvedText.replace(new RegExp(`\\{${placeNameId}\\}`, 'gi'), mapForm);
+        // Collect unique rendering patterns from ALL terms
+        const allPatterns = [];
+        let hasExplicitMapForm = false;
+        let explicitMapForm = '';
+        
+        for (const term of placeName.terms) {
+          const termData = termRenderings[term.termId];
+          if (termData && termData.renderings) {
+            let renderingsStr = termData.renderings || '';
+            // Strip all asterisks (wildcards)
+            renderingsStr = renderingsStr.replace(/\*/g, '');
+            
+            // Check for explicit map form (e.g., (@misradesh) or (map: misradesh))
+            const mapFormMatch = renderingsStr.match(/\((?:@|map:\s*)([^)]+)\)/);
+            if (mapFormMatch) {
+              hasExplicitMapForm = true;
+              explicitMapForm = mapFormMatch[1];
+              break; // Explicit map form takes precedence
+            } else {
+              // Split into separate rendering items
+              const items = renderingsStr.replace(/\|\|/g, '\n').split(/(\r?\n)/);
+              // Process each item: remove parentheses and their contents, trim space
+              const processedItems = items
+                .map(item => item.replace(/\([^)]*\)/g, '').trim())
+                .filter(item => item.length > 0);
+              allPatterns.push(...processedItems);
             }
           }
+        }
+        
+        if (hasExplicitMapForm) {
+          // Replace {placeNameId} with the explicit map form
+          resolvedText = resolvedText.replace(new RegExp(`\\{${placeNameId}\\}`, 'gi'), explicitMapForm);
+        } else if (allPatterns.length > 0) {
+          // Get unique patterns (case-sensitive to preserve original)
+          const uniquePatterns = [...new Set(allPatterns)];
+          // Join with em-dash
+          const mapForm = uniquePatterns.join('—');
+          // Replace {placeNameId} with the processed map form
+          resolvedText = resolvedText.replace(new RegExp(`\\{${placeNameId}\\}`, 'gi'), mapForm);
         }
       }
     });

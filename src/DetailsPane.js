@@ -28,6 +28,7 @@ export default function DetailsPane({
   onApprovedChange,
   termRenderings,
   labels,
+  onTriggerStatusRecalc,
   onSwitchView,
   mapPaneView,
   onSetView,
@@ -1205,27 +1206,80 @@ export default function DetailsPane({
             <span style={{ fontWeight: 'bold' }}>
               {inLang(uiStr.statusValue[status].text, lang) + ': '}
             </span>
-            {inLang(uiStr.statusValue[status].help, lang)
-              .replace('{listOfRenderingPatterns}', localRenderings.split('\n').filter(l => l.trim()).join(', '))}
+            {(() => {
+              let helpText = inLang(uiStr.statusValue[status].help, lang);
+              
+              // For MULTIPLE_RENDERINGS, collect actual patterns from all terms in active placeName
+              if (status === STATUS_MULTIPLE_RENDERINGS) {
+                const currentLabel = labels[selectedLabelIndex];
+                const placeNameIds = currentLabel?.placeNameIds || [];
+                const activePlaceNameId = placeNameIds[activeTab] || placeNameIds[0];
+                
+                if (activePlaceNameId) {
+                  const terms = collectionManager.getTermsForPlace(activePlaceNameId, collectionId) || [];
+                  const patterns = [];
+                  terms.forEach(term => {
+                    const termData = termRenderings[term.termId];
+                    if (termData && termData.renderings) {
+                      // Strip wildcards and extract patterns
+                      const renderingsStr = termData.renderings.replace(/\*/g, '').replace(/\|\|/g, '\n');
+                      const items = renderingsStr.split(/\r?\n/).map(item => item.replace(/\([^)]*\)/g, '').trim()).filter(item => item.length > 0);
+                      patterns.push(...items);
+                    }
+                  });
+                  const uniquePatterns = [...new Set(patterns)];
+                  helpText = helpText.replace('{listOfRenderingPatterns}', uniquePatterns.join(', '));
+                } else {
+                  helpText = helpText.replace('{listOfRenderingPatterns}', '');
+                }
+              } else {
+                helpText = helpText.replace('{listOfRenderingPatterns}', localRenderings.split('\n').filter(l => l.trim()).join(', '));
+              }
+              
+              return helpText;
+            })()}
             {status === STATUS_MULTIPLE_RENDERINGS && (
               <>
                 <button 
                   style={{ marginLeft: 8 }}
-                  onClick={() => {
-                    // Get active placeNameId
+                  onClick={async () => {
+                    // Get active placeNameId and collect its rendering patterns
                     const currentLabel = labels[selectedLabelIndex];
                     const placeNameIds = currentLabel?.placeNameIds || [];
                     const activePlaceNameId = placeNameIds[activeTab] || placeNameIds[0];
                     
                     if (activePlaceNameId) {
-                      labelDictionaryService.setConfirmed(activePlaceNameId, true);
-                      // Trigger re-render by updating vernacular (no change to text)
-                      onUpdateVernacular(
-                        currentLabel.mergeKey,
-                        currentLabel.lblTemplate || currentLabel.mergeKey,
-                        currentLabel.vernLabel,
-                        currentLabel.opCode || 'sync'
-                      );
+                      const vernLabel = currentLabel.vernLabel || '';
+                      
+                      // Collect all unique rendering patterns from terms in this placeName
+                      const terms = collectionManager.getTermsForPlace(activePlaceNameId, collectionId) || [];
+                      const allPatterns = [];
+                      
+                      terms.forEach(term => {
+                        const termData = termRenderings[term.termId];
+                        if (termData && termData.renderings) {
+                          // Strip wildcards and split into individual patterns
+                          const renderingsStr = termData.renderings.replace(/\*/g, '').replace(/\|\|/g, '\n');
+                          const items = renderingsStr.split(/\r?\n/)
+                            .map(item => item.replace(/\([^)]*\)/g, '').trim())
+                            .filter(item => item.length > 0);
+                          allPatterns.push(...items);
+                        }
+                      });
+                      
+                      // Get unique patterns and filter out the one that matches the label
+                      const uniquePatterns = [...new Set(allPatterns)];
+                      const alternatePatterns = uniquePatterns.filter(pattern => pattern !== vernLabel);
+                      
+                      // Add each alternate pattern separately
+                      for (const pattern of alternatePatterns) {
+                        await labelDictionaryService.addAltRendering(activePlaceNameId, [pattern]);
+                      }
+                      
+                      // Trigger status recalculation
+                      if (onTriggerStatusRecalc) {
+                        onTriggerStatusRecalc();
+                      }
                     }
                   }}
                 >

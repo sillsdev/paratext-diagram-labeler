@@ -142,9 +142,9 @@ class LabelDictionaryService {
   }
 
   /**
-   * Add confirmed rendering patterns for a placeName
+   * Add confirmed rendering pattern for a placeName
    * @param {string} placeNameId - PlaceName identifier
-   * @param {Array<string>} patterns - Array of pattern strings to confirm
+   * @param {string|Array<string>} patterns - Pattern string or array with single pattern to confirm
    */
   async addAltRendering(placeNameId, patterns) {
     if (!this.placeNameData[placeNameId]) {
@@ -154,37 +154,25 @@ class LabelDictionaryService {
       };
     }
 
-    // Sort patterns for consistent comparison
-    const sortedPatterns = [...patterns].sort();
+    // Handle both string and array input
+    const pattern = Array.isArray(patterns) ? patterns[0] : patterns;
     
-    // Check if this pattern set already exists
-    const exists = this.placeNameData[placeNameId].altRenderings.some(
-      existing => {
-        const sortedExisting = [...existing].sort();
-        return JSON.stringify(sortedExisting) === JSON.stringify(sortedPatterns);
-      }
-    );
-
-    if (!exists) {
-      this.placeNameData[placeNameId].altRenderings.push(sortedPatterns);
+    // Check if this pattern already exists
+    if (!this.placeNameData[placeNameId].altRenderings.includes(pattern)) {
+      this.placeNameData[placeNameId].altRenderings.push(pattern);
       await this.savePlaceNameData();
     }
   }
 
   /**
-   * Check if patterns are in confirmed altRenderings
+   * Check if a pattern is in confirmed altRenderings
    * @param {string} placeNameId - PlaceName identifier
-   * @param {Array<string>} patterns - Array of pattern strings to check
-   * @returns {boolean} True if patterns are confirmed
+   * @param {string} pattern - Pattern string to check
+   * @returns {boolean} True if pattern is confirmed
    */
-  isPatternsConfirmed(placeNameId, patterns) {
+  isPatternConfirmed(placeNameId, pattern) {
     const altRenderings = this.getAltRenderings(placeNameId);
-    const sortedPatterns = [...patterns].sort();
-    
-    return altRenderings.some(existing => {
-      const sortedExisting = [...existing].sort();
-      return JSON.stringify(sortedExisting) === JSON.stringify(sortedPatterns);
-    });
+    return altRenderings.includes(pattern);
   }
 
   /**
@@ -211,6 +199,30 @@ class LabelDictionaryService {
     }
 
     this.placeNameData[placeNameId].isJoined = joined;
+    await this.savePlaceNameData();
+  }
+
+  /**
+   * Mark multiple rendering patterns as confirmed for a placeName
+   * This is a shorthand that adds the current patterns to altRenderings
+   * @param {string} placeNameId - PlaceName identifier
+   * @param {boolean} confirmed - Whether to confirm (true adds to altRenderings)
+   */
+  async setConfirmed(placeNameId, confirmed = true) {
+    if (!confirmed) {
+      // Could implement removal logic if needed
+      return;
+    }
+    
+    // This method is called when user clicks "Confirm Patterns" button
+    // The specific patterns will be added via addAltRendering by the caller
+    // This method primarily exists for API compatibility
+    if (!this.placeNameData[placeNameId]) {
+      this.placeNameData[placeNameId] = {
+        altRenderings: [],
+        isJoined: false
+      };
+    }
     await this.savePlaceNameData();
   }
 

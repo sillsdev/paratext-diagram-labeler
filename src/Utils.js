@@ -152,9 +152,14 @@ export function getStatus(termRenderings, termId, vernLabel, refs, extractedVers
  * This handles multi-term placeNames (e.g., NT + OT) where terms may have
  * different renderings or one term may have no rendering (auto-join case).
  */
-export function getPlaceNameStatus(termRenderings, terms, vernLabel, extractedVerses) {
+export function getPlaceNameStatus(termRenderings, terms, vernLabel, extractedVerses, placeNameId = null, labelDictionaryService = null) {
   // Ensure vernLabel is a string
   vernLabel = (vernLabel && typeof vernLabel === 'string') ? vernLabel.trim() : '';
+  
+  if (placeNameId) {
+    console.log(`[getPlaceNameStatus] Entry - placeNameId=${placeNameId}, vernLabel="${vernLabel}", terms=${terms.length}, labelDictionaryService=${!!labelDictionaryService}`);
+  }
+  
   if (!vernLabel) {
     return STATUS_BLANK;
   }
@@ -196,7 +201,30 @@ export function getPlaceNameStatus(termRenderings, terms, vernLabel, extractedVe
   
   if (uniqueMapForms.length > 1) {
     // Multiple different renderings across terms
-    return STATUS_MULTIPLE_RENDERINGS;
+    // Check if the extra patterns have been confirmed in altRenderings
+    if (placeNameId && labelDictionaryService) {
+      const altRenderings = labelDictionaryService.getAltRenderings(placeNameId);
+      // Check if all patterns except the one matching the label are confirmed
+      const extraPatterns = uniqueMapForms.filter(pattern => pattern !== vernLabel);
+      const allConfirmed = extraPatterns.every(pattern => altRenderings.includes(pattern));
+      
+      console.log(`[getPlaceNameStatus] placeNameId=${placeNameId}, vernLabel="${vernLabel}"`);
+      console.log(`[getPlaceNameStatus] uniqueMapForms:`, uniqueMapForms);
+      console.log(`[getPlaceNameStatus] extraPatterns:`, extraPatterns);
+      console.log(`[getPlaceNameStatus] altRenderings:`, altRenderings);
+      console.log(`[getPlaceNameStatus] allConfirmed:`, allConfirmed);
+      
+      if (allConfirmed && extraPatterns.length > 0) {
+        // All extra patterns are confirmed, no longer a problem
+        // Continue to check if guessed/matched/incomplete
+        console.log(`[getPlaceNameStatus] Multiple renderings confirmed, continuing...`);
+      } else {
+        console.log(`[getPlaceNameStatus] Returning STATUS_MULTIPLE_RENDERINGS`);
+        return STATUS_MULTIPLE_RENDERINGS;
+      }
+    } else {
+      return STATUS_MULTIPLE_RENDERINGS;
+    }
   }
 
   // All terms have same rendering (or only one term has rendering)

@@ -150,6 +150,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
   });
   const [mapDef, setMapDef] = useState(emptyInitialMap);
   const [labels, setLabelsRaw] = useState([]);
+  const [statusRecalcTrigger, setStatusRecalcTrigger] = useState(0);
   
   // Wrapper to log all setLabels calls
   const setLabels = useCallback((newLabelsOrFn) => {
@@ -409,7 +410,9 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
                     termRenderings,
                     terms,
                     label.vernLabel || '',
-                    extractedVerses
+                    extractedVerses,
+                    placeNameId,
+                    labelDictionaryService
                   );
                 }
               });
@@ -470,7 +473,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
 
   // Recalculate status when extractedVerses becomes available (but only update status, not the whole label)
   useEffect(() => {
-    console.log('[Status Recalc] useEffect triggered - labels:', labels?.length, 'extractedVerses keys:', Object.keys(extractedVerses).length);
+    console.log('[Status Recalc] useEffect triggered - labels:', labels?.length, 'extractedVerses keys:', Object.keys(extractedVerses).length, 'trigger:', statusRecalcTrigger);
     if (!labels?.length || !Object.keys(extractedVerses).length) {
       console.log('[Status Recalc] Skipping - insufficient data');
       return;
@@ -493,7 +496,9 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
             termRenderings,
             terms,
             label.vernLabel || '',
-            extractedVerses
+            extractedVerses,
+            placeNameId,
+            labelDictionaryService
           );
         }
       });
@@ -514,7 +519,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
       return updatedLabels;
     });
     console.log('[Status Recalc] Status recalculation complete');
-  }, [extractedVerses, termRenderings, mapDef.template]);
+  }, [extractedVerses, termRenderings, mapDef.template, statusRecalcTrigger]);
 
   // Load autocorrect file when project folder or initialization state changes
   useEffect(() => {
@@ -567,7 +572,9 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
                   currentTermRenderings,
                   terms,
                   newVernacular,
-                  extractedVerses
+                  extractedVerses,
+                  placeNameId,
+                  labelDictionaryService
                 );
               }
             });
@@ -905,7 +912,9 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
               currentTermRenderings,
               terms,
               dictVernacular || '',
-              extractedVerses
+              extractedVerses,
+              placeNameId,
+              labelDictionaryService
             );
           }
         });
@@ -1192,7 +1201,9 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
                 currentTermRenderings,
                 terms,
                 label.vernLabel || '',
-                extractedVerses
+                extractedVerses,
+                placeNameId,
+                labelDictionaryService
               );
             }
           });
@@ -1763,6 +1774,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
             onApprovedChange={handleApprovedChange}
             termRenderings={termRenderings}
             labels={labels}
+            onTriggerStatusRecalc={() => setStatusRecalcTrigger(prev => prev + 1)}
             onSwitchView={handleSwitchViewWithUsfm}
             mapPaneView={mapPaneView}
             onSetView={async viewIdx => {
