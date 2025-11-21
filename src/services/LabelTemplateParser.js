@@ -5,6 +5,7 @@
  * - {placeNameId} - Basic placeName references
  * - {tag#placeNameId} - Tagged placeName references (any tag allowed)
  * - {r#REF} - Scripture references (e.g., {r#JHN 2}, {r#1SA 2.3})
+ * - {#NUM} - Numbers for digit conversion (e.g., {#7.5}, {#123})
  * 
  * Collections can define their own tag conventions without central registry.
  */
@@ -49,6 +50,11 @@ class LabelTemplateParser {
         field.type = 'reference';
         field.reference = fieldContent.substring(2).trim();
         references.push(field.reference);
+      }
+      // Check if this is a number field {#...}
+      else if (fieldContent.startsWith('#')) {
+        field.type = 'number';
+        field.number = fieldContent.substring(1).trim();
       }
       // Check if this has a tag {tag#placeNameId}
       else if (fieldContent.includes('#')) {

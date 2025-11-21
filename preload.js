@@ -55,6 +55,16 @@ contextBridge.exposeInMainWorld('electronAPI', {
   saveJsonFile: (filePath, data) =>
     ipcRenderer.invoke('save-json-file', filePath, data),
 
+  readJsonFile: (filePath) =>
+    ipcRenderer.invoke('read-json-file', filePath),
+
+  // Digit conversion and reference formatting
+  convertDigits: (projectFolder, numberString) =>
+    ipcRenderer.invoke('convert-digits', projectFolder, numberString),
+
+  vernRef: (projectFolder, refString) =>
+    ipcRenderer.invoke('vern-ref', projectFolder, refString),
+
   // Path utilities
   path: {
     join: (...paths) => ipcRenderer.invoke('path-join', ...paths),

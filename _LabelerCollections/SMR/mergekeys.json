@@ -1320,7 +1320,7 @@
     "mapxKey": "MEDIA"
   },
   "mediterranean_sea": {
-    "lblTemplate": "{MediterraneanSea}",
+    "lblTemplate": "{r#MAT 16.11-13,15; LUK 8.14–9.2; 10.3}",
     "mapxKey": "MEDITERRANEAN SEA"
   },
   "megiddo": {
@@ -1448,7 +1448,7 @@
     "mapxKey": "Nicopolis"
   },
   "nile_river": {
-    "lblTemplate": "{NileRiver}",
+    "lblTemplate": "{to#Egypt}",
     "mapxKey": "Nile River"
   },
   "nineveh": {
@@ -1892,14 +1892,8 @@
     "mapxKey": "Sea of Galilee"
   },
   "sea_of_galilee_ot": {
-    "lblTemplate": "{sea#Chinnereth} ({Galilee})",
-    "mapxKey": "Sea of Chinnereth (Galilee)",
-    "gloss": {
-      "en": "Sea of Chinnereth (Galilee)"
-    },
-    "context": {
-      "en": "Sea between the regions of Galilee and Golan; also called Sea of Galilee"
-    }
+    "lblTemplate": "{GalileeSeaOT}",
+    "mapxKey": "Sea of Chinnereth (Galilee)"
   },
   "seleucia": {
     "lblTemplate": "{Seleucia}",
@@ -1922,7 +1916,7 @@
     "mapxKey": "Shechem"
   },
   "shechem_ot": {
-    "lblTemplate": "{Shechem}",
+    "lblTemplate": "{Caesarea}",
     "mapxKey": "Shechem"
   },
   "sheep_gate": {
@@ -2130,8 +2124,14 @@
     "mapxKey": ""
   },
   "the_negev": {
-    "lblTemplate": "{TheNegev}",
-    "mapxKey": "THE NEGEV"
+    "lblTemplate": "{to#Judea}",
+    "mapxKey": "THE NEGEV",
+    "gloss": {
+      "en": "To Judea (test)"
+    },
+    "context": {
+      "en": "Route to Judea (testing context)"
+    }
   },
   "theater": {
     "lblTemplate": "{Theater}",

@@ -1,5 +1,6 @@
 import packageInfo from '../package.json';
 import labelTemplateParser from './services/LabelTemplateParser';
+import labelTagRulesService from './services/LabelTagRulesService';
 
 const mergeKeysFile = "mergekeys.json";
 const placeNamesFile = "placenames.json";
@@ -259,7 +260,7 @@ class CollectionManager {
   getMergeKeyDefinition(mergeKey, collectionId) {
     const mergeKeys = this.getMergeKeys(collectionId);
     const entry = mergeKeys[mergeKey];
-    return entry?.definition || { en: '' };
+    return entry?.context || { en: '' };
   }
 
   getPlaceNames(collectionId) {
@@ -384,59 +385,130 @@ class CollectionManager {
   }
 
   // Resolve template to get all placeNameIds and references
-  resolveTemplate(lblTemplate, collectionId, termRenderings = {}) {
+  async resolveTemplate(lblTemplate, collectionId, termRenderings = {}, projectFolder = null) {
     if (!lblTemplate) return { placeNameIds: [], references: [], literalText: '', hasMultiplePlaceNames: false };
     
     const parsed = this.templateParser.parseTemplate(lblTemplate);
+    if (parsed.fields.some(f => f.type === 'reference' || f.type === 'number')) {
+      console.log(`[resolveTemplate] Template: "${lblTemplate}", fields:`, parsed.fields);
+    }
     
-    // Resolve the template by looking up vernacular for each placeNameId
+    // Resolve the template by replacing each field with its resolved text
     let resolvedText = lblTemplate;
-    parsed.placeNameIds.forEach(placeNameId => {
-      const placeName = this.getPlaceName(placeNameId, collectionId);
-      if (placeName && placeName.terms && placeName.terms.length > 0) {
-        // Collect unique rendering patterns from ALL terms
-        const allPatterns = [];
-        let hasExplicitMapForm = false;
-        let explicitMapForm = '';
-        
-        for (const term of placeName.terms) {
-          const termData = termRenderings[term.termId];
-          if (termData && termData.renderings) {
-            let renderingsStr = termData.renderings || '';
-            // Strip all asterisks (wildcards)
-            renderingsStr = renderingsStr.replace(/\*/g, '');
-            
-            // Check for explicit map form (e.g., (@misradesh) or (map: misradesh))
-            const mapFormMatch = renderingsStr.match(/\((?:@|map:\s*)([^)]+)\)/);
-            if (mapFormMatch) {
-              hasExplicitMapForm = true;
-              explicitMapForm = mapFormMatch[1];
-              break; // Explicit map form takes precedence
-            } else {
-              // Split into separate rendering items
-              const items = renderingsStr.replace(/\|\|/g, '\n').split(/(\r?\n)/);
-              // Process each item: remove parentheses and their contents, trim space
-              const processedItems = items
-                .map(item => item.replace(/\([^)]*\)/g, '').trim())
-                .filter(item => item.length > 0);
-              allPatterns.push(...processedItems);
-            }
+    
+    // Process each field in reverse order to avoid index shifting
+    const sortedFields = [...parsed.fields].sort((a, b) => b.start - a.start);
+    
+    for (const field of sortedFields) {
+      if (field.type === 'reference') {
+        // Scripture reference - convert to vernacular format
+        if (projectFolder && window.electronAPI?.vernRef) {
+          try {
+            const vernacular = await window.electronAPI.vernRef(projectFolder, field.reference);
+            console.log(`[resolveTemplate] Reference "${field.reference}" -> "${vernacular}"`);
+            resolvedText = resolvedText.substring(0, field.start) + 
+                          vernacular + 
+                          resolvedText.substring(field.end);
+          } catch (error) {
+            console.error(`Error converting reference ${field.reference}:`, error);
+          }
+        } else {
+          console.warn(`[resolveTemplate] Cannot process reference - projectFolder: ${projectFolder}, vernRef available: ${!!window.electronAPI?.vernRef}`);
+        }
+        continue;
+      }
+      
+      if (field.type === 'number') {
+        // Number field - convert digits based on project settings
+        if (projectFolder && window.electronAPI?.convertDigits) {
+          try {
+            const numberStr = field.number;
+            // Convert digits - backend will load settings and use settings.fp
+            const converted = await window.electronAPI.convertDigits(projectFolder, numberStr);
+            resolvedText = resolvedText.substring(0, field.start) + 
+                          converted + 
+                          resolvedText.substring(field.end);
+          } catch (error) {
+            console.error(`Error converting number ${field.number}:`, error);
           }
         }
+        continue;
+      }
+      
+      if (field.type === 'placename' || field.type === 'tagged-placename') {
+        const placeNameId = field.placeNameId;
+        const tag = field.tag || null;
         
-        if (hasExplicitMapForm) {
-          // Replace {placeNameId} with the explicit map form
-          resolvedText = resolvedText.replace(new RegExp(`\\{${placeNameId}\\}`, 'gi'), explicitMapForm);
-        } else if (allPatterns.length > 0) {
-          // Get unique patterns (case-sensitive to preserve original)
-          const uniquePatterns = [...new Set(allPatterns)];
-          // Join with em-dash
-          const mapForm = uniquePatterns.join('—');
-          // Replace {placeNameId} with the processed map form
-          resolvedText = resolvedText.replace(new RegExp(`\\{${placeNameId}\\}`, 'gi'), mapForm);
+        const placeName = this.getPlaceName(placeNameId, collectionId);
+        if (placeName && placeName.terms && placeName.terms.length > 0) {
+          // Collect unique rendering patterns from ALL terms
+          const allPatterns = [];
+          let hasExplicitMapForm = false;
+          let explicitMapForm = '';
+          
+          for (const term of placeName.terms) {
+            const termData = termRenderings[term.termId];
+            if (termData && termData.renderings) {
+              let renderingsStr = termData.renderings || '';
+              // Strip all asterisks (wildcards)
+              renderingsStr = renderingsStr.replace(/\*/g, '');
+              
+              // Check for explicit map form (e.g., (@misradesh) or (map: misradesh))
+              const mapFormMatch = renderingsStr.match(/\((?:@|map:\s*)([^)]+)\)/);
+              if (mapFormMatch) {
+                hasExplicitMapForm = true;
+                explicitMapForm = mapFormMatch[1];
+                break; // Explicit map form takes precedence
+              } else {
+                // Split into separate rendering items
+                const items = renderingsStr.replace(/\|\|/g, '\n').split(/(\r?\n)/);
+                // Process each item: remove parentheses and their contents, trim space
+                const processedItems = items
+                  .map(item => item.replace(/\([^)]*\)/g, '').trim())
+                  .filter(item => item.length > 0);
+                allPatterns.push(...processedItems);
+              }
+            }
+          }
+          
+          let replacementText = '';
+          
+          if (hasExplicitMapForm) {
+            // Use explicit map form
+            replacementText = explicitMapForm;
+            
+            // Apply tag if present
+            if (tag && labelTagRulesService.isInitialized) {
+              replacementText = labelTagRulesService.applyTag(tag, replacementText);
+            }
+          } else if (allPatterns.length > 0) {
+            // Get unique patterns (case-sensitive to preserve original)
+            const uniquePatterns = [...new Set(allPatterns)];
+            
+            // Apply tag to each pattern if present
+            if (tag && labelTagRulesService.isInitialized) {
+              console.log(`[resolveTemplate] Applying tag "${tag}" to patterns:`, uniquePatterns);
+              const taggedPatterns = uniquePatterns.map(pattern => 
+                labelTagRulesService.applyTag(tag, pattern)
+              );
+              replacementText = taggedPatterns.join('—');
+              console.log(`[resolveTemplate] Tagged result: "${replacementText}"`);
+            } else {
+              console.log(`[resolveTemplate] No tag or service not initialized. tag="${tag}", isInitialized=${labelTagRulesService.isInitialized}`);
+              // Join with em-dash without tag
+              replacementText = uniquePatterns.join('—');
+            }
+          }
+          
+          // Replace the field in the template with the resolved text
+          if (replacementText) {
+            resolvedText = resolvedText.substring(0, field.start) + 
+                          replacementText + 
+                          resolvedText.substring(field.end);
+          }
         }
       }
-    });
+    }
     
     return {
       placeNameIds: parsed.placeNameIds,

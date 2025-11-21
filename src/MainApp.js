@@ -16,6 +16,7 @@ import { settingsService } from './services/SettingsService';
 import { autocorrectService } from './services/AutocorrectService';
 import labelTemplateParser from './services/LabelTemplateParser';
 import labelDictionaryService from './services/LabelDictionaryService';
+import labelTagRulesService from './services/LabelTagRulesService';
 
 const electronAPI = window.electronAPI;
 
@@ -342,11 +343,18 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
         await labelDictionaryService.initialize(projectFolder);
         console.log('Label Dictionary Service initialized');
         
+        // Initialize Label Tag Rules Service
+        console.log('About to initialize Label Tag Rules Service with projectFolder:', projectFolder);
+        console.log('labelTagRulesService object:', labelTagRulesService);
+        await labelTagRulesService.initialize(projectFolder);
+        console.log('Label Tag Rules Service initialized');
+        
         // Use the collections folder prop instead of settings to ensure consistency
         await collectionManager.initializeAllCollections(collectionsFolder, projectFolder);
         setIsInitialized(true);
       } catch (collectionError) {
         console.error('Failed to initialize services:', collectionError);
+        console.error('Error stack:', collectionError.stack);
       }
     };
     initializeColls();
@@ -956,22 +964,23 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
         }
       }
       
-      const initialLabels = newLabels.map(label => {
+      const initialLabels = await Promise.all(newLabels.map(async label => {
         // Priority: data merge > saved IDML > dictionary > fallback
         if (labels[label.mergeKey]) {
           label.vernLabel = labels[label.mergeKey]; // Use label from data merge if available
         } else if (savedIdmlLabels[label.mergeKey]) {
           label.vernLabel = savedIdmlLabels[label.mergeKey]; // Use saved label from .IDML.TXT file
-        } else if (!label.vernLabel && label.placeNameIds && label.placeNameIds.length > 0) {
+        } else if (!label.vernLabel && label.lblTemplate) {
           // Try to resolve template using CollectionManager
-          const resolved = collectionManager.resolveTemplate(label.lblTemplate, collectionId, currentTermRenderings);
+          // This handles both placename templates and reference/number templates
+          const resolved = await collectionManager.resolveTemplate(label.lblTemplate, collectionId, currentTermRenderings, projectFolder);
           label.vernLabel = resolved?.literalText || '';
         }
 
         // Don't calculate status here - let the status recalculation useEffect handle it
         // when extractedVerses is available
         return { ...label, status: 1, perPlaceStatus: {} };
-      });
+      }));
       
       // Store the saved labels for revert functionality
       const finalSavedLabels = {};

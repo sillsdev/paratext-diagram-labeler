@@ -191,17 +191,18 @@ export default function DetailsPane({
     onExit();
   };
 
-  const onRefreshLabel = () => {
+  const onRefreshLabel = async () => {
     // This function is called when the user clicks the "Refresh Labels" button.
     // Update the vernacular input using resolved template or getMapForm
     if (selectedLabelIndex >= 0 && selectedLabelIndex < labels.length) {
       const currentLabel = labels[selectedLabelIndex];
       const collectionId = getCollectionIdFromTemplate(mapDef.template);
+      const projectFolder = settingsService.getProjectFolder();
       
       // Try to resolve template first
       let mapForm = '';
       if (currentLabel.lblTemplate) {
-        const resolved = collectionManager.resolveTemplate(currentLabel.lblTemplate, collectionId, termRenderings);
+        const resolved = await collectionManager.resolveTemplate(currentLabel.lblTemplate, collectionId, termRenderings, projectFolder);
         mapForm = resolved?.literalText || '';
       }
       
