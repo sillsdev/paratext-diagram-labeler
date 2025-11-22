@@ -750,7 +750,7 @@
     "ne": "वैकल्पिक अनुवादहरू जोड्नुहोस्"
   },
   "confirmPatterns": {
-    "en": "It's OK. Don't warn me again",
+    "en": "Never warn me about this one again",
     "es": "Confirmar estos patrones",
     "fr": "Confirmer ces modèles",
     "ne": "यी ढाँचाहरू पुष्टि गर्नुहोस्"

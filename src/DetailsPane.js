@@ -1207,48 +1207,50 @@ export default function DetailsPane({
             <span style={{ fontWeight: 'bold' }}>
               {inLang(uiStr.statusValue[status].text, lang) + ': '}
             </span>
-            {(() => {
-              let helpText = inLang(uiStr.statusValue[status].help, lang);
-              
-              // For MULTIPLE_RENDERINGS, collect patterns that don't match the label
-              if (status === STATUS_MULTIPLE_RENDERINGS) {
-                const currentLabel = labels[selectedLabelIndex];
-                const placeNameIds = currentLabel?.placeNameIds || [];
-                const activePlaceNameId = placeNameIds[activeTab] || placeNameIds[0];
-                const vernLabel = currentLabel?.vernLabel || '';
+            <span dangerouslySetInnerHTML={{
+              __html: (() => {
+                let helpText = inLang(uiStr.statusValue[status].help, lang);
                 
-                if (activePlaceNameId) {
-                  const terms = collectionManager.getTermsForPlace(activePlaceNameId, collectionId) || [];
-                  const allPatterns = [];
-                  terms.forEach(term => {
-                    const termData = termRenderings[term.termId];
-                    if (termData && termData.renderings) {
-                      // Extract patterns with wildcards intact, comments stripped
-                      const patterns = extractRenderingPatterns(termData.renderings);
-                      allPatterns.push(...patterns);
-                    }
-                  });
-                  const uniquePatterns = [...new Set(allPatterns)];
-                  // Filter to show only patterns that don't match the label (the ones that will be confirmed)
-                  const alternatePatterns = uniquePatterns.filter(pattern => {
-                    // Check if pattern matches label using wildcard matching
-                    try {
-                      const regex = new RegExp('^' + pattern.replace(/\*/g, '.*') + '$', 'i');
-                      return !regex.test(vernLabel);
-                    } catch {
-                      return pattern.toLowerCase() !== vernLabel.toLowerCase();
-                    }
-                  });
-                  helpText = helpText.replace('{listOfRenderingPatterns}', alternatePatterns.join(', '));
+                // For MULTIPLE_RENDERINGS, collect patterns that don't match the label
+                if (status === STATUS_MULTIPLE_RENDERINGS) {
+                  const currentLabel = labels[selectedLabelIndex];
+                  const placeNameIds = currentLabel?.placeNameIds || [];
+                  const activePlaceNameId = placeNameIds[activeTab] || placeNameIds[0];
+                  const vernLabel = currentLabel?.vernLabel || '';
+                  
+                  if (activePlaceNameId) {
+                    const terms = collectionManager.getTermsForPlace(activePlaceNameId, collectionId) || [];
+                    const allPatterns = [];
+                    terms.forEach(term => {
+                      const termData = termRenderings[term.termId];
+                      if (termData && termData.renderings) {
+                        // Extract patterns with wildcards intact, comments stripped
+                        const patterns = extractRenderingPatterns(termData.renderings);
+                        allPatterns.push(...patterns);
+                      }
+                    });
+                    const uniquePatterns = [...new Set(allPatterns)];
+                    // Filter to show only patterns that don't match the label (the ones that will be confirmed)
+                    const alternatePatterns = uniquePatterns.filter(pattern => {
+                      // Check if pattern matches label using wildcard matching
+                      try {
+                        const regex = new RegExp('^' + pattern.replace(/\*/g, '.*') + '$', 'i');
+                        return !regex.test(vernLabel);
+                      } catch {
+                        return pattern.toLowerCase() !== vernLabel.toLowerCase();
+                      }
+                    });
+                    helpText = helpText.replace('{listOfRenderingPatterns}', "<b>" + alternatePatterns.join(', ') + "</b>");
+                  } else {
+                    helpText = helpText.replace('{listOfRenderingPatterns}', '');
+                  }
                 } else {
-                  helpText = helpText.replace('{listOfRenderingPatterns}', '');
+                  helpText = helpText.replace('{listOfRenderingPatterns}', "<b>" + localRenderings.split('\n').filter(l => l.trim()).join(', ') + "</b>");
                 }
-              } else {
-                helpText = helpText.replace('{listOfRenderingPatterns}', localRenderings.split('\n').filter(l => l.trim()).join(', '));
-              }
-              
-              return helpText;
-            })()}
+                
+                return helpText;
+              })()
+            }} />
             {status === STATUS_MULTIPLE_RENDERINGS && (
               <>
                 <button 

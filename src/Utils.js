@@ -114,7 +114,7 @@ export function getStatus(termRenderings, termId, vernLabel, refs, extractedVers
     return STATUS_BLANK; //{ status: "Blank", color: "crimson" };
   }
 
-  if (vernLabel.includes('—')) {
+  if (vernLabel.includes('——')) {
     return STATUS_MULTIPLE; //{ status: "Must select one", color: "darkorange" };
   }
 
@@ -161,13 +161,13 @@ export function getPlaceNameStatus(termRenderings, terms, vernLabel, extractedVe
     return STATUS_BLANK;
   }
 
-  // If the vernacular label contains em-dash, return STATUS_MULTIPLE
-  if (vernLabel.includes('—')) {
+  // If the vernacular label contains double em-dash, return STATUS_MULTIPLE
+  if (vernLabel.includes('——')) {
     return STATUS_MULTIPLE;
   }
 
-  // If the PlaceName has no terms, return STATUS_OK
-  if (!terms || terms.length === 0) {
+  // If the PlaceName has no terms with refs, return STATUS_OK
+  if (!terms || terms.length === 0 || !terms.some(t => t.refs && t.refs.length > 0)) {
     return STATUS_OK;
   }
 
@@ -327,8 +327,8 @@ function getMapFormStrict(termRenderings, termId) {
     })
     .filter(item => item.length > 0);
 
-  // Join with em-dash and return
-  return processedItems.join('—');
+  // Join with double em-dash and return
+  return processedItems.join('——');
 }
 
 // Check if a word matches any of the renderings, returning a 1-based index of the match.

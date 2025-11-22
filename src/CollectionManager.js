@@ -491,12 +491,12 @@ class CollectionManager {
               const taggedPatterns = uniquePatterns.map(pattern => 
                 labelTagRulesService.applyTag(tag, pattern)
               );
-              replacementText = taggedPatterns.join('—');
+              replacementText = taggedPatterns.join('——');
               console.log(`[resolveTemplate] Tagged result: "${replacementText}"`);
             } else {
               console.log(`[resolveTemplate] No tag or service not initialized. tag="${tag}", isInitialized=${labelTagRulesService.isInitialized}`);
-              // Join with em-dash without tag
-              replacementText = uniquePatterns.join('—');
+              // Join with double em-dash without tag
+              replacementText = uniquePatterns.join('——');
             }
           }
           
