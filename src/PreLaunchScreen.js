@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import './PreLaunchScreen.css';
 import uiStr from './data/ui-strings.json';
 import { inLang } from './Utils.js';
@@ -8,30 +8,9 @@ const CheckIcon = () => <span className="status-icon valid">✓</span>;
 
 const ErrorIcon = () => <span className="status-icon invalid">✗</span>;
 
-const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch, language = 'en' }) => {
+const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch, language = 'en', paratextProjects = [] }) => {
   // Use local state for editing but rely on parent for validated errors
   const [editedSettings, setEditedSettings] = useState({ ...settings });
-  const [paratextProjects, setParatextProjects] = useState([]);
-  const [loadingProjects, setLoadingProjects] = useState(false);
-
-  // Load Paratext projects on component mount
-  useEffect(() => {
-    const loadParatextProjects = async () => {
-      setLoadingProjects(true);
-      try {
-        const projects = await window.electronAPI.discoverParatextProjects();
-        setParatextProjects(projects);
-        console.log('Discovered Paratext projects:', projects);
-      } catch (error) {
-        console.error('Error discovering Paratext projects:', error);
-        setParatextProjects([]);
-      } finally {
-        setLoadingProjects(false);
-      }
-    };
-
-    loadParatextProjects();
-  }, []);
 
   const handleSettingChange = useCallback(
     (key, value) => {
@@ -133,13 +112,9 @@ const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch, languag
                     paratextProjects.find(p => p.path === editedSettings.projectFolder)?.path || ''
                   }
                   onChange={handleParatextProjectSelect}
-                  disabled={loadingProjects}
                 >
                   <option value="">
-                    {loadingProjects 
-                      ? inLang(uiStr.loadingProjects, language) 
-                      : inLang(uiStr.chooseParatextProject, language)
-                    }
+                    {inLang(uiStr.chooseParatextProject, language)}
                   </option>
                   {paratextProjects.map(project => {
                     // Clean up language code display: collapse multiple colons and remove trailing colon
@@ -159,7 +134,7 @@ const PreLaunchScreen = ({ settings, errors, onSettingsChange, onLaunch, languag
             )}
             
             {/* Show helpful message when no projects found */}
-            {!loadingProjects && paratextProjects.length === 0 && (
+            {paratextProjects.length === 0 && (
               <div className="setting-help-text">
                 {inLang(uiStr.noParatextProjectsFound, language)}
               </div>

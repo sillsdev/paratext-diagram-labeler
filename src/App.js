@@ -12,6 +12,7 @@ function App() {
   const [settingsErrors, setSettingsErrors] = useState({});
   const [currentLanguage, setCurrentLanguage] = useState('en'); // Default to English
   const [termRenderings, setTermRenderings] = useState(null);
+  const [paratextProjects, setParatextProjects] = useState([]);
 
   // Use a ref to store the latest validateSettings function to avoid infinite loops
   const validateSettingsRef = useRef();
@@ -144,6 +145,16 @@ function App() {
       // Set the current language from settings
       setCurrentLanguage(newSettings.language || 'en');
 
+      // Load Paratext projects list
+      try {
+        const projects = await window.electronAPI.discoverParatextProjects();
+        setParatextProjects(projects);
+        console.log('Discovered Paratext projects:', projects);
+      } catch (error) {
+        console.error('Error discovering Paratext projects:', error);
+        setParatextProjects([]);
+      }
+
       // Validate settings
       if (!newSettings.collectionsFolder) {
         newSettings.collectionsFolder = await window.electronAPI.getDefaultTemplateFolder();
@@ -241,6 +252,7 @@ function App() {
           onSettingsChange={handleSettingsChange}
           onLaunch={handleLaunch}
           language={currentLanguage}
+          paratextProjects={paratextProjects}
         />
       ) : (
         <div className="main-content">

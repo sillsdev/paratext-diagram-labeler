@@ -633,8 +633,7 @@ function createWindow() {
   if (isDev) {
     // For development: load React dev server
     win.loadURL('http://localhost:3000');
-    // Open DevTools in development mode
-    win.webContents.openDevTools();
+    // win.webContents.openDevTools(); // DevTools disabled by default; uncomment to enable
   } else {
     // For production: load built files
     const indexPath = path.join(__dirname, 'index.html');
