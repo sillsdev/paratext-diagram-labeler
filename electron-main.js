@@ -89,10 +89,8 @@ const digitScripts = {
 // Convert Western digits (0-9) to specified script
 function convertDigits(numberString, scriptCode) {
   if (!scriptCode || !digitScripts[scriptCode]) {
-    console.warn(`Unknown script code: ${scriptCode}, returning original number`);
     return numberString;
   }
-  
   const digits = digitScripts[scriptCode];
   return numberString.replace(/\d/g, digit => digits[parseInt(digit)]);
 }
