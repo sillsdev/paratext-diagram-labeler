@@ -12,7 +12,7 @@ import {
 } from './constants.js';
 import { collectionManager, getCollectionIdFromTemplate, findCollectionIdAndTemplate } from './CollectionManager';
 import { getMapDef } from './MapData';
-import { inLang, statusValue, getMapForm, wordMatchesRenderings } from './Utils.js';
+import { inLang, statusValue, getMapForm, wordMatchesRenderings, extractRenderingPatterns } from './Utils.js';
 import { settingsService } from './services/SettingsService.js';
 import labelDictionaryService from './services/LabelDictionaryService.js';
 import { AutocorrectTextarea } from './components/AutocorrectTextarea';
@@ -1210,26 +1210,36 @@ export default function DetailsPane({
             {(() => {
               let helpText = inLang(uiStr.statusValue[status].help, lang);
               
-              // For MULTIPLE_RENDERINGS, collect actual patterns from all terms in active placeName
+              // For MULTIPLE_RENDERINGS, collect patterns that don't match the label
               if (status === STATUS_MULTIPLE_RENDERINGS) {
                 const currentLabel = labels[selectedLabelIndex];
                 const placeNameIds = currentLabel?.placeNameIds || [];
                 const activePlaceNameId = placeNameIds[activeTab] || placeNameIds[0];
+                const vernLabel = currentLabel?.vernLabel || '';
                 
                 if (activePlaceNameId) {
                   const terms = collectionManager.getTermsForPlace(activePlaceNameId, collectionId) || [];
-                  const patterns = [];
+                  const allPatterns = [];
                   terms.forEach(term => {
                     const termData = termRenderings[term.termId];
                     if (termData && termData.renderings) {
-                      // Strip wildcards and extract patterns
-                      const renderingsStr = termData.renderings.replace(/\*/g, '').replace(/\|\|/g, '\n');
-                      const items = renderingsStr.split(/\r?\n/).map(item => item.replace(/\([^)]*\)/g, '').trim()).filter(item => item.length > 0);
-                      patterns.push(...items);
+                      // Extract patterns with wildcards intact, comments stripped
+                      const patterns = extractRenderingPatterns(termData.renderings);
+                      allPatterns.push(...patterns);
                     }
                   });
-                  const uniquePatterns = [...new Set(patterns)];
-                  helpText = helpText.replace('{listOfRenderingPatterns}', uniquePatterns.join(', '));
+                  const uniquePatterns = [...new Set(allPatterns)];
+                  // Filter to show only patterns that don't match the label (the ones that will be confirmed)
+                  const alternatePatterns = uniquePatterns.filter(pattern => {
+                    // Check if pattern matches label using wildcard matching
+                    try {
+                      const regex = new RegExp('^' + pattern.replace(/\*/g, '.*') + '$', 'i');
+                      return !regex.test(vernLabel);
+                    } catch {
+                      return pattern.toLowerCase() !== vernLabel.toLowerCase();
+                    }
+                  });
+                  helpText = helpText.replace('{listOfRenderingPatterns}', alternatePatterns.join(', '));
                 } else {
                   helpText = helpText.replace('{listOfRenderingPatterns}', '');
                 }
@@ -1259,18 +1269,23 @@ export default function DetailsPane({
                       terms.forEach(term => {
                         const termData = termRenderings[term.termId];
                         if (termData && termData.renderings) {
-                          // Strip wildcards and split into individual patterns
-                          const renderingsStr = termData.renderings.replace(/\*/g, '').replace(/\|\|/g, '\n');
-                          const items = renderingsStr.split(/\r?\n/)
-                            .map(item => item.replace(/\([^)]*\)/g, '').trim())
-                            .filter(item => item.length > 0);
-                          allPatterns.push(...items);
+                          // Extract patterns with wildcards intact, comments stripped
+                          const patterns = extractRenderingPatterns(termData.renderings);
+                          allPatterns.push(...patterns);
                         }
                       });
                       
-                      // Get unique patterns and filter out the one that matches the label
+                      // Get unique patterns and filter out those that match the label (using wildcard matching)
                       const uniquePatterns = [...new Set(allPatterns)];
-                      const alternatePatterns = uniquePatterns.filter(pattern => pattern !== vernLabel);
+                      const alternatePatterns = uniquePatterns.filter(pattern => {
+                        // Check if pattern matches label using wildcard matching
+                        try {
+                          const regex = new RegExp('^' + pattern.replace(/\*/g, '.*') + '$', 'i');
+                          return !regex.test(vernLabel);
+                        } catch {
+                          return pattern.toLowerCase() !== vernLabel.toLowerCase();
+                        }
+                      });
                       
                       // Add each alternate pattern separately
                       for (const pattern of alternatePatterns) {

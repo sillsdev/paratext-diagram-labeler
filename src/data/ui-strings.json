@@ -750,26 +750,12 @@
     "ne": "वैकल्पिक अनुवादहरू जोड्नुहोस्"
   },
   "confirmPatterns": {
-    "en": "Confirm these patterns",
+    "en": "It's OK. Don't warn me again",
     "es": "Confirmar estos patrones",
     "fr": "Confirmer ces modèles",
     "ne": "यी ढाँचाहरू पुष्टि गर्नुहोस्"
   },
   "statusValue": [
-    {
-      "text": {
-        "en": "Multiple Options",
-        "es": "Múltiples opciones",
-        "fr": "Plusieurs options",
-        "ne": "धेरै विकल्पहरू"
-      },
-      "help": {
-        "en": "Multiple options have been provided for you to select from. Ensure that you don't have any bad renderings, and then edit the label to remove unwanted options.",
-        "es": "Se han proporcionado múltiples opciones para que seleccione. Asegúrese de que no haya traducciones incorrectas y luego edite la etiqueta para eliminar las opciones no deseadas.",
-        "fr": "Plusieurs options vous ont été proposées. Assurez-vous qu'il n'y a pas de mauvaises traductions, puis modifiez l'étiquette pour supprimer les options indésirables.",
-        "ne": "तपाईंको छनोटका लागि धेरै विकल्पहरू प्रदान गरिएको छ। गलत अनुवाद छैन भनेर सुनिश्चित गर्नुहोस्, अनि अनावश्यक विकल्पहरू हटाउन लेबल सम्पादन गर्नुहोस्।"
-      }
-    },
     {
       "text": {
         "en": "Blank",
@@ -782,6 +768,20 @@
         "es": "Proporcione el texto que se usará en esta etiqueta.",
         "fr": "Fournissez le texte à utiliser pour cette étiquette.",
         "ne": "यस लेबलमा प्रयोग हुने पाठ प्रदान गर्नुहोस्।"
+      }
+    },
+    {
+      "text": {
+        "en": "Multiple Options",
+        "es": "Múltiples opciones",
+        "fr": "Plusieurs options",
+        "ne": "धेरै विकल्पहरू"
+      },
+      "help": {
+        "en": "Multiple options have been provided for you to select from. Ensure that you don't have any bad renderings, and then edit the label to remove unwanted options.",
+        "es": "Se han proporcionado múltiples opciones para que seleccione. Asegúrese de que no haya traducciones incorrectas y luego edite la etiqueta para eliminar las opciones no deseadas.",
+        "fr": "Plusieurs options vous ont été proposées. Assurez-vous qu'il n'y a pas de mauvaises traductions, puis modifiez l'étiquette pour supprimer les options indésirables.",
+        "ne": "तपाईंको छनोटका लागि धेरै विकल्पहरू प्रदान गरिएको छ। गलत अनुवाद छैन भनेर सुनिश्चित गर्नुहोस्, अनि अनावश्यक विकल्पहरू हटाउन लेबल सम्पादन गर्नुहोस्।"
       }
     },
     {
@@ -814,6 +814,20 @@
     },
     {
       "text": {
+        "en": "Multiple renderings",
+        "es": "Múltiples traducciones",
+        "fr": "Plusieurs traductions",
+        "ne": "धेरै अनुवादहरू"
+      },
+      "help": {
+        "en": "This pattern does not match the label: {listOfRenderingPatterns}",
+        "es": "Estos patrones no coinciden con la etiqueta: {listOfRenderingPatterns}.",
+        "fr": "Ces modèles ne correspondent pas à l'étiquette: {listOfRenderingPatterns}.",
+        "ne": "यी ढाँचाहरू लेबलसँग मेल खाँदैनन्: {listOfRenderingPatterns}।"
+      }
+    },
+    {
+      "text": {
         "en": "Guessed",
         "es": "Conjeturada",
         "fr": "Deviné",
@@ -824,20 +838,6 @@
         "es": "Esta etiqueta coincide con una traducción conjeturada que debe ser aprobada.",
         "fr": "Cette étiquette correspond à une traduction devinée qui doit être approuvée.",
         "ne": "यो लेबल अनुमान गरिएको अनुवादसँग मेल खान्छ, जसलाई स्वीकृत गर्नुपर्छ।"
-      }
-    },
-    {
-      "text": {
-        "en": "Multiple renderings",
-        "es": "Múltiples traducciones",
-        "fr": "Plusieurs traductions",
-        "ne": "धेरै अनुवादहरू"
-      },
-      "help": {
-        "en": "Your project has multiple rendering patterns for this place ({listOfRenderingPatterns}). Click \"Confirm these patterns\" if all patterns are correct.",
-        "es": "Su proyecto tiene múltiples patrones de traducción para este lugar ({listOfRenderingPatterns}). Haga clic en \"Confirmar estos patrones\" si todos los patrones son correctos.",
-        "fr": "Votre projet a plusieurs modèles de traduction pour cet endroit ({listOfRenderingPatterns}). Cliquez sur \"Confirmer ces modèles\" si tous les modèles sont corrects.",
-        "ne": "तपाईंको परियोजनामा यस स्थानको लागि धेरै अनुवाद ढाँचाहरू छन् ({listOfRenderingPatterns})। यदि सबै ढाँचाहरू सही छन् भने \"यी ढाँचाहरू पुष्टि गर्नुहोस्\" मा क्लिक गर्नुहोस्।"
       }
     },
     {
@@ -856,10 +856,10 @@
     },
     {
       "text": {
-        "en": "Perfect",
-        "es": "Perfecto",
-        "fr": "Parfait",
-        "ne": "उत्तम"
+        "en": "OK",
+        "es": "OK",
+        "fr": "OK",
+        "ne": "ठीक छ"
       },
       "help": {
         "en": "The term renderings will be able to supply this label to any other map in the project that needs it.",
