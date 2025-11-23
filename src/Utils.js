@@ -155,14 +155,17 @@ export function getStatus(termRenderings, termId, vernLabel, refs, extractedVers
 export function getPlaceNameStatus(termRenderings, terms, vernLabel, extractedVerses, placeNameId = null, labelDictionaryService = null) {
   // Ensure vernLabel is a string
   vernLabel = (vernLabel && typeof vernLabel === 'string') ? vernLabel.trim() : '';
+  console.log(`[getPlaceNameStatus] placeNameId="${placeNameId}", vernLabel: "${vernLabel}"`, Array.from(vernLabel).map(c => c.charCodeAt(0).toString(16)));
   
   // If the vernacular Label is empty, return STATUS_BLANK
   if (!vernLabel) {
+    console.log(`[getPlaceNameStatus] Returning STATUS_BLANK (empty vernLabel)`);
     return STATUS_BLANK;
   }
 
   // If the vernacular label contains double em-dash, return STATUS_MULTIPLE
   if (vernLabel.includes('——')) {
+    console.log(`[getPlaceNameStatus] Returning STATUS_MULTIPLE (contains ——)`);
     return STATUS_MULTIPLE;
   }
 

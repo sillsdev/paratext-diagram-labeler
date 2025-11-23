@@ -4,7 +4,6 @@ import uiStr from './data/ui-strings.json';
 import {
   MAP_VIEW,
   TABLE_VIEW,
-  USFM_VIEW,
   STATUS_NO_RENDERINGS,
   STATUS_GUESSED,
   STATUS_MULTIPLE_RENDERINGS,
@@ -141,7 +140,9 @@ export default function DetailsPane({
   
   useEffect(() => {
     // Sync local vernacular when selection changes
-    const newVernacular = labels[selectedLabelIndex]?.vernLabel || '';
+    const currentLabel = labels[selectedLabelIndex];
+    const newVernacular = currentLabel?.vernLabel || '';
+    console.log(`[DetailsPane] Syncing vernacular for ${currentLabel?.mergeKey}: "${newVernacular}"`);
     setVernacularValue(newVernacular);
     setLocalIsApproved(isApproved);
     setLocalRenderings(renderings);
@@ -300,105 +301,11 @@ export default function DetailsPane({
     }
   };
 
-  // Only show the button row if in USFM view
-  if (mapPaneView === USFM_VIEW) {
-    return (
-      <div>
-        {/* Button Row */}
-        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
-          <button onClick={onSwitchView} style={{ marginRight: 60, whiteSpace: 'nowrap' }}>
-            {inLang(uiStr.switchView, lang)}
-          </button>
-          <button
-            onClick={handleCancel}
-            style={{ marginRight: 8, width: 80, whiteSpace: 'nowrap' }}
-          >
-            {inLang(uiStr.cancel, lang)}
-          </button>
-          <button onClick={handleOk} style={{ width: 80, whiteSpace: 'nowrap' }}>
-            {inLang(uiStr.ok, lang)}
-          </button>
-          <button
-            onClick={handleExportDataMerge}
-            style={{
-              marginLeft: 16,
-              width: 40,
-              height: 32,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              background: '#e3f2fd',
-              border: '1px solid #1976d2',
-              borderRadius: 4,
-              cursor: 'pointer',
-              whiteSpace: 'nowrap',
-            }}
-            title={inLang(uiStr.export, lang)}
-          >
-            {/* Export icon: two stacked files with an arrow */}
-            <svg
-              width="22"
-              height="22"
-              viewBox="0 0 22 22"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <rect
-                x="4"
-                y="4"
-                width="10"
-                height="14"
-                rx="2"
-                fill="#fff"
-                stroke="#1976d2"
-                strokeWidth="1.2"
-              />
-              <rect
-                x="8"
-                y="2"
-                width="10"
-                height="14"
-                rx="2"
-                fill="#e3f2fd"
-                stroke="#1976d2"
-                strokeWidth="1.2"
-              />
-              <path
-                d="M13 10v5m0 0l-2-2m2 2l2-2"
-                stroke="#1976d2"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-          <div style={{ flex: 1 }} />
-          <button
-            onClick={handleSettings}
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              fontSize: 22,
-              marginLeft: 8,
-              color: '#555',
-              padding: 4,
-              alignSelf: 'flex-start',
-            }}
-            aria-label="Settings"
-          >
-            <span role="img" aria-label="Settings">
-              &#9881;
-            </span>
-          </button>
-        </div>
-      </div>
-    );
-  }
+  // USFM view removed - only Map View and Table View remain
   return (
     <div>
       {/* Button Row */}
-      {mapPaneView !== USFM_VIEW && (
+      {(
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
           {/* Icon view buttons */}
           <button
@@ -1117,6 +1024,7 @@ export default function DetailsPane({
                 checked={(labels[selectedLabelIndex]?.opCode || 'sync') === 'sync'}
                 onChange={() => {
                   const currentLabel = labels[selectedLabelIndex];
+                  console.log(`[DetailsPane] opCode 'sync' radio onChange fired. vernLabel="${currentLabel.vernLabel}"`);
                   onUpdateVernacular(
                     currentLabel.mergeKey,
                     currentLabel.lblTemplate || currentLabel.mergeKey,

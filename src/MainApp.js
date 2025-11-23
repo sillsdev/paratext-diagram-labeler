@@ -2,10 +2,10 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import './MainApp.css';
 import BottomPane from './BottomPane.js';
 import uiStr from './data/ui-strings.json';
-import { MAP_VIEW, TABLE_VIEW, USFM_VIEW } from './constants.js';
+import { MAP_VIEW, TABLE_VIEW } from './constants.js';
 import { collectionManager, getCollectionIdFromTemplate, findCollectionIdAndTemplate } from './CollectionManager';
 import { getMapDef } from './MapData';
-import { inLang, getStatus, getPlaceNameStatus, getMapForm, isLabelVisible } from './Utils.js';
+import { inLang, getStatus, getPlaceNameStatus, isLabelVisible } from './Utils.js';
 import MapPane from './MapPane.js';
 import TableView from './TableView.js';
 import DetailsPane from './DetailsPane.js';
@@ -58,21 +58,13 @@ function getRefList(labels, collectionId = 'SMR') {
   return rl;
 }
 
-async function mapFromUsfm(usfm, projectFolder) {
-  // USFM now only contains the \fig field - it's used only to select the diagram
-  // Extract template name from \fig field
+// Extract template name from USFM \fig field
+function getTemplateNameFromUsfm(usfm) {
+  // USFM only contains the \fig field - extract the template name from src attribute
   const figMatch = usfm.match(/\\fig [^\\]*src="([^\\]+)"[^\\]*\\fig\*/);
   
   if (!figMatch) {
-    return {
-      template: '',
-      fig: '',
-      mapView: false,
-      imgFilename: '',
-      width: 1000,
-      height: 1000,
-      labels: [],
-    };
+    return null;
   }
   
   const templateName = figMatch[1]
@@ -80,51 +72,7 @@ async function mapFromUsfm(usfm, projectFolder) {
     .trim()
     .replace(/\s*[@(].*/, ''); // Remove anything after @ or (
 
-  let mapDefData;
-  try {
-    // Get map definition from collection manager
-    mapDefData = await getMapDef(templateName);
-    if (mapDefData) {
-      mapDefData.mapView = true;
-      mapDefData.template = templateName;
-    } else {
-      throw new Error('Map definition not found');
-    }
-  } catch (e) {
-    console.error('Error loading map definition:', e);
-    mapDefData = {
-      template: templateName,
-      fig: figMatch[0],
-      mapView: false,
-      imgFilename: '',
-      width: 1000,
-      height: 1000,
-      labels: [],
-    };
-  }
-
-  mapDefData.fig = figMatch[0];
-  
-  // Try to load labels from .idml.txt file if it exists
-  try {
-    const result = await window.electronAPI.loadLabelsFromIdmlTxt(projectFolder, templateName);
-    if (result.success && result.labels) {
-      console.log('Loaded labels from .idml.txt file:', result.labels);
-      // Merge saved labels with map definition
-      mapDefData.labels.forEach(label => {
-        if (result.labels[label.mergeKey]) {
-          label.vernLabel = result.labels[label.mergeKey];
-        }
-      });
-    } else {
-      console.log('No saved .idml.txt file found, using default labels from term renderings');
-    }
-  } catch (error) {
-    console.log('Could not load .idml.txt file, using default labels:', error);
-  }
-  
-  console.log('Parsed map definition:', mapDefData);
-  return mapDefData;
+  return templateName;
 }
 
 function usfmFromMap(map, lang) {
@@ -360,79 +308,51 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
     initializeColls();
   }, [settings, collectionsFolder, projectFolder]);
 
-  // Set initial labels
+  // Update label status when data changes (but don't initialize labels - that's done in handleSelectDiagram)
   useEffect(() => {
-    console.log('[Set Initial Labels] useEffect triggered');
+    console.log('[Update Labels] useEffect triggered');
     if (!electronAPI || !projectFolder || !isInitialized || !mapDef || !mapDef.labels?.length) {
-      console.log('[Set Initial Labels] Skipping - insufficient data');
+      console.log('[Update Labels] Skipping - insufficient data');
       return;
     }
 
-    console.log('[Set Initial Labels] Running...');
+    console.log('[Update Labels] Running...');
     try {
-      // Update existing labels with termRenderings, preserving vernLabel values
+      // Update existing labels with status recalculation, preserving vernLabel values
       setLabels(prevLabels => {
+        // Only update if we have existing labels - don't initialize from mapDef here
         if (prevLabels.length === 0) {
-          // If no previous labels, initialize from mapDef
-          console.log('No previous labels found, initializing from mapDef');
-          console.log('[Initial Labels] extractedVerses keys:', Object.keys(extractedVerses).length);
-          const collectionId = getCollectionIdFromTemplate(mapDef.template);
-          return mapDef.labels.map((label, idx) => {
-            // Recalculate status using per-placeName status
-            const perPlaceStatus = {};
-            if (label.placeNameIds && label.placeNameIds.length > 0) {
-              label.placeNameIds.forEach(placeNameId => {
-                const terms = collectionManager.getTermsForPlace(placeNameId, collectionId) || [];
-                if (terms.length > 0) {
-                  perPlaceStatus[placeNameId] = getPlaceNameStatus(
-                    termRenderings,
-                    terms,
-                    label.vernLabel || '',
-                    extractedVerses
-                  );
-                }
-              });
-            }
-            
-            const status = Object.keys(perPlaceStatus).length > 0
-              ? Math.min(...Object.values(perPlaceStatus))
-              : 1; // STATUS_BLANK if no placeNames
-            
-            if (idx < 3) {
-              console.log(`[Initial Labels] Label ${idx} (${label.mergeKey}): status=${status}, perPlaceStatus=`, perPlaceStatus);
-            }
-            
-            return { ...label, status, perPlaceStatus };
-          });
-        } else {
-          // Update existing labels, preserving vernLabel values
-          const collectionId = getCollectionIdFromTemplate(mapDef.template);
-          return prevLabels.map(label => {
-            // Recalculate status using per-placeName status
-            const perPlaceStatus = {};
-            if (label.placeNameIds && label.placeNameIds.length > 0) {
-              label.placeNameIds.forEach(placeNameId => {
-                const terms = collectionManager.getTermsForPlace(placeNameId, collectionId) || [];
-                if (terms.length > 0) {
-                  perPlaceStatus[placeNameId] = getPlaceNameStatus(
-                    termRenderings,
-                    terms,
-                    label.vernLabel || '',
-                    extractedVerses,
-                    placeNameId,
-                    labelDictionaryService
-                  );
-                }
-              });
-            }
-            
-            const status = Object.keys(perPlaceStatus).length > 0
-              ? Math.min(...Object.values(perPlaceStatus))
-              : 1; // STATUS_BLANK if no placeNames
-            
-            return { ...label, status, perPlaceStatus };
-          });
+          console.log('[Update Labels] No labels yet - skipping (initialization happens in handleSelectDiagram)');
+          return prevLabels;
         }
+        
+        // Update existing labels, preserving vernLabel values
+        const collectionId = getCollectionIdFromTemplate(mapDef.template);
+        return prevLabels.map(label => {
+          // Recalculate status using per-placeName status
+          const perPlaceStatus = {};
+          if (label.placeNameIds && label.placeNameIds.length > 0) {
+            label.placeNameIds.forEach(placeNameId => {
+              const terms = collectionManager.getTermsForPlace(placeNameId, collectionId) || [];
+              if (terms.length > 0) {
+                perPlaceStatus[placeNameId] = getPlaceNameStatus(
+                  termRenderings,
+                  terms,
+                  label.vernLabel || '',
+                  extractedVerses,
+                  placeNameId,
+                  labelDictionaryService
+                );
+              }
+            });
+          }
+          
+          const status = Object.keys(perPlaceStatus).length > 0
+            ? Math.min(...Object.values(perPlaceStatus))
+            : 1; // STATUS_BLANK if no placeNames
+          
+          return { ...label, status, perPlaceStatus };
+        });
       });
       // Only set selection to 0 if no valid selection exists
       if (
@@ -563,6 +483,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
   // Handler to update label with new vernacular, opCode, and status
   const handleUpdateVernacular = useCallback(
     (mergeKey, lblTemplate, newVernacular, opCode = 'sync') => {
+      console.log(`[handleUpdateVernacular] mergeKey="${mergeKey}", newVernacular="${newVernacular}", opCode="${opCode}", lblTemplate="${lblTemplate}"`);
       // Create a copy of the current state to ensure we're using the latest data
       const currentTermRenderings = { ...termRenderings };
       const collectionId = getCollectionIdFromTemplate(mapDef.template);
@@ -992,6 +913,10 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
       setSavedLabels(finalSavedLabels);
       setHasUnsavedChanges(false);
       console.log('Initial labels:', initialLabels);
+      const medLabel = initialLabels.find(l => l.mergeKey === 'mediterranean_sea');
+      if (medLabel) {
+        console.log('[mediterranean_sea] vernLabel after initialization:', medLabel.vernLabel);
+      }
       setLabels(initialLabels);
 
       // Find first visible label for initial selection
@@ -1034,6 +959,11 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
   // Template browser selection handlers
   const handleSelectDiagram = useCallback(async (template, filters, group, index) => {
     console.log('Selected diagram:', template);
+    if (!template || !template.templateName) {
+      console.error('Invalid template object:', template);
+      alert(inLang(uiStr.noTemplate, lang) + ': ' + (template ? JSON.stringify(template) : 'null'));
+      return;
+    }
     setShowTemplateBrowser(false);
     setTemplateFilters(filters);
     setTemplateGroup(null);
@@ -1041,7 +971,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
     
     // Load the selected template
     await loadTemplate(template.templateName);
-  }, [loadTemplate]);
+  }, [loadTemplate, lang]);
 
   const handleSelectGroup = useCallback(async (template, filters, group, index) => {
     console.log('Selected group:', template, 'at index:', index, 'of', group.length);
@@ -1098,57 +1028,21 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
         if (!settings.usfm) {
           await handleBrowseMapTemplateRef.current();
         } else {
-          // console.log("Initializing map from USFM:", settings.usfm);
-          const initialMap = await mapFromUsfm(settings.usfm, projectFolder);
-          if (!initialMap.template) {
+          // Extract template name from USFM and load the template
+          const templateName = getTemplateNameFromUsfm(settings.usfm);
+          if (!templateName) {
             console.log('No template specified in USFM, browsing for template instead.');  
             await handleBrowseMapTemplateRef.current();
             return;
           }
-          console.log('Initial Map loaded (based on usfm):', initialMap);
-          setMapDef(initialMap);
-
-          // Initialize selectedVariant based on whether variants exist
-          setSelectedVariant(initialMap.variants && Object.keys(initialMap.variants).length > 0 ? 1 : 0);
-          setMapPaneView(initialMap.mapView ? MAP_VIEW : TABLE_VIEW);
-          
-          // Initialize labels with status information
-          const currentTermRenderings = { ...termRenderings };
-          const initialLabels = initialMap.labels.map(label => {
-            if (!label.vernLabel) {
-              const altTermIds = collectionManager.getAltTermIds(label.mergeKey, getCollectionIdFromTemplate(initialMap.template));
-              label.vernLabel = getMapForm(currentTermRenderings, label.termId, altTermIds);
-            }
-            const status = getStatus(
-              currentTermRenderings,
-              label.termId,
-              label.vernLabel,
-              collectionManager.getRefs(label.mergeKey, getCollectionIdFromTemplate(initialMap.template)),
-              extractedVerses
-            );
-            return { ...label, status };
-          });
-          
-          setLabels(initialLabels);
-          
-          // Set saved labels for revert functionality
-          const finalSavedLabels = {};
-          initialLabels.forEach(label => {
-            if (label.mergeKey && label.vernLabel) {
-              finalSavedLabels[label.mergeKey] = label.vernLabel;
-            }
-          });
-          setSavedLabels(finalSavedLabels);
-          setHasUnsavedChanges(false);
-          
-          // Find first visible label for initial selection
-          const firstVisibleIndex = initialLabels.findIndex(label =>
-            isLabelVisible(
-              label,
-              initialMap.variants && Object.keys(initialMap.variants).length > 0 ? 1 : 0
-            )
-          );
-          setSelectedLabelIndex(firstVisibleIndex >= 0 ? firstVisibleIndex : 0);
+          console.log('Template name from USFM:', templateName);
+          // Use loadTemplate to load the selected template (same as handleSelectDiagram)
+          try {
+            await loadTemplate(templateName);
+          } catch (loadError) {
+            console.error('Error loading template from USFM:', loadError);
+            throw loadError; // Re-throw to be caught by outer try-catch
+          }
         }
       } catch (error) {
         console.log('Unable to initialize map:', error);
@@ -1160,122 +1054,13 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isInitialized, settings.usfm, projectFolder]);
 
-  // USFM View component (editable, uncontrolled)
-  const usfmTextareaRef = useRef();
-  const USFMView = React.memo(function USFMView({ usfmText }) {
-    return (
-      <textarea
-        ref={usfmTextareaRef}
-        style={{ width: '100%', height: '100%', minHeight: 300 }}
-        defaultValue={usfmText}
-        spellCheck={false}
-      />
+  // USFM View mode removed - USFM is now only used for initial template selection
+  // handleSwitchView now only toggles between Map View and Table View
+  const handleSwitchView = useCallback(() => {
+    setMapPaneView(prev =>
+      prev === MAP_VIEW ? TABLE_VIEW : MAP_VIEW
     );
-  });
-
-  // --- USFM state for editing ---
-  const [usfmText, setUsfmText] = useState(() =>
-    usfmFromMap({ ...mapDef, labels }, lang)
-  );
-
-  // Only update USFM text when switching TO USFM view (not on every labels change)
-  const prevMapPaneView = useRef();
-  useEffect(() => {
-    if (prevMapPaneView.current !== USFM_VIEW && mapPaneView === USFM_VIEW) {
-      setUsfmText(usfmFromMap({ ...mapDef, labels }, lang));
-    }
-    prevMapPaneView.current = mapPaneView;
-  }, [mapPaneView, labels, mapDef, lang]);
-
-  // --- USFM to map/labels sync ---
-  // Helper to update map/labels from USFM text
-  const updateMapFromUsfm = useCallback(async () => {
-    if (!usfmTextareaRef.current) return;
-    const text = usfmTextareaRef.current.value;
-    try {
-      const newMap = await mapFromUsfm(text);
-      console.log('Parsed map from USFM:', newMap);
-      // Re-init labels and selection      // Create a local copy of termRenderings to ensure we're using the latest state
-      const currentTermRenderings = { ...termRenderings };
-
-      const collectionId = getCollectionIdFromTemplate(mapDef.template);
-      const initialLabels = newMap.labels.map(label => {
-        // Recalculate status using per-placeName status
-        const perPlaceStatus = {};
-        if (label.placeNameIds && label.placeNameIds.length > 0) {
-          label.placeNameIds.forEach(placeNameId => {
-            const terms = collectionManager.getTermsForPlace(placeNameId, collectionId) || [];
-            if (terms.length > 0) {
-              perPlaceStatus[placeNameId] = getPlaceNameStatus(
-                currentTermRenderings,
-                terms,
-                label.vernLabel || '',
-                extractedVerses,
-                placeNameId,
-                labelDictionaryService
-              );
-            }
-          });
-        }
-        
-        const status = Object.keys(perPlaceStatus).length > 0
-          ? Math.min(...Object.values(perPlaceStatus))
-          : 1; // STATUS_BLANK if no placeNames
-        
-        return { ...label, status, perPlaceStatus };
-      });
-      console.log('Initial labels from USFM:', initialLabels);
-      setSelectedLabelIndex(0);
-      setLabels(initialLabels);
-      //  update map object      // Update map data in state
-      setMapDef({
-        ...mapDef,
-        labels: newMap.labels,
-        template: newMap.template,
-        fig: newMap.fig,
-        mapView: newMap.mapView,
-        imgFilename: newMap.imgFilename,
-        width: newMap.width,
-        height: newMap.height,
-      });
-      setUsfmText(text); // keep USFM text in sync after parse
-
-      return true; // Indicate success
-    } catch (e) {
-      console.error('Error parsing USFM:', e);
-      alert(inLang(uiStr.invalidUsfm, lang));
-      return false; // Indicate failure
-    }
-  }, [termRenderings, setLabels, setSelectedLabelIndex, lang, mapDef, extractedVerses]);
-  // Intercept view switch to update map if leaving USFM view
-  const handleSwitchViewWithUsfm = useCallback(async () => {
-    if (mapPaneView === USFM_VIEW) {
-      await updateMapFromUsfm();
-    }
-    setMapPaneView(prev => {
-      if (!mapDef.mapView) {
-        // Only cycle between Table (1) and USFM (2)
-        return prev === TABLE_VIEW ? USFM_VIEW : TABLE_VIEW;
-      }
-      // Cycle through Map (0), Table (1), USFM (2)
-      return (prev + 1) % 3; // Maybe this can be simplified now that Switch View is only from USFM
-    });
-  }, [mapPaneView, updateMapFromUsfm, mapDef.mapView]);
-
-  // Intercept OK button in DetailsPane
-  //   const handleOkWithUsfm = useCallback(() => {
-  //     if (mapPaneView === USFM_VIEW) {
-  //       updateMapFromUsfm();
-  //     }
-
-  //     // Generate the current USFM from map state and save to settings
-  //     const currentUsfm = usfmFromMap({ ...mapDef, labels: locations }, lang);
-  //     settingsService.updateUsfm(currentUsfm);
-  //     console.log('Saved USFM to settings');
-
-  //     // Optionally: do other OK logic here
-  //     alert("At this point, the USFM text would be saved to Paratext.");  // TODO:
-  //   }, [mapPaneView, updateMapFromUsfm, mapDef, locations, lang]);
+  }, []);
 
   // Add rendering from bottom pane selection
   // OBSOLETE in NEW architecture - renderings are handled per placeName in DetailsPane
@@ -1409,7 +1194,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
   // Add global PageUp/PageDown navigation for Map and Table views
   useEffect(() => {
     function handleGlobalKeyDown(e) {
-      if (mapPaneView === USFM_VIEW) return; // Do not trigger in USFM view
+      // Auto-save enabled for all views
       // Ctrl+9 triggers zoom reset
       if (e.ctrlKey && (e.key === '9' || e.code === 'Digit9')) {
         console.log('Resetting zoom');
@@ -1451,17 +1236,13 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
   useEffect(() => {
     if (electronAPI && electronAPI.onNextLabel && electronAPI.onPreviousLabel) {
       const handleNextLabelMenu = () => {
-        if (mapPaneView !== USFM_VIEW) {
-          console.log('Next Label triggered from menu');
-          handleNextLabel(true);
-        }
+        console.log('Next Label triggered from menu');
+        handleNextLabel(true);
       };
       
       const handlePreviousLabelMenu = () => {
-        if (mapPaneView !== USFM_VIEW) {
-          console.log('Previous Label triggered from menu');
-          handleNextLabel(false);
-        }
+        console.log('Previous Label triggered from menu');
+        handleNextLabel(false);
       };
       
       electronAPI.onNextLabel(handleNextLabelMenu);
@@ -1764,7 +1545,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
               selectedVariant={selectedVariant} // Pass selected variant
             />
           )}
-          {mapPaneView === USFM_VIEW && <USFMView usfmText={usfmText} />}
+          {/* USFM View removed - USFM only used for template selection */}
         </div>
         <div
           className="vertical-divider"
@@ -1784,11 +1565,11 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
             termRenderings={termRenderings}
             labels={labels}
             onTriggerStatusRecalc={() => setStatusRecalcTrigger(prev => prev + 1)}
-            onSwitchView={handleSwitchViewWithUsfm}
+            onSwitchView={handleSwitchView}
             mapPaneView={mapPaneView}
             onSetView={async viewIdx => {
               if (viewIdx === MAP_VIEW && !mapDef.mapView) return;
-              if (mapPaneView === USFM_VIEW) await updateMapFromUsfm();
+              // USFM view removed
               setMapPaneView(viewIdx);
             }}
             onShowSettings={() => setShowSettings(true)} // <-- add onShowSettings
