@@ -56,8 +56,17 @@
     "mapxKey": "Alexandria"
   },
   "alt_red_sea_crossing": {
-    "lblTemplate": "{AltRedSeaCrossing}",
-    "mapxKey": "Alternate routes of Red Sea crossing"
+    "lblTemplate": "Alternate routes of {RedSea} crossing",
+    "mapxKey": "Alternate routes of Red Sea crossing",
+    "gloss": {
+      "en": "Alternate routes of Red Sea crossing",
+      "es": "Las rutas alternativas del cruce del Mar Rojo",
+      "fr": "Itinéraires alternatifs pour traverser la mer Rouge"
+    },
+    "context": {
+      "en": "Label in the legend indicating another possible route"
+    },
+    "altTermIds": "alt_red_sea_crossing"
   },
   "altar": {
     "lblTemplate": "{Altar}",
@@ -2131,7 +2140,8 @@
     },
     "context": {
       "en": "Route to Judea (testing context)"
-    }
+    },
+    "altTermIds": ""
   },
   "theater": {
     "lblTemplate": "{Theater}",
@@ -2326,8 +2336,19 @@
     "mapxKey": ""
   },
   "trade_routes": {
-    "lblTemplate": "{TradeRoutes}",
-    "mapxKey": "Trade routes"
+    "lblTemplate": "Trade Routes",
+    "mapxKey": "Trade routes",
+    "gloss": {
+      "en": "Trade routes",
+      "es": "Las rutas comerciales",
+      "fr": "routes commerciales"
+    },
+    "context": {
+      "en": "Trade routes",
+      "es": "Las rutas comerciales",
+      "fr": "routes commerciales"
+    },
+    "altTermIds": "trade_routes"
   },
   "transfiguration": {
     "lblTemplate": "{Transfiguration}",

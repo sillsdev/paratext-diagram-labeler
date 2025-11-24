@@ -1227,6 +1227,39 @@ export default function DetailsPane({
                 </button>
               </>
             )}
+            {status === STATUS_GUESSED && (
+              <button 
+                style={{ marginLeft: 8 }}
+                onClick={() => {
+                  // Approve guessed renderings for the current label
+                  const currentLabel = labels[selectedLabelIndex];
+                  const placeNameIds = currentLabel?.placeNameIds || [];
+                  const activePlaceNameId = placeNameIds[activeTab] || placeNameIds[0];
+                  
+                  if (activePlaceNameId) {
+                    const updatedData = { ...termRenderings };
+                    const terms = collectionManager.getTermsForPlace(activePlaceNameId, collectionId) || [];
+                    
+                    // Approve all guessed renderings for terms in this placeName
+                    terms.forEach(term => {
+                      if (updatedData[term.termId]?.isGuessed) {
+                        updatedData[term.termId] = {
+                          ...updatedData[term.termId],
+                          isGuessed: false,
+                        };
+                      }
+                    });
+                    
+                    setTermRenderings(updatedData);
+                    if (onTriggerStatusRecalc) {
+                      onTriggerStatusRecalc();
+                    }
+                  }
+                }}
+              >
+                {inLang(uiStr.approveRendering, lang)}
+              </button>
+            )}
             {status === STATUS_UNMATCHED && (
               <button style={{ marginLeft: 8 }} onClick={() => onRefreshLabel()}>
                 {inLang(uiStr.refreshLabel, lang)}

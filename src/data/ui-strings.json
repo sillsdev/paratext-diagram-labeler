@@ -659,6 +659,48 @@
     "fr": "Abandonner",
     "ne": "त्याग्नुहोस्"
   },
+  "syncDifferencesTitle": {
+    "en": "Dictionary Sync Differences",
+    "es": "Diferencias de sincronización del diccionario",
+    "fr": "Différences de synchronisation du dictionnaire",
+    "ne": "शब्दकोश सिंक भिन्नताहरू"
+  },
+  "syncDifferencesMessage": {
+    "en": "The following labels differ from the dictionary, and are marked for sync:",
+    "es": "Las siguientes etiquetas difieren del diccionario y están marcadas para sincronización:",
+    "fr": "Les étiquettes suivantes diffèrent du dictionnaire et sont marquées pour synchronisation:",
+    "ne": "निम्न लेबलहरू शब्दकोशबाट फरक छन्, र सिंकको लागि चिन्ह लगाइएको छ:"
+  },
+  "gloss": {
+    "en": "Gloss",
+    "es": "Glosa",
+    "fr": "Glose",
+    "ne": "ग्लोस"
+  },
+  "previouslySaved": {
+    "en": "Previously Saved",
+    "es": "Guardado anteriormente",
+    "fr": "Enregistré précédemment",
+    "ne": "पहिले बचत गरिएको"
+  },
+  "dictionary": {
+    "en": "Dictionary",
+    "es": "Diccionario",
+    "fr": "Dictionnaire",
+    "ne": "शब्दकोश"
+  },
+  "setToOverride": {
+    "en": "Set to Override",
+    "es": "Establecer como anulación",
+    "fr": "Définir comme remplacement",
+    "ne": "ओभरराइडमा सेट गर्नुहोस्"
+  },
+  "updateFromDictionary": {
+    "en": "Update from Dictionary",
+    "es": "Actualizar desde diccionario",
+    "fr": "Mettre à jour depuis le dictionnaire",
+    "ne": "शब्दकोशबाट अपडेट गर्नुहोस्"
+  },
   "labelsSaved": {
     "en": "Labels saved successfully",
     "es": "Etiquetas guardadas exitosamente",

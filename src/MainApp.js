@@ -652,16 +652,19 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
     try {
       // Build labels object: mergeKey -> vernLabel
       const labelsToSave = {};
+      const opCodesToSave = {};
       labels.forEach(label => {
-        if (label.mergeKey && label.vernLabel) {
-          labelsToSave[label.mergeKey] = label.vernLabel;
+        if (label.mergeKey) {
+          labelsToSave[label.mergeKey] = label.vernLabel || '';
+          opCodesToSave[label.mergeKey] = label.opCode || 'sync';
         }
       });
       
       const result = await electronAPI.saveLabelsToIdmlTxt(
         projectFolder,
         mapDef.template,
-        labelsToSave
+        labelsToSave,
+        opCodesToSave
       );
       
       if (result.success) {
@@ -788,7 +791,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
   }, [promptUnsavedChanges]);
 
   // Extract template loading logic into a reusable function
-  const loadTemplate = useCallback(async (templateName, labels = {}, figFilename = null, isJpg = false, imgPath = null) => {
+  const loadTemplate = useCallback(async (templateName, figFilename = null, isJpg = false, imgPath = null) => {
     try {
       // Get collection ID and exact template name
       const [collectionId, exactTemplateName] = findCollectionIdAndTemplate(templateName);
@@ -892,47 +895,193 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
         };
       });
       
-      // Load saved labels from .IDML.TXT file if no data merge file was loaded
+      // Load saved labels from .IDML.TXT file and accompanying JSON file
       let savedIdmlLabels = {};
-      if (Object.keys(labels).length === 0) {
-        try {
-          const result = await electronAPI.loadLabelsFromIdmlTxt(projectFolder, exactTemplateName);
-          if (result.success && result.labels) {
-            savedIdmlLabels = result.labels;
-            console.log('Loaded saved labels from .IDML.TXT file:', savedIdmlLabels);
-          }
-        } catch (error) {
-          console.error('Error loading .IDML.TXT file:', error);
+      let savedOpCodes = {};
+      try {
+        const result = await electronAPI.loadLabelsFromIdmlTxt(projectFolder, exactTemplateName);
+        if (result.success && result.labels) {
+          savedIdmlLabels = result.labels;
+          savedOpCodes = result.opCodes || {};
+          console.log('Loaded saved labels from .IDML.TXT file:', savedIdmlLabels);
+          console.log('Loaded opCodes from JSON file:', savedOpCodes);
         }
+      } catch (error) {
+        console.error('Error loading .IDML.TXT file:', error);
       }
       
+      // First pass: Load everything from saved files, using saved values
       const initialLabels = await Promise.all(newLabels.map(async label => {
-        // Priority: data merge > saved IDML > dictionary > fallback
-        if (labels[label.mergeKey]) {
-          label.vernLabel = labels[label.mergeKey]; // Use label from data merge if available
-        } else if (savedIdmlLabels[label.mergeKey]) {
-          label.vernLabel = savedIdmlLabels[label.mergeKey]; // Use saved label from .IDML.TXT file
-        } else if (!label.vernLabel && label.lblTemplate) {
-          // Try to resolve template using CollectionManager
-          // This handles both placename templates and reference/number templates
-          const resolved = await collectionManager.resolveTemplate(label.lblTemplate, collectionId, currentTermRenderings, projectFolder);
-          label.vernLabel = resolved?.literalText || '';
+        let finalVernLabel = '';
+        let finalOpCode = 'sync'; // default
+        
+        if (savedIdmlLabels.hasOwnProperty(label.mergeKey)) {
+          // Label was in saved data - use saved values exactly as they were
+          finalVernLabel = savedIdmlLabels[label.mergeKey];
+          finalOpCode = savedOpCodes[label.mergeKey] || 'sync';
+          
+          // Apply opCode rules
+          if (finalOpCode === 'omit') {
+            finalVernLabel = ''; // omit means blank
+          }
+        } else {
+          // Not in saved data - try dictionary first
+          const dictValue = labelDictionaryService.getVernacular(label.lblTemplate);
+          
+          if (dictValue) {
+            finalVernLabel = dictValue;
+            finalOpCode = 'sync';
+          } else {
+            // Not in saved data, not in dictionary - try other fallbacks
+            const mergeKeyData = collectionManager.getMergeKeys(collectionId)[label.mergeKey];
+            
+            if (mergeKeyData?.altTermIds) {
+              // Try altTermIds for backwards compatibility
+              const altTermIds = mergeKeyData.altTermIds.split(/,\s*/);
+              for (const termId of altTermIds) {
+                const termData = currentTermRenderings[termId];
+                if (termData?.renderings) {
+                  const patterns = termData.renderings.split('||').map(p => p.trim()).filter(p => p);
+                  if (patterns.length > 0) {
+                    // Strip wildcards and comments from first pattern
+                    finalVernLabel = patterns[0].replace(/\*/g, '').replace(/\/\/.*$/, '').trim();
+                    break;
+                  }
+                }
+              }
+            }
+            
+            if (!finalVernLabel && label.lblTemplate) {
+              // Check if template contains curly braces
+              if (label.lblTemplate.includes('{')) {
+                // Use resolveTemplate functionality
+                const resolved = await collectionManager.resolveTemplate(label.lblTemplate, collectionId, currentTermRenderings, projectFolder);
+                finalVernLabel = resolved?.literalText || '';
+              } else {
+                // No curly braces, leave blank
+                finalVernLabel = '';
+              }
+            }
+          }
         }
 
-        // Don't calculate status here - let the status recalculation useEffect handle it
-        // when extractedVerses is available
-        return { ...label, status: 1, perPlaceStatus: {} };
+        // Return label with values from saved state (or fallbacks if not saved)
+        return { 
+          ...label, 
+          vernLabel: finalVernLabel,
+          opCode: finalOpCode,
+          status: 1, 
+          perPlaceStatus: {} 
+        };
       }));
       
-      // Store the saved labels for revert functionality
-      const finalSavedLabels = {};
+      // Store this as the reset point
+      const resetPointLabels = {};
       initialLabels.forEach(label => {
-        if (label.mergeKey && label.vernLabel) {
-          finalSavedLabels[label.mergeKey] = label.vernLabel;
+        if (label.mergeKey) {
+          resetPointLabels[label.mergeKey] = label.vernLabel || '';
         }
       });
-      setSavedLabels(finalSavedLabels);
+      setSavedLabels(resetPointLabels);
       setHasUnsavedChanges(false);
+      
+      // Second pass: Check for sync labels that differ from dictionary
+      const syncDifferences = [];
+      initialLabels.forEach(label => {
+        if (label.opCode === 'sync' && label.lblTemplate) {
+          const dictValue = labelDictionaryService.getVernacular(label.lblTemplate);
+          if (dictValue && dictValue !== label.vernLabel) {
+            syncDifferences.push({
+              mergeKey: label.mergeKey,
+              gloss: inLang(label.gloss || { en: label.mergeKey }, lang),
+              savedValue: label.vernLabel || '',
+              dictValue: dictValue
+            });
+          }
+        }
+      });
+      
+      // If there are differences, prompt user
+      if (syncDifferences.length > 0) {
+        const userChoice = await new Promise(resolve => {
+          const overlay = document.createElement('div');
+          overlay.style.cssText = 'position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:10000;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;';
+          
+          const dialog = document.createElement('div');
+          dialog.style.cssText = 'background:white;border-radius:10px;padding:24px;max-width:800px;max-height:80vh;overflow:auto;box-shadow:0 4px 24px rgba(0,0,0,0.3);';
+          
+          const title = document.createElement('h3');
+          title.textContent = inLang(uiStr.syncDifferencesTitle || { en: 'Dictionary Sync Differences' }, lang);
+          title.style.marginTop = '0';
+          
+          const message = document.createElement('p');
+          message.textContent = inLang(uiStr.syncDifferencesMessage || { en: 'The following labels differ from the dictionary, and are marked for sync:' }, lang);
+          
+          const table = document.createElement('table');
+          table.style.cssText = 'width:100%;border-collapse:collapse;margin:16px 0;';
+          table.innerHTML = `
+            <thead>
+              <tr style="border-bottom:2px solid #ccc;">
+                <th style="padding:8px;text-align:left;">${inLang(uiStr.gloss || { en: 'Gloss' }, lang)}</th>
+                <th style="padding:8px;text-align:left;">${inLang(uiStr.previouslySaved || { en: 'Previously Saved' }, lang)}</th>
+                <th style="padding:8px;text-align:left;">${inLang(uiStr.dictionary || { en: 'Dictionary' }, lang)}</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${syncDifferences.map(diff => `
+                <tr style="border-bottom:1px solid #eee;">
+                  <td style="padding:8px;">${diff.gloss}</td>
+                  <td style="padding:8px;">${diff.savedValue}</td>
+                  <td style="padding:8px;font-weight:bold;">${diff.dictValue}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          `;
+          
+          const buttonContainer = document.createElement('div');
+          buttonContainer.style.cssText = 'display:flex;justify-content:flex-end;gap:8px;margin-top:16px;';
+          
+          const overrideBtn = document.createElement('button');
+          overrideBtn.textContent = inLang(uiStr.setToOverride || { en: 'Set to Override' }, lang);
+          overrideBtn.style.cssText = 'padding:8px 16px;border-radius:4px;border:1px solid #ff9800;background:#fff3e0;cursor:pointer;';
+          overrideBtn.onclick = () => { document.body.removeChild(overlay); resolve('override'); };
+          
+          const updateBtn = document.createElement('button');
+          updateBtn.textContent = inLang(uiStr.updateFromDictionary || { en: 'Update from Dictionary' }, lang);
+          updateBtn.style.cssText = 'padding:8px 16px;border-radius:4px;border:1px solid #4caf50;background:#4caf50;color:white;cursor:pointer;';
+          updateBtn.onclick = () => { document.body.removeChild(overlay); resolve('update'); };
+          
+          buttonContainer.appendChild(overrideBtn);
+          buttonContainer.appendChild(updateBtn);
+          
+          dialog.appendChild(title);
+          dialog.appendChild(message);
+          dialog.appendChild(table);
+          dialog.appendChild(buttonContainer);
+          overlay.appendChild(dialog);
+          document.body.appendChild(overlay);
+        });
+        
+        if (userChoice === 'update') {
+          // Update labels from dictionary and set changes flag
+          syncDifferences.forEach(diff => {
+            const labelIndex = initialLabels.findIndex(l => l.mergeKey === diff.mergeKey);
+            if (labelIndex !== -1) {
+              initialLabels[labelIndex].vernLabel = diff.dictValue;
+            }
+          });
+          setHasUnsavedChanges(true);
+        } else if (userChoice === 'override') {
+          // Set opCode to override for these labels
+          syncDifferences.forEach(diff => {
+            const labelIndex = initialLabels.findIndex(l => l.mergeKey === diff.mergeKey);
+            if (labelIndex !== -1) {
+              initialLabels[labelIndex].opCode = 'override';
+            }
+          });
+          // No changes flag since we're keeping saved values
+        }
+      }
       console.log('Initial labels:', initialLabels);
       const medLabel = initialLabels.find(l => l.mergeKey === 'mediterranean_sea');
       if (medLabel) {

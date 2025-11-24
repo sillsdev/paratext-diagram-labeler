@@ -948,12 +948,14 @@ ipcMain.handle('load-labels-from-idml-txt', async (event, projectFolder, templat
   try {
     const projectName = settings.name;
     const filename = `${templateName} @${projectName}.idml.txt`;
+    const jsonFilename = `${templateName} @${projectName}.idml.json`;
     const sharedLabelerPath = path.join(projectFolder, 'shared', 'labeler');
     const filePath = path.join(sharedLabelerPath, filename);
+    const jsonFilePath = path.join(sharedLabelerPath, jsonFilename);
     
     if (!fs.existsSync(filePath)) {
       console.log(`.IDML.TXT file not found: ${filePath}`);
-      return { success: true, labels: null };
+      return { success: true, labels: null, opCodes: null };
     }
     
     // Read and decode the file
@@ -976,7 +978,7 @@ ipcMain.handle('load-labels-from-idml-txt', async (event, projectFolder, templat
     const lines = fileText.split('\n').map(line => line.trim()).filter(line => line.length > 0);
     if (lines.length < 2) {
       console.log('Invalid .IDML.TXT file format');
-      return { success: true, labels: null };
+      return { success: true, labels: null, opCodes: null };
     }
     
     const mergeKeys = lines[0].split('\t');
@@ -987,11 +989,26 @@ ipcMain.handle('load-labels-from-idml-txt', async (event, projectFolder, templat
       for (let i = 0; i < mergeKeys.length; i++) {
         labels[mergeKeys[i]] = verns[i];
       }
+      
+      // Try to load JSON file with opCodes
+      let opCodes = {};
+      if (fs.existsSync(jsonFilePath)) {
+        try {
+          const jsonContent = fs.readFileSync(jsonFilePath, 'utf8');
+          const jsonData = JSON.parse(jsonContent);
+          opCodes = jsonData.opCodes || {};
+          console.log(`Loaded opCodes from ${jsonFilename}:`, opCodes);
+        } catch (jsonError) {
+          console.error('Error reading JSON file:', jsonError);
+          // Continue without opCodes if JSON fails to parse
+        }
+      }
+      
       console.log(`Loaded labels from ${filename}:`, labels);
-      return { success: true, labels };
+      return { success: true, labels, opCodes };
     } else {
       console.log('Mismatch between merge keys and vernacular labels');
-      return { success: true, labels: null };
+      return { success: true, labels: null, opCodes: null };
     }
   } catch (e) {
     console.error('Error loading .IDML.TXT file:', e);
@@ -1000,11 +1017,12 @@ ipcMain.handle('load-labels-from-idml-txt', async (event, projectFolder, templat
 });
 
 // Save labels to .IDML.TXT file in shared/labeler folder
-ipcMain.handle('save-labels-to-idml-txt', async (event, projectFolder, templateName, labels) => {
+ipcMain.handle('save-labels-to-idml-txt', async (event, projectFolder, templateName, labels, opCodes = {}) => {
   await loadSettings(projectFolder);
   try {
     const projectName = settings.name;
     const filename = `${templateName} @${projectName}.idml.txt`;
+    const jsonFilename = `${templateName} @${projectName}.idml.json`;
     const sharedPath = path.join(projectFolder, 'shared');
     const sharedLabelerPath = path.join(sharedPath, 'labeler');
     
@@ -1017,6 +1035,7 @@ ipcMain.handle('save-labels-to-idml-txt', async (event, projectFolder, templateN
     }
     
     const filePath = path.join(sharedLabelerPath, filename);
+    const jsonFilePath = path.join(sharedLabelerPath, jsonFilename);
     
     // Build IDML data merge format
     const mergeKeys = Object.keys(labels);
@@ -1029,8 +1048,14 @@ ipcMain.handle('save-labels-to-idml-txt', async (event, projectFolder, templateN
     // Write with BOM and UTF-16 LE encoding
     await fs.promises.writeFile(filePath, '\uFEFF' + data, { encoding: 'utf16le' });
     
-    console.log(`Labels saved to ${filename}`);
-    return { success: true, filePath };
+    // Save JSON file with opCodes
+    const jsonData = {
+      opCodes: opCodes || {}
+    };
+    await fs.promises.writeFile(jsonFilePath, JSON.stringify(jsonData, null, 2), { encoding: 'utf8' });
+    
+    console.log(`Labels saved to ${filename} and ${jsonFilename}`);
+    return { success: true, filePath, jsonFilePath };
   } catch (e) {
     console.error('Error saving .IDML.TXT file:', e);
     return { success: false, error: e.message };
