@@ -926,32 +926,41 @@ export default function DetailsPane({
                     </span>
                   </td>
                   <td style={{ paddingLeft: '8px' }}>
-                    {status === STATUS_GUESSED.toString() && (
+                    {parseInt(status) === STATUS_GUESSED && (
                       <button
                         onClick={() => {
-                          // Find all labels with guessed status and approve them
+                          console.log('[Tally Approve All] Button clicked');
+                          // Approve all guessed renderings for ALL labels with STATUS_GUESSED
                           const updatedData = { ...termRenderings };
-                          let hasChanges = false;
+                          let anyUpdated = false;
 
                           labels.forEach(label => {
-                            if (label.status === STATUS_GUESSED) {
-                              const termId = label.termId;
-                              if (updatedData[termId]) {
-                                updatedData[termId] = {
-                                  ...updatedData[termId],
-                                  isGuessed: false,
-                                };
-                                hasChanges = true;
-                              }
-                            }
+                            if (label.status !== STATUS_GUESSED) return;
+                            
+                            // For each placeName in this label
+                            (label.placeNameIds || []).forEach(placeNameId => {
+                              const placeName = collectionManager.getPlaceName(placeNameId, collectionId);
+                              const terms = placeName?.terms || [];
+                              
+                              // Approve all guessed renderings for all terms
+                              terms.forEach(term => {
+                                if (updatedData[term.termId]?.isGuessed) {
+                                  updatedData[term.termId] = {
+                                    ...updatedData[term.termId],
+                                    isGuessed: false,
+                                  };
+                                  anyUpdated = true;
+                                }
+                              });
+                            });
                           });
 
-                          if (hasChanges) {
+                          if (anyUpdated) {
                             setTermRenderings(updatedData);
-                            // If currently viewing a guessed item, update local state
-                            if (labels[selectedLabelIndex]?.status === STATUS_GUESSED) {
-                              setLocalIsApproved(true);
+                            if (onTriggerStatusRecalc) {
+                              onTriggerStatusRecalc();
                             }
+                            console.log('[Tally Approve All] Updated and recalculated');
                           }
                         }}
                         style={{
@@ -1105,19 +1114,20 @@ export default function DetailsPane({
             spellCheck={false}
             rows={1}
           />{' '}
-          <span
-            style={{
-              color: statusValue[status].textColor,
-              fontSize: '0.8em',
-              lineHeight: '1.2',
-              display: 'block',
-              marginTop: '4px',
-            }}
-          >
-            <span style={{ fontWeight: 'bold' }}>
-              {inLang(uiStr.statusValue[status].text, lang) + ': '}
-            </span>
-            <span dangerouslySetInnerHTML={{
+          <div>
+            <span
+              style={{
+                color: statusValue[status].textColor,
+                fontSize: '0.8em',
+                lineHeight: '1.2',
+                display: 'inline-block',
+                marginTop: '4px',
+              }}
+            >
+              <span style={{ fontWeight: 'bold' }}>
+                {inLang(uiStr.statusValue[status].text, lang) + ': '}
+              </span>
+              <span dangerouslySetInnerHTML={{
               __html: (() => {
                 let helpText = inLang(uiStr.statusValue[status].help, lang);
                 
@@ -1161,6 +1171,8 @@ export default function DetailsPane({
                 return helpText;
               })()
             }} />
+            </span>
+            {/* Buttons must be outside the status message span to work properly */}
             {status === STATUS_MULTIPLE_RENDERINGS && (
               <>
                 <button 
@@ -1225,51 +1237,8 @@ export default function DetailsPane({
                 {inLang(uiStr.addToRenderings, lang)}
               </button>
             )}
-            {status === STATUS_GUESSED && ( // If status is "guessed", show Approve rendering button
-              <button
-                style={{ marginLeft: 8 }}
-                onClick={() => {
-                  // Get active placeNameId from the current tab
-                  const currentLabel = labels[selectedLabelIndex];
-                  const placeNameIds = currentLabel?.placeNameIds || [];
-                  const activePlaceNameId = placeNameIds[activeTab] || placeNameIds[0];
-                  
-                  if (!activePlaceNameId) return;
-                  
-                  // Get all terms for this placeName
-                  const terms = collectionManager.getTermsForPlace(activePlaceNameId, collectionId) || [];
-                  
-                  // Approve all guessed renderings for all terms in this placeName
-                  const updatedData = { ...termRenderings };
-                  let anyUpdated = false;
-                  
-                  terms.forEach(term => {
-                    if (updatedData[term.termId]?.isGuessed) {
-                      updatedData[term.termId] = {
-                        ...updatedData[term.termId],
-                        isGuessed: false,
-                      };
-                      anyUpdated = true;
-                    }
-                  });
-                  
-                  if (anyUpdated) {
-                    // Update state via parent component handlers
-                    setTermRenderings(updatedData);
-                    // Trigger re-render by updating vernacular (no change to text)
-                    onUpdateVernacular(
-                      currentLabel.mergeKey,
-                      currentLabel.lblTemplate || currentLabel.mergeKey,
-                      currentLabel.vernLabel,
-                      currentLabel.opCode || 'sync'
-                    );
-                  }
-                }}
-              >
-                {inLang(uiStr.approveRendering, lang)}
-              </button>
-            )}
-          </span>
+
+          </div>
         </div>
         {/* Tabbed section for placeNames */}
         {(() => {
