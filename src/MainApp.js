@@ -1034,52 +1034,91 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
                   <td style="padding:8px;">${diff.savedValue}</td>
                   <td style="padding:8px;font-weight:bold;">${diff.dictValue}</td>
                 </tr>
+                <tr>
+                  <td></td>
+                  <td style="padding:4px 8px;">
+                    <button class="override-btn" data-mergekey="${diff.mergeKey}" style="padding:6px 12px;border-radius:4px;border:1px solid #ff9800;background:#fff3e0;cursor:pointer;width:100%;">${inLang(uiStr.setToOverride || { en: 'Keep this (override)' }, lang)}</button>
+                  </td>
+                  <td style="padding:4px 8px;">
+                    <button class="update-btn" data-mergekey="${diff.mergeKey}" style="padding:6px 12px;border-radius:4px;border:1px solid #4caf50;background:#4caf50;color:white;cursor:pointer;width:100%;">${inLang(uiStr.updateFromDictionary || { en: 'Update with this (sync)' }, lang)}</button>
+                  </td>
+                </tr>
               `).join('')}
             </tbody>
           `;
           
-          const buttonContainer = document.createElement('div');
-          buttonContainer.style.cssText = 'display:flex;justify-content:flex-end;gap:8px;margin-top:16px;';
-          
-          const overrideBtn = document.createElement('button');
-          overrideBtn.textContent = inLang(uiStr.setToOverride || { en: 'Set to Override' }, lang);
-          overrideBtn.style.cssText = 'padding:8px 16px;border-radius:4px;border:1px solid #ff9800;background:#fff3e0;cursor:pointer;';
-          overrideBtn.onclick = () => { document.body.removeChild(overlay); resolve('override'); };
-          
-          const updateBtn = document.createElement('button');
-          updateBtn.textContent = inLang(uiStr.updateFromDictionary || { en: 'Update from Dictionary' }, lang);
-          updateBtn.style.cssText = 'padding:8px 16px;border-radius:4px;border:1px solid #4caf50;background:#4caf50;color:white;cursor:pointer;';
-          updateBtn.onclick = () => { document.body.removeChild(overlay); resolve('update'); };
-          
-          buttonContainer.appendChild(overrideBtn);
-          buttonContainer.appendChild(updateBtn);
-          
+          // Add event listeners to buttons in table
           dialog.appendChild(title);
           dialog.appendChild(message);
           dialog.appendChild(table);
-          dialog.appendChild(buttonContainer);
+          
+          // Track choices for each label - preselect 'update' for all
+          const choices = {};
+          syncDifferences.forEach(diff => {
+            choices[diff.mergeKey] = 'update';
+          });
+          
+          table.querySelectorAll('.override-btn').forEach(btn => {
+            btn.onclick = () => {
+              const mergeKey = btn.getAttribute('data-mergekey');
+              choices[mergeKey] = 'override';
+              btn.style.background = '#ff9800';
+              btn.style.color = 'white';
+              const updateBtn = table.querySelector(`.update-btn[data-mergekey="${mergeKey}"]`);
+              if (updateBtn) {
+                updateBtn.style.background = '#4caf50';
+                updateBtn.style.color = 'white';
+              }
+            };
+          });
+          
+          table.querySelectorAll('.update-btn').forEach(btn => {
+            // Preselect update buttons visually
+            btn.style.background = '#2e7d32';
+            btn.style.color = 'white';
+            
+            btn.onclick = () => {
+              const mergeKey = btn.getAttribute('data-mergekey');
+              choices[mergeKey] = 'update';
+              btn.style.background = '#2e7d32';
+              btn.style.color = 'white';
+              const overrideBtn = table.querySelector(`.override-btn[data-mergekey="${mergeKey}"]`);
+              if (overrideBtn) {
+                overrideBtn.style.background = '#fff3e0';
+                overrideBtn.style.color = 'black';
+              }
+            };
+          });
+          
+          const doneBtn = document.createElement('button');
+          doneBtn.textContent = inLang(uiStr.ok || { en: 'OK' }, lang);
+          doneBtn.style.cssText = 'padding:8px 16px;border-radius:4px;border:1px solid #1976d2;background:#1976d2;color:white;cursor:pointer;margin-top:16px;float:right;';
+          doneBtn.onclick = () => { document.body.removeChild(overlay); resolve(choices); };
+          
+          dialog.appendChild(doneBtn);
           overlay.appendChild(dialog);
           document.body.appendChild(overlay);
         });
         
-        if (userChoice === 'update') {
-          // Update labels from dictionary and set changes flag
-          syncDifferences.forEach(diff => {
-            const labelIndex = initialLabels.findIndex(l => l.mergeKey === diff.mergeKey);
-            if (labelIndex !== -1) {
+        // Process each label's choice
+        let hasChanges = false;
+        syncDifferences.forEach(diff => {
+          const choice = userChoice[diff.mergeKey];
+          const labelIndex = initialLabels.findIndex(l => l.mergeKey === diff.mergeKey);
+          if (labelIndex !== -1) {
+            if (choice === 'update') {
+              // Update label from dictionary
               initialLabels[labelIndex].vernLabel = diff.dictValue;
-            }
-          });
-          setHasUnsavedChanges(true);
-        } else if (userChoice === 'override') {
-          // Set opCode to override for these labels
-          syncDifferences.forEach(diff => {
-            const labelIndex = initialLabels.findIndex(l => l.mergeKey === diff.mergeKey);
-            if (labelIndex !== -1) {
+              hasChanges = true;
+            } else if (choice === 'override') {
+              // Set opCode to override to keep saved value
               initialLabels[labelIndex].opCode = 'override';
+              hasChanges = true;
             }
-          });
-          // No changes flag since we're keeping saved values
+          }
+        });
+        if (hasChanges) {
+          setHasUnsavedChanges(true);
         }
       }
       console.log('Initial labels:', initialLabels);

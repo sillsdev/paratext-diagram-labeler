@@ -342,6 +342,7 @@ export default function MapPane({
                 selectedLabelIndex === label.idx,
                 labelScale,
                 labelOpacity,
+                label.opCode,
                 showFrac && label.placeNameIds?.length > 0
                   ? (() => {
                       // Aggregate match tallies from all terms in all placeNames
@@ -388,8 +389,11 @@ function createLabel(
   isSelected = false,
   labelScale = 1,
   labelOpacity = 85,
+  opCode = 'sync',
   extra
 ) {
+  // Add visual indicator for override and omit opCodes
+  const opCodeIndicator = opCode === 'override' ? '🔒' : opCode === 'omit' ? '🚫' : '';
   const isLeft = align === 'left';
   const isCenter = align === 'center';
   const backgroundColor = statusValue[status].bkColor;
@@ -435,7 +439,7 @@ function createLabel(
     } width: 2em; height: 2em; position: relative;">
       <span class="${
         isSelected ? 'selected-label' : 'unselected-label'
-      }" style="${spanStyle}">${labelText}${extra}</span>
+      }" style="${spanStyle}">${labelText}${opCodeIndicator}${extra}</span>
     </div>
   `;
 

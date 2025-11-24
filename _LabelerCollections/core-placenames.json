@@ -343,26 +343,6 @@
     ],
     "altTermIds": ""
   },
-  "AltRedSeaCrossing": {
-    "gloss": {
-      "en": "Alternate routes of Red Sea crossing",
-      "es": "Las rutas alternativas del cruce del Mar Rojo",
-      "fr": "Itinéraires alternatifs pour traverser la mer Rouge"
-    },
-    "context": {
-      "en": "",
-      "es": "",
-      "fr": ""
-    },
-    "terms": [
-      {
-        "termId": "alt_red_sea_crossing",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
   "Altar": {
     "gloss": {
       "en": "Altar",
@@ -377,26 +357,6 @@
     "terms": [
       {
         "termId": "altar",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
-  "AltarOfBurnedOffering": {
-    "gloss": {
-      "en": "Altar of Burned Offering",
-      "es": "Altar de ofrendas quemadas",
-      "fr": "Autel des offrandes brûlées"
-    },
-    "context": {
-      "en": "",
-      "es": "",
-      "fr": ""
-    },
-    "terms": [
-      {
-        "termId": "altar_of_burned_offering",
         "transliteration": "",
         "refs": []
       }
@@ -586,9 +546,9 @@
     ],
     "altTermIds": ""
   },
-  "AntiochPisidia": {
+  "Antioch.2": {
     "gloss": {
-      "en": "Antioch",
+      "en": "Pisidian Antioch",
       "es": "Antioquía",
       "fr": "Antioche"
     },
@@ -611,7 +571,7 @@
     ],
     "altTermIds": "Ἀντιόχεια-1"
   },
-  "AntiochSyria": {
+  "Antioch": {
     "gloss": {
       "en": "Antioch",
       "es": "Antioquía",
@@ -18493,146 +18453,6 @@
     "terms": [
       {
         "termId": "scale_m",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
-  "ScriptureHp": {
-    "gloss": {
-      "en": "Exodus 28",
-      "es": "Éxodo 28",
-      "fr": "Exode 28"
-    },
-    "context": {
-      "en": "",
-      "es": "",
-      "fr": ""
-    },
-    "terms": [
-      {
-        "termId": "scripture_hp",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
-  "ScriptureJ1": {
-    "gloss": {
-      "en": "Acts 13:4–14:28",
-      "es": "Hechos 13:4--14:28",
-      "fr": "Actes 13:4–14:28"
-    },
-    "context": {
-      "en": "",
-      "es": "",
-      "fr": ""
-    },
-    "terms": [
-      {
-        "termId": "scripture_j1",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
-  "ScriptureJ2": {
-    "gloss": {
-      "en": "Acts 15:36–18:22",
-      "es": "Hechos 15:36--18:22",
-      "fr": "Actes 15:36–18:22"
-    },
-    "context": {
-      "en": "",
-      "es": "",
-      "fr": ""
-    },
-    "terms": [
-      {
-        "termId": "scripture_j2",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
-  "ScriptureJ3": {
-    "gloss": {
-      "en": "Acts 18:23–21:17",
-      "es": "Hechos 18:23--21:17",
-      "fr": "Actes 18:23–21:17"
-    },
-    "context": {
-      "en": "",
-      "es": "",
-      "fr": ""
-    },
-    "terms": [
-      {
-        "termId": "scripture_j3",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
-  "ScriptureJ4": {
-    "gloss": {
-      "en": "Acts 27:1–28:16",
-      "es": "Hechos 27.1--28:16",
-      "fr": "Actes 27:1–28:16"
-    },
-    "context": {
-      "en": "",
-      "es": "",
-      "fr": ""
-    },
-    "terms": [
-      {
-        "termId": "scripture_j4",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
-  "ScripturePent": {
-    "gloss": {
-      "en": "Acts 2:5-11",
-      "es": "Hechos 2.5-11",
-      "fr": "Actes 2:5-11"
-    },
-    "context": {
-      "en": "",
-      "es": "",
-      "fr": ""
-    },
-    "terms": [
-      {
-        "termId": "scripture_pent",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
-  "ScriptureSoldier": {
-    "gloss": {
-      "en": "Ephesians 6:10-18",
-      "es": "Efesios 6:10-18",
-      "fr": "Éphésiens 6:10-18"
-    },
-    "context": {
-      "en": "",
-      "es": "",
-      "fr": ""
-    },
-    "terms": [
-      {
-        "termId": "scripture_soldier",
         "transliteration": "",
         "refs": []
       }

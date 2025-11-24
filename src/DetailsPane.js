@@ -1065,6 +1065,15 @@ export default function DetailsPane({
                 style={{ marginRight: 4 }}
               />
               {inLang(uiStr.opCodeOverride, lang)}
+              {(() => {
+                const currentLabel = labels[selectedLabelIndex];
+                if (currentLabel?.opCode === 'override') {
+                  const dictValue = labelDictionaryService.getVernacular(currentLabel?.lblTemplate);
+                  return dictValue ? ` "${dictValue}"` : '';
+                }
+                return '';
+              })()}
+              🔒
             </label>
             <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
               <input
@@ -1084,7 +1093,7 @@ export default function DetailsPane({
                 }}
                 style={{ marginRight: 4 }}
               />
-              {inLang(uiStr.opCodeOmit, lang)}
+              {inLang(uiStr.opCodeOmit, lang)}🚫
             </label>
           </div>
           <textarea

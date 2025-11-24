@@ -73,8 +73,14 @@
     "mapxKey": ""
   },
   "altar_of_burned_offering": {
-    "lblTemplate": "{AltarOfBurnedOffering}",
-    "mapxKey": ""
+    "lblTemplate": "Altar of Burned Offering",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Altar of Burned Offering",
+      "es": "Altar de ofrendas quemadas",
+      "fr": "Autel des offrandes brûlées"
+    },
+    "altTermIds": "altar_of_burned_offering"
   },
   "ammon": {
     "lblTemplate": "{Ammon}",
@@ -89,11 +95,11 @@
     "mapxKey": "Amphipolis"
   },
   "antioch_pisidia": {
-    "lblTemplate": "{AntiochPisidia}",
+    "lblTemplate": "{Antioch.2}",
     "mapxKey": "Antioch of Pisidia"
   },
   "antioch_syria": {
-    "lblTemplate": "{AntiochSyria}",
+    "lblTemplate": "{Antioch}",
     "mapxKey": "Antioch of Syria"
   },
   "antipatris": {
@@ -1329,7 +1335,7 @@
     "mapxKey": "MEDIA"
   },
   "mediterranean_sea": {
-    "lblTemplate": "{r#JHN 3.16}",
+    "lblTemplate": "{MediterraneanSea}",
     "mapxKey": "MEDITERRANEAN SEA"
   },
   "megiddo": {
@@ -1457,7 +1463,7 @@
     "mapxKey": "Nicopolis"
   },
   "nile_river": {
-    "lblTemplate": "{to#Egypt}",
+    "lblTemplate": "{NileRiver}",
     "mapxKey": "Nile River"
   },
   "nineveh": {
@@ -1865,32 +1871,74 @@
     "mapxKey": "Miles"
   },
   "scripture_hp": {
-    "lblTemplate": "{ScriptureHp}",
-    "mapxKey": "Exodus 28"
+    "lblTemplate": "{r#EXO 28}",
+    "mapxKey": "Exodus 28",
+    "gloss": {
+      "en": "Exodus 28",
+      "es": "Éxodo 28",
+      "fr": "Exode 28"
+    },
+    "altTermIds": "scripture_hp"
   },
   "scripture_j1": {
-    "lblTemplate": "{ScriptureJ1}",
-    "mapxKey": ""
+    "lblTemplate": "{r#ACT 13.4–14.28}",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Acts 13:4–14:28",
+      "es": "Hechos 13:4–14:28",
+      "fr": "Actes 13:4–14:28"
+    },
+    "altTermIds": "scripture_j1"
   },
   "scripture_j2": {
-    "lblTemplate": "{ScriptureJ2}",
-    "mapxKey": ""
+    "lblTemplate": "{r#ACT 15.36–18.22}",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Acts 15:36–18:22",
+      "es": "Hechos 15:36–18:22",
+      "fr": "Actes 15:36–18:22"
+    },
+    "altTermIds": "scripture_j2"
   },
   "scripture_j3": {
-    "lblTemplate": "{ScriptureJ3}",
-    "mapxKey": ""
+    "lblTemplate": "{r#ACT 18.23–21.17}",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Acts 18:23–21:17",
+      "es": "Hechos 18:23–21:17",
+      "fr": "Actes 18:23–21:17"
+    },
+    "altTermIds": "scripture_j3"
   },
   "scripture_j4": {
-    "lblTemplate": "{ScriptureJ4}",
-    "mapxKey": ""
+    "lblTemplate": "{r#ACT 27.1–28.16}",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Acts 27:1–28:16",
+      "es": "Hechos 27.1–28:16",
+      "fr": "Actes 27:1–28:16"
+    },
+    "altTermIds": "scripture_j4"
   },
   "scripture_pent": {
-    "lblTemplate": "{ScripturePent}",
-    "mapxKey": ""
+    "lblTemplate": "{r#ACT 2.5-11}",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Acts 2:5-11",
+      "es": "Hechos 2.5-11",
+      "fr": "Actes 2:5-11"
+    },
+    "altTermIds": "scripture_pent"
   },
   "scripture_soldier": {
-    "lblTemplate": "{ScriptureSoldier}",
-    "mapxKey": "Ephesians 6:10-18"
+    "lblTemplate": "{r#EPH 6.10-18}",
+    "mapxKey": "Ephesians 6:10-18",
+    "gloss": {
+      "en": "Ephesians 6:10-18",
+      "es": "Efesios 6:10-18",
+      "fr": "Éphésiens 6:10-18"
+    },
+    "altTermIds": "scripture_soldier"
   },
   "scythia": {
     "lblTemplate": "{Scythia}",
@@ -1925,7 +1973,7 @@
     "mapxKey": "Shechem"
   },
   "shechem_ot": {
-    "lblTemplate": "{Caesarea}",
+    "lblTemplate": "{Shechem}",
     "mapxKey": "Shechem"
   },
   "sheep_gate": {
@@ -2133,15 +2181,8 @@
     "mapxKey": ""
   },
   "the_negev": {
-    "lblTemplate": "{to#Judea}",
-    "mapxKey": "THE NEGEV",
-    "gloss": {
-      "en": "To Judea (test)"
-    },
-    "context": {
-      "en": "Route to Judea (testing context)"
-    },
-    "altTermIds": ""
+    "lblTemplate": "{TheNegev}",
+    "mapxKey": "THE NEGEV"
   },
   "theater": {
     "lblTemplate": "{Theater}",

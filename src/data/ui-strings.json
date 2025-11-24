@@ -690,16 +690,16 @@
     "ne": "शब्दकोश"
   },
   "setToOverride": {
-    "en": "Set to Override",
-    "es": "Establecer como anulación",
-    "fr": "Définir comme remplacement",
-    "ne": "ओभरराइडमा सेट गर्नुहोस्"
+    "en": "Keep this (override)",
+    "es": "Mantener esto (anular)",
+    "fr": "Garder ceci (remplacer)",
+    "ne": "यो राख्नुहोस् (ओभरराइड)"
   },
   "updateFromDictionary": {
-    "en": "Update from Dictionary",
-    "es": "Actualizar desde diccionario",
-    "fr": "Mettre à jour depuis le dictionnaire",
-    "ne": "शब्दकोशबाट अपडेट गर्नुहोस्"
+    "en": "Update with this (sync)",
+    "es": "Actualizar con esto (sincronizar)",
+    "fr": "Mettre à jour avec ceci (sync)",
+    "ne": "यसबाट अपडेट गर्नुहोस् (सिंक)"
   },
   "labelsSaved": {
     "en": "Labels saved successfully",
