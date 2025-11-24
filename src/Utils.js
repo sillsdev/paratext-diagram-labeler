@@ -211,7 +211,8 @@ export function getPlaceNameStatus(termRenderings, terms, vernLabel, extractedVe
 
   for (const pattern of allPatterns) {
     // Check if label matches this pattern using wildcard matching
-    if (patternMatchesLabel(vernLabel, pattern)) {
+    const matches = patternMatchesLabel(vernLabel, pattern);
+    if (matches) {
       matchesLabel.push(pattern);
     } else {
       doesntMatchLabel.push(pattern);
@@ -220,6 +221,7 @@ export function getPlaceNameStatus(termRenderings, terms, vernLabel, extractedVe
 
   // If matchesLabel is empty, return STATUS_UNMATCHED
   if (matchesLabel.length === 0) {
+    console.log(`[getPlaceNameStatus] STATUS_UNMATCHED for "${placeNameId}": vernLabel="${vernLabel}", allPatterns=${JSON.stringify(allPatterns)}`);
     return STATUS_UNMATCHED;
   }
 
@@ -279,7 +281,8 @@ export function getPlaceNameStatus(termRenderings, terms, vernLabel, extractedVe
 function patternMatchesLabel(label, pattern) {
   try {
     const regexPattern = convertParatextWildcardsToRegex(pattern);
-    const regex = new RegExp('^' + regexPattern + '$', 'iu');
+    // Use word boundaries instead of anchors to match pattern anywhere in label
+    const regex = new RegExp(MATCH_PRE_B + regexPattern + MATCH_POST_B, 'iu');
     return regex.test(label);
   } catch (e) {
     // Invalid regex, treat as non-match
