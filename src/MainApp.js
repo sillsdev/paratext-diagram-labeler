@@ -1084,23 +1084,93 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
   }, []);
 
   // Add rendering from bottom pane selection
-  // OBSOLETE in NEW architecture - renderings are handled per placeName in DetailsPane
   const handleAddRendering = useCallback(
     text => {
-      // This handler is no longer used in the NEW architecture
-      // Term renderings are managed per placeName in DetailsPane
+      if (!text || selectedLabelIndex < 0 || !labels[selectedLabelIndex]) return;
+      
+      const currentLabel = labels[selectedLabelIndex];
+      const collectionId = getCollectionIdFromTemplate(mapDef.template);
+      const placeNameId = currentLabel.placeNameIds?.[0]; // Use first placeName
+      
+      if (!placeNameId) return;
+      
+      const placeName = collectionManager.getPlaceName(placeNameId, collectionId);
+      const terms = placeName?.terms || [];
+      
+      if (terms.length === 0) return;
+      
+      // Add to all terms for this placeName (or first term if not joined)
+      const updatedData = { ...termRenderings };
+      const isJoined = labelDictionaryService.isJoined(placeNameId);
+      const termsToUpdate = isJoined ? terms : [terms[0]];
+      
+      termsToUpdate.forEach(term => {
+        const existing = updatedData[term.termId]?.renderings || '';
+        const patterns = existing ? existing.split('||').map(p => p.trim()) : [];
+        const newPattern = text.trim();
+        
+        // Only add if not already present
+        if (newPattern && !patterns.some(p => p.toLowerCase() === newPattern.toLowerCase())) {
+          patterns.push(newPattern);
+          updatedData[term.termId] = {
+            ...updatedData[term.termId],
+            renderings: patterns.join('||'),
+            isGuessed: false,
+          };
+        }
+      });
+      
+      setTermRenderings(updatedData);
+      setStatusRecalcTrigger(prev => prev + 1);
     },
-    []
+    [selectedLabelIndex, labels, termRenderings, mapDef.template]
   );
 
-  // Replace all renderings with selected text (from bottom pane) or create new rendering (from details pane)
-  // OBSOLETE in NEW architecture - renderings are handled per placeName in DetailsPane
+  // Replace all renderings with selected text (from bottom pane)
   const handleReplaceRendering = useCallback(
     text => {
-      // This handler is no longer used in the NEW architecture
-      // Term renderings are managed per placeName in DetailsPane
+      if (!text || selectedLabelIndex < 0 || !labels[selectedLabelIndex]) return;
+      
+      const currentLabel = labels[selectedLabelIndex];
+      const collectionId = getCollectionIdFromTemplate(mapDef.template);
+      const placeNameId = currentLabel.placeNameIds?.[0]; // Use first placeName
+      
+      if (!placeNameId) return;
+      
+      const placeName = collectionManager.getPlaceName(placeNameId, collectionId);
+      const terms = placeName?.terms || [];
+      
+      if (terms.length === 0) return;
+      
+      const newPattern = text.trim();
+      if (!newPattern) return;
+      
+      // Replace for all terms for this placeName (or first term if not joined)
+      const updatedData = { ...termRenderings };
+      const isJoined = labelDictionaryService.isJoined(placeNameId);
+      const termsToUpdate = isJoined ? terms : [terms[0]];
+      
+      termsToUpdate.forEach(term => {
+        updatedData[term.termId] = {
+          ...updatedData[term.termId],
+          renderings: newPattern,
+          isGuessed: false,
+        };
+      });
+      
+      setTermRenderings(updatedData);
+      
+      // Also update the label with the new text
+      handleUpdateVernacular(
+        currentLabel.mergeKey,
+        currentLabel.lblTemplate || currentLabel.mergeKey,
+        newPattern,
+        currentLabel.opCode || 'sync'
+      );
+      
+      setStatusRecalcTrigger(prev => prev + 1);
     },
-    []
+    [selectedLabelIndex, labels, termRenderings, mapDef.template, handleUpdateVernacular]
   );
 
   // Reload extracted verses for all terms (after Paratext edits)
