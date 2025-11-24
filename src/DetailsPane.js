@@ -16,6 +16,7 @@ import { settingsService } from './services/SettingsService.js';
 import labelDictionaryService from './services/LabelDictionaryService.js';
 import { AutocorrectTextarea } from './components/AutocorrectTextarea';
 import { useAutocorrect } from './hooks/useAutocorrect';
+import AlertDialog from './components/AlertDialog';
 
 export default function DetailsPane({
   selectedLabelIndex,
@@ -58,6 +59,7 @@ export default function DetailsPane({
   const [localRenderings, setLocalRenderings] = useState(renderings);
   const [showTemplateInfo, setShowTemplateInfo] = useState(false);
   const [templateData, setTemplateData] = useState({});
+  const [alertMessage, setAlertMessage] = useState(null);
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [selectedExportFormat, setSelectedExportFormat] = useState('idml-full');
   const [lastUsedExportFormat, setLastUsedExportFormat] = useState(null);
@@ -293,11 +295,11 @@ export default function DetailsPane({
         console.log('Export successful or cancelled:', result.message);
       } else {
         // Show error message
-        alert(inLang(uiStr.exportCancelled, lang) + (result.message ? ': ' + result.message : ''));
+        setAlertMessage(inLang(uiStr.exportCancelled, lang) + (result.message ? ': ' + result.message : ''));
       }
     } catch (error) {
       console.error('Export error:', error);
-      alert(inLang(uiStr.notExported, lang) + (error.message ? ': ' + error.message : ''));
+      setAlertMessage(inLang(uiStr.notExported, lang) + (error.message ? ': ' + error.message : ''));
     }
   };
 
@@ -1335,12 +1337,9 @@ export default function DetailsPane({
                                 
                                 if (uniqueNonEmpty.length > 1) {
                                   // Multiple different non-empty renderings
-                                  const msg = inLang(uiStr.cannotJoinDifferentRenderings || 
+                                  setAlertMessage(inLang(uiStr.cannotJoinDifferentRenderings || 
                                     'Cannot join terms with different renderings. Please make them identical first, or clear all but one.', 
-                                    lang);
-                                  
-                                  // Use setTimeout to prevent keyboard focus issues after alert
-                                  setTimeout(() => alert(msg), 0);
+                                    lang));
                                   return;
                                 }
                                 
@@ -1468,6 +1467,14 @@ export default function DetailsPane({
           );
         })()}
       </div>
+      
+      {/* Alert Dialog */}
+      {alertMessage && (
+        <AlertDialog
+          message={alertMessage}
+          onClose={() => setAlertMessage(null)}
+        />
+      )}
     </div>
   );
 }
