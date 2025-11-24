@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import './MainApp.css';
 import BottomPane from './BottomPane.js';
 import uiStr from './data/ui-strings.json';
-import { MAP_VIEW, TABLE_VIEW } from './constants.js';
+import { MAP_VIEW, TABLE_VIEW, STATUS_BLANK, STATUS_OK } from './constants.js';
 import { collectionManager, getCollectionIdFromTemplate, findCollectionIdAndTemplate } from './CollectionManager';
 import { getMapDef } from './MapData';
 import { inLang, getStatus, getPlaceNameStatus, isLabelVisible } from './Utils.js';
@@ -414,32 +414,45 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
     setLabels(prevLabels => {
       console.log('[Status Recalc] prevLabels:', prevLabels.length);
       const updatedLabels = prevLabels.map((label, idx) => {
-      if (!label.placeNameIds || label.placeNameIds.length === 0) return label;
+      // Calculate status for labels WITH placeNameIds
+      if (label.placeNameIds && label.placeNameIds.length > 0) {
+        const perPlaceStatus = {};
+        label.placeNameIds.forEach(placeNameId => {
+          const terms = collectionManager.getTermsForPlace(placeNameId, collectionId) || [];
+          if (terms.length > 0) {
+            perPlaceStatus[placeNameId] = getPlaceNameStatus(
+              termRenderings,
+              terms,
+              label.vernLabel || '',
+              extractedVerses,
+              placeNameId,
+              labelDictionaryService
+            );
+          }
+        });
 
-      const perPlaceStatus = {};
-      label.placeNameIds.forEach(placeNameId => {
-        const terms = collectionManager.getTermsForPlace(placeNameId, collectionId) || [];
-        if (terms.length > 0) {
-          perPlaceStatus[placeNameId] = getPlaceNameStatus(
-            termRenderings,
-            terms,
-            label.vernLabel || '',
-            extractedVerses,
-            placeNameId,
-            labelDictionaryService
-          );
+        const oldStatus = label.status;
+        const newStatus = Object.keys(perPlaceStatus).length > 0
+          ? Math.min(...Object.values(perPlaceStatus))
+          : STATUS_OK;
+        
+        if (idx < 3) {
+          console.log(`[Status Recalc] Label ${idx} (${label.mergeKey}): oldStatus=${oldStatus}, newStatus=${newStatus}, perPlaceStatus=`, perPlaceStatus);
         }
-      });
-
-      const status = Object.keys(perPlaceStatus).length > 0
-        ? Math.min(...Object.values(perPlaceStatus))
-        : 1; // STATUS_BLANK if no placeNames
-
-      if (idx < 3) {
-        console.log(`[Status Recalc] Label ${idx} (${label.mergeKey}): oldStatus=${label.status}, newStatus=${status}, perPlaceStatus=`, perPlaceStatus);
+        
+        return { ...label, status: newStatus, perPlaceStatus };
       }
-
-      return { ...label, status, perPlaceStatus };
+      
+      // Calculate status for labels WITHOUT placeNameIds (e.g., {r#REF}, {number#123})
+      // These don't have terms/renderings to validate against, so only BLANK or OK:
+      const vernLabel = (label.vernLabel || '').trim();
+      const newStatus = vernLabel ? STATUS_OK : STATUS_BLANK;
+      
+      if (idx < 3 || label.status !== newStatus) {
+        console.log(`[Status Recalc] Label ${idx} (${label.mergeKey}): oldStatus=${label.status}, newStatus=${newStatus}, vernLabel="${vernLabel}"`);
+      }
+      
+      return { ...label, status: newStatus };
     });
       
       const sample = updatedLabels.slice(0, 3).map(l => `${l.mergeKey}:${l.status}`).join(', ');
@@ -492,25 +505,33 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
       setLabels(prevLabels =>
         prevLabels.map(label => {
           if (label.mergeKey === mergeKey) {
-            // Recalculate status with new vernacular using per-placeName status
-            const perPlaceStatus = {};
-            label.placeNameIds.forEach(placeNameId => {
-              const terms = collectionManager.getTermsForPlace(placeNameId, collectionId) || [];
-              if (terms.length > 0) {
-                perPlaceStatus[placeNameId] = getPlaceNameStatus(
-                  currentTermRenderings,
-                  terms,
-                  newVernacular,
-                  extractedVerses,
-                  placeNameId,
-                  labelDictionaryService
-                );
-              }
-            });
+            // Recalculate status with new vernacular
+            let status;
+            let perPlaceStatus = {};
             
-            const status = Object.keys(perPlaceStatus).length > 0
-              ? Math.min(...Object.values(perPlaceStatus))
-              : 1; // STATUS_BLANK if no placeNames
+            // Labels WITH placeNameIds: validate against term renderings
+            if (label.placeNameIds && label.placeNameIds.length > 0) {
+              label.placeNameIds.forEach(placeNameId => {
+                const terms = collectionManager.getTermsForPlace(placeNameId, collectionId) || [];
+                if (terms.length > 0) {
+                  perPlaceStatus[placeNameId] = getPlaceNameStatus(
+                    currentTermRenderings,
+                    terms,
+                    newVernacular,
+                    extractedVerses,
+                    placeNameId,
+                    labelDictionaryService
+                  );
+                }
+              });
+              
+              status = Object.keys(perPlaceStatus).length > 0
+                ? Math.min(...Object.values(perPlaceStatus))
+                : STATUS_OK;
+            } else {
+              // Labels WITHOUT placeNameIds (e.g., {r#REF}, {number#123}): only BLANK or OK
+              status = newVernacular.trim() ? STATUS_OK : STATUS_BLANK;
+            }
             
             return { 
               ...label, 

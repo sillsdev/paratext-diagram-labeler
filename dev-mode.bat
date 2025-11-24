@@ -37,8 +37,12 @@ rem -------------------------------------------------
 echo React server already running (PID %PID%).
 
 :launch_electron
-echo Starting Electron...
+echo Starting Electron with remote debugging...
 set NODE_ENV=development
-npx electron electron-main.js
+set ELECTRON_ENABLE_LOGGING=1
+echo Remote debugging will be available at:
+echo   Chrome DevTools: http://localhost:9223
+echo   Node Inspector: http://localhost:5858
+npx electron electron-main.js --remote-debugging-port=9223 --inspect=5858
 
 endlocal
