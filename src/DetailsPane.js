@@ -1325,7 +1325,41 @@ export default function DetailsPane({
                             type="checkbox"
                             checked={isJoined}
                             onChange={(e) => {
-                              labelDictionaryService.setJoined(placeNameId, e.target.checked);
+                              const shouldJoin = e.target.checked;
+                              
+                              if (shouldJoin) {
+                                // Check if terms can be joined: all must be identical or only one non-empty
+                                const renderings = terms.map(t => termRenderings[t.termId]?.renderings || '');
+                                const nonEmpty = renderings.filter(r => r.trim());
+                                const uniqueNonEmpty = [...new Set(nonEmpty.map(r => r.trim().toLowerCase()))];
+                                
+                                if (uniqueNonEmpty.length > 1) {
+                                  // Multiple different non-empty renderings
+                                  const msg = inLang(uiStr.cannotJoinDifferentRenderings || 
+                                    'Cannot join terms with different renderings. Please make them identical first, or clear all but one.', 
+                                    lang);
+                                  
+                                  // Use setTimeout to prevent keyboard focus issues after alert
+                                  setTimeout(() => alert(msg), 0);
+                                  return;
+                                }
+                                
+                                // If joining, sync all terms to the first non-empty rendering
+                                if (nonEmpty.length > 0) {
+                                  const masterRendering = nonEmpty[0];
+                                  const updatedData = { ...termRenderings };
+                                  terms.forEach(t => {
+                                    updatedData[t.termId] = {
+                                      ...updatedData[t.termId],
+                                      renderings: masterRendering,
+                                      isGuessed: false,
+                                    };
+                                  });
+                                  setTermRenderings(updatedData);
+                                }
+                              }
+                              
+                              labelDictionaryService.setJoined(placeNameId, shouldJoin);
                               // Trigger re-render
                               onUpdateVernacular(
                                 currentLabel.mergeKey,
@@ -1361,11 +1395,14 @@ export default function DetailsPane({
                             onChange={e => {
                               const newValue = e.target.value.replace(/\n/g, '||');
                               const updatedData = { ...termRenderings };
-                              updatedData[terms[0].termId] = {
-                                ...updatedData[terms[0].termId],
-                                renderings: newValue,
-                                isGuessed: false,
-                              };
+                              // Update ALL joined terms with the same rendering
+                              terms.forEach(term => {
+                                updatedData[term.termId] = {
+                                  ...updatedData[term.termId],
+                                  renderings: newValue,
+                                  isGuessed: false,
+                                };
+                              });
                               setTermRenderings(updatedData);
                             }}
                             style={{
