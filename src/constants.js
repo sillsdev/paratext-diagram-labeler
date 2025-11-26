@@ -4,13 +4,14 @@ export const USFM_VIEW = 2;
 
 // Status codes (priority order: highest severity first)
 export const STATUS_BLANK = 0;              // Blank - needs content
-export const STATUS_MULTIPLE = 1;           // Multiple Options - needs user selection
-export const STATUS_NO_RENDERINGS = 2;      // No renderings - project missing data
-export const STATUS_UNMATCHED = 3;          // Unmatched label - doesn't match renderings
-export const STATUS_MULTIPLE_RENDERINGS = 4; // Multiple renderings - needs pattern confirmation
-export const STATUS_GUESSED = 5;            // Guessed - needs approval
-export const STATUS_INCOMPLETE = 6;         // Incomplete - missing in some verses
-export const STATUS_OK = 7;                 // OK - all good
+export const STATUS_PARTIAL = 1;            // Partial - literal text needs translation
+export const STATUS_MULTIPLE = 2;           // Multiple Options - needs user selection
+export const STATUS_NO_RENDERINGS = 3;      // No renderings - project missing data
+export const STATUS_UNMATCHED = 4;          // Unmatched label - doesn't match renderings
+export const STATUS_MULTIPLE_RENDERINGS = 5; // Multiple renderings - needs pattern confirmation
+export const STATUS_GUESSED = 6;            // Guessed - needs approval
+export const STATUS_INCOMPLETE = 7;         // Incomplete - missing in some verses
+export const STATUS_OK = 8;                 // OK - all good
 
 // export const MATCH_PRE_B = '\\b';
 // export const MATCH_POST_B = '\\b';

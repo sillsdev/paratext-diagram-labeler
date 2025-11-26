@@ -510,12 +510,79 @@ class CollectionManager {
       }
     }
     
+    // Wrap literal text runs with 《》 if template contains fields
+    if (parsed.fields.length > 0 && resolvedText !== lblTemplate) {
+      resolvedText = this.wrapLiteralTextRuns(lblTemplate, resolvedText, parsed.fields);
+    }
+    
     return {
       placeNameIds: parsed.placeNameIds,
       references: parsed.references,
       hasMultiplePlaceNames: parsed.hasMultiplePlaceNames,
       literalText: resolvedText === lblTemplate ? '' : resolvedText
     };
+  }
+  
+  // Wrap literal text runs in original template with 《》
+  wrapLiteralTextRuns(originalTemplate, resolvedText, fields) {
+    // Find literal text runs in the original template
+    // Pattern: \w[\w\s,.'']*\w (word characters, spaces, commas, periods, apostrophes)
+    // But exclude text inside {...} fields
+    
+    // Build a list of field positions in the original template
+    const fieldRanges = fields.map(f => ({ start: f.start, end: f.end }));
+    
+    // Find literal runs in the original template
+    const literalPattern = /\w[\w\s,;.'’-]*\w/gu;
+    let match;
+    const literalRuns = [];
+    
+    while ((match = literalPattern.exec(originalTemplate)) !== null) {
+      const runStart = match.index;
+      const runEnd = match.index + match[0].length;
+      
+      // Check if this run overlaps with any field
+      const overlapsField = fieldRanges.some(field => 
+        (runStart >= field.start && runStart < field.end) ||
+        (runEnd > field.start && runEnd <= field.end) ||
+        (runStart <= field.start && runEnd >= field.end)
+      );
+      
+      if (!overlapsField) {
+        let literalText = match[0];
+        
+        // Check if there's a trailing .!? that should be included
+        const nextChar = originalTemplate[runEnd];
+        if (nextChar && '.!?;'.includes(nextChar)) {
+          literalText += nextChar;
+        }
+        
+        literalRuns.push({
+          start: runStart,
+          end: runEnd + (('.!?'.includes(nextChar)) ? 1 : 0),
+          text: literalText
+        });
+      }
+    }
+    
+    // Now we need to find these literal runs in the resolved text and wrap them
+    // Process in reverse order to avoid index shifting
+    literalRuns.reverse();
+    
+    for (const run of literalRuns) {
+      // Find this literal text in the resolved string
+      // It should be at approximately the same position, accounting for field expansions
+      const literalText = run.text;
+      const index = resolvedText.indexOf(literalText);
+      
+      if (index !== -1) {
+        resolvedText = resolvedText.substring(0, index) + 
+                      '《' + literalText + '》' + 
+                      resolvedText.substring(index + literalText.length);
+      }
+    }
+    
+    return resolvedText;
   }
 
   // Get gloss for a placeNameId

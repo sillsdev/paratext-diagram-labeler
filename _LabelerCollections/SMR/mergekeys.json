@@ -119,7 +119,7 @@
     "mapxKey": "Apollonia"
   },
   "appearance": {
-    "lblTemplate": "Appears after resurrection (Lk 24)",
+    "lblTemplate": "Appears after resurrection ({r#LUK 24})",
     "mapxKey": "Appears after resurrection (Lk 24)",
     "gloss": {
       "en": "Appears after resurrection (Lk 24)",
@@ -201,7 +201,7 @@
     "mapxKey": "Arvad"
   },
   "ascension": {
-    "lblTemplate": "Discourse; ascension (Ac 1)",
+    "lblTemplate": "Discourse; ascension ({r#ACT 1})",
     "mapxKey": "Discourse; ascension (Ac 1)",
     "gloss": {
       "en": "Discourse; ascension (Ac 1)",
@@ -381,7 +381,7 @@
     "mapxKey": ""
   },
   "birthplace": {
-    "lblTemplate": "Birthplace (Mt 2)",
+    "lblTemplate": "Birthplace ({r#MAT 2})",
     "mapxKey": "Birthplace (Mt 2)",
     "gloss": {
       "en": "Birthplace (Mt 2)",
@@ -403,7 +403,7 @@
     "mapxKey": "BLACK SEA"
   },
   "blindman": {
-    "lblTemplate": "Blind man healed (Mk 8)",
+    "lblTemplate": "Blind man healed ({r#MRK 8})",
     "mapxKey": "Blind man healed (Mk 8)",
     "gloss": {
       "en": "Blind man healed (Mk 8)",
@@ -565,7 +565,7 @@
     "mapxKey": "CILICIA"
   },
   "cities_rebuked": {
-    "lblTemplate": "Cities rebuked (Lk 10)",
+    "lblTemplate": "Cities rebuked ({r#LUK 10})",
     "mapxKey": "Cities rebuked (Lk 10)",
     "gloss": {
       "en": "Cities rebuked (Lk 10)",
@@ -587,7 +587,7 @@
     "mapxKey": "Colossae"
   },
   "confession": {
-    "lblTemplate": "Peter’s Confession (Mt 16)",
+    "lblTemplate": "Peter’s Confession ({r#MAT 16})",
     "mapxKey": "Peter’s Confession (Mt 16)",
     "gloss": {
       "en": "Peter’s Confession (Mt 16)",
@@ -773,7 +773,7 @@
     "mapxKey": ""
   },
   "daughter_healed": {
-    "lblTemplate": "Syro-Phoenician woman’s daughter healed (Mk 7)",
+    "lblTemplate": "Syro-Phoenician woman’s daughter healed ({r#MRK 7})",
     "mapxKey": "Syro-Phoenician woman’s daughter healed (Mk 7)",
     "gloss": {
       "en": "Syro-Phoenician woman’s daughter healed (Mk 7)",
@@ -803,7 +803,7 @@
     "mapxKey": "DECAPOLIS"
   },
   "demoniac": {
-    "lblTemplate": "Demoniac healed (Mk 5)",
+    "lblTemplate": "Demoniac healed ({r#MRK 5})",
     "mapxKey": "Demoniac healed (Mk 5)",
     "gloss": {
       "en": "Demoniac healed (Mk 5)",
@@ -1185,7 +1185,7 @@
     "altTermIds": "headband_hp"
   },
   "headquarters": {
-    "lblTemplate": "Headquarters, site of many miracles (Mk 2)",
+    "lblTemplate": "Headquarters, site of many miracles ({r#MRK 2})",
     "mapxKey": "Headquarters, site of many miracles (Mk 2)",
     "gloss": {
       "en": "Headquarters, site of many miracles (Mk 2)",
@@ -1309,7 +1309,7 @@
     "altTermIds": "holy_place"
   },
   "home": {
-    "lblTemplate": "Boyhood home (Lk 2)",
+    "lblTemplate": "Boyhood home ({r#LUK 2})",
     "mapxKey": "Boyhood home (Lk 2)",
     "gloss": {
       "en": "Boyhood home (Lk 2)",
@@ -1612,7 +1612,7 @@
     "altTermIds": "laver"
   },
   "lazarus": {
-    "lblTemplate": "Home of Mary, Martha and Lazarus (Jn 11)",
+    "lblTemplate": "Home of Mary, Martha and Lazarus ({r#JHN 11})",
     "mapxKey": "Home of Mary, Martha and Lazarus (Jn 11)",
     "gloss": {
       "en": "Home of Mary, Martha and Lazarus (Jn 11)",
@@ -1626,11 +1626,11 @@
     "altTermIds": "lazarus"
   },
   "legend_1": {
-    "lblTemplate": "1. Paul’s First Journey (Acts 13:4–14:28)",
+    "lblTemplate": "1. Paul’s First Journey ({R#ACT 13.4–14.28})",
     "mapxKey": "1. Paul’s First Journey (Acts 13:4–14:28)",
     "gloss": {
       "en": "1. Paul’s First Journey (Acts 13:4–14:28)",
-      "es": "1. El primer viaje de Pablo (Hch 13:4--14:28)",
+      "es": "1. El primer viaje de Pablo (Hch 13:4–14:28)",
       "fr": "1. Le premier voyage de Paul (Actes 13:4–14:28)"
     },
     "context": {
@@ -1640,11 +1640,11 @@
     "altTermIds": "legend_1"
   },
   "legend_2": {
-    "lblTemplate": "2. Paul’s Second Journey (Acts 15:36–18:22)",
+    "lblTemplate": "2. Paul’s Second Journey ({R#ACT 15.36–18.22})",
     "mapxKey": "2. Paul’s Second Journey (Acts 15:36–18:22)",
     "gloss": {
       "en": "2. Paul’s Second Journey (Acts 15:36–18:22)",
-      "es": "2. El segundo viaje de Pablo (Hch 15:36--18:22)",
+      "es": "2. El segundo viaje de Pablo (Hch 15:36–18:22)",
       "fr": "2. Le deuxième voyage de Paul (Actes 15:36–18:22)"
     },
     "context": {
@@ -1654,7 +1654,7 @@
     "altTermIds": "legend_2"
   },
   "legend_3": {
-    "lblTemplate": "3. Paul’s Third Journey (Acts 18:23–21:17)",
+    "lblTemplate": "3. Paul’s Third Journey ({R#ACT 18.23–21.17})",
     "mapxKey": "3. Paul’s Third Journey (Acts 18:23–21:17)",
     "gloss": {
       "en": "3. Paul’s Third Journey (Acts 18:23–21:17)",
@@ -1668,7 +1668,7 @@
     "altTermIds": "legend_3"
   },
   "legend_4": {
-    "lblTemplate": "4. Paul’s Journey to Rome (Acts 27:1–28:16)",
+    "lblTemplate": "4. Paul’s Journey to Rome ({R#ACT 27.1–28.16})",
     "mapxKey": "4. Paul’s Journey to Rome (Acts 27:1–28:16)",
     "gloss": {
       "en": "4. Paul’s Journey to Rome (Acts 27:1–28:16)",
@@ -1682,7 +1682,7 @@
     "altTermIds": "legend_4"
   },
   "lepers": {
-    "lblTemplate": "Lepers healed (Lk 17)",
+    "lblTemplate": "Lepers healed ({r#LUK 17})",
     "mapxKey": "Lepers healed (Lk 17)",
     "gloss": {
       "en": "Lepers healed (Lk 17)",
@@ -2098,7 +2098,7 @@
     "mapxKey": "PARTHIA"
   },
   "passion_wk": {
-    "lblTemplate": "Several visits; passion week (Jn 12)",
+    "lblTemplate": "Several visits; passion week ({r#JHN 12})",
     "mapxKey": "Several visits; passion week (Jn 12)",
     "gloss": {
       "en": "Several visits; passion week (Jn 12)",
@@ -2360,7 +2360,7 @@
     "altTermIds": "refugecities_title01"
   },
   "refugecities_title02": {
-    "lblTemplate": "(Numbers 35 and Joshua 20)",
+    "lblTemplate": "({R#NUM 35} and {R#JOS 20})",
     "mapxKey": "",
     "gloss": {
       "en": "(Numbers 35 and Joshua 20)",
@@ -2687,7 +2687,7 @@
     "altTermIds": "scripture_pent"
   },
   "scripture_soldier": {
-    "lblTemplate": "{r#EPH 6.10-18}",
+    "lblTemplate": "{R#EPH 6.10-18}",
     "mapxKey": "Ephesians 6:10-18",
     "gloss": {
       "en": "Ephesians 6:10-18",
@@ -2835,7 +2835,7 @@
     "altTermIds": "stairs"
   },
   "storm": {
-    "lblTemplate": "Quiets storm (Mt 8)",
+    "lblTemplate": "Quiets storm ({r#MAT 8})",
     "mapxKey": "Quiets storm (Mt 8)",
     "gloss": {
       "en": "Quiets storm (Mt 8)",
@@ -3578,7 +3578,7 @@
     "altTermIds": "trade_routes"
   },
   "transfiguration": {
-    "lblTemplate": "Transfiguration? (Mk 9)",
+    "lblTemplate": "Transfiguration? ({r#MRK 9})",
     "mapxKey": "Transfiguration? (Mk 9)",
     "gloss": {
       "en": "Transfiguration? (Mk 9)",
@@ -3800,7 +3800,7 @@
     "altTermIds": "way_of_the_philistines"
   },
   "well": {
-    "lblTemplate": "Woman at the well (Jn 4)",
+    "lblTemplate": "Woman at the well ({r#JHN 4})",
     "mapxKey": "Woman at the well (Jn 4)",
     "gloss": {
       "en": "Woman at the well (Jn 4)",
@@ -3818,7 +3818,7 @@
     "mapxKey": "West"
   },
   "widows_son": {
-    "lblTemplate": "Widow’s son raised (Lk 7)",
+    "lblTemplate": "Widow’s son raised ({r#LUK 7})",
     "mapxKey": "Widow’s son raised (Lk 7)",
     "gloss": {
       "en": "Widow’s son raised (Lk 7)",
@@ -3840,7 +3840,7 @@
     "mapxKey": "Wilderness of Zin"
   },
   "wine": {
-    "lblTemplate": "Water turned to wine (Jn 2)",
+    "lblTemplate": "Water turned to wine ({r#JHN 2})",
     "mapxKey": "Water turned to wine (Jn 2)",
     "gloss": {
       "en": "Water turned to wine (Jn 2)",
@@ -3876,7 +3876,7 @@
     "altTermIds": "your_country"
   },
   "zacchaeus": {
-    "lblTemplate": "Visits Zacchaeus (Lk 19)",
+    "lblTemplate": "Visits Zacchaeus ({r#LUK 19})",
     "mapxKey": "Visits Zacchaeus (Lk 19)",
     "gloss": {
       "en": "Visits Zacchaeus (Lk 19)",

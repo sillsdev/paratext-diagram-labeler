@@ -814,6 +814,20 @@
     },
     {
       "text": {
+        "en": "Partial",
+        "es": "Parcial",
+        "fr": "Partiel",
+        "ne": "आंशिक"
+      },
+      "help": {
+        "en": "Literal text in the template string still needs to be translated.",
+        "es": "El texto literal en la plantilla aún debe traducirse.",
+        "fr": "Le texte littéral dans le modèle doit encore être traduit.",
+        "ne": "टेम्प्लेटमा शाब्दिक पाठ अझै अनुवाद गर्न आवश्यक छ।"
+      }
+    },
+    {
+      "text": {
         "en": "Multiple Options",
         "es": "Múltiples opciones",
         "fr": "Plusieurs options",

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import './MainApp.css';
 import BottomPane from './BottomPane.js';
 import uiStr from './data/ui-strings.json';
-import { MAP_VIEW, TABLE_VIEW, STATUS_BLANK, STATUS_OK } from './constants.js';
+import { MAP_VIEW, TABLE_VIEW, STATUS_BLANK, STATUS_PARTIAL, STATUS_OK } from './constants.js';
 import { collectionManager, getCollectionIdFromTemplate, findCollectionIdAndTemplate } from './CollectionManager';
 import { getMapDef } from './MapData';
 import { inLang, getStatus, getPlaceNameStatus, isLabelVisible } from './Utils.js';
@@ -432,21 +432,34 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
         });
 
         const oldStatus = label.status;
-        const newStatus = Object.keys(perPlaceStatus).length > 0
+        let calculatedStatus = Object.keys(perPlaceStatus).length > 0
           ? Math.min(...Object.values(perPlaceStatus))
           : STATUS_OK;
         
-        if (idx < 3) {
-          console.log(`[Status Recalc] Label ${idx} (${label.mergeKey}): oldStatus=${oldStatus}, newStatus=${newStatus}, perPlaceStatus=`, perPlaceStatus);
+        // Check for STATUS_PARTIAL (contains 《》)
+        const vernLabel = label.vernLabel || '';
+        if ((vernLabel.includes('《') || vernLabel.includes('》')) && calculatedStatus > STATUS_PARTIAL) {
+          calculatedStatus = STATUS_PARTIAL;
         }
         
-        return { ...label, status: newStatus, perPlaceStatus };
+        if (idx < 3) {
+          console.log(`[Status Recalc] Label ${idx} (${label.mergeKey}): oldStatus=${oldStatus}, newStatus=${calculatedStatus}, perPlaceStatus=`, perPlaceStatus);
+        }
+        
+        return { ...label, status: calculatedStatus, perPlaceStatus };
       }
       
       // Calculate status for labels WITHOUT placeNameIds (e.g., {r#REF}, {number#123})
-      // These don't have terms/renderings to validate against, so only BLANK or OK:
+      // These don't have terms/renderings to validate against, so only BLANK, PARTIAL, or OK:
       const vernLabel = (label.vernLabel || '').trim();
-      const newStatus = vernLabel ? STATUS_OK : STATUS_BLANK;
+      let newStatus;
+      if (!vernLabel) {
+        newStatus = STATUS_BLANK;
+      } else if (vernLabel.includes('《') || vernLabel.includes('》')) {
+        newStatus = STATUS_PARTIAL;
+      } else {
+        newStatus = STATUS_OK;
+      }
       
       if (idx < 3 || label.status !== newStatus) {
         console.log(`[Status Recalc] Label ${idx} (${label.mergeKey}): oldStatus=${label.status}, newStatus=${newStatus}, vernLabel="${vernLabel}"`);
@@ -568,9 +581,20 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
               status = Object.keys(perPlaceStatus).length > 0
                 ? Math.min(...Object.values(perPlaceStatus))
                 : STATUS_OK;
+              
+              // Check for STATUS_PARTIAL (contains 《》)
+              if ((newVernacular.includes('《') || newVernacular.includes('》')) && status > STATUS_PARTIAL) {
+                status = STATUS_PARTIAL;
+              }
             } else {
-              // Labels WITHOUT placeNameIds (e.g., {r#REF}, {number#123}): only BLANK or OK
-              status = newVernacular.trim() ? STATUS_OK : STATUS_BLANK;
+              // Labels WITHOUT placeNameIds (e.g., {r#REF}, {number#123}): BLANK, PARTIAL, or OK
+              if (!newVernacular.trim()) {
+                status = STATUS_BLANK;
+              } else if (newVernacular.includes('《') || newVernacular.includes('》')) {
+                status = STATUS_PARTIAL;
+              } else {
+                status = STATUS_OK;
+              }
             }
             
             return { 

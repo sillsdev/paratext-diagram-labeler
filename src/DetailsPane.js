@@ -992,9 +992,9 @@ export default function DetailsPane({
         }}
       >
         {/* Large gloss from mergekeys or placenames */}
-        <h2 style={{ margin: '8px', marginBottom: 4 }}>
+        <h4 style={{ margin: '8px', marginBottom: 4 }}>
           {inLang(labels[selectedLabelIndex]?.gloss || { en: labels[selectedLabelIndex]?.mergeKey || '' }, lang)}
-        </h2>
+        </h4>
         {/* Label-level context/definition (only if different from placename context) */}
         <p style={{ margin: '8px', marginTop: 4, fontSize: '0.9em', color: '#555' }}>
           {(() => {
@@ -1032,7 +1032,7 @@ export default function DetailsPane({
         >
           {' '}
           {/* OpCode radio buttons */}
-          <div style={{ marginBottom: 8, display: 'flex', gap: 12, alignItems: 'center', color: statusValue[status].textColor }}>
+          <div style={{ marginBottom: 8, display: 'flex', gap: 12, alignItems: 'center', color: statusValue[status].textColor, fontSize: '0.75em' }}>
             <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
               <input
                 type="radio"

@@ -3,8 +3,9 @@ import {
   MATCH_PRE_B,
   MATCH_POST_B,
   MATCH_W,
-  STATUS_MULTIPLE,
   STATUS_BLANK,
+  STATUS_PARTIAL,
+  STATUS_MULTIPLE,
   STATUS_NO_RENDERINGS,
   STATUS_UNMATCHED,
   STATUS_GUESSED,
@@ -15,13 +16,14 @@ import {
 
 export const statusValue = [
   { bkColor: 'dimgray', textColor: 'white', sort: 0 }, // 0 - Blank
-  { bkColor: 'cyan', textColor: 'black', sort: 1 }, // 1 - Multiple Options
-  { bkColor: 'blue', textColor: 'white', sort: 2 }, // 2 - No renderings
-  { bkColor: 'yellow', textColor: 'black', sort: 3 }, // 3 - Unmatched label
-  { bkColor: 'purple', textColor: 'white', sort: 4 }, // 4 - Multiple renderings
-  { bkColor: '#FF8000', textColor: 'black', sort: 5 }, // 5 - Guessed
-  { bkColor: '#80FF00', textColor: 'black', sort: 6 }, // 6 - Incomplete
-  { bkColor: 'white', textColor: 'black', sort: 7 }, // 7 - Perfect (OK)
+  { bkColor: 'dimgray', textColor: 'white', sort: 1 }, // 1 - Partial (same as blank)
+  { bkColor: 'cyan', textColor: 'black', sort: 2 }, // 2 - Multiple Options
+  { bkColor: 'blue', textColor: 'white', sort: 3 }, // 3 - No renderings
+  { bkColor: 'yellow', textColor: 'black', sort: 4 }, // 4 - Unmatched label
+  { bkColor: 'purple', textColor: 'white', sort: 5 }, // 5 - Multiple renderings
+  { bkColor: '#FF8000', textColor: 'black', sort: 6 }, // 6 - Guessed
+  { bkColor: '#80FF00', textColor: 'black', sort: 7 }, // 7 - Incomplete
+  { bkColor: 'white', textColor: 'black', sort: 8 }, // 8 - Perfect (OK)
 ];
 
 export function prettyRef(ref) {
