@@ -246,6 +246,31 @@ class CollectionValidator {
     return usedPlaceNames;
   }
 
+  // Check if refs are sorted across all terms in a placename
+  validateRefsSorted(placeName, placeData, fileName, collectionPrefix) {
+    if (!placeData.terms || !Array.isArray(placeData.terms)) {
+      return;
+    }
+
+    // Collect all refs from all terms
+    const allRefs = [];
+    for (const term of placeData.terms) {
+      if (term.refs && Array.isArray(term.refs)) {
+        allRefs.push(...term.refs);
+      }
+    }
+
+    // Check if they're sorted
+    if (allRefs.length > 1) {
+      for (let i = 1; i < allRefs.length; i++) {
+        if (allRefs[i] < allRefs[i - 1]) {
+          this.log(`${collectionPrefix}${fileName}: PlaceName "${placeName}" has refs not in sorted order. Ref "${allRefs[i]}" comes after "${allRefs[i - 1]}"`, false);
+          break; // Only report once per placename
+        }
+      }
+    }
+  }
+
   // Validate placenames.json
   validatePlaceNames(collectionName, placenames, usedPlaceNames) {
     if (!placenames) {
@@ -255,10 +280,13 @@ class CollectionValidator {
 
     this.logInfo(`  Validating placenames.json...`);
 
-    for (const placeName of Object.keys(placenames)) {
+    for (const [placeName, placeData] of Object.entries(placenames)) {
       if (!usedPlaceNames.has(placeName)) {
         this.log(`[${collectionName}] placenames.json: PlaceName "${placeName}" is not used in any mergekeys.json lblTemplate`, false);
       }
+      
+      // Validate refs are sorted
+      this.validateRefsSorted(placeName, placeData, 'placenames.json', `[${collectionName}] `);
     }
   }
 
@@ -306,10 +334,13 @@ class CollectionValidator {
     }
 
     // Check each placename in core-placenames
-    for (const placeName of Object.keys(this.corePlacenames)) {
+    for (const [placeName, placeData] of Object.entries(this.corePlacenames)) {
       if (!allUsedPlaceNames.has(placeName)) {
         this.log(`core-placenames.json: PlaceName "${placeName}" is not used in any collection's mergekeys.json`, false);
       }
+      
+      // Validate refs are sorted
+      this.validateRefsSorted(placeName, placeData, 'core-placenames.json', '');
     }
   }
 

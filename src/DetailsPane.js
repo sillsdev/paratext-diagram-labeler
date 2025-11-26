@@ -1450,8 +1450,8 @@ export default function DetailsPane({
                           const termGloss = inLang(term.gloss, lang);
                           const termTranslit = term.transliteration ? ` /${term.transliteration}/` : '';
                           return (
-                            <div key={term.termId} style={{ fontSize: '0.9em', marginBottom: 4, fontWeight: 'bold' }}>
-                              {term.termId} {termGloss}{termTranslit}
+                            <div key={term.termId} style={{ fontSize: '0.9em', marginBottom: 4 }}>
+                              <span style={{ fontWeight: 'bold' }}>{term.termId} {termGloss}</span>{termTranslit}
                             </div>
                           );
                         })}
