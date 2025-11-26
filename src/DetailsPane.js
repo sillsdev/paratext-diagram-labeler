@@ -1295,21 +1295,34 @@ export default function DetailsPane({
             <div style={{ margin: '8px', marginTop: 12 }}>
               {/* Tabs if multiple placeNames */}
               {showTabs && (
-                <div style={{ display: 'flex', gap: 4, marginBottom: 8 }}>
+                <div style={{ display: 'flex', gap: 0, marginBottom: 0 }}>
                   {placeNameIds.map((placeNameId, index) => {
                     const placeName = collectionManager.getPlaceName(placeNameId, collectionId);
                     const placeStatus = currentLabel.perPlaceStatus?.[placeNameId] || 0;
-                    const statusColor = statusValue[placeStatus]?.textColor || '#000';
+                    const bgColor = statusValue[placeStatus]?.bkColor || '#f0f0f0';
+                    const textColor = statusValue[placeStatus]?.textColor || '#000';
+                    const isActive = activeTab === index;
+                    
                     return (
                       <button
                         key={placeNameId}
                         style={{
-                          padding: '4px 12px',
-                          background: activeTab === index ? '#d0eaff' : '#f0f0f0',
-                          border: `2px solid ${statusColor}`,
-                          borderRadius: 4,
+                          padding: '8px 16px',
+                          background: bgColor,
+                          color: textColor,
+                          border: '2px solid black',
+                          borderBottom: isActive ? 'none' : '2px solid black',
+                          borderTopLeftRadius: 8,
+                          borderTopRightRadius: 8,
+                          borderBottomLeftRadius: 0,
+                          borderBottomRightRadius: 0,
                           cursor: 'pointer',
                           fontSize: '0.9em',
+                          fontWeight: isActive ? 'bold' : 'normal',
+                          marginBottom: isActive ? 0 : 0,
+                          position: 'relative',
+                          top: isActive ? 2 : 0,
+                          zIndex: isActive ? 10 : 1,
                         }}
                         onClick={() => onActiveTabChange(index)}
                       >
@@ -1327,9 +1340,22 @@ export default function DetailsPane({
                 const placeName = collectionManager.getPlaceName(placeNameId, collectionId);
                 const terms = placeName?.terms || [];
                 const isJoined = labelDictionaryService.isJoined(placeNameId);
+                const placeStatus = currentLabel.perPlaceStatus?.[placeNameId] || 0;
+                const bgColor = statusValue[placeStatus]?.bkColor || '#f9f9f9';
+                const textColor = statusValue[placeStatus]?.textColor || '#000';
                 
                 return (
-                  <div key={placeNameId} style={{ marginTop: showTabs ? 0 : 8 }}>
+                  <div 
+                    key={placeNameId} 
+                    style={{ 
+                      marginTop: showTabs ? 0 : 8,
+                      border: showTabs ? '2px solid black' : 'none',
+                      borderRadius: showTabs ? '0 8px 8px 8px' : 0,
+                      padding: showTabs ? '12px' : 0,
+                      background: showTabs ? bgColor : 'transparent',
+                      color: textColor,
+                    }}
+                  >
                     {/* Join checkbox for multi-term placeNames */}
                     {terms.length > 1 && (
                       <div style={{ marginBottom: 8 }}>

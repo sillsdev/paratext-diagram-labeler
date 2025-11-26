@@ -1,0 +1,144 @@
+newLabelTemplate	oldPlaceName	englishGloss	englishContext
+(Numbers 35 and Joshua 20)	RefugecitiesTitle02	(Numbers 35 and Joshua 20)	Chapters in which the Cities of Refuge are Described
+{to#Bethany}	RoadToBethany	Road to Bethany	
+{to#Bethlehem}	RoadToBethlehem	Road to Bethlehem	
+{to#Caesarea}	RoadToCaesarea	Road to Caesarea	
+{to#DeadSea}	RoadToTheDeadSea	Road to the Dead Sea	
+{to#Jericho}	RoadToJericho	Road to Jericho	
+{to#Joppa}	RoadToJoppa	Road to Joppa	
+1. Paul’s First Journey (Acts 13:4–14:28)	Legend1	1. Paul’s First Journey (Acts 13:4–14:28)	
+2. Paul’s Second Journey (Acts 15:36–18:22)	Legend2	2. Paul’s Second Journey (Acts 15:36–18:22)	
+3. Paul’s Third Journey (Acts 18:23–21:17)	Legend3	3. Paul’s Third Journey (Acts 18:23–21:17)	
+4. Paul’s Journey to Rome (Acts 27:1–28:16)	Legend4	4. Paul’s Journey to Rome (Acts 27:1–28:16)	
+Abraham Goes to Egypt	TitleAbrahamToEgypt	Abraham Goes to Egypt	
+Abraham’s Journey to Canaan	TitleAbrahamToCanaan	Abraham’s Journey to Canaan	
+Abraham’s World	TitleAncient	The Ancient World (Abraham’s World)	
+Acts Chapter 8	TitleActs8	Acts Chapter 8	
+Appears after resurrection ({r#LUK 24})	Appearance	Appears after resurrection (Lk 24)	
+Bare Feet	FeetHp	Bare Feet	
+Bells	BellsHp	Bells	
+Birthplace ({r#MAT 2})	Birthplace	Birthplace (Mt 2)	
+Blind man healed ({r#MRK 8})	Blindman	Blind man healed (Mk 8)	
+Boundary between Israel and Judah	Boundary	Boundary between Israel and Judah	
+Boundary of the Persian Empire	BoundaryPersia	Boundary of the Persian Empire	
+Boundary of the Roman Empire	BoundaryRome	Boundary of the Roman Empire	
+Boyhood home (Lk 2)	Home	Boyhood home (Lk 2)	
+Breastplate with 12 Jewels	BreastplateHp	Breastplate with 12 Jewels	
+Cities In The Time of Samuel and David	TitleSamuelDavid	Cities In The Time of Samuel and David	
+Cities rebuked ({r#LUK 10})	CitiesRebuked	Cities rebuked (Lk 10)	
+Council Chamber	CouncilChamber	Council Chamber	
+Court of Israel (Court of Men)	CourtOfIsrael	Court of Israel (Court of Men)	
+Court of Priests	CourtOfPriests	Court of Priests	
+Court of the Gentiles	CourtOfGentiles	Court of the Gentiles	
+Court of Women	CourtOfWomen	Court of Women	
+Curtain	Curtain	Curtain	hanging fabric
+Curtain Wall	CurtainWall	Curtain Wall	a wall made of fabric
+Damascus Gate	DamascusGate	Damascus Gate	
+Demoniac healed (Mk 5)	Demoniac	Demoniac healed (Mk 5)	
+Discourse; ascension ({r#ACT 1})	Ascension	Discourse; ascension (Ac 1)	
+Ephod	EphodHp	Ephod	
+Events in Christ’s Ministry	TitleChristsministry	Events in Christ’s Ministry	
+Ezekiel’s Temple	TitleEzekielTemple	Ezekiel’s Temple	
+Forum	ForumJerusalem	Forum	
+Galilee at the time of Jesus	TitleGalilee	Galilee at the time of Jesus	
+Gallia (Gaul)	Gaul	Gallia (Gaul)	
+Garden Gate	GardenGate	Garden Gate	
+Gate	Gate	Gate	an opening or entrance to a building, city, or other structure
+Gold Headband	HeadbandHp	Gold Headband	
+Headquarters, site of many miracles (Mk 2)	Headquarters	Headquarters, site of many miracles (Mk 2)	
+Herodian Street	HerodianStreet	Herodian Street	
+Hezekiah’s Tunnel	HezekiahsTunnel	Hezekiah’s Tunnel	
+High Priest	TitleHp	High Priest	
+Home of Mary, Martha and Lazarus (Jn 11)	Lazarus	Home of Mary, Martha and Lazarus (Jn 11)	
+House of Caiaphas	HouseOfCaiaphas	House of Caiaphas	
+Hurrians	Hurrians	Hurrians	
+Incense Burner	IncenseHp	Incense Burner	
+Israel and Moab at the time of Naomi and Ruth	TitleRuth	Israel and Moab at the time of Naomi and Ruth	
+Israel's Tribal Borders	TitleIsraelTribes	Israel's Tribal Borders	
+Jacob’s Trip to Haran	TitleJacob2haran	Jacob’s Trip to Haran	
+Jerusalem in New Testament Times	JerusalemTitle	Jerusalem in New Testament Times	
+Jerusalem in the Time of Christ	TitleJerusalemIll	Jerusalem in the Time of Christ	
+Jewish Calendar	TitleJewishCalendar	Jewish Calendar	
+Journey from Israel to Moab and back	RouteRuth	Journey from Israel to Moab and back	
+Kingdoms of Israel and Judah	TitleKingdoms	Kingdoms of Israel and Judah	
+Land of Canaan	TitleCanaanhg	Land of Canaan	
+Laver	Laver	Laver	a large basin or bowl used for ceremonial washing
+Lepers healed (Lk 17)	Lepers	Lepers healed (Lk 17)	
+Leptis Magna	LeptisMagna	Leptis Magna	
+Map of Israel	HolyLandMap	Holy Land map	Identifies the part of the world covered by the map of Israel
+Map of the World	TitleWorld	Map of the World	
+Mari	Mari	Mari	
+Markhesywan	Markhesywan	Markhesywan	Hebrew month
+Mizpah of Moab	MizpahOfMoab	Mizpah of Moab	
+Nations Whose Languages Were Heard at Pentecost	TitlePent	Nations Whose Languages Were Heard at Pentecost	
+Onyx Stones on Shoulders	OnyxHp	Onyx Stones on Shoulders	
+Paul’s First Journey	TitleJ1	Paul’s First Journey	
+Paul’s Journey to Rome	TitleJ4	Paul’s Journey to Rome	
+Paul’s Journeys map	PaulsJourneyMap	Paul’s Journeys map	
+Paul’s Missionary Journeys	TitleJ0	Paul’s Missionary Journeys	
+Paul’s Second Journey	TitleJ2	Paul’s Second Journey	
+Paul’s Third Journey	TitleJ3	Paul’s Third Journey	
+Peter’s Confession ({r#MAT 16})	Confession	Peter’s Confession (Mt 16)	
+Philip’s Travels	PhilipstravelsTitle	Philip’s Travels	
+Poles	Poles	Poles	long, round pieces of wood used to support something
+Possible route of the Exodus	PossibleRteExodus	Possible route of the Exodus	
+Present day wall	WallPresent	Present day wall	
+Priest’s Houses	PriestsHouses	Priest’s Houses	
+Quiets storm (Mt 8)	Storm	Quiets storm (Mt 8)	
+Rameses	Rameses	Rameses	City in Egypt.
+Return of Jacob	TitleJacobreturns	Return of Jacob	
+River of Life	RiverOfLife	River of Life	
+Robe	RobeHp	Robe	
+Rome	RomeCountry	Rome	
+Route from Egypt to Arabia	RtFrmEgyptToArabia	Route from Egypt to Arabia	
+Royal Porch	RoyalPorch	Royal Porch	
+Sash	SashHp	Sash	
+Seven Churches of Asia	Title7church	Seven Churches of Asia	
+Several visits; passion week (Jn 12)	PassionWk	Several visits; passion week (Jn 12)	
+Special Turban	TurbanHp	Special Turban	
+stairs	Stairs	stairs	
+Syro-Phoenician woman’s daughter healed (Mk 7)	DaughterHealed	Syro-Phoenician woman’s daughter healed (Mk 7)	
+The Altar of Incense	Temple3Altar	The Altar of Incense	
+The Ark of the Covenant	Temple5Ark	The Ark of the Covenant	
+The Building	TheBuilding	The Building	
+The Cherubim	Temple6Cherubim	The Cherubim	
+The Cities of Refuge	RefugecitiesTitle01	The Cities of Refuge	
+The Conquest of Canaan	TitleConquest	The Conquest of Canaan	
+The Curtain	Temple4Curtain	The Curtain	
+The Descendants of Noah	TitleDn	The Descendants of Noah	
+The Entrance	Entrance	The Entrance	
+The Exodus and Canaan	TitleExodusAndCanaan	The Exodus and Canaan	
+The Exodus from Egypt	TitleExodus	The Exodus from Egypt	
+The Holy Land in the Time of Jesus Christ	TitleHoly	The Holy Land in the Time of Jesus Christ	
+The Holy of Holies	HolyHoly	The Holy of Holies	
+The Holy Place	HolyPlace	The Holy Place	
+The Lampstand	Temple2Lamp	The Lampstand	
+The Mediterranean Area	TitleMed	The Mediterranean Area	
+The Persian Empire during the time of Esther	PersiaTitle01	The Persian Empire during the time of Esther	
+The Roman Empire during the time of Christ	TitleRomanEmpire	The Roman Empire during the time of Christ	
+The Table of Showbread	Temple1Table	The Table of Showbread	
+The Temple Buildings	TitleTemple2	The Temple Buildings	
+The Temple in the Time of Jesus Christ	TitleTemple1	The Temple in the Time of Jesus Christ	
+The Temple Itself	TitleTemple3	The Temple Itself	
+The World	TitleWorldsimple	The World	
+Theater	Theater	Theater	
+Time of Samuel to David	TitleSamuelToDavid	Time of Samuel to David	
+Tombs	Tombs	Tombs	
+Tower’s Pool	TowersPool	Tower’s Pool	
+Trade routes	TradeRoutes	Trade routes	
+Transfiguration? (Mk 9)	Transfiguration	Transfiguration? (Mk 9)	
+Tunic of Fine Linen	TunicHp	Tunic of Fine Linen	
+Unleavened Bread	UnleavenedBread	Unleavened Bread	Hebrew holiday
+Unsuccessful invasion of Canaan	UnsucInvOfCanaan	Unsuccessful invasion of Canaan	
+Upper Room	UpperRoom	Upper Room	
+Valley Gate	ValleyGate	Valley Gate	
+Visits Zacchaeus (Lk 19)	Zacchaeus	Visits Zacchaeus (Lk 19)	
+Wall of uncertain date	WallUncertain	Wall of uncertain date	
+Walls at the time of Jesus	WallJesus	Walls at the time of Jesus	
+Walls built by Agrippa I	WallAgrippa	Walls built by Agrippa I	
+Water Gate	WaterGate	Water Gate	
+Water turned to wine (Jn 2)	Wine	Water turned to wine (Jn 2)	
+Way of the Philistines	WayOfThePhilistines	Way of the Philistines	
+Widow’s son raised (Lk 7)	WidowsSon	Widow’s son raised (Lk 7)	
+Woman at the well (Jn 4)	Well	Woman at the well (Jn 4)	
+Your Country	YourCountry	Your Country	
