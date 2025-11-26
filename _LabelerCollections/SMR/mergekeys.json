@@ -1567,7 +1567,7 @@
     "mapxKey": ""
   },
   "tttest_kittim_cyprus": {
-    "lblTemplate": "{tttestKittim} ({Cyprus} / {Cyrene}) ",
+    "lblTemplate": "{tttestKittim} ({Cyprus} / {Jericho}) ",
     "mapxKey": "KITTIM (CYPRUS)",
     "gloss": {
       "en": "Kittim (Cyprus)",
@@ -2465,11 +2465,12 @@
     "lblTemplate": "{to#Jericho}",
     "mapxKey": "Road to Jericho",
     "gloss": {
-      "en": "Road to Jericho",
+      "en": "To Jericho",
       "es": "El camino de Jericó",
       "fr": "Route de Jéricho"
     },
     "context": {
+      "en": "Or 'Road to Jericho'",
       "es": "",
       "fr": ""
     },

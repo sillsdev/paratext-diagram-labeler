@@ -486,11 +486,51 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
       console.log('Selected label:', label);
       if (!label) return;
       setSelectedLabelIndex(label.idx);
-      // In NEW architecture, labels don't have termId - they have placeNameIds
-      // The renderings are shown in DetailsPane per placeName, not here
-      // Just select the label without trying to load term renderings
+      
+      // Check joined terms and sync if needed
+      const collectionId = getCollectionIdFromTemplate(mapDef.template);
+      const placeNameIds = label.placeNameIds || [];
+      
+      placeNameIds.forEach(placeNameId => {
+        const isJoined = labelDictionaryService.isJoined(placeNameId);
+        if (!isJoined) return;
+        
+        const placeName = collectionManager.getPlaceName(placeNameId, collectionId);
+        const terms = placeName?.terms || [];
+        
+        if (terms.length <= 1) return;
+        
+        // Get renderings for all terms
+        const renderings = terms.map(t => termRenderings[t.termId]?.renderings || '');
+        const nonEmpty = renderings.filter(r => r.trim());
+        const uniqueNonEmpty = [...new Set(nonEmpty.map(r => r.trim().toLowerCase()))];
+        
+        // If renderings are identical, we're good
+        if (uniqueNonEmpty.length <= 1) return;
+        
+        // If one is blank and others are identical, sync the blank to the non-blank
+        if (nonEmpty.length === renderings.length - 1) {
+          const masterRendering = nonEmpty[0];
+          const updatedData = { ...termRenderings };
+          terms.forEach(t => {
+            if (!termRenderings[t.termId]?.renderings?.trim()) {
+              updatedData[t.termId] = {
+                ...updatedData[t.termId],
+                renderings: masterRendering,
+                isGuessed: false,
+              };
+            }
+          });
+          setTermRenderings(updatedData);
+          console.log(`[handleSelectLabel] Synced blank rendering to match non-blank for joined placeName ${placeNameId}`);
+        } else {
+          // Multiple different non-empty renderings - unjoin
+          labelDictionaryService.setJoined(placeNameId, false);
+          console.log(`[handleSelectLabel] Unjoined placeName ${placeNameId} due to different renderings`);
+        }
+      });
     },
-    [setSelectedLabelIndex]
+    [setSelectedLabelIndex, mapDef.template, termRenderings, setTermRenderings]
   );
 
   // Handler to update label with new vernacular, opCode, and status
@@ -1121,6 +1161,48 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
           setHasUnsavedChanges(true);
         }
       }
+      // Auto-join terms with identical or single non-empty renderings
+      const updatedTermRenderings = { ...termRenderings };
+      initialLabels.forEach(label => {
+        const placeNameIds = label.placeNameIds || [];
+        
+        placeNameIds.forEach(placeNameId => {
+          const placeName = collectionManager.getPlaceName(placeNameId, collectionId);
+          const terms = placeName?.terms || [];
+          
+          if (terms.length <= 1) return;
+          
+          // Get renderings for all terms
+          const renderings = terms.map(t => updatedTermRenderings[t.termId]?.renderings || '');
+          const nonEmpty = renderings.filter(r => r.trim());
+          const uniqueNonEmpty = [...new Set(nonEmpty.map(r => r.trim().toLowerCase()))];
+          
+          // If all identical or at most one non-empty, auto-join
+          if (uniqueNonEmpty.length <= 1) {
+            // Sync all terms to the same rendering
+            if (nonEmpty.length > 0) {
+              const masterRendering = nonEmpty[0];
+              const anyApproved = terms.some(t => updatedTermRenderings[t.termId] && !updatedTermRenderings[t.termId].isGuessed);
+              
+              terms.forEach(t => {
+                updatedTermRenderings[t.termId] = {
+                  ...updatedTermRenderings[t.termId],
+                  renderings: masterRendering,
+                  isGuessed: anyApproved ? false : (updatedTermRenderings[t.termId]?.isGuessed ?? false),
+                };
+              });
+            }
+            
+            // Set as joined
+            labelDictionaryService.setJoined(placeNameId, true);
+            console.log(`[loadTemplate] Auto-joined placeName ${placeNameId} (${terms.length} terms)`);
+          }
+        });
+      });
+      
+      // Update term renderings state with auto-joined values
+      setTermRenderings(updatedTermRenderings);
+      
       console.log('Initial labels:', initialLabels);
       const medLabel = initialLabels.find(l => l.mergeKey === 'mediterranean_sea');
       if (medLabel) {

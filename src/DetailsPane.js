@@ -995,20 +995,26 @@ export default function DetailsPane({
         <h2 style={{ margin: '8px', marginBottom: 4 }}>
           {inLang(labels[selectedLabelIndex]?.gloss || { en: labels[selectedLabelIndex]?.mergeKey || '' }, lang)}
         </h2>
-        {/* Smaller context/definition */}
+        {/* Label-level context/definition (only if different from placename context) */}
         <p style={{ margin: '8px', marginTop: 4, fontSize: '0.9em', color: '#555' }}>
           {(() => {
             const currentLabel = labels[selectedLabelIndex];
-            // Priority 1: Get from mergekeys
             const mergeKeyDef = collectionManager.getMergeKeyDefinition(currentLabel?.mergeKey, collectionId);
-            if (mergeKeyDef && Object.values(mergeKeyDef).some(v => v)) {
-              return inLang(mergeKeyDef, lang);
-            }
-            // Priority 2: Get from first placeName
             const placeNameIds = currentLabel?.placeNameIds || [];
+            
+            // Get placename context if available
+            let placeNameContext = '';
             if (placeNameIds.length > 0) {
               const firstPlaceNameId = placeNameIds[0];
-              return inLang(collectionManager.getDefinition(firstPlaceNameId, collectionId), lang);
+              placeNameContext = inLang(collectionManager.getDefinition(firstPlaceNameId, collectionId), lang);
+            }
+            
+            // Show mergeKey definition only if it exists and is different from placename context
+            if (mergeKeyDef && Object.values(mergeKeyDef).some(v => v)) {
+              const mergeKeyText = inLang(mergeKeyDef, lang);
+              if (mergeKeyText && mergeKeyText !== placeNameContext) {
+                return mergeKeyText;
+              }
             }
             return '';
           })()}
@@ -1289,14 +1295,26 @@ export default function DetailsPane({
           
           if (placeNameIds.length === 0) return null;
           
-          const showTabs = placeNameIds.length > 1;
+          // Filter out placeNames that have no refs and no context
+          const visiblePlaceNameIds = placeNameIds.filter(placeNameId => {
+            const placeName = collectionManager.getPlaceName(placeNameId, collectionId);
+            const terms = placeName?.terms || [];
+            const hasRefs = terms.some(term => term.refs && term.refs.length > 0);
+            const context = collectionManager.getDefinition(placeNameId, collectionId);
+            const hasContext = context && Object.values(context).some(v => v);
+            return hasRefs || hasContext;
+          });
+          
+          if (visiblePlaceNameIds.length === 0) return null;
+          
+          const showTabs = true; // Always show tabbed interface
           
           return (
             <div style={{ margin: '8px', marginTop: 12 }}>
-              {/* Tabs if multiple placeNames */}
+              {/* Tabs for placeNames */}
               {showTabs && (
                 <div style={{ display: 'flex', gap: 0, marginBottom: 0 }}>
-                  {placeNameIds.map((placeNameId, index) => {
+                  {visiblePlaceNameIds.map((placeNameId, index) => {
                     const placeName = collectionManager.getPlaceName(placeNameId, collectionId);
                     const placeStatus = currentLabel.perPlaceStatus?.[placeNameId] || 0;
                     const bgColor = statusValue[placeStatus]?.bkColor || '#f0f0f0';
@@ -1334,7 +1352,7 @@ export default function DetailsPane({
               )}
               
               {/* Content for active placeName */}
-              {placeNameIds.map((placeNameId, index) => {
+              {visiblePlaceNameIds.map((placeNameId, index) => {
                 if (showTabs && index !== activeTab) return null;
                 
                 const placeName = collectionManager.getPlaceName(placeNameId, collectionId);
@@ -1356,6 +1374,20 @@ export default function DetailsPane({
                       color: textColor,
                     }}
                   >
+                    {/* Context for this placeName */}
+                    {(() => {
+                      const context = collectionManager.getDefinition(placeNameId, collectionId);
+                      
+                      // Always show placename context if it exists
+                      if (context && Object.values(context).some(v => v)) {
+                        return (
+                          <p style={{ margin: '0 0 8px 0', fontSize: '0.9em', fontStyle: 'italic', color: textColor }}>
+                            {inLang(context, lang)}
+                          </p>
+                        );
+                      }
+                      return null;
+                    })()}
                     {/* Join checkbox for multi-term placeNames */}
                     {terms.length > 1 && (
                       <div style={{ marginBottom: 8 }}>
