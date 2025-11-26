@@ -97,6 +97,7 @@ function convertDigits(numberString, scriptCode) {
 
 // Book abbreviations mapping (loaded from BookNames.xml)
 let bookAbbrev = {};
+let bookShort = {};
 
 function tokenizeBibleRefs(str) {
   // Remove all whitespace first
@@ -155,10 +156,11 @@ function tokenizeBibleRefs(str) {
 }
 
 // Convert scripture reference to vernacular format
-function vernRef(refString) {
-  // console.log(`[vernRef] Input: "${refString}"`);
+// useShort: true for R# (short names), false for r# (abbreviated names)
+function vernRef(refString, useShort = false) {
+  // console.log(`[vernRef] Input: "${refString}", useShort: ${useShort}`);
   // console.log(`[vernRef] Settings:`, { cv: settings.cv, vrange: settings.vrange, crange: settings.crange, nosp: settings.nosp, fp: settings.fp });
-  // console.log(`[vernRef] Book abbreviations loaded:`, Object.keys(bookAbbrev).length);
+  // console.log(`[vernRef] Book abbreviations loaded:`, Object.keys(bookAbbrev).length, useShort ? '(short)' : '(abbreviated)');
   
   // Tokenize the reference string
   const tokens = tokenizeBibleRefs(refString);
@@ -171,9 +173,16 @@ function vernRef(refString) {
     const token = tokens[i];
     
     if (token.type === 'book') {
-      // Replace book code with abbreviation
-      const abbrev = bookAbbrev[token.value] || token.value;
-      result += abbrev;
+      // Replace book code with appropriate name (short or abbreviated)
+      let bookName;
+      if (useShort) {
+        // R# - prefer short name, fallback to abbreviated, then code
+        bookName = bookShort[token.value] || bookAbbrev[token.value] || token.value;
+      } else {
+        // r# - prefer abbreviated name, fallback to short, then code
+        bookName = bookAbbrev[token.value] || bookShort[token.value] || token.value;
+      }
+      result += bookName;
       
       // Add space after book name if nosp is false
       if (!settings.nosp) {
@@ -311,7 +320,7 @@ async function loadSettings(projectFolder) {
     // Temporarily hard-code digits to Western
     settings.digits = 'Latn';
     
-    // Load book abbreviations from BookNames.xml
+    // Load book names from BookNames.xml
     const bookNamesPath = path.join(curProjectFolder, 'BookNames.xml');
     if (fs.existsSync(bookNamesPath)) {
       try {
@@ -320,14 +329,16 @@ async function loadSettings(projectFolder) {
         const bookNamesData = await parser.parseStringPromise(bookNamesXml);
         
         bookAbbrev = {};
+        bookShort = {};
         if (bookNamesData.BookNames && bookNamesData.BookNames.book) {
           for (const book of bookNamesData.BookNames.book) {
             const code = book.$.code;
-            const abbr = book.$.abbr || book.$.short || code;
-            bookAbbrev[code] = abbr;
+            // Store both abbreviated and short names
+            bookAbbrev[code] = book.$.abbr || book.$.short || code;
+            bookShort[code] = book.$.short || book.$.abbr || code;
           }
         }
-        console.log(`[Settings] Loaded ${Object.keys(bookAbbrev).length} book abbreviations from BookNames.xml`);
+        console.log(`[Settings] Loaded ${Object.keys(bookAbbrev).length} book names (short & abbreviated) from BookNames.xml`);
       } catch (error) {
         console.error(`[Settings] Failed to parse BookNames.xml:`, error);
       }
@@ -1781,10 +1792,10 @@ ipcMain.handle('convert-digits', async (event, projectFolder, numberString) => {
 });
 
 // Handler for converting scripture reference to vernacular format
-ipcMain.handle('vern-ref', async (event, projectFolder, refString) => {
+ipcMain.handle('vern-ref', async (event, projectFolder, refString, useShort = false) => {
   try {
     await loadSettings(projectFolder);
-    return vernRef(refString);
+    return vernRef(refString, useShort);
   } catch (error) {
     console.error(`Error converting reference:`, error);
     return refString; // Return original on error

@@ -2627,7 +2627,7 @@
     "mapxKey": "Miles"
   },
   "scripture_hp": {
-    "lblTemplate": "{r#EXO 28}",
+    "lblTemplate": "{R#EXO 28}",
     "mapxKey": "Exodus 28",
     "gloss": {
       "en": "Exodus 28",
@@ -2637,7 +2637,7 @@
     "altTermIds": "scripture_hp"
   },
   "scripture_j1": {
-    "lblTemplate": "{r#ACT 13.4–14.28}",
+    "lblTemplate": "{R#ACT 13.4–14.28}",
     "mapxKey": "",
     "gloss": {
       "en": "Acts 13:4–14:28",
@@ -2647,7 +2647,7 @@
     "altTermIds": "scripture_j1"
   },
   "scripture_j2": {
-    "lblTemplate": "{r#ACT 15.36–18.22}",
+    "lblTemplate": "{R#ACT 15.36–18.22}",
     "mapxKey": "",
     "gloss": {
       "en": "Acts 15:36–18:22",
@@ -2657,7 +2657,7 @@
     "altTermIds": "scripture_j2"
   },
   "scripture_j3": {
-    "lblTemplate": "{r#ACT 18.23–21.17}",
+    "lblTemplate": "{R#ACT 18.23–21.17}",
     "mapxKey": "",
     "gloss": {
       "en": "Acts 18:23–21:17",
@@ -2667,7 +2667,7 @@
     "altTermIds": "scripture_j3"
   },
   "scripture_j4": {
-    "lblTemplate": "{r#ACT 27.1–28.16}",
+    "lblTemplate": "{R#ACT 27.1–28.16}",
     "mapxKey": "",
     "gloss": {
       "en": "Acts 27:1–28:16",
@@ -2677,7 +2677,7 @@
     "altTermIds": "scripture_j4"
   },
   "scripture_pent": {
-    "lblTemplate": "{r#ACT 2.5-11}",
+    "lblTemplate": "{R#ACT 2.5-11}",
     "mapxKey": "",
     "gloss": {
       "en": "Acts 2:5-11",

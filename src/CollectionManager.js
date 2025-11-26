@@ -404,8 +404,8 @@ class CollectionManager {
         // Scripture reference - convert to vernacular format
         if (projectFolder && window.electronAPI?.vernRef) {
           try {
-            const vernacular = await window.electronAPI.vernRef(projectFolder, field.reference);
-            console.log(`[resolveTemplate] Reference "${field.reference}" -> "${vernacular}"`);
+            const vernacular = await window.electronAPI.vernRef(projectFolder, field.reference, field.useShort);
+            console.log(`[resolveTemplate] Reference "${field.reference}" (${field.useShort ? 'short' : 'abbr'}) -> "${vernacular}"`);
             resolvedText = resolvedText.substring(0, field.start) + 
                           vernacular + 
                           resolvedText.substring(field.end);

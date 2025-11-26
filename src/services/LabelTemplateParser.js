@@ -4,7 +4,7 @@
  * Parses label template strings to extract:
  * - {placeNameId} - Basic placeName references
  * - {tag#placeNameId} - Tagged placeName references (any tag allowed)
- * - {r#REF} - Scripture references (e.g., {r#JHN 2}, {r#1SA 2.3})
+ * - {r#REF} - Scripture references with abbreviated names (e.g., {r#JHN 2} → "Jn. 2")\n * - {R#REF} - Scripture references with short names (e.g., {R#JHN 2} → "John 2")
  * - {#NUM} - Numbers for digit conversion (e.g., {#7.5}, {#123})
  * 
  * Collections can define their own tag conventions without central registry.
@@ -45,9 +45,10 @@ class LabelTemplateParser {
         end: match.index + match[0].length
       };
 
-      // Check if this is a scripture reference {r#...}
-      if (fieldContent.startsWith('r#')) {
+      // Check if this is a scripture reference {r#...} or {R#...}
+      if (fieldContent.startsWith('r#') || fieldContent.startsWith('R#')) {
         field.type = 'reference';
+        field.useShort = fieldContent.startsWith('R#'); // R# = short, r# = abbreviated
         field.reference = fieldContent.substring(2).trim();
         references.push(field.reference);
       }

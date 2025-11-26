@@ -62,8 +62,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   convertDigits: (projectFolder, numberString) =>
     ipcRenderer.invoke('convert-digits', projectFolder, numberString),
 
-  vernRef: (projectFolder, refString) =>
-    ipcRenderer.invoke('vern-ref', projectFolder, refString),
+  vernRef: (projectFolder, refString, useShort = false) =>
+    ipcRenderer.invoke('vern-ref', projectFolder, refString, useShort),
 
   // Path utilities
   path: {
