@@ -2747,8 +2747,8 @@
     "labels": [
       {
         "mergeKey": "title_jacobreturns",
-        "x": 203,
-        "y": 72,
+        "x": 199,
+        "y": 63,
         "align": "center",
         "angle": 0,
         "variant": 0,
@@ -3357,7 +3357,7 @@
       {
         "mergeKey": "title_ruth",
         "x": 215,
-        "y": 608,
+        "y": 654,
         "align": "center",
         "angle": 0,
         "variant": 0,
@@ -3487,8 +3487,8 @@
       },
       {
         "mergeKey": "route_ruth",
-        "x": 116,
-        "y": 745,
+        "x": 123,
+        "y": 753,
         "align": "left",
         "angle": 0,
         "variant": 0,
@@ -3728,7 +3728,8 @@
         "angle": 0,
         "variant": 0,
         "size": 3,
-        "type": 0
+        "type": 0,
+        "lines": 3
       },
       {
         "mergeKey": "mediterranean_sea",
@@ -4550,7 +4551,7 @@
       {
         "mergeKey": "title_canaanHG",
         "x": 120,
-        "y": 40,
+        "y": 51,
         "align": "center",
         "angle": 0,
         "variant": 1,
@@ -4560,8 +4561,8 @@
       },
       {
         "mergeKey": "refugecities_title01",
-        "x": 120,
-        "y": 28,
+        "x": 119,
+        "y": 55,
         "align": "center",
         "angle": 0,
         "variant": 2,
@@ -4571,12 +4572,12 @@
       },
       {
         "mergeKey": "refugecities_title02",
-        "x": 120,
-        "y": 60,
+        "x": 119,
+        "y": 132,
         "align": "center",
         "angle": 0,
         "variant": 2,
-        "size": 1,
+        "size": 4,
         "type": 2,
         "lines": 2
       },
@@ -4702,13 +4703,14 @@
       },
       {
         "mergeKey": "sea_of_galilee_ot",
-        "x": 418,
-        "y": 306,
+        "x": 426,
+        "y": 307,
         "align": "center",
         "angle": 0,
         "variant": 0,
         "size": 3,
-        "type": 0
+        "type": 0,
+        "lines": 3
       },
       {
         "mergeKey": "ashtaroth",
@@ -5686,13 +5688,14 @@
     "labels": [
       {
         "mergeKey": "title_kingdoms",
-        "x": 132,
-        "y": 91,
+        "x": 128,
+        "y": 58,
         "align": "center",
         "angle": 0,
         "variant": 0,
         "size": 1,
-        "type": 1
+        "type": 1,
+        "lines": 2
       },
       {
         "mergeKey": "riblah",
@@ -5716,13 +5719,14 @@
       },
       {
         "mergeKey": "boundary",
-        "x": 132,
-        "y": 133,
+        "x": 163,
+        "y": 134,
         "align": "center",
         "angle": 0,
         "variant": 0,
         "size": 3,
-        "type": 0
+        "type": 0,
+        "lines": 2
       },
       {
         "mergeKey": "gebal_byblos",
@@ -5902,7 +5906,8 @@
         "angle": 0,
         "variant": 0,
         "size": 3,
-        "type": 0
+        "type": 0,
+        "lines": 2
       },
       {
         "mergeKey": "mt_carmel",
@@ -5966,8 +5971,8 @@
       },
       {
         "mergeKey": "ramoth_gilead",
-        "x": 433,
-        "y": 468,
+        "x": 427,
+        "y": 469,
         "align": "left",
         "angle": 0,
         "variant": 0,
@@ -6534,7 +6539,8 @@
         "angle": 0,
         "variant": 0,
         "size": 1,
-        "type": 1
+        "type": 1,
+        "lines": 2
       },
       {
         "mergeKey": "scythia",
@@ -6908,13 +6914,14 @@
       },
       {
         "mergeKey": "boundary_persia",
-        "x": 96,
-        "y": 593,
+        "x": 124,
+        "y": 569,
         "align": "center",
         "angle": 0,
         "variant": 0,
         "size": 3,
-        "type": 0
+        "type": 0,
+        "lines": 2
       },
       {
         "mergeKey": "cush",
@@ -6960,13 +6967,14 @@
     "labels": [
       {
         "mergeKey": "title_jewish_calendar",
-        "x": 126,
-        "y": 80,
+        "x": 93,
+        "y": 71,
         "align": "center",
         "angle": 0,
         "variant": 0,
         "size": 1,
-        "type": 1
+        "type": 1,
+        "lines": 2
       },
       {
         "mergeKey": "passover_ot",
@@ -7338,7 +7346,8 @@
         "angle": 0,
         "variant": 0,
         "size": 1,
-        "type": 1
+        "type": 1,
+        "lines": 3
       },
       {
         "mergeKey": "antonia_fortress",
@@ -7534,13 +7543,14 @@
     "labels": [
       {
         "mergeKey": "jerusalem_title",
-        "x": 456,
-        "y": 58,
+        "x": 448,
+        "y": 51,
         "align": "center",
         "angle": 0,
         "variant": 0,
         "size": 1,
-        "type": 1
+        "type": 1,
+        "lines": 2
       },
       {
         "mergeKey": "road_to_caesarea",
@@ -8000,7 +8010,8 @@
         "angle": 0,
         "variant": 0,
         "size": 3,
-        "type": 0
+        "type": 0,
+        "lines": 2
       },
       {
         "mergeKey": "water_gate",
@@ -8096,8 +8107,8 @@
     "labels": [
       {
         "mergeKey": "title_tabernacle",
-        "x": 182,
-        "y": 599,
+        "x": 114,
+        "y": 582,
         "align": "center",
         "angle": 0,
         "variant": 0,
@@ -8126,8 +8137,8 @@
       },
       {
         "mergeKey": "poles",
-        "x": 522,
-        "y": 220,
+        "x": 516,
+        "y": 217,
         "align": "center",
         "angle": 0,
         "variant": 0,
@@ -8162,7 +8173,8 @@
         "angle": 0,
         "variant": 0,
         "size": 3,
-        "type": 0
+        "type": 0,
+        "lines": 3
       },
       {
         "mergeKey": "laver",
@@ -8360,13 +8372,14 @@
     "labels": [
       {
         "mergeKey": "title_temple2",
-        "x": 392,
+        "x": 385,
         "y": 59,
         "align": "center",
         "angle": 0,
         "variant": 0,
         "size": 1,
-        "type": 1
+        "type": 1,
+        "lines": 2
       },
       {
         "mergeKey": "tower_of_Antonia",
@@ -8376,7 +8389,8 @@
         "angle": 0,
         "variant": 0,
         "size": 3,
-        "type": 0
+        "type": 0,
+        "lines": 2
       },
       {
         "mergeKey": "court_of_gentiles",
@@ -8436,7 +8450,8 @@
         "angle": 0,
         "variant": 0,
         "size": 3,
-        "type": 0
+        "type": 0,
+        "lines": 2
       },
       {
         "mergeKey": "solomons_porch",
@@ -8498,7 +8513,8 @@
         "angle": 0,
         "variant": 0,
         "size": 3,
-        "type": 0
+        "type": 0,
+        "lines": 2
       },
       {
         "mergeKey": "holy_place",
@@ -8538,7 +8554,8 @@
         "angle": 0,
         "variant": 0,
         "size": 3,
-        "type": 0
+        "type": 0,
+        "lines": 2
       },
       {
         "mergeKey": "court_of_gentiles",
@@ -8548,7 +8565,8 @@
         "angle": 0,
         "variant": 0,
         "size": 3,
-        "type": 0
+        "type": 0,
+        "lines": 2
       },
       {
         "mergeKey": "court_of_women",
@@ -8558,7 +8576,8 @@
         "angle": 0,
         "variant": 0,
         "size": 3,
-        "type": 0
+        "type": 0,
+        "lines": 2
       },
       {
         "mergeKey": "main_gate",
@@ -8604,8 +8623,8 @@
     "labels": [
       {
         "mergeKey": "title_ezekiel_temple",
-        "x": 164,
-        "y": 535,
+        "x": 146,
+        "y": 523,
         "align": "center",
         "angle": 0,
         "variant": 0,
@@ -8614,8 +8633,8 @@
       },
       {
         "mergeKey": "inner_north_gate",
-        "x": 493,
-        "y": 34,
+        "x": 489,
+        "y": 26,
         "align": "center",
         "angle": 0,
         "variant": 0,
@@ -8624,8 +8643,8 @@
       },
       {
         "mergeKey": "the_building",
-        "x": 258,
-        "y": 43,
+        "x": 253,
+        "y": 37,
         "align": "center",
         "angle": 0,
         "variant": 0,
@@ -8634,8 +8653,8 @@
       },
       {
         "mergeKey": "outer_north_gate",
-        "x": 756,
-        "y": 52,
+        "x": 752,
+        "y": 45,
         "align": "center",
         "angle": 0,
         "variant": 0,
@@ -8644,8 +8663,8 @@
       },
       {
         "mergeKey": "temple",
-        "x": 391,
-        "y": 73,
+        "x": 389,
+        "y": 68,
         "align": "center",
         "angle": 0,
         "variant": 0,
@@ -8654,8 +8673,8 @@
       },
       {
         "mergeKey": "priests_houses",
-        "x": 187,
-        "y": 74,
+        "x": 181,
+        "y": 67,
         "align": "center",
         "angle": 0,
         "variant": 0,
@@ -8665,7 +8684,7 @@
       {
         "mergeKey": "outer_court_rooms",
         "x": 850,
-        "y": 91,
+        "y": 84,
         "align": "center",
         "angle": 0,
         "variant": 0,
@@ -8674,8 +8693,8 @@
       },
       {
         "mergeKey": "altar",
-        "x": 527,
-        "y": 94,
+        "x": 524,
+        "y": 86,
         "align": "center",
         "angle": 0,
         "variant": 0,
@@ -8684,8 +8703,8 @@
       },
       {
         "mergeKey": "south-west_kitchen",
-        "x": 118,
-        "y": 127,
+        "x": 114,
+        "y": 119,
         "align": "center",
         "angle": 0,
         "variant": 0,
@@ -8694,8 +8713,8 @@
       },
       {
         "mergeKey": "outer_east_gate",
-        "x": 885,
-        "y": 132,
+        "x": 881,
+        "y": 125,
         "align": "center",
         "angle": 0,
         "variant": 0,
@@ -8704,18 +8723,19 @@
       },
       {
         "mergeKey": "outer_south_gate",
-        "x": 109,
-        "y": 421,
+        "x": 103,
+        "y": 419,
         "align": "center",
         "angle": 0,
         "variant": 0,
         "size": 3,
-        "type": 0
+        "type": 0,
+        "lines": 2
       },
       {
         "mergeKey": "river_of_life",
-        "x": 745,
-        "y": 460,
+        "x": 742,
+        "y": 454,
         "align": "center",
         "angle": 0,
         "variant": 0,
@@ -8724,8 +8744,8 @@
       },
       {
         "mergeKey": "south-east_kitchen",
-        "x": 728,
-        "y": 499,
+        "x": 723,
+        "y": 496,
         "align": "center",
         "angle": 0,
         "variant": 0,
@@ -8734,8 +8754,8 @@
       },
       {
         "mergeKey": "inner_court",
-        "x": 389,
-        "y": 511,
+        "x": 383,
+        "y": 508,
         "align": "center",
         "angle": 0,
         "variant": 0,
@@ -8786,8 +8806,8 @@
       },
       {
         "mergeKey": "headband_hp",
-        "x": 209,
-        "y": 97,
+        "x": 196,
+        "y": 94,
         "align": "right",
         "angle": 0,
         "variant": 0,
@@ -8796,13 +8816,14 @@
       },
       {
         "mergeKey": "onyx_hp",
-        "x": 602,
+        "x": 580,
         "y": 187,
         "align": "center",
         "angle": 0,
         "variant": 0,
         "size": 3,
-        "type": 0
+        "type": 0,
+        "lines": 2
       },
       {
         "mergeKey": "breastplate_hp",
@@ -8812,7 +8833,8 @@
         "angle": 0,
         "variant": 0,
         "size": 3,
-        "type": 0
+        "type": 0,
+        "lines": 2
       },
       {
         "mergeKey": "ephod_hp",
@@ -8872,7 +8894,8 @@
         "angle": 0,
         "variant": 0,
         "size": 3,
-        "type": 0
+        "type": 0,
+        "lines": 2
       },
       {
         "mergeKey": "feet_hp",
@@ -8954,7 +8977,8 @@
         "angle": 0,
         "variant": 0,
         "size": 3,
-        "type": 0
+        "type": 0,
+        "lines": 2
       },
       {
         "mergeKey": "belt_truth",
@@ -8974,7 +8998,8 @@
         "angle": 0,
         "variant": 0,
         "size": 3,
-        "type": 0
+        "type": 0,
+        "lines": 2
       },
       {
         "mergeKey": "shoes_gospel",
@@ -8984,7 +9009,8 @@
         "angle": 0,
         "variant": 0,
         "size": 3,
-        "type": 0
+        "type": 0,
+        "lines": 2
       },
       {
         "mergeKey": "scripture_soldier",
@@ -9020,13 +9046,14 @@
     "labels": [
       {
         "mergeKey": "title_holy",
-        "x": 159,
-        "y": 37,
+        "x": 158,
+        "y": 46,
         "align": "center",
         "angle": 0,
         "variant": 0,
         "size": 1,
-        "type": 1
+        "type": 1,
+        "lines": 2
       },
       {
         "mergeKey": "sidon_nt",
@@ -9562,13 +9589,14 @@
     "labels": [
       {
         "mergeKey": "title_holy",
-        "x": 141,
-        "y": 77,
+        "x": 135,
+        "y": 86,
         "align": "center",
         "angle": 0,
         "variant": 0,
         "size": 1,
-        "type": 1
+        "type": 1,
+        "lines": 3
       },
       {
         "mergeKey": "sidon_nt",
@@ -10461,7 +10489,8 @@
         "angle": 0,
         "variant": 0,
         "size": 1,
-        "type": 1
+        "type": 1,
+        "lines": 2
       },
       {
         "mergeKey": "black_sea",
@@ -10783,7 +10812,8 @@
         "angle": 0,
         "variant": 0,
         "size": 1,
-        "type": 1
+        "type": 1,
+        "lines": 2
       },
       {
         "mergeKey": "scripture_pent",
@@ -11040,7 +11070,7 @@
       {
         "mergeKey": "philipstravels_title",
         "x": 180,
-        "y": 85,
+        "y": 81,
         "align": "center",
         "angle": 0,
         "variant": 0,
@@ -11075,7 +11105,8 @@
         "angle": 0,
         "variant": 0,
         "size": 3,
-        "type": 0
+        "type": 0,
+        "lines": 2
       },
       {
         "mergeKey": "nazareth",
@@ -11271,13 +11302,14 @@
     "labels": [
       {
         "mergeKey": "philipstravels_title",
-        "x": 189,
-        "y": 98,
+        "x": 187,
+        "y": 91,
         "align": "center",
         "angle": 0,
         "variant": 0,
         "size": 1,
-        "type": 1
+        "type": 1,
+        "lines": 2
       },
       {
         "mergeKey": "galilee_nt",
@@ -11301,13 +11333,14 @@
       },
       {
         "mergeKey": "sea_of_galilee_nt",
-        "x": 746,
+        "x": 694,
         "y": 84,
-        "align": "center",
+        "align": "left",
         "angle": 0,
         "variant": 0,
         "size": 3,
-        "type": 0
+        "type": 0,
+        "lines": 2
       },
       {
         "mergeKey": "nazareth",
@@ -11504,7 +11537,7 @@
       {
         "mergeKey": "philipstravels_title",
         "x": 188,
-        "y": 61,
+        "y": 52,
         "align": "center",
         "angle": 0,
         "variant": 0,
@@ -11613,13 +11646,14 @@
       },
       {
         "mergeKey": "sea_of_galilee_nt",
-        "x": 442,
-        "y": 373,
+        "x": 447,
+        "y": 377,
         "align": "center",
         "angle": 0,
         "variant": 0,
         "size": 3,
-        "type": 0
+        "type": 0,
+        "lines": 2
       },
       {
         "mergeKey": "nazareth",
@@ -11805,7 +11839,7 @@
     "labels": [
       {
         "mergeKey": "title_j1",
-        "x": 780,
+        "x": 773,
         "y": 53,
         "align": "center",
         "angle": 0,
@@ -11815,8 +11849,8 @@
       },
       {
         "mergeKey": "scripture_j1",
-        "x": 780,
-        "y": 92,
+        "x": 772,
+        "y": 88,
         "align": "center",
         "angle": 0,
         "variant": 0,
@@ -12459,8 +12493,8 @@
       },
       {
         "mergeKey": "cilicia",
-        "x": 569,
-        "y": 162,
+        "x": 540,
+        "y": 157,
         "align": "center",
         "angle": 17,
         "variant": 0,
@@ -13466,7 +13500,7 @@
       {
         "mergeKey": "title_j2",
         "x": 198,
-        "y": 712,
+        "y": 721,
         "align": "center",
         "angle": 0,
         "variant": 0,
@@ -13476,7 +13510,7 @@
       {
         "mergeKey": "scripture_j2",
         "x": 198,
-        "y": 745,
+        "y": 752,
         "align": "center",
         "angle": 0,
         "variant": 0,
@@ -13916,7 +13950,7 @@
       {
         "mergeKey": "alexandria",
         "x": 559,
-        "y": 732,
+        "y": 738,
         "align": "right",
         "angle": 0,
         "variant": 0,
@@ -13926,7 +13960,7 @@
       {
         "mergeKey": "egypt_nt",
         "x": 627,
-        "y": 785,
+        "y": 792,
         "align": "center",
         "angle": 1,
         "variant": 0,
@@ -13935,8 +13969,8 @@
       },
       {
         "mergeKey": "scale_k",
-        "x": 836,
-        "y": 753,
+        "x": 829,
+        "y": 756,
         "align": "left",
         "angle": 0,
         "variant": 0,
@@ -15234,7 +15268,7 @@
       {
         "mergeKey": "title_j4",
         "x": 774,
-        "y": 43,
+        "y": 48,
         "align": "center",
         "angle": 0,
         "variant": 0,
@@ -15279,7 +15313,8 @@
         "angle": 0,
         "variant": 0,
         "size": 3,
-        "type": 0
+        "type": 0,
+        "lines": 2
       },
       {
         "mergeKey": "puteoli",
@@ -15636,7 +15671,7 @@
       {
         "mergeKey": "title_j4",
         "x": 190,
-        "y": 524,
+        "y": 541,
         "align": "center",
         "angle": 0,
         "variant": 0,
@@ -15938,7 +15973,7 @@
       {
         "mergeKey": "title_j4",
         "x": 205,
-        "y": 469,
+        "y": 474,
         "align": "center",
         "angle": 0,
         "variant": 0,
@@ -18389,7 +18424,8 @@
         "angle": 0,
         "variant": 0,
         "size": 1,
-        "type": 1
+        "type": 1,
+        "lines": 2
       },
       {
         "mergeKey": "asia",
@@ -19063,8 +19099,8 @@
     "labels": [
       {
         "mergeKey": "title_africa",
-        "x": 131,
-        "y": 868,
+        "x": 122,
+        "y": 842,
         "align": "center",
         "angle": 0,
         "variant": 0,
@@ -19997,13 +20033,14 @@
     "labels": [
       {
         "mergeKey": "title_roman_empire",
-        "x": 834,
-        "y": 82,
+        "x": 825,
+        "y": 78,
         "align": "center",
         "angle": 0,
         "variant": 0,
         "size": 1,
-        "type": 1
+        "type": 1,
+        "lines": 3
       },
       {
         "mergeKey": "north_sea",
@@ -20497,13 +20534,14 @@
       },
       {
         "mergeKey": "boundary_rome",
-        "x": 133,
-        "y": 696,
+        "x": 173,
+        "y": 671,
         "align": "center",
         "angle": 0,
         "variant": 0,
         "size": 3,
-        "type": 0
+        "type": 0,
+        "lines": 2
       },
       {
         "mergeKey": "red_sea",
@@ -21445,8 +21483,8 @@
     "labels": [
       {
         "mergeKey": "antioch_pisidia",
-        "x": 27,
-        "y": 43,
+        "x": 66,
+        "y": 31,
         "align": "center",
         "angle": 0,
         "variant": 0,
@@ -22242,7 +22280,7 @@
       {
         "mergeKey": "title_exodus_and_canaan",
         "x": 313,
-        "y": 17,
+        "y": 16,
         "align": "center",
         "angle": 0,
         "variant": 0,
@@ -22271,8 +22309,8 @@
       },
       {
         "mergeKey": "mediterranean_sea",
-        "x": 224,
-        "y": 153,
+        "x": 213,
+        "y": 148,
         "align": "center",
         "angle": 42,
         "variant": 0,
@@ -23015,8 +23053,8 @@
       },
       {
         "mergeKey": "mediterranean_sea",
-        "x": 92,
-        "y": 211,
+        "x": 74,
+        "y": 208,
         "align": "center",
         "angle": 74,
         "variant": 0,
@@ -26761,8 +26799,8 @@
     "labels": [
       {
         "mergeKey": "title_7church",
-        "x": 491,
-        "y": 14,
+        "x": 486,
+        "y": 12,
         "align": "center",
         "angle": 0,
         "variant": 0,
