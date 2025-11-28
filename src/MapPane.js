@@ -405,32 +405,66 @@ function createLabel(
   // Use em units for all scalable properties
   const textOpacity = Math.min(Math.round(labelOpacity * 1.2), 100);
   
-  // Estimate text width using average character width (0.6em for bold text)
-  const fullText = labelText + opCodeIndicator + (extra || '');
-  const estimatedWidthEm = fullText.length * 0.6;
+  // TEMPORARY TEST: Determine number of lines based on presence of period
+  const numLines = labelText.includes('.') ? 2 : 1;
+  
+  // Function to balance text across multiple lines by inserting line breaks
+  const balanceTextLines = (text, targetLines) => {
+    if (targetLines === 1) return text;
+    
+    // Split into words
+    const words = text.split(/\s+/);
+    if (words.length < targetLines) return text; // Not enough words to split
+    
+    // Calculate target characters per line
+    const totalChars = text.length;
+    const targetCharsPerLine = totalChars / targetLines;
+    
+    // Build lines by adding words until we reach the target
+    const lines = [];
+    let currentLine = '';
+    let currentLength = 0;
+    
+    for (let i = 0; i < words.length; i++) {
+      const word = words[i];
+      const wordLength = word.length + (currentLine ? 1 : 0); // +1 for space
+      
+      // Check if adding this word would exceed target for current line
+      if (lines.length < targetLines - 1 && 
+          currentLength + wordLength > targetCharsPerLine &&
+          currentLine) {
+        // Start new line
+        lines.push(currentLine);
+        currentLine = word;
+        currentLength = word.length;
+      } else {
+        // Add to current line
+        if (currentLine) {
+          currentLine += ' ' + word;
+          currentLength += wordLength;
+        } else {
+          currentLine = word;
+          currentLength = word.length;
+        }
+      }
+    }
+    
+    // Add final line
+    if (currentLine) lines.push(currentLine);
+    
+    return lines.join('<br>');
+  };
+  
+  // Apply line balancing to label text
+  const balancedLabel = balanceTextLines(labelText, numLines);
+  const fullText = balancedLabel + opCodeIndicator + (extra || '');
   const lineHeightEm = 1.6;
-  const maxAspectRatio = 13; // Width-to-height ratio threshold
-  const maxWidthEm = lineHeightEm * maxAspectRatio;
-  
-  // Only enable wrapping if estimated width exceeds the threshold
-  const needsWrapping = estimatedWidthEm > maxWidthEm;
-  
-  // If wrapping is needed, calculate optimal width to balance lines
-  let optimalWidthEm = maxWidthEm;
-  if (needsWrapping) {
-    // Calculate how many lines we'll need
-    const numLines = Math.ceil(estimatedWidthEm / maxWidthEm);
-    // Set width to evenly distribute text across those lines
-    optimalWidthEm = Math.ceil(estimatedWidthEm / numLines);
-    // But ensure we don't go below a reasonable minimum or above the max
-    optimalWidthEm = Math.max(lineHeightEm * 5, Math.min(optimalWidthEm, maxWidthEm));
-  }
   
   const baseStyle = [
     `color: color-mix(in srgb, ${textColor} ${textOpacity}%, transparent);`,
     `font-size: ${fontSizePx}px;`,
     'font-weight: bold;',
-    'white-space: nowrap;', // Start with nowrap
+    numLines > 1 ? 'white-space: pre;' : 'white-space: nowrap;', // pre = only break on explicit line breaks
     `background: ${
       backgroundColor
         ? `color-mix(in srgb, ${backgroundColor} ${labelOpacity}%, transparent)`
@@ -442,13 +476,11 @@ function createLabel(
     'position: absolute;',
   ];
   
-  // Add wrapping-specific styles only when needed
-  if (needsWrapping) {
+  // Add multi-line specific styles when needed
+  if (numLines > 1) {
     baseStyle.push(
-      'white-space: normal;', // Override nowrap
-      `width: ${optimalWidthEm}em;`, // Use calculated optimal width
       'display: inline-block;',
-      'text-align: left;' // Left-align to see natural wrapping
+      'text-align: center;' // Center text within the label
     );
   }
   if (isCenter) {
@@ -471,7 +503,7 @@ function createLabel(
     } width: 2em; height: 2em; position: relative;">
       <span class="${
         isSelected ? 'selected-label' : 'unselected-label'
-      }" style="${spanStyle}">${labelText}${opCodeIndicator}${extra}</span>
+      }" style="${spanStyle}">${balancedLabel}${opCodeIndicator}${extra}</span>
     </div>
   `;
 
