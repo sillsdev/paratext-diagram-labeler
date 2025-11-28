@@ -2285,7 +2285,8 @@
         "angle": 0,
         "variant": 0,
         "size": 1,
-        "type": 1
+        "type": 1,
+        "lines": 2
       },
       {
         "mergeKey": "haran",
@@ -2425,7 +2426,8 @@
         "angle": 0,
         "variant": 0,
         "size": 3,
-        "type": 0
+        "type": 0,
+        "lines": 2
       },
       {
         "mergeKey": "ur",
@@ -3360,7 +3362,8 @@
         "angle": 0,
         "variant": 0,
         "size": 1,
-        "type": 1
+        "type": 1,
+        "lines": 3
       },
       {
         "mergeKey": "mt_gilboa",
@@ -3490,7 +3493,8 @@
         "angle": 0,
         "variant": 0,
         "size": 3,
-        "type": 0
+        "type": 0,
+        "lines": 2
       }
     ]
   },
@@ -3522,7 +3526,8 @@
         "angle": 0,
         "variant": 0,
         "size": 1,
-        "type": 1
+        "type": 1,
+        "lines": 2
       },
       {
         "mergeKey": "sidonians",
@@ -3702,7 +3707,8 @@
         "angle": 38,
         "variant": 0,
         "size": 3,
-        "type": 0
+        "type": 0,
+        "lines": 2
       },
       {
         "mergeKey": "ashtaroth",
@@ -4549,7 +4555,8 @@
         "angle": 0,
         "variant": 1,
         "size": 1,
-        "type": 1
+        "type": 1,
+        "lines": 2
       },
       {
         "mergeKey": "refugecities_title01",
@@ -4559,7 +4566,8 @@
         "angle": 0,
         "variant": 2,
         "size": 1,
-        "type": 2
+        "type": 2,
+        "lines": 2
       },
       {
         "mergeKey": "refugecities_title02",
@@ -4569,7 +4577,8 @@
         "angle": 0,
         "variant": 2,
         "size": 1,
-        "type": 2
+        "type": 2,
+        "lines": 2
       },
       {
         "mergeKey": "hivites",

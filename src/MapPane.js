@@ -418,11 +418,11 @@ function createLabel(
     const words = text.split(/\s+/);
     if (words.length < targetLines) return text; // Not enough words to split
     
-    // Calculate target characters per line
+    // Calculate target characters per line (with some tolerance)
     const totalChars = text.length;
     const targetCharsPerLine = totalChars / targetLines;
     
-    // Build lines by adding words until we reach the target
+    // Build lines by trying to balance actual character counts
     const lines = [];
     let currentLine = '';
     let currentLength = 0;
@@ -430,23 +430,40 @@ function createLabel(
     for (let i = 0; i < words.length; i++) {
       const word = words[i];
       const wordLength = word.length + (currentLine ? 1 : 0); // +1 for space
+      const nextWord = i < words.length - 1 ? words[i + 1] : null;
       
-      // Check if adding this word would exceed target for current line
-      if (lines.length < targetLines - 1 && 
-          currentLength + wordLength > targetCharsPerLine &&
-          currentLine) {
-        // Start new line
-        lines.push(currentLine);
+      // Add word to current line
+      if (currentLine) {
+        currentLine += ' ' + word;
+        currentLength += wordLength;
+      } else {
         currentLine = word;
         currentLength = word.length;
-      } else {
-        // Add to current line
-        if (currentLine) {
-          currentLine += ' ' + word;
-          currentLength += wordLength;
-        } else {
-          currentLine = word;
-          currentLength = word.length;
+      }
+      
+      // Decide if we should break here
+      if (lines.length < targetLines - 1) {
+        // Calculate how far we are from the target
+        const distanceFromTarget = Math.abs(currentLength - targetCharsPerLine);
+        
+        // Calculate what the distance would be if we add the next word
+        const nextWordLength = nextWord ? nextWord.length + 1 : 0;
+        const distanceWithNext = Math.abs(currentLength + nextWordLength - targetCharsPerLine);
+        
+        // Don't break if current line starts with opening punctuation and is very short
+        const startsWithOpening = /^[(\[{《]/.test(currentLine);
+        const tooShortToBreak = currentLength < targetCharsPerLine * 0.3;
+        
+        // Break if we're at or past target, and adding next word would be worse
+        // But avoid breaking too early after opening punctuation
+        if (nextWord && 
+            currentLength >= targetCharsPerLine * 0.5 && // At least 50% of target
+            !(startsWithOpening && tooShortToBreak) &&
+            distanceWithNext > distanceFromTarget) {
+          // Start new line
+          lines.push(currentLine);
+          currentLine = '';
+          currentLength = 0;
         }
       }
     }
@@ -458,9 +475,9 @@ function createLabel(
   };
   
   // Apply line balancing to label text
-  const balancedLabel = balanceTextLines(labelText, numLines);
-  const fullText = balancedLabel + opCodeIndicator + (extra || '');
-  const lineHeightEm = 1.6;
+  const fullText = labelText + opCodeIndicator + (extra || '');
+  const balancedLabel = balanceTextLines(fullText, numLines);
+  const lineHeightEm = 1.2;
   
   const baseStyle = [
     `color: color-mix(in srgb, ${textColor} ${textOpacity}%, transparent);`,
@@ -505,7 +522,7 @@ function createLabel(
     } width: 2em; height: 2em; position: relative;">
       <span class="${
         isSelected ? 'selected-label' : 'unselected-label'
-      }" style="${spanStyle}">${balancedLabel}${opCodeIndicator}${extra}</span>
+      }" style="${spanStyle}">${balancedLabel}</span>
     </div>
   `;
 
