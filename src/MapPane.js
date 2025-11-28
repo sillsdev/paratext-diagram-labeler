@@ -404,11 +404,33 @@ function createLabel(
   const fontSizePx = baseFontSize * (0.7 + 0.1 * (4 - size));
   // Use em units for all scalable properties
   const textOpacity = Math.min(Math.round(labelOpacity * 1.2), 100);
+  
+  // Estimate text width using average character width (0.6em for bold text)
+  const fullText = labelText + opCodeIndicator + (extra || '');
+  const estimatedWidthEm = fullText.length * 0.6;
+  const lineHeightEm = 1.6;
+  const maxAspectRatio = 13; // Width-to-height ratio threshold
+  const maxWidthEm = lineHeightEm * maxAspectRatio;
+  
+  // Only enable wrapping if estimated width exceeds the threshold
+  const needsWrapping = estimatedWidthEm > maxWidthEm;
+  
+  // If wrapping is needed, calculate optimal width to balance lines
+  let optimalWidthEm = maxWidthEm;
+  if (needsWrapping) {
+    // Calculate how many lines we'll need
+    const numLines = Math.ceil(estimatedWidthEm / maxWidthEm);
+    // Set width to evenly distribute text across those lines
+    optimalWidthEm = Math.ceil(estimatedWidthEm / numLines);
+    // But ensure we don't go below a reasonable minimum or above the max
+    optimalWidthEm = Math.max(lineHeightEm * 5, Math.min(optimalWidthEm, maxWidthEm));
+  }
+  
   const baseStyle = [
     `color: color-mix(in srgb, ${textColor} ${textOpacity}%, transparent);`,
     `font-size: ${fontSizePx}px;`,
     'font-weight: bold;',
-    'white-space: nowrap;',
+    'white-space: nowrap;', // Start with nowrap
     `background: ${
       backgroundColor
         ? `color-mix(in srgb, ${backgroundColor} ${labelOpacity}%, transparent)`
@@ -416,9 +438,19 @@ function createLabel(
     };`,
     'padding: 0 0.5em;', // 0px top/bottom, 0.5em left/right
     'border-radius: 0.83em;', // 10px if font-size is 12px
-    'line-height: 1.6em;', // scale height of label
+    `line-height: ${lineHeightEm}em;`, // scale height of label
     'position: absolute;',
   ];
+  
+  // Add wrapping-specific styles only when needed
+  if (needsWrapping) {
+    baseStyle.push(
+      'white-space: normal;', // Override nowrap
+      `width: ${optimalWidthEm}em;`, // Use calculated optimal width
+      'display: inline-block;',
+      'text-align: left;' // Left-align to see natural wrapping
+    );
+  }
   if (isCenter) {
     baseStyle.push(
       `left: 50%;`,
