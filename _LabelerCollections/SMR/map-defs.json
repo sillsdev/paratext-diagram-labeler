@@ -5182,7 +5182,8 @@
         "angle": 0,
         "variant": 0,
         "size": 1,
-        "type": 1
+        "type": 1,
+        "lines": 2
       },
       {
         "mergeKey": "mt_lebanon",
