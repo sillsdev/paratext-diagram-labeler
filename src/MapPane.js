@@ -343,6 +343,7 @@ export default function MapPane({
                 labelScale,
                 labelOpacity,
                 label.opCode,
+                label.lines,
                 showFrac && label.placeNameIds?.length > 0
                   ? (() => {
                       // Aggregate match tallies from all terms in all placeNames
@@ -390,6 +391,7 @@ function createLabel(
   labelScale = 1,
   labelOpacity = 85,
   opCode = 'sync',
+  lines = 1,
   extra
 ) {
   // Add visual indicator for override and omit opCodes
@@ -405,8 +407,8 @@ function createLabel(
   // Use em units for all scalable properties
   const textOpacity = Math.min(Math.round(labelOpacity * 1.2), 100);
   
-  // TEMPORARY TEST: Determine number of lines based on presence of period
-  const numLines = labelText.includes('.') ? 2 : 1;
+  // Use the lines property from the label definition (defaults to 1)
+  const numLines = lines || 1;
   
   // Function to balance text across multiple lines by inserting line breaks
   const balanceTextLines = (text, targetLines) => {
