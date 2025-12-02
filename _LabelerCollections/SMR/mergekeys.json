@@ -2651,12 +2651,13 @@
     "lblTemplate": "{to#Bethany}",
     "mapxKey": "Road to Bethany",
     "gloss": {
-      "en": "Road to Bethany",
+      "en": "To Bethany",
       "es": "El camino de Betania",
       "fr": "Route de Béthanie"
     },
     "context": {
-      "es": "",
+       "en": "Or 'Road to Bethany'",
+     "es": "",
       "fr": ""
     },
     "altTermIds": "road_to_bethany"
@@ -2665,11 +2666,12 @@
     "lblTemplate": "{to#Bethlehem}",
     "mapxKey": "Road to Bethlehem",
     "gloss": {
-      "en": "Road to Bethlehem",
+      "en": "To Bethlehem",
       "es": "Camino de Belén",
       "fr": "Route de Bethléem"
     },
     "context": {
+      "en": "Or 'Road to Bethlehem'",
       "es": "",
       "fr": ""
     },
@@ -2677,13 +2679,14 @@
   },
   "road_to_caesarea": {
     "lblTemplate": "{to#Caesarea}",
-    "mapxKey": "Road to Caesarea",
+    "mapxKey": "To Caesarea",
     "gloss": {
       "en": "Road to Caesarea",
       "es": "El camino de Cesarea",
       "fr": "Route de Césarée"
     },
     "context": {
+      "en": "Or 'Road to Caesarea'",
       "es": "",
       "fr": ""
     },
@@ -2708,11 +2711,12 @@
     "lblTemplate": "{to#Joppa}",
     "mapxKey": "Road to Joppa",
     "gloss": {
-      "en": "Road to Joppa",
+      "en": "To Joppa",
       "es": "El camino de Jope",
       "fr": "Route de Joppé"
     },
     "context": {
+      "en": "Or 'Road to Joppa'",
       "es": "",
       "fr": ""
     },
@@ -2722,11 +2726,12 @@
     "lblTemplate": "{to#DeadSea}",
     "mapxKey": "Road to the Dead Sea",
     "gloss": {
-      "en": "Road to the Dead Sea",
+      "en": "To the Dead Sea",
       "es": "El camino al Mar Muerto",
       "fr": "Route vers la mer Morte"
     },
     "context": {
+      "en": "Or 'Road to the Dead Sea'",
       "es": "",
       "fr": ""
     },
@@ -3160,11 +3165,11 @@
     "mapxKey": "Syracuse"
   },
   "syria_nt": {
-    "lblTemplate": "{Syria.2}",
+    "lblTemplate": "{Syria}",
     "mapxKey": "SYRIA"
   },
   "syria_ot": {
-    "lblTemplate": "{Syria}",
+    "lblTemplate": "{Syria.ot}",
     "mapxKey": "SYRIA"
   },
   "syrtis": {
