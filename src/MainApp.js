@@ -99,7 +99,11 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
   });
   const [mapDef, setMapDef] = useState(emptyInitialMap);
   const [labels, setLabelsRaw] = useState([]);
-  const [statusRecalcTrigger, setStatusRecalcTrigger] = useState(0);
+  const [statusRecalcTrigger, setStatusRecalcTrigger] = useState({
+    timestamp: 0,
+    affectedPlaceNameId: null,  // String: which placeName's rendering changed
+    affectedLabelMergeKey: null // String: which label's vernacular changed
+  });
   
   // Wrapper to log all setLabels calls
   const setLabels = useCallback((newLabelsOrFn) => {
@@ -407,13 +411,28 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
       return;
     }
 
-    console.log('[Status Recalc] Running status recalculation...');
+    const { affectedPlaceNameId, affectedLabelMergeKey } = statusRecalcTrigger;
+    const isTargetedRecalc = affectedPlaceNameId || affectedLabelMergeKey;
+    
+    console.log('[Status Recalc] Running status recalculation...',
+      isTargetedRecalc
+        ? `targeted: ${affectedPlaceNameId ? `placeNameId=${affectedPlaceNameId}` : `mergeKey=${affectedLabelMergeKey}`}`
+        : 'full recalc');
     console.log('[Status Recalc] termRenderings keys:', Object.keys(termRenderings).length);
     const collectionId = getCollectionIdFromTemplate(mapDef.template);
     console.log('[Status Recalc] About to call setLabels...');
     setLabels(prevLabels => {
       console.log('[Status Recalc] prevLabels:', prevLabels.length);
       const updatedLabels = prevLabels.map((label, idx) => {
+      // Skip labels not affected by this change
+      if (isTargetedRecalc) {
+        if (affectedLabelMergeKey && label.mergeKey !== affectedLabelMergeKey) {
+          return label; // Skip: different label
+        }
+        if (affectedPlaceNameId && !label.placeNameIds?.includes(affectedPlaceNameId)) {
+          return label; // Skip: doesn't use this placeName
+        }
+      }
       // Calculate status for labels WITH placeNameIds
       if (label.placeNameIds && label.placeNameIds.length > 0) {
         const perPlaceStatus = {};
@@ -468,12 +487,12 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
       return { ...label, status: newStatus };
     });
       
-      const sample = updatedLabels.slice(0, 3).map(l => `${l.mergeKey}:${l.status}`).join(', ');
-      console.log('[Status Recalc] Updated labels sample:', sample);
+      // const sample = updatedLabels.slice(0, 3).map(l => `${l.mergeKey}:${l.status}`).join(', ');
+      // console.log('[Status Recalc] Updated labels sample:', sample);
       return updatedLabels;
     });
     console.log('[Status Recalc] Status recalculation complete');
-  }, [extractedVerses, termRenderings, mapDef.template, statusRecalcTrigger]);
+  }, [extractedVerses, termRenderings, mapDef.template, statusRecalcTrigger.timestamp]);
 
   // Load autocorrect file when project folder or initialization state changes
   useEffect(() => {
@@ -550,63 +569,14 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
   const handleUpdateVernacular = useCallback(
     (mergeKey, lblTemplate, newVernacular, opCode = 'sync') => {
       console.log(`[handleUpdateVernacular] mergeKey="${mergeKey}", newVernacular="${newVernacular}", opCode="${opCode}", lblTemplate="${lblTemplate}"`);
-      // Create a copy of the current state to ensure we're using the latest data
-      const currentTermRenderings = { ...termRenderings };
-      const collectionId = getCollectionIdFromTemplate(mapDef.template);
-
-      // Update label in state
+      
+      // Update label vernacular and opCode (status will be recalculated via trigger)
       setLabels(prevLabels =>
-        prevLabels.map(label => {
-          if (label.mergeKey === mergeKey) {
-            // Recalculate status with new vernacular
-            let status;
-            let perPlaceStatus = {};
-            
-            // Labels WITH placeNameIds: validate against term renderings
-            if (label.placeNameIds && label.placeNameIds.length > 0) {
-              label.placeNameIds.forEach(placeNameId => {
-                const terms = collectionManager.getTermsForPlace(placeNameId, collectionId) || [];
-                if (terms.length > 0) {
-                  perPlaceStatus[placeNameId] = getPlaceNameStatus(
-                    currentTermRenderings,
-                    terms,
-                    newVernacular,
-                    extractedVerses,
-                    placeNameId,
-                    labelDictionaryService
-                  );
-                }
-              });
-              
-              status = Object.keys(perPlaceStatus).length > 0
-                ? Math.min(...Object.values(perPlaceStatus))
-                : STATUS_OK;
-              
-              // Check for STATUS_PARTIAL (contains 《》)
-              if (newVernacular && (newVernacular.includes('《') || newVernacular.includes('》')) && status > STATUS_PARTIAL) {
-                status = STATUS_PARTIAL;
-              }
-            } else {
-              // Labels WITHOUT placeNameIds (e.g., {r#REF}, {number#123}): BLANK, PARTIAL, or OK
-              if (!newVernacular || !newVernacular.trim()) {
-                status = STATUS_BLANK;
-              } else if (newVernacular && (newVernacular.includes('《') || newVernacular.includes('》'))) {
-                status = STATUS_PARTIAL;
-              } else {
-                status = STATUS_OK;
-              }
-            }
-            
-            return { 
-              ...label, 
-              vernLabel: newVernacular, 
-              opCode,
-              status,
-              perPlaceStatus
-            };
-          }
-          return label;
-        })
+        prevLabels.map(label =>
+          label.mergeKey === mergeKey
+            ? { ...label, vernLabel: newVernacular, opCode }
+            : label
+        )
       );
       
       // If opCode is 'sync', update Label Dictionary (in memory only - not saved to disk yet)
@@ -616,8 +586,15 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
       
       // Mark as having unsaved changes
       setHasUnsavedChanges(true);
+      
+      // Trigger targeted status recalculation for this label only
+      setStatusRecalcTrigger(prev => ({
+        timestamp: prev.timestamp + 1,
+        affectedPlaceNameId: null,
+        affectedLabelMergeKey: mergeKey
+      }));
     },
-    [termRenderings, extractedVerses, mapDef.template]
+    []
   );
 
   // Handler to cycle forward or backward through labels
@@ -1949,7 +1926,13 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
             onApprovedChange={handleApprovedChange}
             termRenderings={termRenderings}
             labels={labels}
-            onTriggerStatusRecalc={() => setStatusRecalcTrigger(prev => prev + 1)}
+            onTriggerStatusRecalc={(placeNameId = null) => {
+              setStatusRecalcTrigger(prev => ({
+                timestamp: prev.timestamp + 1,
+                affectedPlaceNameId: placeNameId,
+                affectedLabelMergeKey: null
+              }));
+            }}
             onSwitchView={handleSwitchView}
             mapPaneView={mapPaneView}
             onSetView={async viewIdx => {

@@ -958,7 +958,7 @@ export default function DetailsPane({
                           if (anyUpdated) {
                             setTermRenderings(updatedData);
                             if (onTriggerStatusRecalc) {
-                              onTriggerStatusRecalc();
+                              onTriggerStatusRecalc(null); // Full recalc - affects multiple labels
                             }
                             console.log('[Tally Approve All] Updated and recalculated');
                           }
@@ -1231,9 +1231,9 @@ export default function DetailsPane({
                         await labelDictionaryService.addAltRendering(activePlaceNameId, [pattern]);
                       }
                       
-                      // Trigger status recalculation
+                      // Trigger status recalculation for this placeName
                       if (onTriggerStatusRecalc) {
-                        onTriggerStatusRecalc();
+                        onTriggerStatusRecalc(activePlaceNameId);
                       }
                     }
                   }}
@@ -1267,7 +1267,7 @@ export default function DetailsPane({
                     
                     setTermRenderings(updatedData);
                     if (onTriggerStatusRecalc) {
-                      onTriggerStatusRecalc();
+                      onTriggerStatusRecalc(activePlaceNameId);
                     }
                   }
                 }}
@@ -1472,6 +1472,9 @@ export default function DetailsPane({
                                 };
                               });
                               setTermRenderings(updatedData);
+                              if (onTriggerStatusRecalc) {
+                                onTriggerStatusRecalc(placeNameId);
+                              }
                             }}
                             style={{
                               width: '100%',
@@ -1512,6 +1515,9 @@ export default function DetailsPane({
                                   isGuessed: false,
                                 };
                                 setTermRenderings(updatedData);
+                                if (onTriggerStatusRecalc) {
+                                  onTriggerStatusRecalc(placeNameId);
+                                }
                               }}
                               style={{
                                 width: '100%',

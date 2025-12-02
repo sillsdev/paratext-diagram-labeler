@@ -44,8 +44,9 @@ function App() {
         if (!exists || !exists.isDirectory) {
           errors.projectFolder = inLang(uiStr.projectFolderNotFound, currentLanguage);
         } else {
+          const termRenderingsExists = await window.electronAPI.statPath(settingsToValidate.projectFolder + '/TermRenderings.xml');
           // Check term renderings state (loaded separately in useEffect)
-          if (!termRenderings) {
+          if (!termRenderingsExists) {
             errors.projectFolder = inLang(uiStr.failedToLoadTermRenderingsFromFolder, currentLanguage);
           }
           // If termRenderings exists, no error for project folder
@@ -57,13 +58,13 @@ function App() {
 
     // Validate USFM if present
     if (settingsToValidate.usfm) {
-      // if (!settingsToValidate.usfm.includes('\\zdiagram-s')) {
-      //   errors.usfm = 'USFM does not appear to be valid diagram markup';
-      // }
+      if (!settingsToValidate.usfm.match(/\\fig .*src=".*"\\fig\*/)) {
+        errors.usfm = 'USFM does not appear to be a valid figure marker.';
+      }
     }
 
     return errors;
-  }, [currentLanguage, termRenderings]);
+  }, [currentLanguage]);
 
   // Store the latest validateSettings in a ref to avoid infinite loops
   validateSettingsRef.current = validateSettings;
@@ -143,7 +144,8 @@ function App() {
       const newSettings = await settingsService.loadSettings();
 
       // Set the current language from settings
-      setCurrentLanguage(newSettings.language || 'en');
+      const newLanguage = newSettings.language || 'en';
+      setCurrentLanguage(newLanguage);
 
       // Load Paratext projects list
       try {
@@ -155,17 +157,37 @@ function App() {
         setParatextProjects([]);
       }
 
-      // Validate settings
+      // Validate settings (inline to avoid dependency loop)
       if (!newSettings.collectionsFolder) {
         newSettings.collectionsFolder = await window.electronAPI.getDefaultTemplateFolder();
       }
-      const errors = await validateSettings(newSettings);
+      
+      const errors = {};
+      // Check collectionsFolder
+      if (!newSettings.collectionsFolder) {
+        errors.collectionsFolder = inLang(uiStr.specifyTemplateFolder, newLanguage);
+      } else {
+        try {
+          const exists = await window.electronAPI.statPath(newSettings.collectionsFolder);
+          if (!exists || !exists.isDirectory) {
+            errors.collectionsFolder = inLang(uiStr.templateFolderNotFound, newLanguage);
+          }
+        } catch (error) {
+          errors.collectionsFolder = `${inLang(uiStr.errorCheckingTemplateFolder, newLanguage)}: ${error.message}`;
+        }
+      }
+      
+      // Check projectFolder (term renderings will be validated separately in the other useEffect)
+      if (!newSettings.projectFolder) {
+        errors.projectFolder = inLang(uiStr.specifyProjectFolder, newLanguage);
+      }
+      
       setSettingsErrors(errors);
       setIsLoadingSettings(false);
     }
 
     initialize();
-  }, [validateSettings]);
+  }, []); // Run only once on mount
 
   // Initial load of term renderings when component mounts
   useEffect(() => {
