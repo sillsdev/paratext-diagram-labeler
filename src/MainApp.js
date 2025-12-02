@@ -438,7 +438,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
         
         // Check for STATUS_PARTIAL (contains 《》)
         const vernLabel = label.vernLabel || '';
-        if ((vernLabel.includes('《') || vernLabel.includes('》')) && calculatedStatus > STATUS_PARTIAL) {
+        if (vernLabel && (vernLabel.includes('《') || vernLabel.includes('》')) && calculatedStatus > STATUS_PARTIAL) {
           calculatedStatus = STATUS_PARTIAL;
         }
         
@@ -455,7 +455,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
       let newStatus;
       if (!vernLabel) {
         newStatus = STATUS_BLANK;
-      } else if (vernLabel.includes('《') || vernLabel.includes('》')) {
+      } else if (vernLabel && (vernLabel.includes('《') || vernLabel.includes('》'))) {
         newStatus = STATUS_PARTIAL;
       } else {
         newStatus = STATUS_OK;
@@ -583,14 +583,14 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
                 : STATUS_OK;
               
               // Check for STATUS_PARTIAL (contains 《》)
-              if ((newVernacular.includes('《') || newVernacular.includes('》')) && status > STATUS_PARTIAL) {
+              if (newVernacular && (newVernacular.includes('《') || newVernacular.includes('》')) && status > STATUS_PARTIAL) {
                 status = STATUS_PARTIAL;
               }
             } else {
               // Labels WITHOUT placeNameIds (e.g., {r#REF}, {number#123}): BLANK, PARTIAL, or OK
-              if (!newVernacular.trim()) {
+              if (!newVernacular || !newVernacular.trim()) {
                 status = STATUS_BLANK;
-              } else if (newVernacular.includes('《') || newVernacular.includes('》')) {
+              } else if (newVernacular && (newVernacular.includes('《') || newVernacular.includes('》'))) {
                 status = STATUS_PARTIAL;
               } else {
                 status = STATUS_OK;
