@@ -1,7 +1,18 @@
 {
   "ab": {
-    "lblTemplate": "{Ab}",
-    "mapxKey": ""
+    "lblTemplate": "Ab",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Ab",
+      "es": "Ab",
+      "fr": "Ab"
+    },
+    "context": {
+      "en": "Hebrew month",
+      "es": "",
+      "fr": "mois hébraïque"
+    },
+    "altTermIds": "ab"
   },
   "abilene": {
     "lblTemplate": "{Abilene}",
@@ -20,8 +31,19 @@
     "mapxKey": "ACHAIA"
   },
   "adar": {
-    "lblTemplate": "{Adar}",
-    "mapxKey": ""
+    "lblTemplate": "Adar",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Adar",
+      "es": "Adar",
+      "fr": "Adar"
+    },
+    "context": {
+      "en": "Hebrew month",
+      "es": "",
+      "fr": "mois hébraïque"
+    },
+    "altTermIds": "adar"
   },
   "adramyttium": {
     "lblTemplate": "{Adramyttium}",
@@ -133,8 +155,19 @@
     "altTermIds": "appearance"
   },
   "apr": {
-    "lblTemplate": "{Apr}",
-    "mapxKey": ""
+    "lblTemplate": "Apr",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Apr",
+      "es": "abr",
+      "fr": "Avr"
+    },
+    "context": {
+      "en": "3 letter abbreviation for the month",
+      "es": "",
+      "fr": "Abréviation à 3 lettres du mois"
+    },
+    "altTermIds": "apr"
   },
   "aqueduct": {
     "lblTemplate": "{Aqueduct}",
@@ -177,7 +210,7 @@
     "mapxKey": "ARAMEANS"
   },
   "ararat_mtns": {
-    "lblTemplate": "{AraratMtns}",
+    "lblTemplate": "{Ararat}",
     "mapxKey": "Mountains of Ararat"
   },
   "arimathea": {
@@ -189,7 +222,11 @@
     "mapxKey": "ARMENIA"
   },
   "aroer": {
-    "lblTemplate": "{Aroer}",
+    "lblTemplate": "{Aroer.2}",
+    "mapxKey": "Aroer"
+  },
+  "aroer.3": {
+    "lblTemplate": "{Aroer.3}",
     "mapxKey": "Aroer"
   },
   "arphaxad": {
@@ -219,7 +256,7 @@
     "mapxKey": "Ashdod"
   },
   "asher": {
-    "lblTemplate": "{Asher}",
+    "lblTemplate": "{TerritoryOfAsher}",
     "mapxKey": "ASHER"
   },
   "ashkelon": {
@@ -259,8 +296,19 @@
     "mapxKey": "Attalia"
   },
   "aug": {
-    "lblTemplate": "{Aug}",
-    "mapxKey": ""
+    "lblTemplate": "Aug",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Aug",
+      "es": "ago",
+      "fr": "août"
+    },
+    "context": {
+      "en": "3 letter abbreviation for the month",
+      "es": "",
+      "fr": "Abréviation à 3 lettres du mois"
+    },
+    "altTermIds": "aug"
   },
   "australia": {
     "lblTemplate": "{Australia}",
@@ -279,7 +327,7 @@
     "mapxKey": "Azotus"
   },
   "baal_zephon": {
-    "lblTemplate": "{BaalZephon}",
+    "lblTemplate": "{Baal-zephon}",
     "mapxKey": "Baal Zephon"
   },
   "babylon": {
@@ -329,7 +377,7 @@
     "mapxKey": "Belt of Truth"
   },
   "benjamin": {
-    "lblTemplate": "{Benjamin}",
+    "lblTemplate": "{TerritoryOfBenjamin}",
     "mapxKey": "BENJAMIN"
   },
   "berea": {
@@ -337,11 +385,11 @@
     "mapxKey": "Berea"
   },
   "beth_shean": {
-    "lblTemplate": "{BethShean}",
+    "lblTemplate": "{Beth-shan}",
     "mapxKey": "Beth Shean"
   },
   "beth_shemesh": {
-    "lblTemplate": "{BethShemesh}",
+    "lblTemplate": "{Beth-shemesh}",
     "mapxKey": "Beth-Shemesh"
   },
   "bethany": {
@@ -349,7 +397,7 @@
     "mapxKey": "Bethany"
   },
   "bethany_east": {
-    "lblTemplate": "{BethanyEast}",
+    "lblTemplate": "{Bethany.2}",
     "mapxKey": "Bethany east of the Jordan"
   },
   "bethel": {
@@ -365,7 +413,7 @@
     "mapxKey": "Bethlehem"
   },
   "bethpeor": {
-    "lblTemplate": "{Bethpeor}",
+    "lblTemplate": "{Beth-peor}",
     "mapxKey": "Beth-peor"
   },
   "bethphage": {
@@ -463,7 +511,7 @@
     "altTermIds": "boundary_rome"
   },
   "bozrah": {
-    "lblTemplate": "{Bozrah}",
+    "lblTemplate": "{Bozrah.2}",
     "mapxKey": "Bozrah"
   },
   "breast_right": {
@@ -541,7 +589,7 @@
     "mapxKey": "CAUDA"
   },
   "cenchrea": {
-    "lblTemplate": "{Cenchrea}",
+    "lblTemplate": "{Cenchreae}",
     "mapxKey": "Cenchrea"
   },
   "chaldea": {
@@ -549,8 +597,19 @@
     "mapxKey": "CHALDEA"
   },
   "chanukah": {
-    "lblTemplate": "{Chanukah}",
-    "mapxKey": ""
+    "lblTemplate": "Chanukah",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Chanukah",
+      "es": "Janucá",
+      "fr": "Hanoukka"
+    },
+    "context": {
+      "en": "Hebrew month",
+      "es": "",
+      "fr": "mois hébraïque"
+    },
+    "altTermIds": "chanukah"
   },
   "chios": {
     "lblTemplate": "{Chios}",
@@ -719,7 +778,7 @@
     "altTermIds": "curtain_wall"
   },
   "cush": {
-    "lblTemplate": "{Cush}",
+    "lblTemplate": "{Cush.2}",
     "mapxKey": ""
   },
   "cyprus": {
@@ -761,11 +820,11 @@
     "mapxKey": "Damascus"
   },
   "dan": {
-    "lblTemplate": "{Dan}",
+    "lblTemplate": "{TerritoryOfDan}",
     "mapxKey": "DAN"
   },
   "dan_laish": {
-    "lblTemplate": "{DanLaish}",
+    "lblTemplate": "{TerritoryOfDan} ({Laish})",
     "mapxKey": "Dan (Laish)"
   },
   "danube_river": {
@@ -787,7 +846,7 @@
     "altTermIds": "daughter_healed"
   },
   "dead_sea": {
-    "lblTemplate": "{DeadSea}",
+    "lblTemplate": "{SaltSea}",
     "mapxKey": "Dead Sea"
   },
   "debir": {
@@ -795,8 +854,19 @@
     "mapxKey": "Debir"
   },
   "dec": {
-    "lblTemplate": "{Dec}",
-    "mapxKey": ""
+    "lblTemplate": "Dec",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Dec",
+      "es": "dic",
+      "fr": "Déc"
+    },
+    "context": {
+      "en": "3 letter abbreviation for the month",
+      "es": "",
+      "fr": "Abréviation à 3 lettres du mois"
+    },
+    "altTermIds": "dec"
   },
   "decapolis": {
     "lblTemplate": "{Decapolis}",
@@ -853,8 +923,16 @@
     "mapxKey": "Edrei"
   },
   "eglon": {
-    "lblTemplate": "{Eglon}",
-    "mapxKey": "Eglon?"
+    "lblTemplate": "{q#Eglon}",
+    "mapxKey": "Eglon?",
+    "gloss": {
+      "en": "Eglon?",
+      "es": "Eglón?",
+      "fr": "Églon?"
+    },
+    "context": {
+      "en": "(uncertain location)"
+    }
   },
   "egypt_nt": {
     "lblTemplate": "{Egypt}",
@@ -877,19 +955,36 @@
     "mapxKey": "ELAM"
   },
   "elim": {
-    "lblTemplate": "{Elim}",
-    "mapxKey": "Elim"
+    "lblTemplate": "{q#Elim}",
+    "mapxKey": "Elim",
+    "gloss": {
+      "en": "Elim?"
+    },
+    "context": {
+      "en": "(uncertain location)"
+    }
   },
   "elul": {
-    "lblTemplate": "{Elul}",
-    "mapxKey": ""
+    "lblTemplate": "Elul",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Elul",
+      "es": "Elul",
+      "fr": "Elul"
+    },
+    "context": {
+      "en": "Hebrew month",
+      "es": "",
+      "fr": "mois hébraïque"
+    },
+    "altTermIds": "elul"
   },
   "emmaus": {
     "lblTemplate": "{Emmaus}",
     "mapxKey": "Emmaus"
   },
   "endor": {
-    "lblTemplate": "{Endor}",
+    "lblTemplate": "{En-dor}",
     "mapxKey": "Endor"
   },
   "engedi": {
@@ -897,7 +992,7 @@
     "mapxKey": "En-Gedi"
   },
   "enrogel_spring": {
-    "lblTemplate": "{EnrogelSpring}",
+    "lblTemplate": "{En-rogel}",
     "mapxKey": "Enrogel Spring"
   },
   "entrance": {
@@ -933,11 +1028,11 @@
     "altTermIds": "ephod_hp"
   },
   "ephraim_nt": {
-    "lblTemplate": "{Ephraim}",
+    "lblTemplate": "{TerritoryOfEphraim}",
     "mapxKey": "EPHRAIM"
   },
   "ephraim_ot": {
-    "lblTemplate": "{Ephraim}",
+    "lblTemplate": "{TerritoryOfEphraim}",
     "mapxKey": "EPHRAIM"
   },
   "ephrath": {
@@ -957,7 +1052,7 @@
     "mapxKey": "Ethiopia"
   },
   "euphrates_river": {
-    "lblTemplate": "{EuphratesRiver}",
+    "lblTemplate": "{Euphrates}",
     "mapxKey": "Euphrates River"
   },
   "europe": {
@@ -965,7 +1060,7 @@
     "mapxKey": ""
   },
   "ezion_geber": {
-    "lblTemplate": "{EzionGeber}",
+    "lblTemplate": "{Ezion-geber}",
     "mapxKey": "Ezion Geber"
   },
   "fair_havens": {
@@ -973,8 +1068,19 @@
     "mapxKey": "Fair Havens"
   },
   "feb": {
-    "lblTemplate": "{Feb}",
-    "mapxKey": ""
+    "lblTemplate": "Feb",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Feb",
+      "es": "feb",
+      "fr": "Fév"
+    },
+    "context": {
+      "en": "3 letter abbreviation for the month",
+      "es": "",
+      "fr": "Abréviation à 3 lettres du mois"
+    },
+    "altTermIds": "feb"
   },
   "feet_hp": {
     "lblTemplate": "Bare Feet",
@@ -1013,7 +1119,7 @@
     "mapxKey": "Forum of Appius"
   },
   "gad": {
-    "lblTemplate": "{Gad}",
+    "lblTemplate": "{TerritoryOfGad}",
     "mapxKey": "GAD"
   },
   "gadara": {
@@ -1061,8 +1167,16 @@
     "altTermIds": "gate"
   },
   "gath": {
-    "lblTemplate": "{Gath}",
-    "mapxKey": "Gath"
+    "lblTemplate": "{q#Gath}",
+    "mapxKey": "Gath",
+    "gloss": {
+      "en": "Gath?",
+      "es": "Gat?",
+      "fr": "Gath?"
+    },
+    "context": {
+      "en": "(uncertain location)"
+    }
   },
   "gaul": {
     "lblTemplate": "Gallia (Gaul)",
@@ -1087,7 +1201,7 @@
     "mapxKey": "Gaza"
   },
   "gebal_byblos": {
-    "lblTemplate": "{GebalByblos}",
+    "lblTemplate": "{Gebal}",
     "mapxKey": "Gebal (Byblos)"
   },
   "gennesaret": {
@@ -1115,7 +1229,7 @@
     "mapxKey": "Gibeon"
   },
   "gihon_spring": {
-    "lblTemplate": "{GihonSpring}",
+    "lblTemplate": "{Gihon.2}",
     "mapxKey": "Gihon Spring"
   },
   "gilead": {
@@ -1123,7 +1237,7 @@
     "mapxKey": "GILEAD"
   },
   "gilgal": {
-    "lblTemplate": "{Gilgal}",
+    "lblTemplate": "{Gilgal.3}",
     "mapxKey": "Gilgal"
   },
   "golan": {
@@ -1151,7 +1265,7 @@
     "mapxKey": "GREECE"
   },
   "gulf_of_aqaba": {
-    "lblTemplate": "{GulfOfAqaba}",
+    "lblTemplate": "{RedSea.2}",
     "mapxKey": "Gulf of Aqaba"
   },
   "ham": {
@@ -1289,6 +1403,7 @@
       "fr": "Carte de la Terre Sainte"
     },
     "context": {
+      "en": "Identifies the part of the world covered by the map of Israel",
       "es": "",
       "fr": ""
     },
@@ -1409,7 +1524,7 @@
     "mapxKey": "Israel Pool"
   },
   "issachar": {
-    "lblTemplate": "{Issachar}",
+    "lblTemplate": "{TerritoryOfIssachar}",
     "mapxKey": "ISSACHAR"
   },
   "italy": {
@@ -1421,11 +1536,22 @@
     "mapxKey": ""
   },
   "iyar": {
-    "lblTemplate": "{Iyar}",
-    "mapxKey": ""
+    "lblTemplate": "Iyar",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Iyar",
+      "es": "Iyar",
+      "fr": "Iyar"
+    },
+    "context": {
+      "en": "Hebrew month",
+      "es": "",
+      "fr": "mois hébraïque"
+    },
+    "altTermIds": "iyar"
   },
   "jabesh": {
-    "lblTemplate": "{Jabesh}",
+    "lblTemplate": "{Jabesh-gilead}",
     "mapxKey": "Jabesh Gilead"
   },
   "jabneel": {
@@ -1441,12 +1567,23 @@
     "mapxKey": "Jacob’s Well"
   },
   "jamnia": {
-    "lblTemplate": "{Jamnia}",
+    "lblTemplate": "{Jabneh}",
     "mapxKey": "Jamnia"
   },
   "jan": {
-    "lblTemplate": "{Jan}",
-    "mapxKey": ""
+    "lblTemplate": "Jan",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Jan",
+      "es": "ene",
+      "fr": "Jan"
+    },
+    "context": {
+      "en": "3 letter abbreviation for the month",
+      "es": "",
+      "fr": "Abréviation à 3 lettres du mois"
+    },
+    "altTermIds": "jan"
   },
   "japheth": {
     "lblTemplate": "{Japheth}",
@@ -1495,7 +1632,7 @@
     "altTermIds": "jerusalem_title"
   },
   "jezreel": {
-    "lblTemplate": "{Jezreel}",
+    "lblTemplate": "{Jezreel.2}",
     "mapxKey": "Jezreel"
   },
   "jokneam": {
@@ -1511,15 +1648,15 @@
     "mapxKey": "Joppa"
   },
   "jordan_river_nt": {
-    "lblTemplate": "{JordanRiver}",
+    "lblTemplate": "{Jordan}",
     "mapxKey": "Jordan River"
   },
   "jordan_river_ot": {
-    "lblTemplate": "{JordanRiver}",
+    "lblTemplate": "{Jordan}",
     "mapxKey": "Jordan River"
   },
   "judah": {
-    "lblTemplate": "{Judah}",
+    "lblTemplate": "{TerritoryOfJudah}",
     "mapxKey": "JUDAH"
   },
   "judea": {
@@ -1527,19 +1664,41 @@
     "mapxKey": "JUDEA"
   },
   "jul": {
-    "lblTemplate": "{Jul}",
-    "mapxKey": ""
+    "lblTemplate": "Jul",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Jul",
+      "es": "jul",
+      "fr": "Juillet"
+    },
+    "context": {
+      "en": "3 letter abbreviation for the month",
+      "es": "",
+      "fr": "Abréviation à 3 lettres du mois"
+    },
+    "altTermIds": "jul"
   },
   "jun": {
-    "lblTemplate": "{Jun}",
-    "mapxKey": ""
+    "lblTemplate": "Jun",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Jun",
+      "es": "jun",
+      "fr": "Juin"
+    },
+    "context": {
+      "en": "3 letter abbreviation for the month",
+      "es": "",
+      "fr": "Abréviation à 3 lettres du mois"
+    },
+    "altTermIds": "jun"
   },
   "kadesh": {
     "lblTemplate": "{Kadesh}",
     "mapxKey": "Kadesh"
   },
   "kadesh_barnea": {
-    "lblTemplate": "{KadeshBarnea}",
+    "lblTemplate": "{Kadesh-barnea}",
     "mapxKey": "Kadesh Barnea"
   },
   "kedar": {
@@ -1551,20 +1710,31 @@
     "mapxKey": "Kedesh"
   },
   "kidron_valley": {
-    "lblTemplate": "{KidronValley}",
+    "lblTemplate": "{Kidron}",
     "mapxKey": "Kidron Valley"
   },
   "kir_hareseth": {
-    "lblTemplate": "{KirHareseth}",
+    "lblTemplate": "{Kir-hareseth}",
     "mapxKey": "Kir Hareseth"
   },
   "kiriath_jearim": {
-    "lblTemplate": "{KiriathJearim}",
+    "lblTemplate": "{Kiriath-jearim}",
     "mapxKey": "Kiriath-Jearim"
   },
   "kislew": {
-    "lblTemplate": "{Kislew}",
-    "mapxKey": ""
+    "lblTemplate": "Kislew",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Kislew",
+      "es": "Kislew",
+      "fr": "Kislew"
+    },
+    "context": {
+      "en": "Hebrew month",
+      "es": "",
+      "fr": "mois hébraïque"
+    },
+    "altTermIds": "kislew"
   },
   "tttest_kittim_cyprus": {
     "lblTemplate": "{tttestKittim} ({Cyprus} / {Jericho}) ",
@@ -1582,7 +1752,7 @@
     "altTermIds": "tttest_kittim_cyprus"
   },
   "kittim_cyprus": {
-    "lblTemplate": "{KittimCyprus}",
+    "lblTemplate": "{Kittim} ({Cyprus})",
     "mapxKey": "KITTIM (CYPRUS)"
   },
   "lachish": {
@@ -1606,6 +1776,7 @@
       "fr": "Laver"
     },
     "context": {
+      "en": "a large basin or bowl used for ceremonial washing.",
       "es": "",
       "fr": ""
     },
@@ -1710,7 +1881,7 @@
     "altTermIds": "leptis_magna"
   },
   "libnah": {
-    "lblTemplate": "{Libnah}",
+    "lblTemplate": "{Libnah.2}",
     "mapxKey": ""
   },
   "libya_nt": {
@@ -1722,7 +1893,7 @@
     "mapxKey": ""
   },
   "lud": {
-    "lblTemplate": "{Lud}",
+    "lblTemplate": "{Pul}",
     "mapxKey": ""
   },
   "lycaonia": {
@@ -1782,20 +1953,39 @@
     "mapxKey": ""
   },
   "manasseh_east": {
-    "lblTemplate": "{ManassehEast}",
+    "lblTemplate": "{TerritoryOfEastManasseh}",
     "mapxKey": "Manasseh (East)"
   },
   "manasseh_west": {
-    "lblTemplate": "{ManassehWest}",
+    "lblTemplate": "{TerritoryOfWestManasseh}",
     "mapxKey": "Manasseh (West)"
   },
   "mar": {
-    "lblTemplate": "{Mar}",
-    "mapxKey": ""
+    "lblTemplate": "Mar",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Mar",
+      "es": "mar",
+      "fr": "Mar"
+    },
+    "context": {
+      "en": "3 letter abbreviation for the month",
+      "es": "",
+      "fr": "Abréviation à 3 lettres du mois"
+    },
+    "altTermIds": "mar"
   },
   "marah": {
-    "lblTemplate": "{Marah}",
-    "mapxKey": "Marah"
+    "lblTemplate": "{q#Marah}",
+    "mapxKey": "Marah",
+    "gloss": {
+      "en": "Marah?",
+      "es": "Mara?",
+      "fr": "Mara?"
+    },
+    "context": {
+      "en": "(uncertain location)"
+    }
   },
   "mareshah": {
     "lblTemplate": "{Mareshah}",
@@ -1824,6 +2014,7 @@
       "fr": "Markhesywan"
     },
     "context": {
+      "en": "Hebrew month",
       "es": "",
       "fr": ""
     },
@@ -1834,8 +2025,19 @@
     "mapxKey": ""
   },
   "may": {
-    "lblTemplate": "{May}",
-    "mapxKey": ""
+    "lblTemplate": "May",
+    "mapxKey": "",
+    "gloss": {
+      "en": "May",
+      "es": "may",
+      "fr": "Peut"
+    },
+    "context": {
+      "en": "3 letter abbreviation for the month",
+      "es": "",
+      "fr": "Abréviation à 3 lettres du mois"
+    },
+    "altTermIds": "may"
   },
   "medeba": {
     "lblTemplate": "{Medeba}",
@@ -1886,22 +2088,12 @@
     "mapxKey": "Mitylene"
   },
   "mizpa": {
-    "lblTemplate": "{Mizpa}",
+    "lblTemplate": "{Mizpah}",
     "mapxKey": "Mizpa/Mizpeh"
   },
   "mizpah_of_moab": {
-    "lblTemplate": "Mizpah of Moab",
-    "mapxKey": "Mizpah of Moab",
-    "gloss": {
-      "en": "Mizpah of Moab",
-      "es": "",
-      "fr": ""
-    },
-    "context": {
-      "es": "",
-      "fr": ""
-    },
-    "altTermIds": "mizpah_of_moab"
+    "lblTemplate": "{Mizpeh}",
+    "mapxKey": "Mizpah of Moab"
   },
   "mizraim": {
     "lblTemplate": "{Mizraim}",
@@ -1916,47 +2108,47 @@
     "mapxKey": ""
   },
   "mount_of_olives": {
-    "lblTemplate": "{MountOfOlives}",
+    "lblTemplate": "{OlivesMount}",
     "mapxKey": "Mount of Olives"
   },
   "mt_carmel": {
-    "lblTemplate": "{MtCarmel}",
+    "lblTemplate": "{CarmelMount}",
     "mapxKey": "Mt. Carmel"
   },
   "mt_ebal": {
-    "lblTemplate": "{MtEbal}",
+    "lblTemplate": "{EbalMount}",
     "mapxKey": "Mt. Ebal"
   },
   "mt_gerizim": {
-    "lblTemplate": "{MtGerizim}",
+    "lblTemplate": "{GerizimMount}",
     "mapxKey": "MT. Gerizim"
   },
   "mt_gilboa": {
-    "lblTemplate": "{MtGilboa}",
+    "lblTemplate": "{GilboaMount}",
     "mapxKey": "Mt. Gilboa"
   },
   "mt_hermon": {
-    "lblTemplate": "{MtHermon}",
+    "lblTemplate": "{HermonMount}",
     "mapxKey": "MT. Hermon"
   },
   "mt_lebanon": {
-    "lblTemplate": "{MtLebanon}",
+    "lblTemplate": "{LebanonMount}",
     "mapxKey": "Lebanon Mountains"
   },
   "mt_nebo": {
-    "lblTemplate": "{MtNebo}",
+    "lblTemplate": "{NeboMount}",
     "mapxKey": "Mt. Nebo"
   },
   "mt_seir": {
-    "lblTemplate": "{MtSeir}",
+    "lblTemplate": "{Seir}",
     "mapxKey": ""
   },
   "mt_sinai_horeb": {
-    "lblTemplate": "{MtSinaiHoreb}",
+    "lblTemplate": "{SinaiMount}",
     "mapxKey": "Mt. Sinai Horeb"
   },
   "mt_tabor": {
-    "lblTemplate": "{MtTabor}",
+    "lblTemplate": "{TaborMount}",
     "mapxKey": "Mt. Tabor"
   },
   "myra": {
@@ -1972,7 +2164,7 @@
     "mapxKey": "Nain"
   },
   "naphtali": {
-    "lblTemplate": "{Naphtali}",
+    "lblTemplate": "{TerritoryOfNaphtali}",
     "mapxKey": "Naphtali"
   },
   "nazareth": {
@@ -1988,7 +2180,7 @@
     "mapxKey": "Nicopolis"
   },
   "nile_river": {
-    "lblTemplate": "{NileRiver}",
+    "lblTemplate": "{Nile}",
     "mapxKey": "Nile River"
   },
   "nineveh": {
@@ -2000,8 +2192,19 @@
     "mapxKey": "Nippur"
   },
   "nisan": {
-    "lblTemplate": "{Nisan}",
-    "mapxKey": ""
+    "lblTemplate": "Nisan",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Nisan",
+      "es": "Nisan",
+      "fr": "Nissan"
+    },
+    "context": {
+      "en": "Hebrew month",
+      "es": "",
+      "fr": "mois hébraïque"
+    },
+    "altTermIds": "nisan"
   },
   "north": {
     "lblTemplate": "{North}",
@@ -2016,8 +2219,19 @@
     "mapxKey": ""
   },
   "nov": {
-    "lblTemplate": "{Nov}",
-    "mapxKey": ""
+    "lblTemplate": "Nov",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Nov",
+      "es": "nov",
+      "fr": "Nov"
+    },
+    "context": {
+      "en": "3 letter abbreviation for the month",
+      "es": "",
+      "fr": "Abréviation à 3 lettres du mois"
+    },
+    "altTermIds": "nov"
   },
   "numidia": {
     "lblTemplate": "{Numidia}",
@@ -2028,8 +2242,19 @@
     "mapxKey": "Nuzi"
   },
   "oct": {
-    "lblTemplate": "{Oct}",
-    "mapxKey": ""
+    "lblTemplate": "Oct",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Oct",
+      "es": "oct",
+      "fr": "Octobre"
+    },
+    "context": {
+      "en": "3 letter abbreviation for the month",
+      "es": "",
+      "fr": "Abréviation à 3 lettres du mois"
+    },
+    "altTermIds": "oct"
   },
   "onyx_hp": {
     "lblTemplate": "Onyx Stones on Shoulders",
@@ -2074,7 +2299,7 @@
     "mapxKey": ""
   },
   "paddan_aram": {
-    "lblTemplate": "{PaddanAram}",
+    "lblTemplate": "{Paddan-aram}",
     "mapxKey": "Paddan Aram"
   },
   "palestine": {
@@ -2090,7 +2315,7 @@
     "mapxKey": "Paphos"
   },
   "paris": {
-    "lblTemplate": "{Paris}",
+    "lblTemplate": "{Lutetia}",
     "mapxKey": ""
   },
   "parthia": {
@@ -2138,7 +2363,7 @@
     "altTermIds": "pauls_journey_map"
   },
   "peniel": {
-    "lblTemplate": "{Peniel}",
+    "lblTemplate": "{Penuel}",
     "mapxKey": ""
   },
   "peraea": {
@@ -2238,6 +2463,7 @@
       "fr": "Pôles"
     },
     "context": {
+      "en": "long, round pieces of wood used to support something",
       "es": "",
       "fr": ""
     },
@@ -2248,11 +2474,11 @@
     "mapxKey": "PONTUS"
   },
   "pool_of_bethzatha": {
-    "lblTemplate": "{PoolOfBethzatha}",
+    "lblTemplate": "{Bethesda}",
     "mapxKey": "Pool of Bethesda"
   },
   "pool_of_siloam": {
-    "lblTemplate": "{PoolOfSiloam}",
+    "lblTemplate": "{Siloam}",
     "mapxKey": "Pool of Siloam"
   },
   "possible_rte_exodus": {
@@ -2296,8 +2522,19 @@
     "mapxKey": "Punon"
   },
   "purim": {
-    "lblTemplate": "{Purim}",
-    "mapxKey": ""
+    "lblTemplate": "Purim",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Purim",
+      "es": "Purim",
+      "fr": "Pourim"
+    },
+    "context": {
+      "en": "Hebrew holiday",
+      "es": "",
+      "fr": "fête hébraïque"
+    },
+    "altTermIds": "purim"
   },
   "put": {
     "lblTemplate": "{Put}",
@@ -2320,25 +2557,15 @@
     "mapxKey": "Ramah"
   },
   "rameses": {
-    "lblTemplate": "Rameses",
-    "mapxKey": "Rameses",
-    "gloss": {
-      "en": "Rameses",
-      "es": "Ramsés",
-      "fr": "Ramsès"
-    },
-    "context": {
-      "es": "",
-      "fr": ""
-    },
-    "altTermIds": "rameses"
+    "lblTemplate": "{Rameses}",
+    "mapxKey": "Rameses"
   },
   "ramoth": {
-    "lblTemplate": "{Ramoth}",
+    "lblTemplate": "{Ramoth-gilead}",
     "mapxKey": "Ramoth"
   },
   "ramoth_gilead": {
-    "lblTemplate": "{RamothGilead}",
+    "lblTemplate": "{Ramoth-gilead}",
     "mapxKey": "Ramoth Gilead"
   },
   "red_sea": {
@@ -2368,13 +2595,14 @@
       "fr": "(Nombres 35 et Josué 20)"
     },
     "context": {
+      "en": "Chapters in which the Cities of Refuge are Described",
       "es": "",
       "fr": ""
     },
     "altTermIds": "refugecities_title02"
   },
   "reuben": {
-    "lblTemplate": "{Reuben}",
+    "lblTemplate": "{TerritoryOfReuben}",
     "mapxKey": "Reuben"
   },
   "rhegium": {
@@ -2390,11 +2618,11 @@
     "mapxKey": "Riblah"
   },
   "river_arnon": {
-    "lblTemplate": "{RiverArnon}",
+    "lblTemplate": "{Arnon}",
     "mapxKey": "Arnon River"
   },
   "river_jabbok": {
-    "lblTemplate": "{RiverJabbok}",
+    "lblTemplate": "{Jabbok}",
     "mapxKey": "Jabbok River"
   },
   "river_of_life": {
@@ -2416,7 +2644,7 @@
     "mapxKey": "Yarmuk River"
   },
   "river_zered": {
-    "lblTemplate": "{RiverZered}",
+    "lblTemplate": "{Zered}",
     "mapxKey": "Zered River"
   },
   "road_to_bethany": {
@@ -2577,15 +2805,15 @@
     "mapxKey": "Salmone"
   },
   "samaria_city_nt": {
-    "lblTemplate": "{SamariaCity}",
+    "lblTemplate": "{Samaria}",
     "mapxKey": "Samaria"
   },
   "samaria_city_ot": {
-    "lblTemplate": "{SamariaCity}",
+    "lblTemplate": "{Samaria}",
     "mapxKey": "Samaria"
   },
   "samaria_region": {
-    "lblTemplate": "{SamariaRegion}",
+    "lblTemplate": "{Samaria.2}",
     "mapxKey": "SAMARIA"
   },
   "samos": {
@@ -2713,16 +2941,38 @@
     "mapxKey": "Seleucia"
   },
   "sept": {
-    "lblTemplate": "{Sept}",
-    "mapxKey": ""
+    "lblTemplate": "Sept",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Sept",
+      "es": "sep",
+      "fr": "Sept"
+    },
+    "context": {
+      "en": "3 letter abbreviation for the month",
+      "es": "",
+      "fr": "Abréviation à 3 lettres du mois"
+    },
+    "altTermIds": "sept"
   },
   "serpents_pool": {
     "lblTemplate": "{SerpentsPool}",
     "mapxKey": "Serpent’s Pool"
   },
   "shavot": {
-    "lblTemplate": "{Shavot}",
-    "mapxKey": ""
+    "lblTemplate": "Shavot",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Shavot",
+      "es": "Shavot",
+      "fr": "Shavot"
+    },
+    "context": {
+      "en": "Hebrew holiday",
+      "es": "",
+      "fr": "fête hébraïque"
+    },
+    "altTermIds": "shavot"
   },
   "shechem_nt": {
     "lblTemplate": "{Shechem}",
@@ -2777,7 +3027,7 @@
     "mapxKey": "SIDONIANS"
   },
   "simeon": {
-    "lblTemplate": "{Simeon}",
+    "lblTemplate": "{TerritoryOfSimeon}",
     "mapxKey": "SIMEON"
   },
   "sinai": {
@@ -2785,8 +3035,19 @@
     "mapxKey": "SINAI"
   },
   "siwan": {
-    "lblTemplate": "{Siwan}",
-    "mapxKey": ""
+    "lblTemplate": "Siwan",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Siwan",
+      "es": "Siwan",
+      "fr": "Siwan"
+    },
+    "context": {
+      "en": "Hebrew holiday",
+      "es": "",
+      "fr": "fête hébraïque"
+    },
+    "altTermIds": "siwan"
   },
   "smyrna": {
     "lblTemplate": "{Smyrna}",
@@ -2797,7 +3058,7 @@
     "mapxKey": "Solomon’s Pool"
   },
   "solomons_porch": {
-    "lblTemplate": "{SolomonsPorch}",
+    "lblTemplate": "{SolomonsPortico}",
     "mapxKey": "Solomon’s Porch"
   },
   "south": {
@@ -2853,8 +3114,19 @@
     "mapxKey": "Succoth"
   },
   "sukkot": {
-    "lblTemplate": "{Sukkot}",
-    "mapxKey": ""
+    "lblTemplate": "Sukkot",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Sukkot",
+      "es": "Sucot",
+      "fr": "Souccot"
+    },
+    "context": {
+      "en": "Hebrew holiday",
+      "es": "",
+      "fr": "fête hébraïque"
+    },
+    "altTermIds": "sukkot"
   },
   "susa": {
     "lblTemplate": "{Susa}",
@@ -2869,8 +3141,19 @@
     "mapxKey": "Sychar"
   },
   "syebat": {
-    "lblTemplate": "{Syebat}",
-    "mapxKey": ""
+    "lblTemplate": "Syebat",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Syebat",
+      "es": "Syebat",
+      "fr": "Syebat"
+    },
+    "context": {
+      "en": "Hebrew holiday",
+      "es": "",
+      "fr": "fête hébraïque"
+    },
+    "altTermIds": "syebat"
   },
   "syracuse": {
     "lblTemplate": "{Syracuse}",
@@ -2897,11 +3180,22 @@
     "mapxKey": "Tamar"
   },
   "tamus": {
-    "lblTemplate": "{Tamus}",
-    "mapxKey": ""
+    "lblTemplate": "Tamus",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Tamus",
+      "es": "Tamus",
+      "fr": "Tamus"
+    },
+    "context": {
+      "en": "Hebrew holiday",
+      "es": "",
+      "fr": "fête hébraïque"
+    },
+    "altTermIds": "tamus"
   },
   "tappuah": {
-    "lblTemplate": "{Tappuah}",
+    "lblTemplate": "{Tappuah.2}",
     "mapxKey": "Tappuah"
   },
   "tarsus": {
@@ -2913,8 +3207,19 @@
     "mapxKey": "TAURUS MTNS"
   },
   "tebet": {
-    "lblTemplate": "{Tebet}",
-    "mapxKey": ""
+    "lblTemplate": "Tebet",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Tebet",
+      "es": "Tebet",
+      "fr": "Tebet"
+    },
+    "context": {
+      "en": "Hebrew holiday",
+      "es": "",
+      "fr": "fête hébraïque"
+    },
+    "altTermIds": "tebet"
   },
   "tekoa": {
     "lblTemplate": "{Tekoa}",
@@ -3027,7 +3332,7 @@
     "altTermIds": "the_building"
   },
   "the_negev": {
-    "lblTemplate": "{TheNegev}",
+    "lblTemplate": "{Negeb}",
     "mapxKey": "THE NEGEV"
   },
   "theater": {
@@ -3065,11 +3370,11 @@
     "mapxKey": "Tiberias"
   },
   "tigris_river": {
-    "lblTemplate": "{TigrisRiver}",
+    "lblTemplate": "{Tigris}",
     "mapxKey": "Tigris River"
   },
   "timnah": {
-    "lblTemplate": "{Timnah}",
+    "lblTemplate": "{Timnah.1}",
     "mapxKey": "Timnah"
   },
   "tirzah": {
@@ -3077,8 +3382,19 @@
     "mapxKey": "Tirzah"
   },
   "tisyri": {
-    "lblTemplate": "{Tisyri}",
-    "mapxKey": ""
+    "lblTemplate": "Tisyri",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Tisyri",
+      "es": "Tisyri",
+      "fr": "Tisyri"
+    },
+    "context": {
+      "en": "Hebrew holiday",
+      "es": "",
+      "fr": "fête hébraïque"
+    },
+    "altTermIds": "tisyri"
   },
   "title_7church": {
     "lblTemplate": "Seven Churches of Asia",
@@ -3596,12 +3912,34 @@
     "mapxKey": "Troas"
   },
   "tu_bav": {
-    "lblTemplate": "{TuBav}",
-    "mapxKey": ""
+    "lblTemplate": "Tu B’Av",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Tu B’Av",
+      "es": "Tu B'Av",
+      "fr": "Tu B’Av"
+    },
+    "context": {
+      "en": "Hebrew holiday",
+      "es": "",
+      "fr": "fête hébraïque"
+    },
+    "altTermIds": "tu_bav"
   },
   "tu_bishvat": {
-    "lblTemplate": "{TuBishvat}",
-    "mapxKey": ""
+    "lblTemplate": "Tu BiShvat",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Tu BiShvat",
+      "es": "Tu BiShvat",
+      "fr": "Tu BiShvat"
+    },
+    "context": {
+      "en": "Hebrew holiday",
+      "es": "",
+      "fr": "fête hébraïque"
+    },
+    "altTermIds": "tu_bishvat"
   },
   "tubal": {
     "lblTemplate": "{Tubal}",
@@ -3660,6 +3998,7 @@
       "fr": ""
     },
     "context": {
+      "en": "Hebrew holiday",
       "es": "",
       "fr": ""
     },
@@ -3782,8 +4121,18 @@
     "altTermIds": "water_gate"
   },
   "way_of_shur": {
-    "lblTemplate": "{WayOfShur}",
-    "mapxKey": "Way of Shur"
+    "lblTemplate": "Way of {Shur}",
+    "mapxKey": "Way of Shur",
+    "gloss": {
+      "en": "Way of Shur",
+      "es": "Camino de Shur",
+      "fr": "Voie de Shur"
+    },
+    "context": {
+      "en": "",
+      "es": "",
+      "fr": ""
+    }
   },
   "way_of_the_philistines": {
     "lblTemplate": "Way of the Philistines",
@@ -3836,7 +4185,7 @@
     "mapxKey": "Wilderness of Paran"
   },
   "wilderness_of_zin": {
-    "lblTemplate": "{WildernessOfZin}",
+    "lblTemplate": "{Zin}",
     "mapxKey": "Wilderness of Zin"
   },
   "wine": {
@@ -3854,12 +4203,34 @@
     "altTermIds": "wine"
   },
   "yom_kippur": {
-    "lblTemplate": "{YomKippur}",
-    "mapxKey": ""
+    "lblTemplate": "Yom Kippur",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Yom Kippur",
+      "es": "Yom Kippur",
+      "fr": "Yom Kippour"
+    },
+    "context": {
+      "en": "Hebrew holiday",
+      "es": "",
+      "fr": "fête hébraïque"
+    },
+    "altTermIds": "yom_kippur"
   },
   "yom_teruah": {
-    "lblTemplate": "{YomTeruah}",
-    "mapxKey": ""
+    "lblTemplate": "Yom Teruah",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Yom Teruah",
+      "es": "Yom Teruah",
+      "fr": "Yom Teruah"
+    },
+    "context": {
+      "en": "Hebrew holiday",
+      "es": "",
+      "fr": "fête hébraïque"
+    },
+    "altTermIds": "yom_teruah"
   },
   "your_country": {
     "lblTemplate": "Your Country",
@@ -3902,12 +4273,20 @@
     "mapxKey": "Zarephath"
   },
   "zebulun": {
-    "lblTemplate": "{Zebulun}",
+    "lblTemplate": "{TerritoryOfZebulun}",
     "mapxKey": "ZEBULUN"
   },
   "ziklag": {
-    "lblTemplate": "{Ziklag}",
-    "mapxKey": "Ziklag"
+    "lblTemplate": "{q#Ziklag}",
+    "mapxKey": "Ziklag",
+    "gloss": {
+      "en": "Ziklag?",
+      "es": "Siclag?",
+      "fr": "Ziklag?"
+    },
+    "context": {
+      "en": "(uncertain location)"
+    }
   },
   "zoar": {
     "lblTemplate": "{Zoar}",
@@ -3926,7 +4305,7 @@
     "mapxKey": "Salem"
   },
   "mt_hor": {
-    "lblTemplate": "{MtHor}",
+    "lblTemplate": "{HorMount}",
     "mapxKey": "Mt. Hor"
   },
   "title_acts8": {
@@ -3951,20 +4330,16 @@
     "lblTemplate": "{Berothai}",
     "mapxKey": "Berothai"
   },
-  "besor": {
-    "lblTemplate": "{Besor}",
-    "mapxKey": "Besor"
-  },
   "beth-aven": {
-    "lblTemplate": "{Beth-aven}",
+    "lblTemplate": "{Beth-aven.2}",
     "mapxKey": "Beth-aven"
   },
   "bezek": {
-    "lblTemplate": "{Bezek}",
+    "lblTemplate": "{Bezek.2}",
     "mapxKey": "Bezek"
   },
   "brook_besor": {
-    "lblTemplate": "{BrookBesor}",
+    "lblTemplate": "{Besor}",
     "mapxKey": "Brook Besor"
   },
   "title_samuel_david": {
@@ -3986,7 +4361,7 @@
     "mapxKey": "Desert of Maon"
   },
   "dumah": {
-    "lblTemplate": "{Dumah}",
+    "lblTemplate": "{Dumah.2}",
     "mapxKey": "Dumah"
   },
   "ebenezer": {
@@ -4038,8 +4413,18 @@
     "altTermIds": "title_israel_tribes"
   },
   "jebus": {
-    "lblTemplate": "{Jebus}",
-    "mapxKey": "Jebus (Jerusalem)"
+    "lblTemplate": "{Jebus} ({Jerusalem})",
+    "mapxKey": "Jebus (Jerusalem)",
+    "gloss": {
+      "en": "Jebus (Jerusalem)",
+      "es": "",
+      "fr": ""
+    },
+    "context": {
+      "en": "Jebus is a town of the Jebusites that later became Jerusalem.",
+      "es": "",
+      "fr": ""
+    }
   },
   "jonah": {
     "lblTemplate": "{Jonah}",
@@ -4126,7 +4511,7 @@
     "mapxKey": "Tob"
   },
   "valley_elah": {
-    "lblTemplate": "{ValleyElah}",
+    "lblTemplate": "{ElahValley}",
     "mapxKey": "Valley of Elah"
   },
   "ziph": {

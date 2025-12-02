@@ -1,24 +1,4 @@
 {
-  "Ab": {
-    "gloss": {
-      "en": "Ab",
-      "es": "Ab",
-      "fr": "Ab"
-    },
-    "context": {
-      "en": "Hebrew month",
-      "es": "",
-      "fr": "mois hébraïque"
-    },
-    "terms": [
-      {
-        "termId": "ab",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
   "Abilene": {
     "gloss": {
       "en": "Abilene",
@@ -26,7 +6,7 @@
       "fr": "Abilene"
     },
     "context": {
-      "en": "a territory around the city of Abila, northwest of Damascus and ruled over by Lysanias",
+      "en": "A region around the city of Abila, northwest of Damascus, ruled over by Lysanias.",
       "es": "Nombre de lugar ubicado al noroeste de Damasco.",
       "fr": "un territoire autour de la ville d'Abila, au nord-ouest de Damas, gouverné par Lysanias"
     },
@@ -48,7 +28,7 @@
       "fr": "Accad"
     },
     "context": {
-      "en": "town; Mesopotamia",
+      "en": "A town in Mesopotamia, which was part of the kingdom of Nimrod in the region of Shinar.",
       "es": "Lugar en la región de Sinar.",
       "fr": "ville; Mésopotamie"
     },
@@ -70,7 +50,7 @@
       "fr": "Acco"
     },
     "context": {
-      "en": "town; territory of Asher",
+      "en": "A seaport town on the coast of the Mediterranean in the territory of Asher; later known as Ptolemais.",
       "es": "Nombre de lugar ocupado por los cananeos en el territorio de Aser.",
       "fr": "ville; territoire d'Asher"
     },
@@ -92,7 +72,7 @@
       "fr": "Achaïe"
     },
     "context": {
-      "en": "a Roman province including the most important parts of Greece",
+      "en": "A Roman province in Greece which included the northern part of the Peloponnese Peninsula and the city of Corinth. Many early Christian communities and missionary activities were located here.",
       "es": "Provincia romana en una zona importante de Grecia.",
       "fr": "une province romaine comprenant les parties les plus importantes de la Grèce"
     },
@@ -116,26 +96,6 @@
     ],
     "altTermIds": ""
   },
-  "Adar": {
-    "gloss": {
-      "en": "Adar",
-      "es": "Adar",
-      "fr": "Adar"
-    },
-    "context": {
-      "en": "Hebrew month",
-      "es": "",
-      "fr": "mois hébraïque"
-    },
-    "terms": [
-      {
-        "termId": "adar",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
   "Adramyttium": {
     "gloss": {
       "en": "Adramyttium",
@@ -143,7 +103,7 @@
       "fr": "Adramyttium"
     },
     "context": {
-      "en": "(derivative of Ἀδραμύττιον Adramyttium, not occurring in the NT",
+      "en": "A seaport town in Mysia.",
       "es": "Puerto ubicado en Misia, Asia Menor.",
       "fr": "(Dérivé de Ἀδραμύττιον Adramyttium, absent du Nouveau Testament)"
     },
@@ -165,7 +125,7 @@
       "fr": "mer Adriatique"
     },
     "context": {
-      "en": "",
+      "en": "The Adriatic Sea is the northernmost arm of the Mediterranean Sea, east of Italy.",
       "es": "",
       "fr": ""
     },
@@ -185,7 +145,7 @@
       "fr": "Adullam"
     },
     "context": {
-      "en": "location",
+      "en": "A town in the foothills of the territory of Judah where David and his men hid in a nearby cave (1 Samuel 22:1).",
       "es": "Nombre de lugar, en el territorio de Judá.",
       "fr": "emplacement"
     },
@@ -214,7 +174,7 @@
       "fr": "Énon"
     },
     "context": {
-      "en": "a place where John the Baptist was baptizing",
+      "en": "A town near Salim and the Jordan River where John the Baptist was baptizing (John 3:23).",
       "es": "Nombre de lugar en el valle del Jordán donde bautizaba Juan El Bautista\".",
       "fr": "un lieu où Jean-Baptiste baptisait"
     },
@@ -256,7 +216,7 @@
       "fr": "IA"
     },
     "context": {
-      "en": "town; territory of Ephraim",
+      "en": "Ai of Ephraim: A town near Bethel in the territory of Ephraim; probably to be identified with Aiath. After an initial defeat, the Canaanite town was eventually conquered by the Israelites (Joshua 7–8).",
       "es": "Nombre de lugar, en el territorio de Efraín.",
       "fr": "ville; territoire d'Éphraïm"
     },
@@ -308,7 +268,7 @@
       "fr": "Alep"
     },
     "context": {
-      "en": "town; Syria; Aleppo",
+      "en": "town in Syria",
       "es": "Ciudad de Alepo, en Siria.",
       "fr": "ville; Syrie; Alep"
     },
@@ -330,7 +290,7 @@
       "fr": "Alexandrie"
     },
     "context": {
-      "en": "",
+      "en": "A major city in Egypt located on the Mediterranean coast. It was founded by Alexander the Great. The city had a large Jewish population and later became a center of early Christianity.",
       "es": "",
       "fr": ""
     },
@@ -370,7 +330,7 @@
       "fr": "Ammon"
     },
     "context": {
-      "en": "son of Lot; Ben-Ammi; people, land",
+      "en": "A nation located east of the Jordan River. It was founded by Ben-Ammi, son of Lot (Genesis 19:38).",
       "es": "Grupo étnico que habitaba la región situada al este de Mar Muerto y se les consideraba descendientes de Lot.",
       "fr": "fils de Lot ; Ben-Ammi ; peuple, terre"
     },
@@ -531,7 +491,7 @@
       "fr": "Amphipolis"
     },
     "context": {
-      "en": "the capital of southeast Macedonia",
+      "en": "The capital of southeast Macedonia; Paul and Silas passed through on their way to Thessalonica.",
       "es": "Importante lugar del sureste de Macedonia, ubicado sobre la vía Egnatia.",
       "fr": "la capitale du sud-est de la Macédoine"
     },
@@ -553,7 +513,7 @@
       "fr": "Antioche"
     },
     "context": {
-      "en": "a city in Pisidia",
+      "en": "Antioch of Pisidia: A city in Pisidia, located on the Via Sebaste, where Paul traveled to during his first missionary journey.",
       "es": "Nombre de lugar en Pisidia.",
       "fr": "une ville de Pisidie"
     },
@@ -578,7 +538,7 @@
       "fr": "Antioche"
     },
     "context": {
-      "en": "a city in Syria",
+      "en": "Antioch of Syria: The capital of the Roman province Syria, located on the Orontes River, where followers of Jesus were first called Christians.",
       "es": "Ciudad en Siria.",
       "fr": "une ville de Syrie"
     },
@@ -612,7 +572,7 @@
       "fr": "Antipatris"
     },
     "context": {
-      "en": "a city in Judea",
+      "en": "A city rebuilt by Herod the Great, east of Joppa; Aphek in the Old Testament.",
       "es": "Estación militar situada entre Jerusalén y Cesarea.",
       "fr": "une ville de Judée"
     },
@@ -654,7 +614,7 @@
       "fr": "Aphek"
     },
     "context": {
-      "en": "town; Sharon; west of Shilo",
+      "en": "Aphek of Sharon: A town in the Sharon Plain, west of Shiloh; Antipatris in the New Testament.",
       "es": "Lugar en la llanura de Sarón, al oeste de Silo.",
       "fr": "ville; Sharon; à l'ouest de Shilo"
     },
@@ -678,7 +638,7 @@
       "fr": "Apollonia"
     },
     "context": {
-      "en": "a city in Macedonia",
+      "en": "A city in Macedonia located on the Via Egnatia.",
       "es": "Nombre de lugar en Macedonia.",
       "fr": "une ville de Macédoine"
     },
@@ -689,26 +649,6 @@
         "refs": [
           "044017001"
         ]
-      }
-    ],
-    "altTermIds": ""
-  },
-  "Apr": {
-    "gloss": {
-      "en": "Apr",
-      "es": "abr",
-      "fr": "Avr"
-    },
-    "context": {
-      "en": "3 letter abbreviation for the month",
-      "es": "",
-      "fr": "Abréviation à 3 lettres du mois"
-    },
-    "terms": [
-      {
-        "termId": "apr",
-        "transliteration": "",
-        "refs": []
       }
     ],
     "altTermIds": ""
@@ -740,7 +680,7 @@
       "fr": "Arabah"
     },
     "context": {
-      "en": "",
+      "en": "The deep depression through which the Jordan River flows, which runs from the south of the Sea of Galilee via the Dead Sea into the Gulf of Aqabah.",
       "es": "",
       "fr": ""
     },
@@ -781,7 +721,7 @@
       "fr": "Arabie"
     },
     "context": {
-      "en": "Arabia (probably a reference to the Sinai Peninsula",
+      "en": "A peninsula located east and south-east of Israel, consisting primarily of steppe and desert and inhabited by nomadic tribes.",
       "es": "Región ubicada al sureste de Palestina.",
       "fr": "Arabie (probablement une référence à la péninsule du Sinaï)"
     },
@@ -857,7 +797,7 @@
       "fr": "Arad"
     },
     "context": {
-      "en": "town; territory of Judah",
+      "en": "A Canaanite town located in the Negev, near the wilderness of Judah, conquered by the Israelites.",
       "es": "Hijo de Beriá, jefe de familia, de la tribu de Benjamín.",
       "fr": "ville; territoire de Juda"
     },
@@ -902,7 +842,7 @@
       "fr": "Aram"
     },
     "context": {
-      "en": "son of Shem; people, land",
+      "en": "A land and ethnic group located in Syria, regarded as descendants of Shem; often referred to as Syria in the Old Testament.",
       "es": "Hijo de Sem.",
       "fr": "fils de Sem ; peuple, terre"
     },
@@ -1061,14 +1001,14 @@
     ],
     "altTermIds": ""
   },
-  "AraratMtns": {
+  "Ararat": {
     "gloss": {
       "en": "Mountains of Ararat",
       "es": "Montañas de Ararat",
       "fr": "Montagnes d'Ararat"
     },
     "context": {
-      "en": "area and people; Armenia",
+      "en": "A mountainous area and nation, also known as Urartu; located in East Asia Minor (ABD); called in a prophecy to punish Babylon.",
       "es": "Región montañosa ubicada al este de Armenia.",
       "fr": "région et population ; Arménie"
     },
@@ -1093,7 +1033,7 @@
       "fr": "Arimathie"
     },
     "context": {
-      "en": "a city in Judea",
+      "en": "A city in Judea, northwest of Jerusalem; home to Joseph, who provided a tomb for Jesus after he was crucified (Matthew 27:57–61; Mark 15:42–47; Luke 23:50–56; John 19:38–42).",
       "es": "Nombre de lugar ubicado al noroeste de Jerusalén.",
       "fr": "une ville de Judée"
     },
@@ -1136,14 +1076,23 @@
     ],
     "altTermIds": ""
   },
-  "Aroer": {
+  "Aroer.3": {
+    "gloss": {
+      "en": "Aroer"
+    },
+    "context": {
+      "en": "Aroer of Judah: A town in the territory of Judah located to the West of the Jordan River."
+    },
+    "altTermIds": "Aroer.2"
+  },
+  "Aroer.2": {
     "gloss": {
       "en": "Aroer",
       "es": "Aroer",
       "fr": "Aroer"
     },
     "context": {
-      "en": "town; territory of Reuben",
+      "en": "Aroer of Reuben: A town in the territory of Reuben, located on the rim of the valley of the Arnon River.",
       "es": "pueblo; territorio de la tribu de Rubén",
       "fr": "ville; territoire de Ruben"
     },
@@ -1166,7 +1115,7 @@
         ]
       }
     ],
-    "altTermIds": ""
+    "altTermIds": "Aroer.3"
   },
   "Arphaxad": {
     "gloss": {
@@ -1197,7 +1146,7 @@
       "fr": "Arvad"
     },
     "context": {
-      "en": "town in Phoenicia",
+      "en": "A town on a small island off the coast of Phoenicia; its people are considered descendants of Canaan (ABD).",
       "es": "Lugar en Fenicia, al norte de Sidón.",
       "fr": "ville de Phénicie"
     },
@@ -1220,7 +1169,7 @@
       "fr": "Ashdod"
     },
     "context": {
-      "en": "town in Philistia",
+      "en": "A town in Philistia; one of the five cities of the Philistines.",
       "es": "Lugar filisteo.",
       "fr": "ville de Philistie"
     },
@@ -1249,14 +1198,14 @@
     ],
     "altTermIds": ""
   },
-  "Asher": {
+  "TerritoryOfAsher": {
     "gloss": {
       "en": "Asher",
       "es": "Aser",
       "fr": "Asher"
     },
     "context": {
-      "en": "son of Jacob; founder of tribe of Asher",
+      "en": "The land assigned to the tribe of Asher.",
       "es": "Hijo de Jacob y Zilpá, fundador de la tribu de Israel.",
       "fr": "fils de Jacob ; fondateur de la tribu d'Asher"
     },
@@ -1317,7 +1266,7 @@
       "fr": "Ashkelon"
     },
     "context": {
-      "en": "town in Philistia",
+      "en": "A town in Philistia; one of the five cities of the Philistines.",
       "es": "Lugar en el territorio de los filisteos.",
       "fr": "ville de Philistie"
     },
@@ -1349,7 +1298,7 @@
       "fr": "Ashtaroth"
     },
     "context": {
-      "en": "town; for Levites; territory of Manasseh",
+      "en": "A Levitical town in the territory of Manasseh, east of the Jordan River, assigned to the clan of Gershon; possibly to be identified with Beeshterah, Ashteroth-Karnaim, and Karnaim. It was the former residence of King Sihon of Heshbon and King Og of Bashan and conquered by the Israelites.",
       "es": "Nombre de lugar en el territorio de Manasés.",
       "fr": "ville; pour les Lévites; territoire de Manassé"
     },
@@ -1376,7 +1325,7 @@
       "fr": "Asie"
     },
     "context": {
-      "en": "the Roman province of Asia, primarily the western part of present-day Turkey",
+      "en": "The Roman province of Asia, primarily the western part of present-day Turkey.",
       "es": "Provincia romana, principalmente de la región de Asia Menor.",
       "fr": "la province romaine d'Asie, principalement la partie occidentale de la Turquie actuelle"
     },
@@ -1415,7 +1364,7 @@
       "fr": "Assur"
     },
     "context": {
-      "en": "Second son of Shem",
+      "en": "A city on the Tigris River and first capital of Assyria.",
       "es": "",
       "fr": "Deuxième fils de Sem"
     },
@@ -1438,7 +1387,7 @@
       "fr": "Assos"
     },
     "context": {
-      "en": "a city of Mysia",
+      "en": "A seaport city of Mysia where Paul met up with Luke during his third missionary journey.",
       "es": "Puerto del noroeste de Asia Menor.",
       "fr": "une ville de Mysie"
     },
@@ -1461,7 +1410,7 @@
       "fr": "Assyrie"
     },
     "context": {
-      "en": "land, empire, or people of Assyria",
+      "en": "A nation in northern Mesopotamia, with Nineveh as its capital; regarded as descendants of Shem.",
       "es": "Tierra de Asiria, imperio asirio, o la gente de Asiria.",
       "fr": "terre, empire ou peuple d'Assyrie"
     },
@@ -1618,7 +1567,7 @@
       "fr": "Athènes"
     },
     "context": {
-      "en": "a principal city of Greece",
+      "en": "A principal city of Greece where Paul preached at the Areopagus.",
       "es": "Importante ciudad de Grecia.",
       "fr": "une ville principale de Grèce"
     },
@@ -1663,7 +1612,7 @@
       "fr": "Attalia"
     },
     "context": {
-      "en": "a seaport in Pamphylia",
+      "en": "A seaport in Pamphylia where",
       "es": "Puerto de Panfilia.",
       "fr": "un port maritime en Pamphylie"
     },
@@ -1674,26 +1623,6 @@
         "refs": [
           "044014025"
         ]
-      }
-    ],
-    "altTermIds": ""
-  },
-  "Aug": {
-    "gloss": {
-      "en": "Aug",
-      "es": "ago",
-      "fr": "août"
-    },
-    "context": {
-      "en": "3 letter abbreviation for the month",
-      "es": "",
-      "fr": "Abréviation à 3 lettres du mois"
-    },
-    "terms": [
-      {
-        "termId": "aug",
-        "transliteration": "",
-        "refs": []
       }
     ],
     "altTermIds": ""
@@ -1745,7 +1674,7 @@
       "fr": "Azekah"
     },
     "context": {
-      "en": "town; territory of Judah",
+      "en": "A fortified town in the foothills of the territory of Judah.",
       "es": "Nombre de lugar, en el territorio de Judá.",
       "fr": "ville; territoire de Juda"
     },
@@ -1773,7 +1702,7 @@
       "fr": "Azotus"
     },
     "context": {
-      "en": "a city on the coast of southern Palestine",
+      "en": "A city on the coast of southern Palestine; Called Ashdod in the Old Testament.",
       "es": "Nombre de lugar en la costa sur de Palestina.",
       "fr": "une ville située sur la côte sud de la Palestine"
     },
@@ -1788,14 +1717,14 @@
     ],
     "altTermIds": ""
   },
-  "BaalZephon": {
+  "Baal-zephon": {
     "gloss": {
       "en": "Baal Zephon",
       "es": "Baal-zefón",
       "fr": "Baal Zephon"
     },
     "context": {
-      "en": "location along route of exodus",
+      "en": "A location in eastern Egypt, near the Sea of Reeds and west of Pi-Hahiroth; the Israelites camped near there during the exodus.",
       "es": "Nombre de lugar en la ruta del éxodo.",
       "fr": "emplacement le long de la route de l'exode"
     },
@@ -1819,7 +1748,7 @@
       "fr": "Babylone"
     },
     "context": {
-      "en": "City in Mesopotamia.",
+      "en": "An ancient city in southern Mesopotamia, located on the Euphrates River; capital of the Babylonian Empire.",
       "es": "Ciudad de Mesopotamia.",
       "fr": "Ville de Mésopotamie."
     },
@@ -2090,7 +2019,7 @@
       "fr": "Babylone"
     },
     "context": {
-      "en": "Empire in Mesopotamia with the city Babylon as its capital.",
+      "en": "A region in southern Mesopotamia through which the Euphrates and Tigris rivers flow.",
       "es": "Imperio en Mesopotamia con la ciudad de Babilonia como su capital.",
       "fr": "Empire de Mésopotamie avec Babylone pour capitale."
     },
@@ -2145,7 +2074,7 @@
       "fr": "Bashan"
     },
     "context": {
-      "en": "area; north-east of Jordan",
+      "en": "A region northeast of the Jordan River which was ruled by King Og and later assigned to half of the tribe of Manasseh.",
       "es": "Región ubicada al oriente del río Jordán.",
       "fr": "région; nord-est de la Jordanie"
     },
@@ -2219,7 +2148,7 @@
       "fr": "Belle porte"
     },
     "context": {
-      "en": "",
+      "en": "A gate of Herod's Temple in Jerusalem where a lame man was healed by Peter and John (Acts 3:1–10).",
       "es": "",
       "fr": ""
     },
@@ -2239,7 +2168,7 @@
       "fr": "Beersheba"
     },
     "context": {
-      "en": "town; territory of Simeon",
+      "en": "Beersheba in the Negev: A town located in the Negev, at the southern border of Judah; used especially in combination with Dan at the northern border of Israel to refer to all Israel.",
       "es": "Lugar ubicado al sur de Palestina.",
       "fr": "ville; territoire de Siméon"
     },
@@ -2328,14 +2257,14 @@
     ],
     "altTermIds": ""
   },
-  "Benjamin": {
+  "TerritoryOfBenjamin": {
     "gloss": {
       "en": "Benjamin",
       "es": "Benjamín",
       "fr": "Benjoin"
     },
     "context": {
-      "en": "son of Jacob; founder of tribe of Benjamin",
+      "en": "The land assigned to the tribe of Benjamin.",
       "es": "Hijo de Jacob y Raquel.",
       "fr": "fils de Jacob ; fondateur de la tribu de Benjamin"
     },
@@ -2511,7 +2440,7 @@
       "fr": "Bérée"
     },
     "context": {
-      "en": "a city in Macedonia",
+      "en": "A city in Macedonia where Paul and Silas traveled to after being driven out of Thessalonica.",
       "es": "Nombre de lugar al sur de Macedonia.",
       "fr": "une ville de Macédoine"
     },
@@ -2527,14 +2456,14 @@
     ],
     "altTermIds": ""
   },
-  "BethShean": {
+  "Beth-shan": {
     "gloss": {
       "en": "Beth Shean",
       "es": "Bet-seán",
       "fr": "Beth Shean"
     },
     "context": {
-      "en": "",
+      "en": "A border town in the territory of West Manasseh, near Zarethan, where Saul's body was hung after he was killed.",
       "es": "",
       "fr": ""
     },
@@ -2547,14 +2476,14 @@
     ],
     "altTermIds": "beth_shean"
   },
-  "BethShemesh": {
+  "Beth-shemesh": {
     "gloss": {
       "en": "Beth-Shemesh",
       "es": "Bet-semes",
       "fr": "Beth-Shemesh"
     },
     "context": {
-      "en": "town; for Levites; territory of Judah",
+      "en": "Beth-shemesh of Judah: A Levitical town in the territory of Judah, assigned to the clan of Aaron.",
       "es": "Lugar en el territorio de Judá.",
       "fr": "ville; pour les Lévites; territoire de Juda"
     },
@@ -2590,7 +2519,7 @@
       "fr": "Béthanie"
     },
     "context": {
-      "en": "a village on the Mount of Olives",
+      "en": "Bethany on the Mount of Olives: A village on the Mount of Olives, where Mary, Martha, and Lazarus lived (John 11:1).",
       "es": "Nombre de lugar en el Monte de los Olivos.",
       "fr": "un village sur le mont des Oliviers"
     },
@@ -2615,14 +2544,14 @@
     ],
     "altTermIds": "Βηθανία-1"
   },
-  "BethanyEast": {
+  "Bethany.2": {
     "gloss": {
       "en": "Bethany East of the Jordan",
       "es": "Betania",
       "fr": "Béthanie à l'est du Jourdain"
     },
     "context": {
-      "en": "a place on the east side of the Jordan where John baptized",
+      "en": "",
       "es": "Nombre de un lugar en el lado este del río Jordán donde Juan bautizaba a la gente.",
       "fr": "un lieu sur la rive est du Jourdain où Jean a baptisé"
     },
@@ -2644,7 +2573,7 @@
       "fr": "Béthel"
     },
     "context": {
-      "en": "town; territory of Ephraim",
+      "en": "Bethel of Ephraim: A town and cult center in the territory of Ephraim, near the border of Benjamin; also referred to as Beth-Aven, or simply Aven.",
       "es": "Nombre que en hebreo significa Casa de Dios\". Lugar al norte de Jerusalén.",
       "fr": "ville; territoire d'Éphraïm"
     },
@@ -2729,7 +2658,7 @@
       "fr": "Bethléem"
     },
     "context": {
-      "en": "a town south of Jerusalem",
+      "en": "Bethlehem of Judah: A town in the territory of Judah, southwest of Jerusalem, where Jesus was born; ancestral town of King David.",
       "es": "Pueblo de la región de Judea, al sur de Jerusalén.",
       "fr": "une ville au sud de Jérusalem"
     },
@@ -2796,14 +2725,14 @@
     ],
     "altTermIds": ""
   },
-  "Bethpeor": {
+  "Beth-peor": {
     "gloss": {
       "en": "Beth-peor",
       "es": "Bet-peor",
       "fr": "Beth-peor"
     },
     "context": {
-      "en": "village; territory of Reuben",
+      "en": "A town in Moab allotted to the tribe of Reuben, near where Moses introduced the Law to the Israelites.",
       "es": "Lugar en Moab, cerca del monte Pisgá.",
       "fr": "village; territoire de Ruben"
     },
@@ -2828,7 +2757,7 @@
       "fr": "Bethphage"
     },
     "context": {
-      "en": "a village near Jerusalem, perhaps east of Bethany",
+      "en": "A village east of Bethany (on the Mount of Olives), where Jesus sent two of his disciples to retrieve a donkey for him to ride upon as he entered Jerusalem (Matthew 21:1–11; Mark 11:1–11; Luke 19:28–40).",
       "es": "Nombre de lugar en el Monte de los Olivos.",
       "fr": "un village près de Jérusalem, peut-être à l'est de Béthanie"
     },
@@ -2852,7 +2781,7 @@
       "fr": "Bethsaïda"
     },
     "context": {
-      "en": "a place northeast of the Lake of Galilee",
+      "en": "A town northeast of the Sea of Galilee; hometown of Peter, Andrew, and Philip (John 1:44).",
       "es": "Nombre de lugar en la costa noreste del lago de Galilea.",
       "fr": "un lieu au nord-est du lac de Galilée"
     },
@@ -2880,7 +2809,7 @@
       "fr": "Bézer"
     },
     "context": {
-      "en": "town of refuge; for Levites; territory of Reuben",
+      "en": "A Levitical town of refuge in the wilderness in the territory of Reuben, assigned to the clan of Merari.",
       "es": "Lugar de refugio al este del río Jordán, en el territorio de Rubén.",
       "fr": "ville de refuge; pour les Lévites; territoire de Ruben"
     },
@@ -2905,7 +2834,7 @@
       "fr": "Bithynie"
     },
     "context": {
-      "en": "a province in northern Asia Minor",
+      "en": "A province in northern Asia Minor; Paul, Silas, and Timothy tried to enter while traveling through the province of Asia, but were not permitted by the Spirit of Jesus (Acts 16:7).",
       "es": "Región del norte de Asia Menor.",
       "fr": "une province du nord de l'Asie Mineure"
     },
@@ -3013,14 +2942,14 @@
     ],
     "altTermIds": ""
   },
-  "Bozrah": {
+  "Bozrah.2": {
     "gloss": {
       "en": "Bozrah",
       "es": "Bosra",
       "fr": "Bozrah"
     },
     "context": {
-      "en": "town; Edom",
+      "en": "Bozrah of Edom: The capital of Edom.",
       "es": "Localidad en Edom.",
       "fr": "ville; Édom"
     },
@@ -3130,7 +3059,7 @@
       "fr": "Césarée"
     },
     "context": {
-      "en": "Caesarea on the coast of Palestine, south of Mount Carmel",
+      "en": "A seaport on the coast of Palestine, south of Mount Carmel; home of Philip the evangelist.",
       "es": "#VALUE!",
       "fr": "Césarée, sur la côte palestinienne, au sud du mont Carmel"
     },
@@ -3166,7 +3095,7 @@
       "fr": "Césarée de Philippe"
     },
     "context": {
-      "en": "Caesarea Philippi, at the foot of Mount Hermon, named by Philip-2",
+      "en": "A city at the foot of Mount Hermon, where Peter makes his confession of Christ (Matthew 16:13–20; Mark 8:27–30)",
       "es": "#VALUE!",
       "fr": "Césarée de Philippe, au pied du mont Hermon, nommée par Philippe II"
     },
@@ -3189,7 +3118,7 @@
       "fr": "Cana"
     },
     "context": {
-      "en": "a city in Galilee",
+      "en": "A city in Galilee where Jesus turned water into wine; home of Jesus' disciple Nathanael.",
       "es": "Pueblo de Galilea.",
       "fr": "une ville de Galilée"
     },
@@ -3214,7 +3143,7 @@
       "fr": "Canaan"
     },
     "context": {
-      "en": "son of Ham; ancestor of the Canaanites",
+      "en": "The region in the southern Levant inhabited by people who were regarded as descendants of Canaan, son of Ham, son of Noah; settled by Abraham.",
       "es": "Hijo de Cam, antepasado de los cananeos.",
       "fr": "fils de Cham ; ancêtre des Cananéens"
     },
@@ -3244,7 +3173,7 @@
       "fr": "Capharnaüm"
     },
     "context": {
-      "en": "a city on the Lake of Galilee",
+      "en": "A city on the northwest coast of the Sea of Galilee. After leaving Nazareth, Jesus moved here where he did much of his ministry.",
       "es": "Nombre de lugar a orillas del lago de Galilea.",
       "fr": "une ville sur le lac de Galilée"
     },
@@ -3281,7 +3210,7 @@
       "fr": "Cappadoce"
     },
     "context": {
-      "en": "a province in the interior of Asia Minor",
+      "en": "A province in the interior of Asia Minor; some of the crowd who were at Pentecost were from here (Acts 2:5–13).",
       "es": "Provincia ubicada al este de Asia Menor.",
       "fr": "une province de l'intérieur de l'Asie Mineure"
     },
@@ -3304,7 +3233,7 @@
       "fr": "Carchemish"
     },
     "context": {
-      "en": "town; on the Euphrates",
+      "en": "A town on the Euphrates River where Nebuchadnezzar defeated the Assyrians and the Egyptians (Jer 46:1–2).",
       "es": "Nombre de lugar a orillas del río Éufrates.",
       "fr": "ville; sur l'Euphrate"
     },
@@ -3328,7 +3257,7 @@
       "fr": "Carthage"
     },
     "context": {
-      "en": "",
+      "en": "An ancient seaport city on the northern coast of Africa.",
       "es": "",
       "fr": ""
     },
@@ -3388,7 +3317,7 @@
       "fr": "Cauda"
     },
     "context": {
-      "en": "a small island south of Crete",
+      "en": "A small island south of Crete which Paul passed on his voyage to Rome, prior to the shipwreck.",
       "es": "Pequeña isla del sur de Creta.",
       "fr": "une petite île au sud de la Crète"
     },
@@ -3403,14 +3332,14 @@
     ],
     "altTermIds": ""
   },
-  "Cenchrea": {
+  "Cenchreae": {
     "gloss": {
       "en": "Cenchrea",
       "es": "Cencrea",
       "fr": "Cenchrée"
     },
     "context": {
-      "en": "a seaport of the city of Corinth",
+      "en": "A seaport of the city of Corinth; home of Phoebe who was a servant of the church there.",
       "es": "Puerto de la ciudad de Corinto.",
       "fr": "un port maritime de la ville de Corinthe"
     },
@@ -3433,7 +3362,7 @@
       "fr": "Chaldée"
     },
     "context": {
-      "en": "descendant of Chesed, son of Nahor;  their land",
+      "en": "The land in lower Mesopotamia inhabited by the descendants of Chesed, son of Nahor.",
       "es": "Pueblo semita que hablaba una lengua aramea.",
       "fr": "descendant de Chesed, fils de Nahor ; leur terre"
     },
@@ -3525,26 +3454,6 @@
     ],
     "altTermIds": ""
   },
-  "Chanukah": {
-    "gloss": {
-      "en": "Chanukah",
-      "es": "Janucá",
-      "fr": "Hanoukka"
-    },
-    "context": {
-      "en": "Hebrew month",
-      "es": "",
-      "fr": "mois hébraïque"
-    },
-    "terms": [
-      {
-        "termId": "chanukah",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
   "Chios": {
     "gloss": {
       "en": "Chios",
@@ -3552,7 +3461,7 @@
       "fr": "Chios"
     },
     "context": {
-      "en": "an island, with a city of the same name, in the Aegean Sea",
+      "en": "An island, with a city of the same name, in the Aegean Sea; Paul and his companions passed the island while traveling to Jerusalem.",
       "es": "Isla del mar Egeo, frente a la costa oeste del Asia Menor.",
       "fr": "une île, avec une ville du même nom, dans la mer Égée"
     },
@@ -3574,7 +3483,7 @@
       "fr": "Chorazine"
     },
     "context": {
-      "en": "a city in Galilee",
+      "en": "A city in Galilee on which Jesus pronounced woe due to its inhabitants lack of repentance.",
       "es": "Ciudad de la costa del mar de Galilea.",
       "fr": "une ville de Galilée"
     },
@@ -3597,7 +3506,7 @@
       "fr": "Cilicie"
     },
     "context": {
-      "en": "a province in the southeast corner of Asia Minor",
+      "en": "A province in the southeast corner of Asia Minor; Paul was from Tarsus, the capital city of the province, and traveled through the region during his second missionary journey.",
       "es": "Región ubicada al sureste de Asia Menor.",
       "fr": "une province située dans le coin sud-est de l'Asie Mineure"
     },
@@ -3626,7 +3535,7 @@
       "fr": "Cnide"
     },
     "context": {
-      "en": "a peninsula on the southwest coast of Asia Minor",
+      "en": "A seaport on the southwest coast of Asia Minor; Paul and his companions stopped here during the voyage to Rome, prior to encountering the storm at sea.",
       "es": "Península en el suroeste de la costa de Asia Menor.",
       "fr": "une péninsule située sur la côte sud-ouest de l'Asie Mineure"
     },
@@ -3648,7 +3557,7 @@
       "fr": "Colosses"
     },
     "context": {
-      "en": "a city in Phrygia in Asia Minor",
+      "en": "A city in Phrygia in Asia Minor near Hierapolis and Laodicea; the letter to the Colossians was addressed to the church there.",
       "es": "Provincia romana de Asia.",
       "fr": "une ville de Phrygie en Asie Mineure"
     },
@@ -3670,7 +3579,7 @@
       "fr": "Corinthe"
     },
     "context": {
-      "en": "a city in Greece",
+      "en": "A city in Greece where Paul ministered for a year and a half (Acts 18:11); Paul wrote at least two letters to the church here.",
       "es": "Ciudad en Grecia.",
       "fr": "une ville de Grèce"
     },
@@ -3717,7 +3626,7 @@
       "fr": "Cos"
     },
     "context": {
-      "en": "an island in the Aegean Sea",
+      "en": "An island in the Aegean Sea where Paul's ship made a stop on his journey to Jerusalem.",
       "es": "Isla ubicada en la costa suroeste de Asia Menor.",
       "fr": "une île de la mer Égée"
     },
@@ -3739,7 +3648,7 @@
       "fr": "Tribunal"
     },
     "context": {
-      "en": "courtyard, enclosure",
+      "en": "An area enclosed by walls or buildings; part of the temple complex.",
       "es": "",
       "fr": "cour, enclos"
     },
@@ -3951,7 +3860,7 @@
       "fr": "Crète"
     },
     "context": {
-      "en": "an island south of Greece",
+      "en": "An island in the Mediterranean Sea, south of Greece, where Titus ministered (Tit 1:5).",
       "es": "Isla del sur de Grecia.",
       "fr": "une île au sud de la Grèce"
     },
@@ -3970,14 +3879,14 @@
     ],
     "altTermIds": ""
   },
-  "Cush": {
+  "Cush.2": {
     "gloss": {
       "en": "Cush",
       "es": "Cus",
       "fr": "Cush"
     },
     "context": {
-      "en": "oldest son of Ham, son of Noah",
+      "en": "Cush Nation: An ethnic group and their territory; regarded as descendants of Cush, son of Ham.",
       "es": "Hijo de Cam.",
       "fr": "fils aîné de Cham, fils de Noé"
     },
@@ -4004,7 +3913,7 @@
       "fr": "Chypre"
     },
     "context": {
-      "en": "an island off the south coast of Asia Minor",
+      "en": "An island off the south coast of Asia Minor; Paul and Barnabas ministered here during Paul's first missionary journey (Acts 13:4–12).",
       "es": "Isla del Mediterráneo oriental.",
       "fr": "une île au large de la côte sud de l'Asie Mineure"
     },
@@ -4050,7 +3959,7 @@
       "fr": "Cyrène"
     },
     "context": {
-      "en": "a city on the coast of north Africa",
+      "en": "A city on the coast of North Africa and its people; home of Simon, who was forced to carry the cross of Christ (Matthew 27:32–44).",
       "es": "Puerto ubicado en la costa norte de África.",
       "fr": "une ville sur la côte de l'Afrique du Nord"
     },
@@ -4072,7 +3981,7 @@
       "fr": "Dalmatie"
     },
     "context": {
-      "en": "the southern part of Illyricum",
+      "en": "The southern part of Illyricum.",
       "es": "Parte sur de la provincia romana de IIiria, al este del Adriático.",
       "fr": "la partie sud de l'Illyrie"
     },
@@ -4094,7 +4003,7 @@
       "fr": "Damas"
     },
     "context": {
-      "en": "the capital of Syria",
+      "en": "A town in Syria; capital of one of the Aramaean kingdoms. Paul was converted on the road to Damascus (Acts 9:1–9).",
       "es": "Capital de Siria.",
       "fr": "la capitale de la Syrie"
     },
@@ -4130,14 +4039,14 @@
     ],
     "altTermIds": "דּוּמֶשֶׂק"
   },
-  "Dan": {
+  "TerritoryOfDan": {
     "gloss": {
       "en": "Dan",
       "es": "Dan",
       "fr": "Dan"
     },
     "context": {
-      "en": "town; territory of Dan",
+      "en": "The land assigned to the tribe of Dan.",
       "es": "Poblado en el territorio de Dan, al extremo norte de Palestina.",
       "fr": "ville; territoire de Dan"
     },
@@ -4172,14 +4081,14 @@
     ],
     "altTermIds": ""
   },
-  "DanLaish": {
+  "Laish": {
     "gloss": {
-      "en": "Dan (Laish)",
-      "es": "Dan (Lais)",
-      "fr": "Dan (Laish)"
+      "en": "Laish",
+      "es": "Lais",
+      "fr": "Laish"
     },
     "context": {
-      "en": "previous name of town of Dan",
+      "en": "",
       "es": "Antiguo nombre de la ciudad de Dan, ubicada en el extremo norte de Palestina.",
       "fr": "ancien nom de la ville de Dan"
     },
@@ -4217,14 +4126,14 @@
     ],
     "altTermIds": ""
   },
-  "DeadSea": {
+  "SaltSea": {
     "gloss": {
       "en": "Dead Sea",
       "es": "Mar Muerto",
       "fr": "mer Morte"
     },
     "context": {
-      "en": "literally, the salt sea; inland lake in the rift valley in Israel, with no outlet and high salt content",
+      "en": "A large body of salt water (literally \"the sea of salt\") located in the basin of the Jordan Valley, east of Judah; the Jordan River flows from the north into the northern part of this sea. The water is so salty that no living organism inhabits it.",
       "es": "Significa literalmente “mar salado”; lago interior en el valle del rift en Israel, sin salida y alto contenido de sal",
       "fr": "Littéralement, la mer de sel ; lac intérieur de la vallée du Rift en Israël, sans émissaire et à forte salinité."
     },
@@ -4254,7 +4163,7 @@
       "fr": "Débir"
     },
     "context": {
-      "en": "town; for priests; territory of Judah",
+      "en": "Debir of Judah: A Levitical town in the hill country of the territory of Judah, assigned to the clan of Aaron; formerly called Kiriath-Sepher and also known as Kiriath-Sannah. It was captured by Othniel, Israel's first judge (Judges 1:11–13).",
       "es": "Poblado ubicado en el territorio de Judá.",
       "fr": "ville; pour les prêtres; territoire de Juda"
     },
@@ -4278,26 +4187,6 @@
     ],
     "altTermIds": ""
   },
-  "Dec": {
-    "gloss": {
-      "en": "Dec",
-      "es": "dic",
-      "fr": "Déc"
-    },
-    "context": {
-      "en": "3 letter abbreviation for the month",
-      "es": "",
-      "fr": "Abréviation à 3 lettres du mois"
-    },
-    "terms": [
-      {
-        "termId": "dec",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
   "Decapolis": {
     "gloss": {
       "en": "Decapolis",
@@ -4305,7 +4194,7 @@
       "fr": "Décapole"
     },
     "context": {
-      "en": "a league of ten cities in a region east of the Jordan",
+      "en": "A league of ten cities in a region southeast of the Sea of Galilee, where Jesus healed a deaf man (Matthew 27:31–37; Mark 15:21–32).",
       "es": "Ciudad de la región al oriente del Jordán.",
       "fr": "une ligue de dix villes dans une région à l'est du Jourdain"
     },
@@ -4329,7 +4218,7 @@
       "fr": "Derbe"
     },
     "context": {
-      "en": "a city in Lycaonia",
+      "en": "A city in Lycaonia, southeast of Lystra; Paul ministered here during his missionary journeys.",
       "es": "Pueblo de Licaonia.",
       "fr": "une ville de Lycaonia"
     },
@@ -4353,7 +4242,7 @@
       "fr": "Dibon"
     },
     "context": {
-      "en": "town; territory of Reuben, Moab",
+      "en": "Dibon of Moab: A town in Moab said to be built by the tribe of Gad, but also attributed to the tribe of Reuben.",
       "es": "Poblado ubicado en el territorio de Rubén.",
       "fr": "ville; territoire de Ruben, Moab"
     },
@@ -4384,7 +4273,7 @@
       "fr": "Dor"
     },
     "context": {
-      "en": "town; territory of Manasseh",
+      "en": "A coastal town in the territory of West Manasseh, north of Caesarea.",
       "es": "Poblado ubicado en el territorio de Manasés.",
       "fr": "ville; territoire de Manassé"
     },
@@ -4411,7 +4300,7 @@
       "fr": "Dothan"
     },
     "context": {
-      "en": "town",
+      "en": "A town in northern Israel, probably to be identified with Tel Dothan; Joseph went to meet his brothers there before they plotted to kill him (Genesis 37:17).",
       "es": "Nombre de lugar.",
       "fr": "ville"
     },
@@ -4434,7 +4323,7 @@
       "fr": "Est"
     },
     "context": {
-      "en": "the compass direction East",
+      "en": "",
       "es": "",
       "fr": "direction de la boussole Est"
     },
@@ -4454,7 +4343,7 @@
       "fr": "Ecbatane"
     },
     "context": {
-      "en": "town; in Media",
+      "en": "The capital city of the province of Media, where a scroll containing the decrees of King Darius were found (Ezra 6).",
       "es": "ciudad; en Media",
       "fr": "ville; dans les médias"
     },
@@ -4476,7 +4365,7 @@
       "fr": "Édom"
     },
     "context": {
-      "en": "people, land; Esau and descendants of Esau",
+      "en": "A nation located south of the Dead Sea; considered descendants of Esau.",
       "es": "Primer hijo de Isaac, conocido también como Esaú. Tierra de Edom.",
       "fr": "peuple, terre ; Ésaü et les descendants d'Ésaü"
     },
@@ -4623,7 +4512,7 @@
       "fr": "Edrei"
     },
     "context": {
-      "en": "town; Bashan, Manasseh",
+      "en": "Edrei of Og: A town in Bashan; part of the kingdom of Og, and later assigned to Manasseh.",
       "es": "Localidad en el territorio de Basán, parte del reinado de Og.",
       "fr": "ville; Bashan, Manassé"
     },
@@ -4646,12 +4535,12 @@
   },
   "Eglon": {
     "gloss": {
-      "en": "Eglon?",
-      "es": "Eglón?",
-      "fr": "Églon ?"
+      "en": "Eglon",
+      "es": "Eglón",
+      "fr": "Églon"
     },
     "context": {
-      "en": "town; territory of Judah",
+      "en": "A town in the foothills of the territory of Judah captured by Joshua (Joshua 10:35).",
       "es": "Nombre de lugar, en el territorio de Judá.",
       "fr": "ville; territoire de Juda"
     },
@@ -4680,7 +4569,7 @@
       "fr": "Egypte"
     },
     "context": {
-      "en": "Egypt",
+      "en": "A nation and their territory; regarded as founded by one of the sons of Ham with the same name.",
       "es": "Nombre de lugar al noreste de África.",
       "fr": "Égypte"
     },
@@ -5327,7 +5216,7 @@
       "fr": "Ekron"
     },
     "context": {
-      "en": "town in Philistia",
+      "en": "A town in Philistia; one of the five cities of the Philistines.",
       "es": "Nombre de lugar en el territorio de los cananeos.",
       "fr": "ville de Philistie"
     },
@@ -5368,7 +5257,7 @@
       "fr": "Élam"
     },
     "context": {
-      "en": "a person who is a native of Elam",
+      "en": "A nation located between Mesopotamia and Persia; regarded as founded by a person with the same name.",
       "es": "Habitante de Elam.",
       "fr": "une personne originaire d'Elam"
     },
@@ -5393,12 +5282,10 @@
   },
   "Elim": {
     "gloss": {
-      "en": "Elim?",
-      "es": "Elim?",
-      "fr": "Éliminer ?"
+      "en": "Elim"
     },
     "context": {
-      "en": "location near Mount Sinai",
+      "en": "A location in the Sinai Peninsula, not far from the Sea of Reeds, containing 12 springs of water and 70 palm trees; the Israelites encamped their on their way from Egypt to Canaan.",
       "es": "Oasis posiblemente situado al borde del Mar Rojo, al sudoeste de Suez.",
       "fr": "emplacement près du mont Sinaï"
     },
@@ -5416,26 +5303,6 @@
     ],
     "altTermIds": ""
   },
-  "Elul": {
-    "gloss": {
-      "en": "Elul",
-      "es": "Elul",
-      "fr": "Elul"
-    },
-    "context": {
-      "en": "Hebrew month",
-      "es": "",
-      "fr": "mois hébraïque"
-    },
-    "terms": [
-      {
-        "termId": "elul",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
   "Emmaus": {
     "gloss": {
       "en": "Emmaus",
@@ -5443,7 +5310,7 @@
       "fr": "Emmaüs"
     },
     "context": {
-      "en": "a village in Judea, not far from Jerusalem",
+      "en": "A village in Judea, not far from Jerusalem, where Jesus appeared to two disciples after his resurrection (Luke 24:13–35).",
       "es": "Pueblo ubicado a once kilómetros de Jerusalén.",
       "fr": "un village de Judée, non loin de Jérusalem"
     },
@@ -5458,14 +5325,14 @@
     ],
     "altTermIds": ""
   },
-  "Endor": {
+  "En-dor": {
     "gloss": {
       "en": "Endor",
       "es": "Endor",
       "fr": "Endor"
     },
     "context": {
-      "en": "",
+      "en": "A town in the territory of Issachar but allotted to Manasseh, where Saul consulted with a medium (1 Samuel 28:7–25).",
       "es": "",
       "fr": ""
     },
@@ -5485,7 +5352,7 @@
       "fr": "En-Gedi"
     },
     "context": {
-      "en": "town; territory of Judah",
+      "en": "An oasis in the wilderness of the territory of Judah, on the western shore of the Dead Sea; also known as Hazezon-Tamar.",
       "es": "Nombre de lugar, en el territorio de Judá.",
       "fr": "ville; territoire de Juda"
     },
@@ -5505,14 +5372,14 @@
     ],
     "altTermIds": ""
   },
-  "EnrogelSpring": {
+  "En-rogel": {
     "gloss": {
       "en": "Enrogel Spring",
       "es": "Manantial de Roguel",
       "fr": "Enrogel Spring"
     },
     "context": {
-      "en": "",
+      "en": "A spring on the boundary between the territories of Judah and Benjamin.",
       "es": "",
       "fr": ""
     },
@@ -5532,7 +5399,7 @@
       "fr": "Éphèse"
     },
     "context": {
-      "en": "a seaport in the western part of the Roman province of Asia",
+      "en": "A seaport in the western part of the Roman province of Asia; one of the seven cities addressed in Revelation. The letter of Ephesians was addressed to the church there.",
       "es": "Puerto y capital de la provincia romana de Asia Menor. Lugar famoso por su templo a la diosa Artemisa.",
       "fr": "un port maritime situé dans la partie occidentale de la province romaine d'Asie"
     },
@@ -5562,14 +5429,14 @@
     ],
     "altTermIds": ""
   },
-  "Ephraim": {
+  "TerritoryOfEphraim": {
     "gloss": {
       "en": "Ephraim",
       "es": "Efraín",
       "fr": "Éphraïm"
     },
     "context": {
-      "en": "a city of uncertain location",
+      "en": "The land assigned to the tribe of Ephraim.",
       "es": "Nombre de lugar en el desierto, probablemente al noreste de Jerusalén.",
       "fr": "une ville de localisation incertaine"
     },
@@ -5761,7 +5628,7 @@
       "fr": "Éphrat"
     },
     "context": {
-      "en": "town; territory of Judah",
+      "en": "A town in the territory of Judah where Jacob buried Rachel, his wife; also known as Ephrathah and Bethlehem.",
       "es": "Lugar cerca de Betel, ubicado en el territorio de Judá.",
       "fr": "ville; territoire de Juda"
     },
@@ -5809,7 +5676,7 @@
       "fr": "Etham"
     },
     "context": {
-      "en": "location along the route of the Exodus",
+      "en": "A location in eastern Egypt near Succoth and on the edge of the desert, where the Israelites encamped on their way from Egypt to Canaan. When setting out from Etham they turned back in the direction of Pi-Hahiroth, and after having crossed the Sea of Reeds the Israelites passed through the desert of Etham.",
       "es": "Lugar a lo largo de la ruta del Éxodo.",
       "fr": "emplacement le long de la route de l'Exode"
     },
@@ -5829,7 +5696,7 @@
       "fr": "Ethiopie"
     },
     "context": {
-      "en": "A country in Africa.",
+      "en": "A country south of Egypt; approximately equivalent to Cush.",
       "es": "Un país de África.",
       "fr": "Un pays d'Afrique."
     },
@@ -5844,14 +5711,14 @@
     ],
     "altTermIds": ""
   },
-  "EuphratesRiver": {
+  "Euphrates": {
     "gloss": {
       "en": "Euphrates River",
       "es": "Río Éufrates",
       "fr": "fleuve Euphrate"
     },
     "context": {
-      "en": "river",
+      "en": "A large river in Mesopotamia; one of the four rivers flowing from the garden of Eden.",
       "es": "Río en Mesopotamia.",
       "fr": "rivière"
     },
@@ -5904,14 +5771,14 @@
     ],
     "altTermIds": ""
   },
-  "EzionGeber": {
+  "Ezion-geber": {
     "gloss": {
       "en": "Ezion Geber",
       "es": "Ezión-geber",
       "fr": "Ezion Geber"
     },
     "context": {
-      "en": "town; Gulf of Aqaba",
+      "en": "A seaport town on the Gulf of Aqaba, near Elath, where the Israelites camped on their journey from Egypt to Canaan.",
       "es": "Nombre de lugar en la ruta del éxodo.",
       "fr": "ville; golfe d'Aqaba"
     },
@@ -5939,7 +5806,7 @@
       "fr": "Fair Havens"
     },
     "context": {
-      "en": "a bay on the south coast of Crete",
+      "en": "A bay on the south coast of Crete; Paul's ship sought refuge from the windy sea on his voyage to Rome.",
       "es": "Bahía en el sur de la isla de Creta.",
       "fr": "une baie sur la côte sud de la Crète"
     },
@@ -5954,26 +5821,6 @@
     ],
     "altTermIds": ""
   },
-  "Feb": {
-    "gloss": {
-      "en": "Feb",
-      "es": "feb",
-      "fr": "Fév"
-    },
-    "context": {
-      "en": "3 letter abbreviation for the month",
-      "es": "",
-      "fr": "Abréviation à 3 lettres du mois"
-    },
-    "terms": [
-      {
-        "termId": "feb",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
   "FieldOfBlood": {
     "gloss": {
       "en": "Field of Blood",
@@ -5981,7 +5828,7 @@
       "fr": "Champ de sang"
     },
     "context": {
-      "en": "(an Aramaic term meaning field of blood",
+      "en": "",
       "es": "Nombre de lugar que en arameo significa Campo de Sangre\".",
       "fr": "(un terme araméen signifiant champ de sang)"
     },
@@ -6003,7 +5850,7 @@
       "fr": "Forum d'Appius"
     },
     "context": {
-      "en": "a market town south of Rome",
+      "en": "A market town south of Rome which Paul visited on his way to Rome.",
       "es": "Lugar de mercado al sur de Roma.",
       "fr": "une ville de marché au sud de Rome"
     },
@@ -6018,14 +5865,14 @@
     ],
     "altTermIds": ""
   },
-  "Gad": {
+  "TerritoryOfGad": {
     "gloss": {
       "en": "Gad",
       "es": "Gad",
       "fr": "Gad"
     },
     "context": {
-      "en": "man, tribe, and territory; seventh son of Jacob and first son of Zilpah, slave of Leah; founder of Gad, a tribe of Israel",
+      "en": "The land assigned to the tribe of Gad.",
       "es": "Hijo de Jacob y fundador de la tribu de Gad.",
       "fr": "homme, tribu et territoire ; septième fils de Jacob et premier fils de Zilpa, esclave de Léa ; fondateur de Gad, tribu d'Israël"
     },
@@ -6099,7 +5946,7 @@
       "fr": "Gadara"
     },
     "context": {
-      "en": "a person who lives in or is a native of Gadara",
+      "en": "Gadara of the Decapolis: A Decapolis city southwest of the Sea of Galilee; modern-day Umm Qais.",
       "es": "Habitante de Gadara o Gerasa.",
       "fr": "une personne qui vit à Gadara ou qui en est originaire"
     },
@@ -6121,7 +5968,7 @@
       "fr": "Galatie"
     },
     "context": {
-      "en": "a district in the Roman province of Asia",
+      "en": "A district in the Roman province of Asia; the letter to the Galatians is addressed to the church here.",
       "es": "Nombre de lugar en la provincia romana de Asia Menor.",
       "fr": "un district de la province romaine d'Asie"
     },
@@ -6146,7 +5993,7 @@
       "fr": "Galilée"
     },
     "context": {
-      "en": "a district in the northern part of Palestine",
+      "en": "A region located in the northernmost part of Israel where most of Jesus' ministry took place.",
       "es": "Región en el norte de Palestina.",
       "fr": "un district du nord de la Palestine"
     },
@@ -6229,12 +6076,12 @@
   },
   "Gath": {
     "gloss": {
-      "en": "Gath?",
-      "es": "Gat?",
-      "fr": "Gath ?"
+      "en": "Gath",
+      "es": "Gat",
+      "fr": "Gath"
     },
     "context": {
-      "en": "town in Philistia",
+      "en": "A town in Philistia; one of the five cities of the Philistines.",
       "es": "Poblado al sur de Palestina.",
       "fr": "ville de Philistie"
     },
@@ -6286,7 +6133,7 @@
       "fr": "Gaza"
     },
     "context": {
-      "en": "a city in southwest Palestine on a principal road to Egypt",
+      "en": "A town in Philistia; one of the five cities of the Philistines.",
       "es": "Ciudad filistea al sureste de Palestina, ubicada en la ruta comercial de Egipto.",
       "fr": "une ville du sud-ouest de la Palestine, située sur une route principale menant à l'Égypte"
     },
@@ -6326,14 +6173,14 @@
     ],
     "altTermIds": "עַזָּה"
   },
-  "GebalByblos": {
+  "Gebal": {
     "gloss": {
       "en": "Gebal (Byblos)",
       "es": "Gebal",
       "fr": "Gebal (Byblos)"
     },
     "context": {
-      "en": "town; in Phoenicia",
+      "en": "Gebal Byblos: A town in Phoenicia, north of Israel, and functioning as the seaport of the major city of Byblos, which used to trade with Tyre.",
       "es": "Lugar en la costa de Fenicia, al norte de Tiro.",
       "fr": "ville; en Phénicie"
     },
@@ -6355,7 +6202,7 @@
       "fr": "Génésareth"
     },
     "context": {
-      "en": "a fertile plain south of Capernaum",
+      "en": "A fertile plain on the northwest shore of the Sea of Galilee, south of Capernaum, where Jesus healed many sick people (Matthew 14:34–36; Mark 6:53–56).",
       "es": "Llanura fértil en la orilla noroeste del Lago de Galilea.",
       "fr": "une plaine fertile au sud de Capharnaüm"
     },
@@ -6378,7 +6225,7 @@
       "fr": "Gerasa"
     },
     "context": {
-      "en": "a person who lives in or is a native of Gerasa, a city in Peraea, east of the Jordan",
+      "en": "A city in Perea, east of the Jordan and southeast of the Sea of Galilee; one of the cities of the Decapolis. Jesus cast out many demons from a man while in the region near there (Mark 5:1–20; Luke 8:26–39).",
       "es": "Habitante de Gerasa.",
       "fr": "une personne qui vit à Gerasa, ville de Pérée, à l'est du Jourdain, ou qui en est originaire"
     },
@@ -6402,7 +6249,7 @@
       "fr": "Gethsémani"
     },
     "context": {
-      "en": "a garden at the foot of the Mount of Olives",
+      "en": "A garden at the foot of the Mount of Olives, where Jesus was arrested (Matthew 26:47–56; Mark 14:43–52).",
       "es": "Huerto cercano al monte de los Olivos donde fue arrestado Jesús.",
       "fr": "un jardin au pied du mont des Oliviers"
     },
@@ -6425,7 +6272,7 @@
       "fr": "Gezer"
     },
     "context": {
-      "en": "town; for Levites; territory of Ephraim",
+      "en": "A Levitical town in the territory of Ephraim, assigned to the clan of Kohath; possibly to be identified with Gob. It was conquered by Joshua and the Israelites but later retaken by the Canaanites.",
       "es": "Poblado ubicado en el territorio de Efraín.",
       "fr": "ville; pour les Lévites; territoire d'Éphraïm"
     },
@@ -6460,7 +6307,7 @@
       "fr": "Gibeah"
     },
     "context": {
-      "en": "town; territory of Judah",
+      "en": "Gibeah of Judah: A town located in the hilly country of the territory of Judah.",
       "es": "Lugar en el territorio de Judá.",
       "fr": "ville; territoire de Juda"
     },
@@ -6483,7 +6330,7 @@
       "fr": "Gibeon"
     },
     "context": {
-      "en": "town; territory of Benjamin",
+      "en": "A town in the territory of Benjamin; one of the four Hivite cities that made a covenant with Joshua (Joshua 9:17–18).",
       "es": "Lugar en el territorio de Benjamín.",
       "fr": "ville; territoire de Benjamin"
     },
@@ -6532,14 +6379,14 @@
     ],
     "altTermIds": ""
   },
-  "GihonSpring": {
+  "Gihon.2": {
     "gloss": {
       "en": "Gihon Spring",
       "es": "Manantial del Gihón",
       "fr": "Gihon Spring"
     },
     "context": {
-      "en": "spring",
+      "en": "A spring on the east side of Jerusalem, right outside the city wall; it was later made accessible from inside the town by means of a tunnel.",
       "es": "Parte más antigua de la ciudad de Jerusalén.",
       "fr": "printemps"
     },
@@ -6565,7 +6412,7 @@
       "fr": "Galaad"
     },
     "context": {
-      "en": "area on other side of the Jordan",
+      "en": "An area on the east side of the Jordan River; supposedly named after Gilead, son of Makir, tribe of Manasseh.",
       "es": "Región al este del río Jordán.",
       "fr": "région située de l'autre côté du Jourdain"
     },
@@ -6689,14 +6536,14 @@
     ],
     "altTermIds": ""
   },
-  "Gilgal": {
+  "Gilgal.3": {
     "gloss": {
       "en": "Gilgal",
       "es": "Gilgal",
       "fr": "Gilgal"
     },
     "context": {
-      "en": "location; close to Jericho",
+      "en": "Gilgal near Jericho: A town close to Jericho where the Israelites first camped after crossing the Jordan River and set up twelve stones as a monument; it later became the location of a cultic center.",
       "es": "Lugar al este de Jericó.",
       "fr": "emplacement; à proximité de Jéricho"
     },
@@ -6750,7 +6597,7 @@
       "fr": "Golan"
     },
     "context": {
-      "en": "town; Bashan; territory of Manasseh",
+      "en": "A Levitical town of refuge in Bashan, in the territory of Manasseh east of the Jordan River, assigned to the clan of Gershon.",
       "es": "Poblado en la región de Basán, en el territorio de Manasés.",
       "fr": "ville; Bashan; territoire de Manassé"
     },
@@ -6775,7 +6622,7 @@
       "fr": "Golgotha"
     },
     "context": {
-      "en": "the Aramaic name of a hill near Jerusalem where executions took place",
+      "en": "A hill near Jerusalem where executions took place and where Jesus was crucified (Matthew 27:33–44; Mark 15:21–32; John 19:16–19).",
       "es": "Nombre de lugar, cercano a Jerusalén, que significa en arameo Lugar de la Calavera\". En este lugar se llevaban a cabo las ejecuciones.",
       "fr": "le nom araméen d'une colline près de Jérusalem où se déroulaient les exécutions"
     },
@@ -6799,7 +6646,7 @@
       "fr": "Gomer"
     },
     "context": {
-      "en": "son of Japheth",
+      "en": "A nation located in the vicinity of the Black Sea; possibly to be identified with Cimmerians, considered descendants of Japheth through his son Gomer (Genesis 10:2).",
       "es": "Hijo de Jafet.",
       "fr": "fils de Japhet"
     },
@@ -6825,7 +6672,7 @@
       "fr": "Goshen"
     },
     "context": {
-      "en": "location",
+      "en": "Goshen of Egypt: A region in the eastern Egyptian delta where the Israelites lived from the time they settled in the country until the exodus.",
       "es": "Región fértil al oriente del río Nilo.",
       "fr": "emplacement"
     },
@@ -6857,7 +6704,7 @@
       "fr": "La Grande Mer"
     },
     "context": {
-      "en": "",
+      "en": "A large body of water located between southern Europe, northern Africa, and western Asia, which borders Palestine on the west.",
       "es": "",
       "fr": ""
     },
@@ -6877,7 +6724,7 @@
       "fr": "Grèce"
     },
     "context": {
-      "en": "Greece",
+      "en": "A nation on the southern end of the Balkan Peninsula.",
       "es": "Nombre de lugar ubicado al oeste de Asia Menor.",
       "fr": "Grèce"
     },
@@ -6892,14 +6739,14 @@
     ],
     "altTermIds": ""
   },
-  "GulfOfAqaba": {
+  "RedSea.2": {
     "gloss": {
       "en": "Gulf of Aqaba",
       "es": "El golfo de Aqaba",
       "fr": "Golfe d'Aqaba"
     },
     "context": {
-      "en": "",
+      "en": "The northeastern arm of the Red Sea.",
       "es": "",
       "fr": ""
     },
@@ -6919,7 +6766,7 @@
       "fr": "Jambon"
     },
     "context": {
-      "en": "location; east of Jordan river",
+      "en": "Ham of Zuzim: A location inhabited by the Zuzim, which was subdued by Chedorlaomer and the allied kings.",
       "es": "Nombre de lugar.",
       "fr": "situation géographique : à l’est du Jourdain"
     },
@@ -6941,7 +6788,7 @@
       "fr": "Hamath"
     },
     "context": {
-      "en": "town on Orontes river; חֲמָת רַבָּה and חֲמָת צוֹבָה",
+      "en": "A town on the Orontes River in Syria; capital of Aramean kingdom; its inhabitants were relocated to Samaria by the king of Assyria.",
       "es": "Poblado ubicado en la frontera norte de Canaán.",
       "fr": "ville sur le fleuve Oronte ; חֲמָת רַבָּה et חֲמָת צוֹבָה"
     },
@@ -6995,7 +6842,7 @@
       "fr": "Haran"
     },
     "context": {
-      "en": "town",
+      "en": "A town in northern Mesopotamia where Abraham's father settled when coming from Ur, and where his relatives continued to live. It was later destroyed by Assyria and was a trading partner of Tyre.",
       "es": "Ciudad",
       "fr": "ville"
     },
@@ -7026,7 +6873,7 @@
       "fr": "Danger"
     },
     "context": {
-      "en": "fortified town and kingdom in Galilee",
+      "en": "Hazor of Galilee: A fortified town in Galilee.",
       "es": "Ciudad fortificada en Galilea.",
       "fr": "ville fortifiée et royaume de Galilée"
     },
@@ -7058,7 +6905,7 @@
       "fr": "Hébron"
     },
     "context": {
-      "en": "town; for Levites; territory of Judah",
+      "en": "A Levitical town in the territory of Judah, assigned to the clan of Aaron; formerly known as Kiriath-Arba. The patriarchs were buried in a cave there.",
       "es": "Ciudad antigua ubicada en el territorio de Judá.",
       "fr": "ville; pour les Lévites; territoire de Juda"
     },
@@ -7218,7 +7065,7 @@
       "fr": "Heshbon"
     },
     "context": {
-      "en": "town; for Levites; territory of Gad",
+      "en": "A Levitical town in the territory of Gad, assigned to the clan of Merari; former residence of Sihon, king of the Amorites (who had captured it from Moab); later occupied by Moab.",
       "es": "Lugar para los levitas en el territorio de Gad.",
       "fr": "ville; pour les Lévites; territoire de Gad"
     },
@@ -7276,7 +7123,7 @@
       "fr": "Hiérapolis"
     },
     "context": {
-      "en": "a city in Phrygia",
+      "en": "A city in Phrygia near Colossae and Laodicea.",
       "es": "Nombre de lugar en la provincia de Asia, al norte de Laodicea.",
       "fr": "une ville de Phrygie"
     },
@@ -7298,7 +7145,7 @@
       "fr": "Vallée de Hinnom"
     },
     "context": {
-      "en": "valley; south of Jerusalem",
+      "en": "A valley west and south of Jerusalem; known for the idol worship that took place there.",
       "es": "Valle ubicado al sur de Jerusalén.",
       "fr": "vallée; au sud de Jérusalem"
     },
@@ -7436,7 +7283,7 @@
       "fr": "Hormah"
     },
     "context": {
-      "en": "location; territory of Simeon",
+      "en": "A town where the Amalekites and the Canaanites defeated the Israelites; later conquered by the Israelites and allotted to the tribe of Simeon.",
       "es": "Nombre de lugar ubicado en el territorio de Simeón.",
       "fr": "lieu; territoire de Siméon"
     },
@@ -7466,7 +7313,7 @@
       "fr": "Iconium"
     },
     "context": {
-      "en": "a city in Lycaonia",
+      "en": "A city in Lycaonia, in southern Asia Minor; Paul and Barnabas traveled here during Paul's first missionary journey.",
       "es": "Ciudad en Licaonia, Asia Menor.",
       "fr": "une ville de Lycaonia"
     },
@@ -7493,7 +7340,7 @@
       "fr": "Idumée"
     },
     "context": {
-      "en": "a mountainous region south of Judea (Edom of the OT",
+      "en": "A mountainous region south of Judea and north of the earlier region known as Edom.",
       "es": "Región montañosa al sur de Judea.",
       "fr": "une région montagneuse au sud de la Judée (Édom de l'Ancien Testament)"
     },
@@ -7515,7 +7362,7 @@
       "fr": "Illyrie"
     },
     "context": {
-      "en": "a district to the north of Macedonia",
+      "en": "A district north of Macedonia.",
       "es": "Región ubicada al norte de Macedonia.",
       "fr": "un district au nord de la Macédoine"
     },
@@ -7537,7 +7384,7 @@
       "fr": "Inde"
     },
     "context": {
-      "en": "land; eastern boundary of kingdom of king Ahasuerus, Xerxes",
+      "en": "A land located east of Persia, which formed the eastern boundary of the kingdom ruled by Ahasuerus (Esther 1:1).",
       "es": "Frontera oriental del imperio persa gobernado por el rey Asuero.",
       "fr": "territoire ; frontière orientale du royaume du roi Assuérus, Xerxès"
     },
@@ -7640,7 +7487,7 @@
       "fr": "Israël"
     },
     "context": {
-      "en": "new name given by the LORD to Jacob; henceforth the name of the people descending from Jacob",
+      "en": "The land inhabited by the Israelites.",
       "es": "Nombre que le dio el Señor a Jacob y que a su vez recibe todo el pueblo que desciende de Jacob.",
       "fr": "nouveau nom donné par l'Éternel à Jacob ; désormais le nom du peuple descendant de Jacob"
     },
@@ -9912,14 +9759,14 @@
     ],
     "altTermIds": ""
   },
-  "Issachar": {
+  "TerritoryOfIssachar": {
     "gloss": {
       "en": "Issachar",
       "es": "Isacar",
       "fr": "Issachar"
     },
     "context": {
-      "en": "son of Jacob; founder of tribe of Issachar",
+      "en": "The land assigned to the tribe of Issachar.",
       "es": "Hijo de Jacob y Lía.",
       "fr": "fils de Jacob ; fondateur de la tribu d'Issachar"
     },
@@ -9979,7 +9826,7 @@
       "fr": "Italie"
     },
     "context": {
-      "en": "Italy",
+      "en": "A peninsula in Southern Europe, surrounded by the Adriatic, Ionian, and Tyrrhenian seas.",
       "es": "Región territorial rodeada por el Mar Mediterráneo con un sentido geográfico similar al de la actualidad.",
       "fr": "Italie"
     },
@@ -10004,7 +9851,7 @@
       "fr": "Iturée"
     },
     "context": {
-      "en": "pertaining to Ituraea",
+      "en": "A small province northeast of the Sea of Galilee, which was part of the tetrarchy of Philip (Luke 3:1).",
       "es": "Región gobernada por Filipo.",
       "fr": "relatif à Iturée"
     },
@@ -10019,34 +9866,14 @@
     ],
     "altTermIds": ""
   },
-  "Iyar": {
-    "gloss": {
-      "en": "Iyar",
-      "es": "Iyar",
-      "fr": "Iyar"
-    },
-    "context": {
-      "en": "Hebrew month",
-      "es": "",
-      "fr": "mois hébraïque"
-    },
-    "terms": [
-      {
-        "termId": "iyar",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
-  "Jabesh": {
+  "Jabesh-gilead": {
     "gloss": {
       "en": "Jabesh Gilead",
       "es": "Jabes-galaad",
       "fr": "Jabesh Galaad"
     },
     "context": {
-      "en": "town; Gilead",
+      "en": "A town in Gilead in Transjordan.",
       "es": "Lugar ubicado en Transjordania.",
       "fr": "ville; Galaad"
     },
@@ -10085,7 +9912,7 @@
       "fr": "Jabneel"
     },
     "context": {
-      "en": "town; territory of Judah",
+      "en": "Jabneel of Judah: A town in the northwestern edge of the territory of Judah, on the coastal plain; possibly to be identified with Jabneh,",
       "es": "Nombre de lugar ubicado en el territorio de Judá.",
       "fr": "ville; territoire de Juda"
     },
@@ -10107,7 +9934,7 @@
       "fr": "Jabneh"
     },
     "context": {
-      "en": "town; Philistea",
+      "en": "Jabneh is the coastal city Yavne (Latin: Jamnia) in the Shephelah/lowlands, about 7 km from the sea, between Joppa and Ashdod. Earlier in its history its name was Jabneel (of Judah).",
       "es": "Ciudad ubicada en el territorio de los filisteos.",
       "fr": "ville; Philistée"
     },
@@ -10129,53 +9956,13 @@
       "fr": "Puits de Jacob"
     },
     "context": {
-      "en": "",
+      "en": "A well east of Shechem, associated with the patriarch Jacob, where Jesus spoke with the Samaritan woman (John 4:6).",
       "es": "",
       "fr": ""
     },
     "terms": [
       {
         "termId": "jacobs_well",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
-  "Jamnia": {
-    "gloss": {
-      "en": "Jamnia",
-      "es": "Jamnia",
-      "fr": "Jamnia"
-    },
-    "context": {
-      "en": "",
-      "es": "",
-      "fr": ""
-    },
-    "terms": [
-      {
-        "termId": "jamnia",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
-  "Jan": {
-    "gloss": {
-      "en": "Jan",
-      "es": "ene",
-      "fr": "Jan"
-    },
-    "context": {
-      "en": "3 letter abbreviation for the month",
-      "es": "",
-      "fr": "Abréviation à 3 lettres du mois"
-    },
-    "terms": [
-      {
-        "termId": "jan",
         "transliteration": "",
         "refs": []
       }
@@ -10221,7 +10008,7 @@
       "fr": "Jarmuth"
     },
     "context": {
-      "en": "town; territory of Judah",
+      "en": "Jarmuth of Judah: A town in the foothills of the territory of Judah.",
       "es": "Nombre de lugar en el territorio de Judá.",
       "fr": "ville; territoire de Juda"
     },
@@ -10248,7 +10035,7 @@
       "fr": "Javan"
     },
     "context": {
-      "en": "son of Japheth; land",
+      "en": "A nation usually identified with Greece; considered descendants of Japheth through his son Javan.",
       "es": "Hijo de Jafet.",
       "fr": "fils de Japhet; terre"
     },
@@ -10300,7 +10087,7 @@
       "fr": "Jéricho"
     },
     "context": {
-      "en": "a city in Judea, not far from the north end of the Dead Sea",
+      "en": "A town northwest of the Dead Sea in the territory of Benjamin; first town conquered by Israel after they entered Canaan.",
       "es": "Nombre de lugar en Judea.",
       "fr": "une ville de Judée, non loin de l'extrémité nord de la mer Morte"
     },
@@ -10386,7 +10173,7 @@
       "fr": "Jérusalem"
     },
     "context": {
-      "en": "the city of Jerusalem, including its inhabitants",
+      "en": "The capital city of Israel in the territory of Judah, formerly referred to as Salem and Jebus. It was conquered by King David, who made it the capital of his kingdom (2 Samuel 5:6–9).",
       "es": "Ciudad ubicada en las montañas de Judea, a 50 Km del Mar Mediterráneo y al norte del Mar Muerto.",
       "fr": "la ville de Jérusalem, y compris ses habitants"
     },
@@ -11137,14 +10924,14 @@
     ],
     "altTermIds": ""
   },
-  "Jezreel": {
+  "Jezreel.2": {
     "gloss": {
       "en": "Jezreel",
       "es": "Jezreel",
       "fr": "Jezreel"
     },
     "context": {
-      "en": "town and valley; territory of Issachar",
+      "en": "Jezreel of Issachar: A town in the territory of Issachar.",
       "es": "Valle ubicado en el territorio de Isacar.",
       "fr": "ville et vallée; territoire d'Issachar"
     },
@@ -11194,7 +10981,7 @@
       "fr": "Jokneam"
     },
     "context": {
-      "en": "town; for Levites; territory of Zebulun",
+      "en": "A Levitical town in the territory of Zebulun, near Mount Carmel; assigned to the clan of Merari.",
       "es": "Nombre de lugar ubicado en el territorio de Zabulón.",
       "fr": "ville; pour les Lévites; territoire de Zabulon"
     },
@@ -11218,7 +11005,7 @@
       "fr": "Joppé"
     },
     "context": {
-      "en": "a seaport on the coast of Palestine",
+      "en": "A seaport town in the territory of Dan.",
       "es": "Puerto de la costa noroeste de Palestina.",
       "fr": "un port maritime sur la côte palestinienne"
     },
@@ -11252,14 +11039,14 @@
     ],
     "altTermIds": "יָפוֹ"
   },
-  "JordanRiver": {
+  "Jordan": {
     "gloss": {
       "en": "Jordan River",
       "es": "Río Jordán",
       "fr": "Jourdain"
     },
     "context": {
-      "en": "river that flows through the Sea of Galilee into the Dead Sea",
+      "en": "A river flowing south from Mount Hermon through the Sea of Galilee into the Dead Sea. Jesus was baptized by John in the Jordan River (Matthew 3:13–17; Mark 1:9–11; Luke 3:21–22; John 1:29–34).",
       "es": "Principal río de Palestina.",
       "fr": "fleuve qui traverse la mer de Galilée pour se jeter dans la mer Morte"
     },
@@ -11458,14 +11245,14 @@
     ],
     "altTermIds": ""
   },
-  "Judah": {
+  "TerritoryOfJudah": {
     "gloss": {
       "en": "Judah",
       "es": "Judá",
       "fr": "Juda"
     },
     "context": {
-      "en": "son of Jacob; founder of tribe of Judah",
+      "en": "The land assigned to the tribe of Judah.",
       "es": "Hijo de Jacob y Lía, de la tribu de Israel.",
       "fr": "fils de Jacob ; fondateur de la tribu de Juda"
     },
@@ -12234,7 +12021,7 @@
       "fr": "Judée"
     },
     "context": {
-      "en": "the southern part of Palestine, or: the wider region occupied by the Jewish nation",
+      "en": "A region in southern Palestine associated with the tribe of Judah.",
       "es": "Parte sur del territorio de Palestina.",
       "fr": "la partie sud de la Palestine, ou : la région plus vaste occupée par la nation juive"
     },
@@ -12291,46 +12078,6 @@
     ],
     "altTermIds": ""
   },
-  "Jul": {
-    "gloss": {
-      "en": "Jul",
-      "es": "jul",
-      "fr": "Juillet"
-    },
-    "context": {
-      "en": "3 letter abbreviation for the month",
-      "es": "",
-      "fr": "Abréviation à 3 lettres du mois"
-    },
-    "terms": [
-      {
-        "termId": "jul",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
-  "Jun": {
-    "gloss": {
-      "en": "Jun",
-      "es": "jun",
-      "fr": "Juin"
-    },
-    "context": {
-      "en": "3 letter abbreviation for the month",
-      "es": "",
-      "fr": "Abréviation à 3 lettres du mois"
-    },
-    "terms": [
-      {
-        "termId": "jun",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
   "Kadesh": {
     "gloss": {
       "en": "Kadesh",
@@ -12338,7 +12085,7 @@
       "fr": "Kadesh"
     },
     "context": {
-      "en": "location; En Mishpat",
+      "en": "A location between Gilead and Dan-Jaan visited by David's military commanders during the census.",
       "es": "Nombre de lugar también conocido como En-mispat.",
       "fr": "emplacement; En Mishpat"
     },
@@ -12367,14 +12114,14 @@
     ],
     "altTermIds": ""
   },
-  "KadeshBarnea": {
+  "Kadesh-barnea": {
     "gloss": {
       "en": "Kadesh Barnea",
       "es": "Cades-barnea",
       "fr": "Kadesh Barnea"
     },
     "context": {
-      "en": "location",
+      "en": "A town in the wilderness of Zin, in the northern part of the Sinai Peninsula, where the Israelites encamped on their way from Egypt to Canaan; it is also the location of the Meribah Spring. Spies were sent out into Canaan from this place; it later marked the southern border of the territory of Judah.",
       "es": "Nombre de lugar.",
       "fr": "emplacement"
     },
@@ -12405,9 +12152,7 @@
       "fr": "Kedar"
     },
     "context": {
-      "en": "son of Ishmael; people, land",
-      "es": "Hijo de Ismael; nombre de lugar.",
-      "fr": "fils d'Ismaël ; peuple, terre"
+      "en": "Arabia; land of the descendants of Ishmael"
     },
     "terms": [
       {
@@ -12437,7 +12182,7 @@
       "fr": "Kedesh"
     },
     "context": {
-      "en": "fortified; town; for Levites; territory of Naphtali",
+      "en": "Kedesh in Upper Galilee: A town in Upper Galilee, in the territory of Naphtali; assigned to the clan of Gershon of tribe of Levi as a town of refuge (Joshua 21:31); later captured by Tiglath-Pileser.",
       "es": "Ciudad fortificada, en el territorio de Neftalí.",
       "fr": "fortifiée ; ville ; pour les Lévites ; territoire de Nephtali"
     },
@@ -12461,14 +12206,14 @@
     ],
     "altTermIds": ""
   },
-  "KidronValley": {
+  "Kidron": {
     "gloss": {
       "en": "Kidron Valley",
       "es": "Valle de Cedrón",
       "fr": "Vallée de Kidron"
     },
     "context": {
-      "en": "a valley between Jerusalem and the Mount of Olives",
+      "en": "A valley located east of Jerusalem between the ancient city and the Mount of Olives.",
       "es": "Arroyo que comienza al norte de Jerusalén y pasa junto al monte de los Olivos rumbo al Mar Muerto.",
       "fr": "une vallée entre Jérusalem et le mont des Oliviers"
     },
@@ -12483,14 +12228,14 @@
     ],
     "altTermIds": ""
   },
-  "KirHareseth": {
+  "Kir-hareseth": {
     "gloss": {
       "en": "Kir Hareseth",
       "es": "Kir-hareset",
       "fr": "Kir Hareseth"
     },
     "context": {
-      "en": "town in Moab Kir-Hareseth",
+      "en": "A town in Moab; also known as Kir-Heres.",
       "es": "Nombre de lugar en Moab.",
       "fr": "ville de Moab Kir-Hareseth"
     },
@@ -12507,14 +12252,14 @@
     ],
     "altTermIds": ""
   },
-  "KiriathJearim": {
+  "Kiriath-jearim": {
     "gloss": {
       "en": "Kiriath-Jearim",
       "es": "Quiriat-jearim",
       "fr": "Kiriath-Jearim"
     },
     "context": {
-      "en": "",
+      "en": "A town located in the hill country of the territory of Judah; one of the four Hivite cities that made a covenant with Joshua (Joshua 9:17–18); also known as Kiriath-Baal, Baalah, and Baale-Judah, .",
       "es": "",
       "fr": ""
     },
@@ -12542,26 +12287,6 @@
           "016007029",
           "024026020"
         ]
-      }
-    ],
-    "altTermIds": ""
-  },
-  "Kislew": {
-    "gloss": {
-      "en": "Kislew",
-      "es": "Kislew",
-      "fr": "Kislew"
-    },
-    "context": {
-      "en": "Hebrew month",
-      "es": "",
-      "fr": "mois hébraïque"
-    },
-    "terms": [
-      {
-        "termId": "kislew",
-        "transliteration": "",
-        "refs": []
       }
     ],
     "altTermIds": ""
@@ -12595,16 +12320,16 @@
     ],
     "altTermIds": ""
   },
-  "KittimCyprus": {
+  "Kittim": {
     "gloss": {
-      "en": "Kittim (Cyprus)",
-      "es": "Kítim (Chipre)",
-      "fr": "Kittim (Chypre)"
+      "en": "Kittim",
+      "es": "Kítim",
+      "fr": "Kittim"
     },
     "context": {
-      "en": "descendants of Javan, son of Japheth; Greece?",
-      "es": "Descendientes de Javan, hijo de Jafet; = Grecia",
-      "fr": "descendants de Javan, fils de Japhet ; Grèce ?"
+      "en": "An island in the Mediterranean Sea; possibly to be identified with Cyprus.",
+      "es": "Descendientes de Javan, hijo de Jafet; Chipre",
+      "fr": "descendants de Javan, fils de Japhet ; Chypre"
     },
     "terms": [
       {
@@ -12631,7 +12356,7 @@
       "fr": "Lachish"
     },
     "context": {
-      "en": "town; territory of Judah",
+      "en": "A fortified town in the foothills of the territory of Judah, where Amaziah, king of Judah, was assassinated.",
       "es": "Nombre de lugar ubicado en el territorio de Judá.",
       "fr": "ville; territoire de Juda"
     },
@@ -12674,7 +12399,7 @@
       "fr": "Laodicée"
     },
     "context": {
-      "en": "a city in Phrygia in Asia Minor",
+      "en": "A city in Phrygia in Asia Minor near Colossae and Hierapolis; one of the seven cities addressed in Revelation.",
       "es": "Nombre de lugar ubicado al suroeste de Frigia en Asia Menor.",
       "fr": "une ville de Phrygie en Asie Mineure"
     },
@@ -12701,7 +12426,7 @@
       "fr": "Lasea"
     },
     "context": {
-      "en": "a city on the south coast of the island of Crete",
+      "en": "A city on the south coast of the island of Crete near Fair Havens.",
       "es": "Nombre de lugar sobre la costa sur de la isla de Creta.",
       "fr": "une ville située sur la côte sud de l'île de Crète"
     },
@@ -12716,14 +12441,14 @@
     ],
     "altTermIds": ""
   },
-  "Libnah": {
+  "Libnah.2": {
     "gloss": {
       "en": "Libnah",
       "es": "Libná",
       "fr": "Libnah"
     },
     "context": {
-      "en": "town; territory of Judah; assigned to clan of Aaron, tribe of Levi",
+      "en": "Libnah of Judah: A Levitical town in the foothills of the territory of Judah; assigned to the clan of Aaron.",
       "es": "Nombre de lugar en el territorio de Judá.",
       "fr": "ville ; territoire de Juda ; attribuée au clan d'Aaron, tribu de Lévi"
     },
@@ -12759,7 +12484,7 @@
       "fr": "Libye"
     },
     "context": {
-      "en": "a district in north Africa",
+      "en": "A country in North Africa; Libyans were among those present at Pentecost (Acts 2:10).",
       "es": "Región del norte de África.",
       "fr": "un district d'Afrique du Nord"
     },
@@ -12781,7 +12506,7 @@
       "fr": "Londinium"
     },
     "context": {
-      "en": "",
+      "en": "The capital city of Roman Britain; modern-day London.",
       "es": "",
       "fr": ""
     },
@@ -12794,14 +12519,14 @@
     ],
     "altTermIds": ""
   },
-  "Lud": {
+  "Pul": {
     "gloss": {
       "en": "Lud",
       "es": "Lud",
       "fr": "Lud"
     },
     "context": {
-      "en": "son of Shem; people, land",
+      "en": "A land and ethnic group located in Asia Minor, possibly to be identified with the Lydians; regarded as descendants of Shem; known as archers.",
       "es": "Hijo de Sem.",
       "fr": "fils de Sem ; peuple, terre"
     },
@@ -12827,7 +12552,7 @@
       "fr": "Lycaonia"
     },
     "context": {
-      "en": "a province in the interior of Asia Minor",
+      "en": "A province in the interior of Asia Minor; Paul and Barnabas fled to Lystra and Derbe in this region when the people of Iconium sought to stone them.",
       "es": "Región centro-sur de Asia Menor.",
       "fr": "une province de l'intérieur de l'Asie Mineure"
     },
@@ -12849,7 +12574,7 @@
       "fr": "Lycia"
     },
     "context": {
-      "en": "a projection on the south coast of Asia Minor",
+      "en": "A region on the south coast of Asia Minor.",
       "es": "Pequeña región en la costa sur de Asia Menor.",
       "fr": "une avancée sur la côte sud de l'Asie Mineure"
     },
@@ -12871,7 +12596,7 @@
       "fr": "Lydda"
     },
     "context": {
-      "en": "a city southeast of Joppa",
+      "en": "A town in the territory of Benjamin; built by Shemed.",
       "es": "Nombre de lugar al sureste de Jope.",
       "fr": "une ville au sud-est de Joppé"
     },
@@ -12895,7 +12620,7 @@
       "fr": "Lydia"
     },
     "context": {
-      "en": "kingdom; western Asia Minor",
+      "en": "A province in Western Asia Minor.",
       "es": "Región de Asia menor.",
       "fr": "royaume ; Asie Mineure occidentale"
     },
@@ -12917,7 +12642,7 @@
       "fr": "Lystra"
     },
     "context": {
-      "en": "a city in Lycaonia in Asia Minor",
+      "en": "A city in Lycaonia in Asia Minor, northwest of Derbe; Paul met Timothy there.",
       "es": "Nombre de lugar de Licaonia en Asia Menor.",
       "fr": "une ville de Lycaonie en Asie Mineure"
     },
@@ -12964,7 +12689,7 @@
       "fr": "Macédoine"
     },
     "context": {
-      "en": "a Roman province in Greece",
+      "en": "A Roman province in Greece; Paul had a vision of a man of Macedonia who pleaded with him to come and preach the gospel (Acts 16:9–10).",
       "es": "Provincia romana en Grecia.",
       "fr": "une province romaine en Grèce"
     },
@@ -13028,7 +12753,7 @@
       "fr": "Magadan"
     },
     "context": {
-      "en": "a place of uncertain location on the Lake of Galilee",
+      "en": "An uncertain location west of the Sea of Galilee to which Jesus came after he fed the 4,000 (Matthew 15:39).",
       "es": "Hijo de Matatías, persona que se menciona como antepasado de Jesús.",
       "fr": "un lieu de localisation incertaine sur le lac de Galilée"
     },
@@ -13050,7 +12775,7 @@
       "fr": "Mahanaim"
     },
     "context": {
-      "en": "town; for Levites; territory of Gad",
+      "en": "A Levitical town in the territory of Gad, assigned to the clan of Merari; capital of the kingdom of Isboseth, son of Saul.",
       "es": "Poblado para los levitas, en el territorio de Gad.",
       "fr": "ville; pour les Lévites; territoire de Gad"
     },
@@ -13104,7 +12829,7 @@
       "fr": "La Mecque"
     },
     "context": {
-      "en": "village; territory of Judah",
+      "en": "A town in the foothills of the territory of Judah.",
       "es": "Nombre de lugar en el territorio de Judá.",
       "fr": "village ; territoire de Juda"
     },
@@ -13133,7 +12858,7 @@
       "fr": "Malte"
     },
     "context": {
-      "en": "an island located south of Sicily",
+      "en": "An island south of Sicily where Paul was shipwrecked on his voyage to Rome.",
       "es": "Isla que se ubica al sur de Sicilia.",
       "fr": "une île située au sud de la Sicile"
     },
@@ -13155,7 +12880,7 @@
       "fr": "Mamre"
     },
     "context": {
-      "en": "location",
+      "en": "A location with oak trees near Hebron, where Abraham pitched his tents.",
       "es": "Nombre de lugar.",
       "fr": "emplacement"
     },
@@ -13177,14 +12902,14 @@
     ],
     "altTermIds": ""
   },
-  "ManassehEast": {
+  "TerritoryOfEastManasseh": {
     "gloss": {
       "en": "Manasseh (East)",
       "es": "Manasés (Este)",
       "fr": "Manassé (Est)"
     },
     "context": {
-      "en": "son of Joseph; founder of tribe of Manasseh",
+      "en": "The land assigned to the tribe of Manasseh, east of the Jordan River.",
       "es": "Hijo de José y Asenat, de la tribu de Israel.",
       "fr": "fils de Joseph ; fondateur de la tribu de Manassé"
     },
@@ -13305,14 +13030,14 @@
     ],
     "altTermIds": ""
   },
-  "ManassehWest": {
+  "TerritoryOfWestManasseh": {
     "gloss": {
       "en": "Manasseh (West)",
       "es": "Manasés (Oeste)",
       "fr": "Manassé (Ouest)"
     },
     "context": {
-      "en": "son of Joseph; founder of tribe of Manasseh",
+      "en": "The land assigned to the tribe of Manasseh, west of the Jordan River.",
       "es": "Hijo de José y Asenat, de la tribu de Israel.",
       "fr": "fils de Joseph ; fondateur de la tribu de Manassé"
     },
@@ -13325,34 +13050,14 @@
     ],
     "altTermIds": ""
   },
-  "Mar": {
-    "gloss": {
-      "en": "Mar",
-      "es": "mar",
-      "fr": "Mar"
-    },
-    "context": {
-      "en": "3 letter abbreviation for the month",
-      "es": "",
-      "fr": "Abréviation à 3 lettres du mois"
-    },
-    "terms": [
-      {
-        "termId": "mar",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
   "Marah": {
     "gloss": {
-      "en": "Marah?",
-      "es": "Mara?",
-      "fr": "Mara ?"
+      "en": "Marah",
+      "es": "Mara",
+      "fr": "Mara"
     },
     "context": {
-      "en": "location along route of exodus",
+      "en": "A location in the wilderness of Etham where the Israelites encamped shortly after crossing the Sea of Reeds on their way from Egypt to Canaan; here bitter water was made drinkable.",
       "es": "Nombre de lugar en la ruta del éxodo.",
       "fr": "emplacement le long de la route de l'exode"
     },
@@ -13376,7 +13081,7 @@
       "fr": "Mareshah"
     },
     "context": {
-      "en": "town; territory of Judah",
+      "en": "A town in the foothills of the territory of Judah.",
       "es": "Nombre de lugar, en el territorio de Judá.",
       "fr": "ville; territoire de Juda"
     },
@@ -13417,26 +13122,6 @@
     ],
     "altTermIds": ""
   },
-  "May": {
-    "gloss": {
-      "en": "May",
-      "es": "may",
-      "fr": "Peut"
-    },
-    "context": {
-      "en": "3 letter abbreviation for the month",
-      "es": "",
-      "fr": "Abréviation à 3 lettres du mois"
-    },
-    "terms": [
-      {
-        "termId": "may",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
   "Medeba": {
     "gloss": {
       "en": "Medeba",
@@ -13444,7 +13129,7 @@
       "fr": "Medeba"
     },
     "context": {
-      "en": "town; territory of Reuben, Moab",
+      "en": "A town in the territory of Reuben, in Moab.",
       "es": "Nombre de lugar en el territorio de Rubén.",
       "fr": "ville; territoire de Ruben, Moab"
     },
@@ -13470,7 +13155,7 @@
       "fr": "Médias"
     },
     "context": {
-      "en": "(derivative of Μηδία Media, not occurring in the NT",
+      "en": "A nation and their territory; regarded as founded by Madai; the empire was consolidated in the 6th–5th BCE and stretched from Mesopotamia to Turkey.",
       "es": "Persona que vive o es originaria de Media.",
       "fr": "(dérivé de Μηδία Media, absent du NT"
     },
@@ -13532,7 +13217,7 @@
       "fr": "Megiddo"
     },
     "context": {
-      "en": "town; territory of Manasseh",
+      "en": "A town in the territory of Manasseh, southwest of the Jezreel Valley, where King Josiah of Judah was killed during his battle with Pharaoh Neco; former Canaanite kingdom.",
       "es": "Nombre de lugar ubicado en el territorio de Manasés.",
       "fr": "ville; territoire de Manassé"
     },
@@ -13565,7 +13250,7 @@
       "fr": "Memphis"
     },
     "context": {
-      "en": "town; Egypt; Memphis; נֹף",
+      "en": "A town in Egypt; residence and capital of many of its kings (ABD).",
       "es": "pueblo; Egipto; = Menfis",
       "fr": "ville; Égypte; Memphis; נֹף"
     },
@@ -13587,7 +13272,7 @@
       "fr": "Meshech"
     },
     "context": {
-      "en": "son of Shem, Japheth",
+      "en": "A nation named after Meshech, son of Japheth and grandson of Noah.",
       "es": "Hijo de Jafet.",
       "fr": "fils de Sem, Japhet"
     },
@@ -13617,7 +13302,7 @@
       "fr": "Mésopotamie"
     },
     "context": {
-      "en": "the valley of the Euphrates and Tigris rivers",
+      "en": "A region between the Tigris and Euphrates Rivers; the Garden of Eden was located here.",
       "es": "Tierras que se destacan por su fertilidad entre los ríos Tigris y Éufrates.",
       "fr": "la vallée de l'Euphrate et du Tigre"
     },
@@ -13651,7 +13336,7 @@
       "fr": "Midian"
     },
     "context": {
-      "en": "son of Abraham; people, land",
+      "en": "Son of Keturah, wife of Abraham; regarded as ancestor of an ethnic group with the same name, and the region they occupied.",
       "es": "Hijo de Abraham y Queturá, también nombre de un pueblo o territorio.",
       "fr": "fils d'Abraham ; peuple, terre"
     },
@@ -13727,7 +13412,7 @@
       "fr": "Milet"
     },
     "context": {
-      "en": "a seaport city on the west coast of Asia Minor",
+      "en": "A seaport city of Caria, on the west coast of Asia Minor; Paul met with the Ephesian elders here.",
       "es": "Puerto de la costa este de Asia Menor.",
       "fr": "une ville portuaire située sur la côte ouest de l'Asie Mineure"
     },
@@ -13751,7 +13436,7 @@
       "fr": "Mitylène"
     },
     "context": {
-      "en": "the chief city on the island of Lesbos in the Aegean Sea",
+      "en": "The chief city on the island of Lesbos in the Aegean Sea.",
       "es": "Puerto de la isla de Lesbos, cerca de la costa occidental del Asia Menor.",
       "fr": "la principale ville de l'île de Lesbos en mer Égée"
     },
@@ -13766,14 +13451,13 @@
     ],
     "altTermIds": ""
   },
-  "Mizpa": {
+  "Mizpah": {
     "gloss": {
-      "en": "Mizpa/Mizpeh",
-      "es": "Mizpa",
-      "fr": "Mizpa/Mizpeh"
+      "en": "Mizpah",
+      "es": "Mizpa"
     },
     "context": {
-      "en": "town; territory of Benjamin",
+      "en": "Mizpah of Benjamin: A town in the territory of Benjamin where Israel assembled after the atrocity that was committed in Gibeah, and where Israel assembled during the time of Samuel's leadership; residence of the governor Gedaliah after the destruction of Jerusalem.",
       "es": "Nombre de lugar, en el territorio de Benjamín.",
       "fr": "ville; territoire de Benjamin"
     },
@@ -13817,7 +13501,24 @@
         ]
       }
     ],
-    "altTermIds": "mizpah_of_moab"
+    "altTermIds": "Mizpeh"
+  },
+  "Mizpeh": {
+    "gloss": {
+      "en": "Mizpeh of Moab"
+    },
+    "context": {
+      "en": "Mizpeh of Moab: A location in Moab; residence of Moabite king."
+    },
+    "terms": [
+      {
+        "termId": "מִצְפָּה-5",
+        "transliteration": "miṣpāh-5",
+        "refs": [
+          "009022003"
+        ]
+      }
+    ]
   },
   "Mizraim": {
     "gloss": {
@@ -13852,7 +13553,7 @@
       "fr": "Moab"
     },
     "context": {
-      "en": "son of Lot; people, land",
+      "en": "A nation and its territory situated east of the Dead Sea; regarded as founded by a son of Lot.",
       "es": "Hija de Lot. Nombre de lugar.",
       "fr": "fils de Lot ; peuple, terre"
     },
@@ -14061,14 +13762,14 @@
     ],
     "altTermIds": ""
   },
-  "MountOfOlives": {
+  "OlivesMount": {
     "gloss": {
       "en": "Mount of Olives",
       "es": "Monte de los Olivos",
       "fr": "Mont des Oliviers"
     },
     "context": {
-      "en": "",
+      "en": "A mountain, named for its olive groves, east of Jerusalem and the Kidron Valley and near Gethsemane; an important location during the final week of Jesus' life. The southern peak, where Solomon built shrines to Chemosh and Molech (1Ki 11:7), is often referred to as the \"Mount of Offense.\"",
       "es": "",
       "fr": ""
     },
@@ -14081,14 +13782,14 @@
     ],
     "altTermIds": ""
   },
-  "MtCarmel": {
+  "CarmelMount": {
     "gloss": {
       "en": "Mt. Carmel",
       "es": "Monte Carmelo",
       "fr": "Mont Carmel"
     },
     "context": {
-      "en": "mountain in north of Israel",
+      "en": "A coastal mountain range in northern Israel, west of the Jezreel Valley, where the prophet Elijah confronted the prophets of Baal (1 Kings 18:16–35).",
       "es": "Monte o montaña ubicada en el norte de Israel.",
       "fr": "montagne du nord d'Israël"
     },
@@ -14117,14 +13818,14 @@
     ],
     "altTermIds": ""
   },
-  "MtEbal": {
+  "EbalMount": {
     "gloss": {
       "en": "Mt. Ebal",
       "es": "Monte Ebal",
       "fr": "Mont Ebal"
     },
     "context": {
-      "en": "mountain",
+      "en": "A mountain north of Shechem where the Israelites pronounced curses (Deuteronomy 11:29); often associated with Mount Gerizim to the south.",
       "es": "Nombre de un monte, usado como lugar para la maldición.",
       "fr": "montagne"
     },
@@ -14143,14 +13844,14 @@
     ],
     "altTermIds": ""
   },
-  "MtGerizim": {
+  "GerizimMount": {
     "gloss": {
       "en": "Mt. Gerizim",
       "es": "Monte Guerizim",
       "fr": "Mont Garizim"
     },
     "context": {
-      "en": "mountain; close to Shechem",
+      "en": "A mountain southwest of Shechem where the Israelites pronounced blessings (Deuteronomy 11:29); often associated with Mount Ebal to the north.",
       "es": "Monte cercano a Siquem.",
       "fr": "montagne; près de Sichem"
     },
@@ -14168,14 +13869,14 @@
     ],
     "altTermIds": ""
   },
-  "MtGilboa": {
+  "GilboaMount": {
     "gloss": {
       "en": "Mt. Gilboa",
       "es": "Monte Gilboa",
       "fr": "Mont Gilboa"
     },
     "context": {
-      "en": "mountain",
+      "en": "A mountain range in Israel, southeast of the Jezreel Valley, where Saul and three of his sons died (1 Samuel 31:1–6).",
       "es": "Montaña en el sur del valle de Jezreel.",
       "fr": "montagne"
     },
@@ -14197,14 +13898,14 @@
     ],
     "altTermIds": ""
   },
-  "MtHermon": {
+  "HermonMount": {
     "gloss": {
       "en": "Mt. Hermon",
       "es": "Monte Hermón",
       "fr": "Mont Hermon"
     },
     "context": {
-      "en": "range of mountains, north-east of Israel",
+      "en": "A mountain in the Anti-Lebanon range, northeast of Israel; also known as Senir, Sion, and Sirion.",
       "es": "Cadena montañosa ubicada en el extremo norte de Basán.",
       "fr": "chaîne de montagnes, au nord-est d'Israël"
     },
@@ -14232,14 +13933,14 @@
     ],
     "altTermIds": ""
   },
-  "MtLebanon": {
+  "LebanonMount": {
     "gloss": {
       "en": "Lebanon Mountains",
       "es": "Las montañas del Líbano",
       "fr": "Montagnes du Liban"
     },
     "context": {
-      "en": "range of mountains; north of Israel",
+      "en": "A range of mountains north of Israel known for the cedar and other trees growing there.",
       "es": "Región montañosa en el norte de Israel.",
       "fr": "chaîne de montagnes; au nord d'Israël"
     },
@@ -14317,14 +14018,14 @@
     ],
     "altTermIds": ""
   },
-  "MtNebo": {
+  "NeboMount": {
     "gloss": {
       "en": "Mt. Nebo",
       "es": "Monte Nebo",
       "fr": "Mont Nébo"
     },
     "context": {
-      "en": "mountain; in Moab",
+      "en": "A mountain in Moab, near Jericho, where Moses had a view of the promised land before he died (Deuteronomy 34:1–4).",
       "es": "Montaña en Moab.",
       "fr": "montagne; à Moab"
     },
@@ -14341,14 +14042,14 @@
     ],
     "altTermIds": ""
   },
-  "MtSeir": {
+  "Seir": {
     "gloss": {
       "en": "Mount Seir",
       "es": "Monte Seir",
       "fr": "Mont Seir"
     },
     "context": {
-      "en": "location",
+      "en": "Seir Region: A mountainous area east of the Jordan Valley and south of Moab, first inhabited by the Horites and later by the Edomites.",
       "es": "Nombre de lugar.",
       "fr": "emplacement"
     },
@@ -14363,14 +14064,14 @@
     ],
     "altTermIds": ""
   },
-  "MtSinaiHoreb": {
+  "SinaiMount": {
     "gloss": {
       "en": "Mt. Sinai Horeb",
       "es": "Monte Sinaí",
       "fr": "Mont Sinaï Horeb"
     },
     "context": {
-      "en": "mountain, desert",
+      "en": "A mountain and surrounding desert on the Sinai Peninsula in Egypt where YHWH entered into a covenant with Israel; also known as Mount Horeb.",
       "es": "Montaña, desierto en Palestina.",
       "fr": "montagne, désert"
     },
@@ -14418,14 +14119,14 @@
     ],
     "altTermIds": ""
   },
-  "MtTabor": {
+  "TaborMount": {
     "gloss": {
       "en": "Mt. Tabor",
       "es": "Monte Tabor",
       "fr": "Mont Tabor"
     },
     "context": {
-      "en": "mountain; territory of Naphtali",
+      "en": "A mountain in the territory of Naphtali, northeast of the Jezreel Valley, where Deborah and Barak launched an attack against Sisera's army (Judges 4:12–16).",
       "es": "Monte ubicado en el territorio de Neftalí.",
       "fr": "montagne; territoire de Nephtali"
     },
@@ -14455,7 +14156,7 @@
       "fr": "Myra"
     },
     "context": {
-      "en": "a city on the south coast of Lycia in Asia Minor",
+      "en": "A city on the south coast of Lycia in Asia Minor where Paul boarded an Alexandrian ship on his way to Rome.",
       "es": "Nombre de lugar en Licia, Asia Menor.",
       "fr": "une ville située sur la côte sud de la Lycie, en Asie Mineure"
     },
@@ -14477,7 +14178,7 @@
       "fr": "Mysie"
     },
     "context": {
-      "en": "a province in northwest Asia Minor",
+      "en": "A province in northwest Asia Minor where Paul passed through during his second missionary journey.",
       "es": "Región ubicada al noroeste de Asia Menor.",
       "fr": "une province du nord-ouest de l'Asie Mineure"
     },
@@ -14500,7 +14201,7 @@
       "fr": "Nain"
     },
     "context": {
-      "en": "a city in southern Galilee",
+      "en": "A city in southern Galilee where Jesus raised a widow's son.",
       "es": "Nombre de lugar al sur de Nazaret.",
       "fr": "une ville du sud de la Galilée"
     },
@@ -14515,14 +14216,14 @@
     ],
     "altTermIds": ""
   },
-  "Naphtali": {
+  "TerritoryOfNaphtali": {
     "gloss": {
       "en": "Naphtali",
       "es": "Neftalí",
       "fr": "Naphtali"
     },
     "context": {
-      "en": "son of Jacob; founder of tribe of Naphtali",
+      "en": "The land assigned to the tribe of Naphtali.",
       "es": "Hijo de Jacob y Bilhá.",
       "fr": "fils de Jacob ; fondateur de la tribu de Nephtali"
     },
@@ -14590,7 +14291,7 @@
       "fr": "Nazareth"
     },
     "context": {
-      "en": "a town in the south central part of Galilee",
+      "en": "A town in south central Galilee, where Jesus lived as a child (Matthew 2:23).",
       "es": "Pueblo que se ubica en las montañas de Galilea.",
       "fr": "une ville située dans la partie centre-sud de la Galilée"
     },
@@ -14623,7 +14324,7 @@
       "fr": "Néapolis"
     },
     "context": {
-      "en": "the harbor of Philippi in Macedonia",
+      "en": "The harbor of Philippi in Macedonia; Paul and his companions sailed here from Samothrace.",
       "es": "Puerto de Filipos en Macedonia.",
       "fr": "le port de Philippes en Macédoine"
     },
@@ -14645,7 +14346,7 @@
       "fr": "Nicopolis"
     },
     "context": {
-      "en": "a city on the west coast of Greece",
+      "en": "A seaport city on the west coast of Greece, which Paul visited during his travels (Tit 3:12).",
       "es": "Nombre de lugar en la costa oeste de Grecia.",
       "fr": "une ville située sur la côte ouest de la Grèce"
     },
@@ -14660,14 +14361,14 @@
     ],
     "altTermIds": ""
   },
-  "NileRiver": {
+  "Nile": {
     "gloss": {
       "en": "Nile River",
       "es": "Río Nilo",
       "fr": "Le Nil"
     },
     "context": {
-      "en": "river; in Egypt",
+      "en": "A large body of flowing water located in Egypt; very important to transportation, irrigation, and life in Egypt.",
       "es": "río en Egipto",
       "fr": "fleuve; en Égypte"
     },
@@ -14719,7 +14420,7 @@
       "fr": "Ninive"
     },
     "context": {
-      "en": "city in Mesopotamia; capital of Assyria",
+      "en": "A town in northern Mesopotamia near Mosul, on the east bank of the Tigris River; built by Nimrod after the flood. It was the capital of Assyria; the prophet Jonah preached against the town.",
       "es": "Lugar en Mesopotamia, capital de Asiria.",
       "fr": "ville de Mésopotamie ; capitale de l'Assyrie"
     },
@@ -14762,26 +14463,6 @@
     "terms": [
       {
         "termId": "nippur",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
-  "Nisan": {
-    "gloss": {
-      "en": "Nisan",
-      "es": "Nisan",
-      "fr": "Nissan"
-    },
-    "context": {
-      "en": "Hebrew month",
-      "es": "",
-      "fr": "mois hébraïque"
-    },
-    "terms": [
-      {
-        "termId": "nisan",
         "transliteration": "",
         "refs": []
       }
@@ -14848,26 +14529,6 @@
     ],
     "altTermIds": ""
   },
-  "Nov": {
-    "gloss": {
-      "en": "Nov",
-      "es": "nov",
-      "fr": "Nov"
-    },
-    "context": {
-      "en": "3 letter abbreviation for the month",
-      "es": "",
-      "fr": "Abréviation à 3 lettres du mois"
-    },
-    "terms": [
-      {
-        "termId": "nov",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
   "Numidia": {
     "gloss": {
       "en": "Numidia",
@@ -14902,26 +14563,6 @@
     "terms": [
       {
         "termId": "nuzi",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
-  "Oct": {
-    "gloss": {
-      "en": "Oct",
-      "es": "oct",
-      "fr": "Octobre"
-    },
-    "context": {
-      "en": "3 letter abbreviation for the month",
-      "es": "",
-      "fr": "Abréviation à 3 lettres du mois"
-    },
-    "terms": [
-      {
-        "termId": "oct",
         "transliteration": "",
         "refs": []
       }
@@ -15068,14 +14709,14 @@
     ],
     "altTermIds": ""
   },
-  "PaddanAram": {
+  "Paddan-aram": {
     "gloss": {
       "en": "Paddan Aram",
       "es": "Padan-aram",
       "fr": "Paddan Aram"
     },
     "context": {
-      "en": "",
+      "en": "A region in upper Mesopotamia, located around the great bend of the Euphrates River in northern Syria; ancestral home of Abraham’s family (ABD); also known as Aram-Naharaim.",
       "es": "",
       "fr": ""
     },
@@ -15106,7 +14747,7 @@
       "fr": "Palestine"
     },
     "context": {
-      "en": "",
+      "en": "The land of the Philistines, situated along the coast of the Mediterranean and concentrated around the cities of Gaza, Gath, Ekron, Ashdod, and Ashkelon.",
       "es": "",
       "fr": ""
     },
@@ -15126,7 +14767,7 @@
       "fr": "Pamphylie"
     },
     "context": {
-      "en": "a province in the southern part of Asia Minor",
+      "en": "A province in the southern part of Asia Minor; Paul and his companions traveled here during his first missionary journey.",
       "es": "Región de la costa sur de Asia Menor.",
       "fr": "une province du sud de l'Asie Mineure"
     },
@@ -15152,7 +14793,7 @@
       "fr": "Paphos"
     },
     "context": {
-      "en": "a city on the southwest coast of the island of Cyprus",
+      "en": "A seaport city on the southwest coast of the island of Cyprus, where Paul and Barnabas encountered Elymas the sorcerer (Acts 13:6–12).",
       "es": "Nombre de lugar en la costa suroeste de la isla de Chipre.",
       "fr": "une ville située sur la côte sud-ouest de l'île de Chypre"
     },
@@ -15168,25 +14809,13 @@
     ],
     "altTermIds": ""
   },
-  "Paris": {
+  "Lutetia": {
     "gloss": {
-      "en": "Paris",
-      "es": "París",
-      "fr": "Paris"
+      "en": "Lutetia"
     },
     "context": {
-      "en": "",
-      "es": "",
-      "fr": ""
-    },
-    "terms": [
-      {
-        "termId": "paris",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
+      "en": "A Roman city in northern France; modern-day Paris. Beginning in the third century AD, it was a center of early Christianity."
+    }
   },
   "Parthia": {
     "gloss": {
@@ -15282,7 +14911,7 @@
       "fr": "Patara"
     },
     "context": {
-      "en": "a city in Lycia on the southwest coast of Asia Minor",
+      "en": "A city in Lycia on the southwest coast of Asia Minor where Paul's ship made a stop on his journey to Jerusalem.",
       "es": "Puerto ubicado al suroeste de Licia en Asia Menor.",
       "fr": "une ville de Lycie, sur la côte sud-ouest de l'Asie Mineure"
     },
@@ -15304,7 +14933,7 @@
       "fr": "Patmos"
     },
     "context": {
-      "en": "a small, rocky island in the Aegean Sea",
+      "en": "A small, rock island in the Aegean Sea where John received his revelation.",
       "es": "Isla que se ubica al suroeste de la costa de Asia Menor.",
       "fr": "une petite île rocheuse de la mer Égée"
     },
@@ -15319,14 +14948,14 @@
     ],
     "altTermIds": ""
   },
-  "Peniel": {
+  "Penuel": {
     "gloss": {
       "en": "Peniel",
       "es": "Penuel",
       "fr": "Peniel"
     },
     "context": {
-      "en": "location; Penuel",
+      "en": "A town on the Jabbok River; also known as Peniel.",
       "es": "Nombre de lugar.",
       "fr": "lieu; Penuel"
     },
@@ -15368,7 +14997,7 @@
       "fr": "Perga"
     },
     "context": {
-      "en": "a city in Pamphylia, near the south coast of Asia Minor",
+      "en": "A city in Pamphylia, near the south coast of Asia Minor; Paul traveled here during his first missionary journey.",
       "es": "Nombre de lugar en la región de Panfilia, cerca de la costa sur de Asia Menor.",
       "fr": "une ville de Pamphylie, près de la côte sud de l'Asie Mineure"
     },
@@ -15392,7 +15021,7 @@
       "fr": "Pergame"
     },
     "context": {
-      "en": "an important city in northwest Asia Minor",
+      "en": "An important city in northwest Asia Minor; one of the seven cities addressed in Revelation.",
       "es": "Ciudad que se ubica al noroeste de Asia Menor.",
       "fr": "une ville importante du nord-ouest de l'Asie Mineure"
     },
@@ -15415,7 +15044,7 @@
       "fr": "Perse"
     },
     "context": {
-      "en": "a person greeted in Romans 16",
+      "en": "A nation and its territory, which was greatly expanded during the reign of Cyrus I.",
       "es": "Persona a la que se saluda en la carta a los romanos.",
       "fr": "une personne saluée dans Romains 16"
     },
@@ -15457,7 +15086,7 @@
       "fr": "Philadelphie"
     },
     "context": {
-      "en": "a city in the west central part of Asia Minor",
+      "en": "A city in the west central part of Asia Minor; one of the seven cities addressed in Revelation.",
       "es": "Ciudad de la provincia romana de Asia.",
       "fr": "une ville située dans la partie centre-ouest de l'Asie Mineure"
     },
@@ -15480,7 +15109,7 @@
       "fr": "Philippe"
     },
     "context": {
-      "en": "a city in Macedonia",
+      "en": "A city in Macedonia; the letter to the Philippians was addressed to the church there.",
       "es": "Importante ciudad de Macedonia, colonia romana.",
       "fr": "une ville de Macédoine"
     },
@@ -15799,7 +15428,7 @@
       "fr": "Phénicie"
     },
     "context": {
-      "en": "an area along the seacoast to the west and north of Palestine",
+      "en": "A region along the coast of the Mediterranean Sea to the west and north of Palestine, and its inhabitants.",
       "es": "Región de la costa oeste y norte de Palestina.",
       "fr": "une zone côtière à l'ouest et au nord de la Palestine"
     },
@@ -15823,7 +15452,7 @@
       "fr": "Phénix"
     },
     "context": {
-      "en": "a seaport on the south coast of Crete",
+      "en": "A seaport on the south coast of Crete where Paul and his shipmates hoped to harbor for the winter before continuing on to Rome.",
       "es": "Puerto ubicado en la costa sur de la isla de Creta.",
       "fr": "un port maritime sur la côte sud de la Crète"
     },
@@ -15845,7 +15474,7 @@
       "fr": "Phrygie"
     },
     "context": {
-      "en": "a district in central Asia Minor",
+      "en": "A district in central Asia Minor through which Paul traveled during his missionary journeys.",
       "es": "Región de la parte central de Asia Menor.",
       "fr": "un district d'Asie Mineure centrale"
     },
@@ -15889,7 +15518,7 @@
       "fr": "Pisidie"
     },
     "context": {
-      "en": "a region in central Asia Minor",
+      "en": "A region in the province of Galatia, in southern Asia Minor.",
       "es": "Región de la parte central de Asia Menor.",
       "fr": "une région d'Asie Mineure centrale"
     },
@@ -15911,7 +15540,7 @@
       "fr": "Pithom"
     },
     "context": {
-      "en": "town in Egypt",
+      "en": "A town in Egypt; one of the two cities for storage that had to be built by the Hebrew slaves.",
       "es": "Nombre de lugar en Egipto.",
       "fr": "ville d'Égypte"
     },
@@ -15933,7 +15562,7 @@
       "fr": "Pontus"
     },
     "context": {
-      "en": "a region in northeast Asia Minor",
+      "en": "A region in northeast Asia Minor; home of Aquila (Acts 18:2).",
       "es": "Región del noreste de Asia Menor.",
       "fr": "une région du nord-est de l'Asie Mineure"
     },
@@ -15949,14 +15578,14 @@
     ],
     "altTermIds": ""
   },
-  "PoolOfBethzatha": {
+  "Bethesda": {
     "gloss": {
       "en": "Pool of Bethzatha",
       "es": "La piscina de Betesda",
       "fr": "Piscine de Bethzatha"
     },
     "context": {
-      "en": "a pool in the northeast part of Old Jerusalem",
+      "en": "A pool in Jerusalem where people came to be healed; Jesus healed a man who has been an invalid for 38 years there.",
       "es": "Estanque en Jerusalén, cerca de la Puerta de las Ovejas\".",
       "fr": "un bassin dans la partie nord-est de la Vieille Jérusalem"
     },
@@ -15971,14 +15600,14 @@
     ],
     "altTermIds": ""
   },
-  "PoolOfSiloam": {
+  "Siloam": {
     "gloss": {
       "en": "Pool of Siloam",
       "es": "Estanque de Siloé",
       "fr": "Bassin de Siloé"
     },
     "context": {
-      "en": "the name for a system of water supply in Jerusalem; the pool of Siloam was probably the basin into which the water flowed",
+      "en": "The name for a system of water supply in Jerusalem; the pool of Siloam was probably the basin into which the water flowed.",
       "es": "Torre, fuente de agua y estanque situado en el extremo sur Jerusalén.",
       "fr": "Le nom donné à un système d'approvisionnement en eau à Jérusalem ; le bassin de Siloé était probablement le bassin dans lequel l'eau s'écoulait."
     },
@@ -16030,7 +15659,7 @@
       "fr": "Ptolémée"
     },
     "context": {
-      "en": "a seaport on the coast of Palestine (called Acco in OT times",
+      "en": "A seaport on the coast of Palestine; Acco in the Old Testament.",
       "es": "Antiguo puerto de Aco ubicado en la costa de Palestina, al norte de Cesarea.",
       "fr": "un port maritime sur la côte de Palestine (appelé Acco dans l'Ancien Testament)"
     },
@@ -16052,7 +15681,7 @@
       "fr": "Punon"
     },
     "context": {
-      "en": "location along route of exodus",
+      "en": "A location along the route of the exodus where the Israelites encamped on their way from Egypt to Canaan.",
       "es": "Nombre de lugar en la ruta del éxodo.",
       "fr": "emplacement le long de la route de l'exode"
     },
@@ -16068,26 +15697,6 @@
     ],
     "altTermIds": ""
   },
-  "Purim": {
-    "gloss": {
-      "en": "Purim",
-      "es": "Purim",
-      "fr": "Pourim"
-    },
-    "context": {
-      "en": "Hebrew holiday",
-      "es": "",
-      "fr": "fête hébraïque"
-    },
-    "terms": [
-      {
-        "termId": "purim",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
   "Put": {
     "gloss": {
       "en": "Put",
@@ -16095,7 +15704,7 @@
       "fr": "Mettre"
     },
     "context": {
-      "en": "son of Ham",
+      "en": "A nation descended from a man of the same name; possibly to be identified with Libya.",
       "es": "Hijo de Cam.",
       "fr": "fils de Cham"
     },
@@ -16123,7 +15732,7 @@
       "fr": "Puteoli"
     },
     "context": {
-      "en": "a city on the coast of Italy, south of Rome",
+      "en": "A city on the coast of Italy, south of Rome; visited by Paul on his journey to Rome.",
       "es": "Nombre de lugar en la costa de Italia, al sur de Roma.",
       "fr": "une ville côtière d'Italie, au sud de Rome"
     },
@@ -16165,7 +15774,7 @@
       "fr": "Rabbah"
     },
     "context": {
-      "en": "town; capital of Ammon",
+      "en": "Rabbah of the Ammonites: A town in Ammon and capital of the Ammonite kingdom; first conquered by Israel on their way from Egypt, and later again by David.",
       "es": "Capital de la ciudad de Amón.",
       "fr": "ville ; capitale d'Ammon"
     },
@@ -16199,7 +15808,7 @@
       "fr": "Ramah"
     },
     "context": {
-      "en": "town; territory of Ephraim",
+      "en": "Ramah of Ephraim: A town in the territory of Ephraim, where Samuel lived; also known as Ramathaim Zophim.",
       "es": "Nombre de lugar, en el territorio de Efraín.",
       "fr": "ville; territoire d'Éphraïm"
     },
@@ -16226,14 +15835,14 @@
     ],
     "altTermIds": ""
   },
-  "Ramoth": {
+  "Ramoth-gilead": {
     "gloss": {
-      "en": "Ramoth",
-      "es": "Ramot",
-      "fr": "Ramoth"
+      "en": "Ramoth Gilead",
+      "es": "Ramot de Galaad",
+      "fr": "Ramoth Galaad"
     },
     "context": {
-      "en": "town of refuge; for Levites; Gilead; territory of Gad",
+      "en": "A Levitical town in Gilead, in the territory of Gad; assigned to the clan of Merari.",
       "es": "Poblado para los levitas, en el territorio de Gad.",
       "fr": "ville de refuge; pour les Lévites; Galaad; territoire de Gad"
     },
@@ -16269,48 +15878,7 @@
         ]
       }
     ],
-    "altTermIds": ""
-  },
-  "RamothGilead": {
-    "gloss": {
-      "en": "Ramoth Gilead",
-      "es": "Ramot de Galaad",
-      "fr": "Ramoth Galaad"
-    },
-    "context": {
-      "en": "",
-      "es": "",
-      "fr": ""
-    },
-    "terms": [
-      {
-        "termId": "רָאמוֹת גִּלְעָד",
-        "transliteration": "",
-        "refs": [
-          "011004013",
-          "011022003",
-          "011022004",
-          "011022006",
-          "011022012",
-          "011022015",
-          "011022020",
-          "011022029",
-          "012008028",
-          "012009001",
-          "012009004",
-          "012009014",
-          "014018002",
-          "014018003",
-          "014018005",
-          "014018011",
-          "014018014",
-          "014018019",
-          "014018028",
-          "014022005"
-        ]
-      }
-    ],
-    "altTermIds": ""
+    "altTermIds": "רָאמוֹת גִּלְעָד"
   },
   "RedSea": {
     "gloss": {
@@ -16319,7 +15887,7 @@
       "fr": "mer Rouge"
     },
     "context": {
-      "en": "extreme northern part of Gulf of Suez",
+      "en": "A body of salt water located between Egypt and the Sinai Peninsula, which the Israelites crossed after they left Egypt.",
       "es": "Se encuentra al extremo norte del golfo de Suez.",
       "fr": "partie la plus septentrionale du golfe de Suez"
     },
@@ -16357,14 +15925,14 @@
     ],
     "altTermIds": ""
   },
-  "Reuben": {
+  "TerritoryOfReuben": {
     "gloss": {
       "en": "Reuben",
       "es": "Rubén",
       "fr": "Ruben"
     },
     "context": {
-      "en": "son of Jacob; founder of tribe of Reuben",
+      "en": "The land assigned to the tribe of Reuben.",
       "es": "Hijo de Jacob y Lía.",
       "fr": "fils de Jacob ; fondateur de la tribu de Ruben"
     },
@@ -16451,7 +16019,7 @@
       "fr": "Rhégium"
     },
     "context": {
-      "en": "a city on a promontory in the south of Italy",
+      "en": "A city on a promontory in the south of Italy; visited by Paul on his journey to Rome.",
       "es": "Puerto de la costa sur de Italia.",
       "fr": "une ville située sur un promontoire dans le sud de l'Italie"
     },
@@ -16473,7 +16041,7 @@
       "fr": "Rhodes"
     },
     "context": {
-      "en": "an island off the southwest coast of Asia Minor",
+      "en": "An island, with a city of the same name, off the southwest coast of Asia Minor; Paul's ship stopped here on his journey to Jerusalem.",
       "es": "Isla que se ubica al sudoeste de Asia Menor.",
       "fr": "une île au large de la côte sud-ouest de l'Asie Mineure"
     },
@@ -16495,7 +16063,7 @@
       "fr": "Riblah"
     },
     "context": {
-      "en": "town; on the Orontes river",
+      "en": "",
       "es": "",
       "fr": "ville; sur le fleuve Oronte"
     },
@@ -16510,14 +16078,14 @@
     ],
     "altTermIds": ""
   },
-  "RiverArnon": {
+  "Arnon": {
     "gloss": {
       "en": "Arnon River",
       "es": "Río Arnón",
       "fr": "Rivière Arnon"
     },
     "context": {
-      "en": "river",
+      "en": "A river east of the Jordan which constitutes the border between Moab and Ammon.",
       "es": "Río ubicado al este del Jordán.",
       "fr": "rivière"
     },
@@ -16554,14 +16122,14 @@
     ],
     "altTermIds": ""
   },
-  "RiverJabbok": {
+  "Jabbok": {
     "gloss": {
       "en": "Jabbok River",
       "es": "Río Jaboc",
       "fr": "Rivière Jabbok"
     },
     "context": {
-      "en": "river",
+      "en": "A river flowing west from its source near Rabbath-Ammon to empty into the Jordan River about 40 km north of the Dead Sea.",
       "es": "Nombre de río, afluente del río Jordán, al norte del mar muerto.",
       "fr": "rivière"
     },
@@ -16602,14 +16170,14 @@
     ],
     "altTermIds": ""
   },
-  "RiverZered": {
+  "Zered": {
     "gloss": {
       "en": "Zered River",
       "es": "Río Zéred",
       "fr": "Rivière Zered"
     },
     "context": {
-      "en": "valley, river",
+      "en": "River and its valley located south of Moab; crossed by the Israelites, ending their 40 years of sojourn in the wilderness.",
       "es": "Arroyo ubicado entre las fronteras de Moab y Edom.",
       "fr": "vallée, rivière"
     },
@@ -16633,7 +16201,7 @@
       "fr": "Rome"
     },
     "context": {
-      "en": "the capital city of the Roman Empire",
+      "en": "The capital city of the Roman Empire and an early center of Christianity. The letter to the Romans was addressed to the church there.",
       "es": "Capital del Imperio Romano.",
       "fr": "la capitale de l'Empire romain"
     },
@@ -16661,7 +16229,7 @@
       "fr": "Salamine"
     },
     "context": {
-      "en": "a city on the southeast coast of Cyprus",
+      "en": "A city on the southeast coast of Cyprus; Paul and Barnabas preached here during their first missionary journey.",
       "es": "Puerto que se ubica en la costa sureste de la isla de Chipre.",
       "fr": "une ville située sur la côte sud-est de Chypre"
     },
@@ -16683,7 +16251,7 @@
       "fr": "Salim"
     },
     "context": {
-      "en": "a place in northern Samaria (location uncertain",
+      "en": "A place of uncertain location in Samaria, near Aenon where John was baptizing.",
       "es": "Nombre de lugar posiblemente situado al norte de Judea, en el valle del río Jordán.",
       "fr": "un lieu du nord de la Samarie (localisation incertaine)"
     },
@@ -16705,7 +16273,7 @@
       "fr": "Saumon"
     },
     "context": {
-      "en": "a promontory on the northeast corner of Crete",
+      "en": "A promontory on the northeast corner of Crete; Paul's ship sailed near here during his journey to Rome.",
       "es": "Nombre de lugar en la esquina noreste de la isla de Creta.",
       "fr": "un promontoire à l'angle nord-est de la Crète"
     },
@@ -16720,14 +16288,14 @@
     ],
     "altTermIds": ""
   },
-  "SamariaCity": {
+  "Samaria": {
     "gloss": {
       "en": "Samaria",
       "es": "Samaria",
       "fr": "Samarie"
     },
     "context": {
-      "en": "the principal city of Samaria",
+      "en": "Samaria City: A city constructed by King Omri which was the capital of the northern Israelite kingdom until it was conquered by Assyrians; often used to refer to the entire northern kingdom.",
       "es": "Región y capital del reino del norte de Israel.",
       "fr": "la principale ville de Samarie"
     },
@@ -16850,14 +16418,14 @@
     ],
     "altTermIds": "Σαμάρεια-1, שֹׁמְרוֹן"
   },
-  "SamariaRegion": {
+  "Samaria.2": {
     "gloss": {
       "en": "Samaria",
       "es": "Samaria",
       "fr": "Samarie"
     },
     "context": {
-      "en": "a region in the central part of Palestine",
+      "en": "A region in the central part of Palestine, between Galilee and the Dead Sea, named after its capital city;",
       "es": "Región y capital del reino del norte de Israel.",
       "fr": "une région située dans la partie centrale de la Palestine"
     },
@@ -16887,7 +16455,7 @@
       "fr": "Samos"
     },
     "context": {
-      "en": "an island off the west coast of Asia Minor",
+      "en": "An island off the west coast of Asia Minor; Paul's ship stopped here during his third missionary journey.",
       "es": "Una de las islas mayores del mar Egeo, ubicada al suroeste de Éfeso.",
       "fr": "une île au large de la côte ouest de l'Asie Mineure"
     },
@@ -16909,7 +16477,7 @@
       "fr": "Samothrace"
     },
     "context": {
-      "en": "an island in the northern Aegean Sea",
+      "en": "An island in the northern Aegean Sea; Paul's ship stopped here on his journey from Troas to Philippi.",
       "es": "Isla montañosa ubicada al norte del mar Egeo.",
       "fr": "une île du nord de la mer Égée"
     },
@@ -16951,7 +16519,7 @@
       "fr": "Sardes"
     },
     "context": {
-      "en": "a city in western Asia Minor",
+      "en": "A city in western Asia Minor; one of the seven cities addressed in Revelation.",
       "es": "Nombre de lugar al oeste de Asia Menor.",
       "fr": "une ville d'Asie Mineure occidentale"
     },
@@ -17038,7 +16606,7 @@
       "fr": "Mer de Galilée"
     },
     "context": {
-      "en": "the Lake of Galilee, also called Tiberias and Gennesaret",
+      "en": "A large body of freshwater east of the territory of Galilee, in northern Israel, through which the Jordan River flows and where Jesus walked on water (Matthew 14:22–33; Mark 6:45–52; John 6:16–21).",
       "es": "Lago de la región de Galilea conocido también como el “lago de Genesaret o \"mar de Tiberias\".",
       "fr": "le lac de Galilée, également appelé Tibériade et Génésaret"
     },
@@ -17091,7 +16659,7 @@
       "fr": "Séleucie"
     },
     "context": {
-      "en": "the port city of Antioch in Syria",
+      "en": "The port city of Antioch in Syria; Paul and Barnabas departed for Cyprus from here.",
       "es": "Puerto de Antioquía de Siria.",
       "fr": "la ville portuaire d'Antioche en Syrie"
     },
@@ -17102,26 +16670,6 @@
         "refs": [
           "044013004"
         ]
-      }
-    ],
-    "altTermIds": ""
-  },
-  "Sept": {
-    "gloss": {
-      "en": "Sept",
-      "es": "sep",
-      "fr": "Sept"
-    },
-    "context": {
-      "en": "3 letter abbreviation for the month",
-      "es": "",
-      "fr": "Abréviation à 3 lettres du mois"
-    },
-    "terms": [
-      {
-        "termId": "sept",
-        "transliteration": "",
-        "refs": []
       }
     ],
     "altTermIds": ""
@@ -17146,26 +16694,6 @@
     ],
     "altTermIds": ""
   },
-  "Shavot": {
-    "gloss": {
-      "en": "Shavot",
-      "es": "Shavot",
-      "fr": "Shavot"
-    },
-    "context": {
-      "en": "Hebrew holiday",
-      "es": "",
-      "fr": "fête hébraïque"
-    },
-    "terms": [
-      {
-        "termId": "shavot",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
   "Shechem": {
     "gloss": {
       "en": "Shechem",
@@ -17173,7 +16701,7 @@
       "fr": "Shechem"
     },
     "context": {
-      "en": "a city in Samaria",
+      "en": "A Levitical town of refuge in the hill country of the territory of Ephraim; assigned to the clan of Kohath. God appeared to Abram at Shechem and Abram built an altar.",
       "es": "Ciudad de Palestina, situada entre los montes Ebal y Guerizim.",
       "fr": "une ville de Samarie"
     },
@@ -17241,7 +16769,7 @@
       "fr": "Porte des moutons"
     },
     "context": {
-      "en": "",
+      "en": "A gate in the walls of Jerusalem, near the pool of Bethesda, which was rebuilt by the high priest Eliashib and his fellow priests (Nehemiah 3:1).",
       "es": "",
       "fr": ""
     },
@@ -17320,7 +16848,7 @@
       "fr": "Shiloh"
     },
     "context": {
-      "en": "town; territory of Ephraim",
+      "en": "A town in the territory of Ephraim; location of the Tent of Meeting for some time.",
       "es": "pueblo; territorio de Efraín",
       "fr": "ville; territoire d'Éphraïm"
     },
@@ -17372,7 +16900,7 @@
       "fr": "Shittim"
     },
     "context": {
-      "en": "A large area in the plains of Moab directly across from Jericho, immediately east of the Jordan River.",
+      "en": "A location on the plains of Moab, across from Jericho, where the Israelites camped before crossing the Jordan River (JOS 3:1).",
       "es": "Una gran zona en las llanuras de Moab, directamente frente a Jericó, inmediatamente al este del río Jordán.",
       "fr": "Une vaste zone dans les plaines de Moab, juste en face de Jéricho, immédiatement à l'est du Jourdain."
     },
@@ -17414,7 +16942,7 @@
       "fr": "Shunem"
     },
     "context": {
-      "en": "town; territory of Issachar",
+      "en": "A town in the territory of Issachar.",
       "es": "Nombre de lugar, en el territorio de Isacar.",
       "fr": "ville; territoire d'Issachar"
     },
@@ -17458,7 +16986,7 @@
       "fr": "Sidon"
     },
     "context": {
-      "en": "a city on the coast of Phoenicia",
+      "en": "A seaport town on the Phoenician coast, north of Tyre; marked the northern boundary of the promised land.",
       "es": "Ciudad y puerto de la costa de Fenicia.",
       "fr": "une ville sur la côte de la Phénicie"
     },
@@ -17545,14 +17073,14 @@
     ],
     "altTermIds": ""
   },
-  "Simeon": {
+  "TerritoryOfSimeon": {
     "gloss": {
       "en": "Simeon",
       "es": "Simeón",
       "fr": "Siméon"
     },
     "context": {
-      "en": "son of Jacob; founder of tribe of Simeon",
+      "en": "The land assigned to the tribe of Judah.",
       "es": "Hijo de Jacob y Lía.",
       "fr": "fils de Jacob ; fondateur de la tribu de Siméon"
     },
@@ -17611,7 +17139,7 @@
       "fr": "Sinaï"
     },
     "context": {
-      "en": "mountain, desert",
+      "en": "A mountain located on the Sinai Peninsula; another name for Mount Sinai.",
       "es": "Montaña, desierto en Palestina.",
       "fr": "montagne, désert"
     },
@@ -17659,26 +17187,6 @@
     ],
     "altTermIds": ""
   },
-  "Siwan": {
-    "gloss": {
-      "en": "Siwan",
-      "es": "Siwan",
-      "fr": "Siwan"
-    },
-    "context": {
-      "en": "Hebrew holiday",
-      "es": "",
-      "fr": "fête hébraïque"
-    },
-    "terms": [
-      {
-        "termId": "siwan",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
   "Smyrna": {
     "gloss": {
       "en": "Smyrna",
@@ -17686,7 +17194,7 @@
       "fr": "Smyrne"
     },
     "context": {
-      "en": "a city on the west coast of Asia Minor",
+      "en": "A city on the west coast of Asia Minor; one of the seven cities addressed in Revelation.",
       "es": "Nombre de lugar al oeste de Asia Menor.",
       "fr": "une ville située sur la côte ouest de l'Asie Mineure"
     },
@@ -17722,14 +17230,14 @@
     ],
     "altTermIds": ""
   },
-  "SolomonsPorch": {
+  "SolomonsPortico": {
     "gloss": {
       "en": "Solomon’s Porch",
       "es": "El pórtico de Salomón",
       "fr": "Le porche de Salomon"
     },
     "context": {
-      "en": "",
+      "en": "A colonnade on the east side of the Herod's temple in Jerusalem.",
       "es": "",
       "fr": ""
     },
@@ -17829,7 +17337,7 @@
       "fr": "Hispanie (Espagne)"
     },
     "context": {
-      "en": "",
+      "en": "A country at the western end of the Mediterranean Sea; Paul planned to travel there after visiting Jerusalem.",
       "es": "",
       "fr": ""
     },
@@ -17849,7 +17357,7 @@
       "fr": "Succoth"
     },
     "context": {
-      "en": "town; territory of Gad",
+      "en": "Succoth of Gad: A town in the territory of Gad.",
       "es": "Nombre de lugar, en el territorio de Gad.",
       "fr": "ville; territoire de Gad"
     },
@@ -17871,26 +17379,6 @@
     ],
     "altTermIds": ""
   },
-  "Sukkot": {
-    "gloss": {
-      "en": "Sukkot",
-      "es": "Sucot",
-      "fr": "Souccot"
-    },
-    "context": {
-      "en": "Hebrew holiday",
-      "es": "",
-      "fr": "fête hébraïque"
-    },
-    "terms": [
-      {
-        "termId": "sukkot",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
   "Susa": {
     "gloss": {
       "en": "Susa",
@@ -17898,7 +17386,7 @@
       "fr": "Suse"
     },
     "context": {
-      "en": "town; capital of Persia",
+      "en": "The capital of Persia.",
       "es": "Capital de Persia.",
       "fr": "ville ; capitale de la Perse"
     },
@@ -17960,7 +17448,7 @@
       "fr": "Sychar"
     },
     "context": {
-      "en": "a city in Samaria",
+      "en": "A city in Samaria where Jesus spoke to the Samaritan Woman at Jacob's Well.",
       "es": "Nombre de lugar en Samaria.",
       "fr": "une ville de Samarie"
     },
@@ -17975,26 +17463,6 @@
     ],
     "altTermIds": ""
   },
-  "Syebat": {
-    "gloss": {
-      "en": "Syebat",
-      "es": "Syebat",
-      "fr": "Syebat"
-    },
-    "context": {
-      "en": "Hebrew holiday",
-      "es": "",
-      "fr": "fête hébraïque"
-    },
-    "terms": [
-      {
-        "termId": "syebat",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
   "Syracuse": {
     "gloss": {
       "en": "Syracuse",
@@ -18002,7 +17470,7 @@
       "fr": "Syracuse"
     },
     "context": {
-      "en": "a city on the east coast of Sicily",
+      "en": "A city on the east coast of Sicily where Paul stayed for three days while on his way to Rome.",
       "es": "Puerto de la costa este de Sicilia.",
       "fr": "une ville de la côte est de la Sicile"
     },
@@ -18053,7 +17521,7 @@
       "fr": "Syrie"
     },
     "context": {
-      "en": "son of Shem; people, land",
+      "en": "A region to the north and east of Palestine; known as Aram in the Old Testament.",
       "es": "Hijo de Sem.",
       "fr": "fils de Sem ; peuple, terre"
     },
@@ -18187,7 +17655,7 @@
       "fr": "Syrtis"
     },
     "context": {
-      "en": "Two shallow and treacherous Mediterranean gulfs along the north African coastline.",
+      "en": "Two shallow and treacherous Mediterranean gulfs along the North African coastline; Paul's ship was wrecked on Malta after attempting to avoid running aground here.",
       "es": "Nombre de dos golfos mediterráneos poco profundos y traicioneros a lo largo de la costa del norte de África.",
       "fr": "Deux golfes méditerranéens peu profonds et dangereux le long de la côte nord-africaine."
     },
@@ -18209,7 +17677,7 @@
       "fr": "Taanach"
     },
     "context": {
-      "en": "town; territory of Manasseh",
+      "en": "A Levitical town in the territory of Manasseh, west of the Jordan River; assigned to the clan of Kohath.",
       "es": "Nombre de lugar, en el territorio de Manasés.",
       "fr": "ville; territoire de Manassé"
     },
@@ -18237,7 +17705,7 @@
       "fr": "Tamar"
     },
     "context": {
-      "en": "town; territory of Judah",
+      "en": "Tamar in the Wilderness: A town rebuilt by Solomon in the wilderness; possibly in the territory of Judah.",
       "es": "Nombre de lugar, en el desierto de Judá.",
       "fr": "ville; territoire de Juda"
     },
@@ -18254,34 +17722,14 @@
     ],
     "altTermIds": ""
   },
-  "Tamus": {
-    "gloss": {
-      "en": "Tamus",
-      "es": "Tamus",
-      "fr": "Tamus"
-    },
-    "context": {
-      "en": "Hebrew holiday",
-      "es": "",
-      "fr": "fête hébraïque"
-    },
-    "terms": [
-      {
-        "termId": "tamus",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
-  "Tappuah": {
+  "Tappuah.2": {
     "gloss": {
       "en": "Tappuah",
       "es": "Tapúa",
       "fr": "Tappuah"
     },
     "context": {
-      "en": "location; territory of Judah",
+      "en": "Tappuah of Judah: A town in the foothills of the territory of Judah.",
       "es": "lugar; territorio de Judá",
       "fr": "lieu; territoire de Juda"
     },
@@ -18306,7 +17754,7 @@
       "fr": "Tarse"
     },
     "context": {
-      "en": "the capital of Cilicia in southeast Asia Minor",
+      "en": "The capital city of Cilicia in southeast Asia Minor; birthplace of the apostle Paul.",
       "es": "Capital de Cilicia, ciudad de la costa de Asia Menor.",
       "fr": "la capitale de la Cilicie en Asie Mineure du Sud-Est"
     },
@@ -18343,26 +17791,6 @@
     ],
     "altTermIds": ""
   },
-  "Tebet": {
-    "gloss": {
-      "en": "Tebet",
-      "es": "Tebet",
-      "fr": "Tebet"
-    },
-    "context": {
-      "en": "Hebrew holiday",
-      "es": "",
-      "fr": "fête hébraïque"
-    },
-    "terms": [
-      {
-        "termId": "tebet",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
   "Tekoa": {
     "gloss": {
       "en": "Tekoa",
@@ -18370,7 +17798,7 @@
       "fr": "Tekoa"
     },
     "context": {
-      "en": "town; Judah",
+      "en": "A town in the territory of Judah; hometown of the prophet Amos.",
       "es": "Nombre de lugar, en el territorio de Judá.",
       "fr": "ville; Juda"
     },
@@ -18398,7 +17826,7 @@
       "fr": "Teman"
     },
     "context": {
-      "en": "son of Eliphaz, son of Esau; people, land",
+      "en": "The territory of the most prominent tribe of Edom (ABD); sometimes used to refer to the entire territory of Edom.",
       "es": "Hijo de Elifaz, descendiente de Esaú.",
       "fr": "fils d'Éliphaz, fils d'Ésaü ; peuple, terre"
     },
@@ -18441,14 +17869,14 @@
     ],
     "altTermIds": ""
   },
-  "TheNegev": {
+  "Negeb": {
     "gloss": {
       "en": "The Negev",
       "es": "El Neguev",
       "fr": "Le Néguev"
     },
     "context": {
-      "en": "desert in the south of Israel",
+      "en": "A area of land located in the south of Israel, consisting of little vegetation and with very little annual rainfall; inhabited by numerous peoples, initially by the Canaanites in Arad and the Amalekites, and later, the people of Judah.",
       "es": "Zona desértica al sur de Palestina.",
       "fr": "désert du sud d'Israël"
     },
@@ -18565,7 +17993,7 @@
       "fr": "Thessalonique"
     },
     "context": {
-      "en": "a city of Macedonia",
+      "en": "A seaport city in Macedonia between Berea and Apollonia; 1 and 2 Thessalonians were addressed to the church there.",
       "es": "Puerto y capital de la provincia de Macedonia.",
       "fr": "une ville de Macédoine"
     },
@@ -18611,7 +18039,7 @@
       "fr": "Trois tavernes"
     },
     "context": {
-      "en": "",
+      "en": "A location on the Appian Way where Paul was welcomed by Christians from Rome.",
       "es": "",
       "fr": ""
     },
@@ -18631,7 +18059,7 @@
       "fr": "Thyatire"
     },
     "context": {
-      "en": "a city in Lydia",
+      "en": "A city in Lydia in Asia Minor; home of Lydia, a convert of Paul, and one of the seven cities addressed in Revelation.",
       "es": "Ciudad en Asia conocida por sus telas teñidas de púrpura.",
       "fr": "une ville de Lydie"
     },
@@ -18656,7 +18084,7 @@
       "fr": "Tibériade"
     },
     "context": {
-      "en": "a city on the west shore of the Lake of Galilee",
+      "en": "A city on the west shore of the Sea of Galilee, south of Magdala.",
       "es": "Ciudad de la costa oeste del mar de Galilea.",
       "fr": "une ville située sur la rive ouest du lac de Galilée"
     },
@@ -18671,14 +18099,14 @@
     ],
     "altTermIds": ""
   },
-  "TigrisRiver": {
+  "Tigris": {
     "gloss": {
       "en": "Tigris River",
       "es": "Río Tigris",
       "fr": "Le Tigre"
     },
     "context": {
-      "en": "river; in Mesopotamia",
+      "en": "A large body of flowing water in Mesopotamia; one of the four rivers that flowed out of the river from the Garden of Eden.",
       "es": "Uno de los grandes ríos de Mesopotamia.",
       "fr": "fleuve; en Mésopotamie"
     },
@@ -18694,14 +18122,14 @@
     ],
     "altTermIds": ""
   },
-  "Timnah": {
+  "Timnah.1": {
     "gloss": {
       "en": "Timnah",
       "es": "Timná",
       "fr": "Timna"
     },
     "context": {
-      "en": "town; territory of Dan",
+      "en": "Timnah of Dan: A town in the territory of Dan, on the northern border of the territory of Judah; occupied by the Philistines and home to wife of Samson.",
       "es": "Nombre de lugar, en el territorio de Dan.",
       "fr": "ville; territoire de Dan"
     },
@@ -18728,7 +18156,7 @@
       "fr": "Tirzah"
     },
     "context": {
-      "en": "town; territory of Manasseh",
+      "en": "A city in the territory of Manasseh; capital of the northern kingdom of Israel during the reign of King Jeroboam until the reign of King Omri, who moved the capital to Samaria.",
       "es": "Nombre de lugar, en el territorio de Manasés.",
       "fr": "ville; territoire de Manassé"
     },
@@ -18751,26 +18179,6 @@
           "012015016",
           "022006004"
         ]
-      }
-    ],
-    "altTermIds": ""
-  },
-  "Tisyri": {
-    "gloss": {
-      "en": "Tisyri",
-      "es": "Tisyri",
-      "fr": "Tisyri"
-    },
-    "context": {
-      "en": "Hebrew holiday",
-      "es": "",
-      "fr": "fête hébraïque"
-    },
-    "terms": [
-      {
-        "termId": "tisyri",
-        "transliteration": "",
-        "refs": []
       }
     ],
     "altTermIds": ""
@@ -18983,7 +18391,7 @@
       "fr": "Trachonite"
     },
     "context": {
-      "en": "a district to the south of Damascus",
+      "en": "A district south of Damascus.",
       "es": "Región al noreste de Galilea, gobernada por Filipo, el hijo de Herodes el Grande.",
       "fr": "un district au sud de Damas"
     },
@@ -19005,7 +18413,7 @@
       "fr": "Troas"
     },
     "context": {
-      "en": "a city and region in the northwest corner of Asia Minor",
+      "en": "A city and region in the northwest corner of Asia Minor; Paul had a vision while visiting there (Acts 16:8–9).",
       "es": "Puerto del mar Egeo, ubicado en el extremo noroeste de Asia Menor.",
       "fr": "une ville et une région situées dans le coin nord-ouest de l'Asie Mineure"
     },
@@ -19025,46 +18433,6 @@
     ],
     "altTermIds": ""
   },
-  "TuBav": {
-    "gloss": {
-      "en": "Tu B’Av",
-      "es": "Tu B'Av",
-      "fr": "Tu B’Av"
-    },
-    "context": {
-      "en": "Hebrew holiday",
-      "es": "",
-      "fr": "fête hébraïque"
-    },
-    "terms": [
-      {
-        "termId": "tu_bav",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
-  "TuBishvat": {
-    "gloss": {
-      "en": "Tu BiShvat",
-      "es": "Tu BiShvat",
-      "fr": "Tu BiShvat"
-    },
-    "context": {
-      "en": "Hebrew holiday",
-      "es": "",
-      "fr": "fête hébraïque"
-    },
-    "terms": [
-      {
-        "termId": "tu_bishvat",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
   "Tubal": {
     "gloss": {
       "en": "Tubal",
@@ -19072,7 +18440,7 @@
       "fr": "tubaire"
     },
     "context": {
-      "en": "son of Japheth",
+      "en": "A nation possibly to be identified with Tabal, located in vicinity of the Black Sea; considered descendants of Japheth through his son Tubal.",
       "es": "Hijo de Jafet.",
       "fr": "fils de Japhet"
     },
@@ -19101,7 +18469,7 @@
       "fr": "Pneu"
     },
     "context": {
-      "en": "city on the Phoenician coast",
+      "en": "A seaport town on the Phoenician coast, south of Sidon.",
       "es": "Importante puerto de la costa Fenicia.",
       "fr": "ville sur la côte phénicienne"
     },
@@ -19218,7 +18586,7 @@
       "fr": "Ur"
     },
     "context": {
-      "en": "town; Mesopotamia",
+      "en": "Ur Town: A town on the Euphrates River in southern Mesopotamia, where Abraham and his family used to live before moving to Haran.",
       "es": "Ciudad antigua al sur de Mesopotamia.",
       "fr": "ville; Mésopotamie"
     },
@@ -19235,33 +18603,6 @@
       }
     ],
     "altTermIds": ""
-  },
-  "WayOfShur": {
-    "gloss": {
-      "en": "Way of Shur",
-      "es": "Camino de Shur",
-      "fr": "Voie de Shur"
-    },
-    "context": {
-      "en": "location",
-      "es": "Nombre de lugar.",
-      "fr": "emplacement"
-    },
-    "terms": [
-      {
-        "termId": "way_of_shur",
-        "transliteration": "",
-        "refs": [
-          "001016007",
-          "001020001",
-          "001025018",
-          "002015022",
-          "009015007",
-          "009027008"
-        ]
-      }
-    ],
-    "altTermIds": "שׁוּר"
   },
   "West": {
     "gloss": {
@@ -19290,7 +18631,7 @@
       "fr": "La nature sauvage de Paran"
     },
     "context": {
-      "en": "desert",
+      "en": "A desert located south of Israel, west of Edom, and north of the wilderness of Sinai.",
       "es": "Desierto ubicado al sur de Canaán.",
       "fr": "désert"
     },
@@ -19314,14 +18655,14 @@
     ],
     "altTermIds": "פָּארָן"
   },
-  "WildernessOfZin": {
+  "Zin": {
     "gloss": {
       "en": "Wilderness of Zin",
       "es": "Desierto de Zin",
       "fr": "La nature sauvage de Zin"
     },
     "context": {
-      "en": "location; Negeb",
+      "en": "A wilderness area in the Negev on the southern border of Canaan, near Kadesh-Barnea.",
       "es": "Desierto ubicado al sur de Canaán.",
       "fr": "lieu; Néguev"
     },
@@ -19344,46 +18685,6 @@
     ],
     "altTermIds": ""
   },
-  "YomKippur": {
-    "gloss": {
-      "en": "Yom Kippur",
-      "es": "Yom Kippur",
-      "fr": "Yom Kippour"
-    },
-    "context": {
-      "en": "Hebrew holiday",
-      "es": "",
-      "fr": "fête hébraïque"
-    },
-    "terms": [
-      {
-        "termId": "yom_kippur",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
-  "YomTeruah": {
-    "gloss": {
-      "en": "Yom Teruah",
-      "es": "Yom Teruah",
-      "fr": "Yom Teruah"
-    },
-    "context": {
-      "en": "Hebrew holiday",
-      "es": "",
-      "fr": "fête hébraïque"
-    },
-    "terms": [
-      {
-        "termId": "yom_teruah",
-        "transliteration": "",
-        "refs": []
-      }
-    ],
-    "altTermIds": ""
-  },
   "Zaphon": {
     "gloss": {
       "en": "Zaphon",
@@ -19391,7 +18692,7 @@
       "fr": "Zaphon"
     },
     "context": {
-      "en": "town; territory of Gad",
+      "en": "Zaphon of Gad: A town in the territory of Gad.",
       "es": "Nombre de lugar, en el territorio de Gad.",
       "fr": "ville; territoire de Gad"
     },
@@ -19413,7 +18714,7 @@
       "fr": "Sarepta"
     },
     "context": {
-      "en": "a city on the coast of Phoenicia between Tyre and Sidon",
+      "en": "A town located between Tyre and Sidon; Phoenician seaport. God sent Elijah to meet a widow there (1 Kings 17:9).",
       "es": "Ciudad de la costa de Fenicia situada entre Tiro y Sidón.",
       "fr": "une ville située sur la côte phénicienne, entre Tyr et Sidon"
     },
@@ -19437,14 +18738,14 @@
     ],
     "altTermIds": "צָרְפַת"
   },
-  "Zebulun": {
+  "TerritoryOfZebulun": {
     "gloss": {
       "en": "Zebulun",
       "es": "Zabulón",
       "fr": "Zabulon"
     },
     "context": {
-      "en": "son of Jacob; founder of tribe of Zebulun",
+      "en": "The land assigned to the tribe of Zebulun.",
       "es": "Hijo de Lía y Jacob.",
       "fr": "fils de Jacob ; fondateur de la tribu de Zabulon"
     },
@@ -19503,12 +18804,12 @@
   },
   "Ziklag": {
     "gloss": {
-      "en": "Ziklag?",
-      "es": "Siclag?",
-      "fr": "Ziklag ?"
+      "en": "Ziklag",
+      "es": "Siclag",
+      "fr": "Ziklag"
     },
     "context": {
-      "en": "location; territory of Simeon",
+      "en": "A town in the territory of Simeon which belonged to Philistia and was given to David before he moved to Hebron, where he was made king of Judah; precise location is unknown.",
       "es": "Nombre de lugar, en el territorio de Simeón.",
       "fr": "lieu; territoire de Siméon"
     },
@@ -19571,7 +18872,7 @@
       "fr": "Zobah"
     },
     "context": {
-      "en": "land; in Syria",
+      "en": "An Aramean kingdom located north of Damascus and ruled by Hadadezer; it was defeated and subjugated by David and then controlled by Solomon.",
       "es": "Nombre de lugar en Siria.",
       "fr": "terre; en Syrie"
     },
@@ -19602,7 +18903,7 @@
       "fr": ""
     },
     "context": {
-      "en": "",
+      "en": "A town in Mesopotamia founded by Nimrod where the tower of Babel was built; capital of the Chaldean Empire.",
       "es": "",
       "fr": ""
     },
@@ -19625,7 +18926,7 @@
       "fr": ""
     },
     "context": {
-      "en": "",
+      "en": "A town ruled by Melchizedek during the time of Abraham; to be identified with Jerusalem.",
       "es": "",
       "fr": ""
     },
@@ -19641,14 +18942,14 @@
     ],
     "altTermIds": ""
   },
-  "MtHor": {
+  "HorMount": {
     "gloss": {
       "en": "Mt. Hor",
       "es": "",
       "fr": ""
     },
     "context": {
-      "en": "",
+      "en": "Mount Hor of Edom: A mountain on the Edomite border where Aaron died (Numbers 33:38–39).",
       "es": "",
       "fr": ""
     },
@@ -19679,7 +18980,7 @@
       "fr": ""
     },
     "context": {
-      "en": "",
+      "en": "Amalek Place: The territory in the Negev inhabited by the Amalekites, a nomadic group regarded as descendants of Esau, who were enemies of Israel and ultimately destroyed by Saul (1 Samuel 15:7).",
       "es": "",
       "fr": ""
     },
@@ -19739,7 +19040,7 @@
       "fr": ""
     },
     "context": {
-      "en": "",
+      "en": "A town in the territory of Hadadezer, king of Zobah.",
       "es": "",
       "fr": ""
     },
@@ -19756,12 +19057,12 @@
   },
   "Besor": {
     "gloss": {
-      "en": "Besor",
+      "en": "Brook of Besor",
       "es": "",
       "fr": ""
     },
     "context": {
-      "en": "",
+      "en": "A stream in the territory of the Philistines where some of David's men rested while the rest continued their pursuit of those who raided Ziklag (1 Samuel 30:9–10).",
       "es": "",
       "fr": ""
     },
@@ -19778,14 +19079,14 @@
     ],
     "altTermIds": ""
   },
-  "Beth-aven": {
+  "Beth-aven.2": {
     "gloss": {
       "en": "Beth-aven",
       "es": "",
       "fr": ""
     },
     "context": {
-      "en": "",
+      "en": "Beth-aven of Ephraim: A town in the territory Of Ephraim; probably a pun or word-play on the name Bethel (\"house of God\").",
       "es": "",
       "fr": ""
     },
@@ -19803,14 +19104,14 @@
     ],
     "altTermIds": ""
   },
-  "Bezek": {
+  "Bezek.2": {
     "gloss": {
       "en": "Bezek",
       "es": "",
       "fr": ""
     },
     "context": {
-      "en": "",
+      "en": "The place where Saul marshaled his army before marching to the relief of Jabesh-gilead.",
       "es": "",
       "fr": ""
     },
@@ -19823,26 +19124,6 @@
           "007001005",
           "009011008"
         ]
-      }
-    ],
-    "altTermIds": ""
-  },
-  "BrookBesor": {
-    "gloss": {
-      "en": "Brook Besor",
-      "es": "",
-      "fr": ""
-    },
-    "context": {
-      "en": "",
-      "es": "",
-      "fr": ""
-    },
-    "terms": [
-      {
-        "termId": "brook_besor",
-        "transliteration": "",
-        "refs": []
       }
     ],
     "altTermIds": ""
@@ -19871,14 +19152,14 @@
     ],
     "altTermIds": ""
   },
-  "Dumah": {
+  "Dumah.2": {
     "gloss": {
       "en": "Dumah",
       "es": "",
       "fr": ""
     },
     "context": {
-      "en": "",
+      "en": "Dumah of Judah: A town in the hill country of the territory of Judah; possibly to be identified with Arumah.",
       "es": "",
       "fr": ""
     },
@@ -19901,7 +19182,7 @@
       "fr": ""
     },
     "context": {
-      "en": "",
+      "en": "Ebenezer Place: A location near Aphek where the Israelites encamped before battling the Philistines (1 Samuel 4:1).",
       "es": "",
       "fr": ""
     },
@@ -19925,7 +19206,7 @@
       "fr": ""
     },
     "context": {
-      "en": "",
+      "en": "A Levitical town in the territory of Benjamin, possibly to be identified with Gibeah; hometown of King Saul.",
       "es": "",
       "fr": ""
     },
@@ -19964,7 +19245,7 @@
       "fr": ""
     },
     "context": {
-      "en": "",
+      "en": "A town in western Negev, not far from Gaza, inhabited by the Philistines; one of the places where Abraham and Isaac sojourned.",
       "es": "",
       "fr": ""
     },
@@ -19995,7 +19276,7 @@
       "fr": ""
     },
     "context": {
-      "en": "",
+      "en": "A kingdom located between Gilead, Bashan, and Mount Hermon (ABD).",
       "es": "",
       "fr": ""
     },
@@ -20025,7 +19306,7 @@
       "fr": ""
     },
     "context": {
-      "en": "",
+      "en": "A region, possibly located in Arabia, surrounded by the Pishon River; known for fragrant resins and precious stones (ABD).",
       "es": "",
       "fr": ""
     },
@@ -20048,12 +19329,12 @@
   },
   "Jebus": {
     "gloss": {
-      "en": "Jebus (Jerusalem)",
+      "en": "Jebus",
       "es": "",
       "fr": ""
     },
     "context": {
-      "en": "",
+      "en": "A town of the Jebusites that later became Jerusalem.",
       "es": "",
       "fr": ""
     },
@@ -20118,7 +19399,7 @@
       "fr": ""
     },
     "context": {
-      "en": "",
+      "en": "A fortified town in the foothills of the territory of Judah.",
       "es": "",
       "fr": ""
     },
@@ -20157,7 +19438,7 @@
       "fr": ""
     },
     "context": {
-      "en": "",
+      "en": "A town in the hill country of the territory of Judah.",
       "es": "",
       "fr": ""
     },
@@ -20190,7 +19471,7 @@
       "fr": ""
     },
     "context": {
-      "en": "",
+      "en": "A town east of the Jordan River, assigned to the tribe of Gad.",
       "es": "",
       "fr": ""
     },
@@ -20214,7 +19495,7 @@
       "fr": ""
     },
     "context": {
-      "en": "",
+      "en": "A small Aramean nation located northeast of the Sea of Galilee.",
       "es": "",
       "fr": ""
     },
@@ -20238,7 +19519,7 @@
       "fr": ""
     },
     "context": {
-      "en": "",
+      "en": "A town in the hill country of the territory of Judah; residence of Nabal and his wife Abigail, who later married David.",
       "es": "",
       "fr": ""
     },
@@ -20260,7 +19541,7 @@
       "fr": ""
     },
     "context": {
-      "en": "",
+      "en": "A town in the territory of Benjamin.",
       "es": "",
       "fr": ""
     },
@@ -20292,7 +19573,7 @@
       "fr": ""
     },
     "context": {
-      "en": "",
+      "en": "A mountain in the wilderness of Paran.",
       "es": "",
       "fr": ""
     },
@@ -20323,7 +19604,7 @@
       "fr": ""
     },
     "context": {
-      "en": "",
+      "en": "Rehoboth Well: A well, dug by herdsmen of Isaac, which, unlike the wells of Esek and Sitnah, did not become a source of contention between them and the herdsmen of Gerar.",
       "es": "",
       "fr": ""
     },
@@ -20345,7 +19626,7 @@
       "fr": ""
     },
     "context": {
-      "en": "",
+      "en": "A wilderness east of Egypt.",
       "es": "",
       "fr": ""
     },
@@ -20372,7 +19653,7 @@
       "fr": ""
     },
     "context": {
-      "en": "",
+      "en": "Socoh in the Shephelah: A town in the foothills of the territory of Judah.",
       "es": "",
       "fr": ""
     },
@@ -20399,7 +19680,7 @@
       "fr": ""
     },
     "context": {
-      "en": "",
+      "en": "A seaport town or maritime region probably located at the Iberian Peninsula; described as inhabited by descendants of Javan, son of Japheth; famous for its commerce.",
       "es": "",
       "fr": ""
     },
@@ -20444,7 +19725,7 @@
       "fr": ""
     },
     "context": {
-      "en": "",
+      "en": "A town or territory east of the northern Jordan River.",
       "es": "",
       "fr": ""
     },
@@ -20462,14 +19743,14 @@
     ],
     "altTermIds": ""
   },
-  "ValleyElah": {
+  "ElahValley": {
     "gloss": {
       "en": "Valley of Elah",
       "es": "",
       "fr": ""
     },
     "context": {
-      "en": "",
+      "en": "A valley in the Shephelah where David killed Goliath (1 Samuel 17).",
       "es": "",
       "fr": ""
     },
@@ -20493,7 +19774,7 @@
       "fr": ""
     },
     "context": {
-      "en": "",
+      "en": "Ziph of Judah: A town in the southern territory of Judah, near the border of Edom.",
       "es": "",
       "fr": ""
     },

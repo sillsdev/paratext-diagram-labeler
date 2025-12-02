@@ -10,10 +10,10 @@ const mergekeysPath = path.join(__dirname, '_LabelerCollections', 'SMR', 'mergek
 function parseTSV(filePath) {
   const content = fs.readFileSync(filePath, 'utf8');
   const lines = content.trim().split('\n');
-  const headers = lines[0].split('\t');
+  const headers = lines[0].split('\t').map(h => h.trim()); // Trim to remove \r and whitespace
   
   return lines.slice(1).map(line => {
-    const values = line.split('\t');
+    const values = line.split('\t').map(v => v.trim()); // Trim values too
     const row = {};
     headers.forEach((header, index) => {
       row[header] = values[index] || '';
@@ -87,8 +87,10 @@ changes.forEach((change, index) => {
       fr: ''
     };
   } else {
-    // Keep existing context values
-    newMergekeys[foundMergekeyKey].context = savedContext;
+    // Keep existing context values but ensure English is set
+    const updatedContext = { ...savedContext };
+    updatedContext.en = englishContext;
+    newMergekeys[foundMergekeyKey].context = updatedContext;
   }
   
   newMergekeys[foundMergekeyKey].altTermIds = foundMergekeyKey;
