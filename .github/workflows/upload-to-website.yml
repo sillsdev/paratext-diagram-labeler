@@ -3,16 +3,20 @@ name: Upload Release to Website
 # This workflow downloads release assets from GitHub and uploads them to the SIL software website.
 # It generates .download_info metadata files for each installer package.
 #
-# Required Repository Variables (Settings → Secrets and variables → Actions → Variables):
-#   PROJECT_NAME: Display name of the project (e.g., "Paratext Diagram Labeler")
-#   PROJECT_FOLDER: Folder name for downloads (e.g., "labeler")
-#   SFTP_HOST: SFTP server hostname (e.g., "software.sil.org")
-#   SFTP_TARGET_DIR: Base directory path without project folder (e.g., "/var/www/virtual/software.sil.org/htdocs/downloads/r")
-#   DOWNLOAD_BASE_URL: Public download URL without project folder (e.g., "https://software.sil.org/downloads/r")
-#
 # Required Repository Secrets (Settings → Secrets and variables → Actions → Secrets):
 #   SFTP_USERNAME: SSH username for SFTP authentication
 #   SFTP_PRIVATE_KEY: SSH private key for SFTP authentication
+#
+# Required Repository Variables (Settings → Secrets and variables → Actions → Variables):
+#   PROJECT_NAME: Display name of the project (e.g., "Paratext Diagram Labeler")
+#   PROJECT_FOLDER: Folder name for downloads (e.g., "labeler")
+#
+# Required Repository Variables (Settings → Secrets and variables → Actions → Variables):
+# that could be better implemented as Organization Variables by someone with the "Manage 
+# organization Actions variables" permission.
+#   SFTP_HOST: SFTP server hostname (e.g., "software.sil.org")
+#   SFTP_TARGET_DIR: Base directory path without project folder (e.g., "/var/www/virtual/software.sil.org/htdocs/downloads/r")
+#   DOWNLOAD_BASE_URL: Public download URL without project folder (e.g., "https://software.sil.org/downloads/r")
 #
 # Files are uploaded to: {SFTP_TARGET_DIR}/{PROJECT_FOLDER}/
 # Download URLs become: {DOWNLOAD_BASE_URL}/{PROJECT_FOLDER}/{filename}
