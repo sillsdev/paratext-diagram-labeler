@@ -4,19 +4,19 @@ import uiStr from './data/ui-strings.json';
 import {
   MAP_VIEW,
   TABLE_VIEW,
-  USFM_VIEW,
   STATUS_NO_RENDERINGS,
   STATUS_GUESSED,
-  STATUS_RENDERING_SHORT,
   STATUS_MULTIPLE_RENDERINGS,
   STATUS_UNMATCHED,
 } from './constants.js';
 import { collectionManager, getCollectionIdFromTemplate, findCollectionIdAndTemplate } from './CollectionManager';
 import { getMapDef } from './MapData';
-import { inLang, statusValue, getMapForm, wordMatchesRenderings } from './Utils.js';
+import { inLang, statusValue, getMapForm, extractRenderingPatterns } from './Utils.js';
 import { settingsService } from './services/SettingsService.js';
+import labelDictionaryService from './services/LabelDictionaryService.js';
 import { AutocorrectTextarea } from './components/AutocorrectTextarea';
 import { useAutocorrect } from './hooks/useAutocorrect';
+import AlertDialog from './components/AlertDialog';
 
 export default function DetailsPane({
   selectedLabelIndex,
@@ -28,6 +28,7 @@ export default function DetailsPane({
   onApprovedChange,
   termRenderings,
   labels,
+  onTriggerStatusRecalc,
   onSwitchView,
   mapPaneView,
   onSetView,
@@ -51,11 +52,13 @@ export default function DetailsPane({
   templateGroupIndex = -1,
   onPreviousTemplate,
   onNextTemplate,
+  activeTab = 0,
+  onActiveTabChange,
 }) {
-  const [localIsApproved, setLocalIsApproved] = useState(isApproved);
   const [localRenderings, setLocalRenderings] = useState(renderings);
   const [showTemplateInfo, setShowTemplateInfo] = useState(false);
   const [templateData, setTemplateData] = useState({});
+  const [alertMessage, setAlertMessage] = useState(null);
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [selectedExportFormat, setSelectedExportFormat] = useState('idml-full');
   const [lastUsedExportFormat, setLastUsedExportFormat] = useState(null);
@@ -116,7 +119,13 @@ export default function DetailsPane({
     textareaRef: vernacularAutocorrectRef,
   } = useAutocorrect(labels[selectedLabelIndex]?.vernLabel || '', text => {
     // console.log('DetailsPane: Vernacular changing to', text);
-    onUpdateVernacular(labels[selectedLabelIndex].termId, text);
+    const currentLabel = labels[selectedLabelIndex];
+    onUpdateVernacular(
+      currentLabel.mergeKey, 
+      currentLabel.lblTemplate || currentLabel.mergeKey, 
+      text,
+      currentLabel.opCode || 'sync'
+    );
   });
 
   // const vernacularAutocorrectRef = useRef(null);
@@ -132,9 +141,10 @@ export default function DetailsPane({
   
   useEffect(() => {
     // Sync local vernacular when selection changes
-    const newVernacular = labels[selectedLabelIndex]?.vernLabel || '';
+    const currentLabel = labels[selectedLabelIndex];
+    const newVernacular = currentLabel?.vernLabel || '';
+    console.log(`[DetailsPane] Syncing vernacular for ${currentLabel?.mergeKey}: "${newVernacular}"`);
     setVernacularValue(newVernacular);
-    setLocalIsApproved(isApproved);
     setLocalRenderings(renderings);
   }, [selectedLabelIndex, isApproved, renderings, labels, setVernacularValue]);
 
@@ -182,46 +192,35 @@ export default function DetailsPane({
     onExit();
   };
 
-  const onAddMapForm = () => {
-    // This function is called when the user clicks the "Add Map" button
-    // Append the contents of the vernacular input to the renderings textarea
-    if (vernacularAutocorrectRef && vernacularAutocorrectRef.current) {
-      const vernacularText = vernacularValue.trim();
-      // Append the vernacular text to the renderings textarea
-      if (renderingsTextareaRef && renderingsTextareaRef.current) {
-        const currentRenderings = renderingsTextareaRef.current.value
-          .split('\n')
-          .map(line => line.trim())
-          .filter(line => line.length > 0)
-          .join('\n');
-        console.log(`Current renderings: "${currentRenderings}"`);
-
-        const whichRendering = wordMatchesRenderings(vernacularText, currentRenderings, false);
-        console.log(`Matched rendering index: ${whichRendering}`);
-        const mapForm = ` (@${vernacularText})`;
-        try {
-          // insert mapForm into renderingsTextareaRef.current.value at the end of the rendering whose 1-based index is whichRendering
-          const lines = currentRenderings.split('\n');
-          lines[whichRendering - 1] += mapForm;
-          renderingsTextareaRef.current.value = lines.join('\n');
-        } catch (e) {
-          renderingsTextareaRef.current.value = currentRenderings + mapForm;
-        }
-        onRenderingsChange({ target: { value: renderingsTextareaRef.current.value } });
-      }
-    }
-  };
-
-  const onRefreshLabel = () => {
+  const onRefreshLabel = async () => {
     // This function is called when the user clicks the "Refresh Labels" button.
-    // Update the vernacular input using getMapForm
+    // Update the vernacular input using resolved template or getMapForm
     if (selectedLabelIndex >= 0 && selectedLabelIndex < labels.length) {
       const currentLabel = labels[selectedLabelIndex];
-      const altTermIds = collectionManager.getAltTermIds(currentLabel?.mergeKey, getCollectionIdFromTemplate(mapDef.template));
-      const mapForm = getMapForm(termRenderings, currentLabel.termId, altTermIds);
+      const collectionId = getCollectionIdFromTemplate(mapDef.template);
+      const projectFolder = settingsService.getProjectFolder();
+      
+      // Try to resolve template first
+      let mapForm = '';
+      if (currentLabel.lblTemplate) {
+        const resolved = await collectionManager.resolveTemplate(currentLabel.lblTemplate, collectionId, termRenderings, projectFolder);
+        mapForm = resolved?.literalText || '';
+      }
+      
+      // Fallback to old method if needed (shouldn't happen with new architecture)
+      if (!mapForm) {
+        const altTermIds = collectionManager.getAltTermIds(currentLabel?.mergeKey, collectionId);
+        mapForm = getMapForm(termRenderings, currentLabel.termId, altTermIds);
+      }
+      
       console.log('Refreshing label:', currentLabel.mergeKey, 'Map form:', mapForm);
       setVernacularValue(mapForm);
-      onUpdateVernacular(currentLabel.termId, mapForm);
+      onUpdateVernacular(
+        currentLabel.mergeKey, 
+        currentLabel.lblTemplate || currentLabel.mergeKey, 
+        mapForm,
+        currentLabel.opCode || 'sync'
+      );
     }
   };
 
@@ -294,113 +293,19 @@ export default function DetailsPane({
         console.log('Export successful or cancelled:', result.message);
       } else {
         // Show error message
-        alert(inLang(uiStr.exportCancelled, lang) + (result.message ? ': ' + result.message : ''));
+        setAlertMessage(inLang(uiStr.exportCancelled, lang) + (result.message ? ': ' + result.message : ''));
       }
     } catch (error) {
       console.error('Export error:', error);
-      alert(inLang(uiStr.notExported, lang) + (error.message ? ': ' + error.message : ''));
+      setAlertMessage(inLang(uiStr.notExported, lang) + (error.message ? ': ' + error.message : ''));
     }
   };
 
-  // Only show the button row if in USFM view
-  if (mapPaneView === USFM_VIEW) {
-    return (
-      <div>
-        {/* Button Row */}
-        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
-          <button onClick={onSwitchView} style={{ marginRight: 60, whiteSpace: 'nowrap' }}>
-            {inLang(uiStr.switchView, lang)}
-          </button>
-          <button
-            onClick={handleCancel}
-            style={{ marginRight: 8, width: 80, whiteSpace: 'nowrap' }}
-          >
-            {inLang(uiStr.cancel, lang)}
-          </button>
-          <button onClick={handleOk} style={{ width: 80, whiteSpace: 'nowrap' }}>
-            {inLang(uiStr.ok, lang)}
-          </button>
-          <button
-            onClick={handleExportDataMerge}
-            style={{
-              marginLeft: 16,
-              width: 40,
-              height: 32,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              background: '#e3f2fd',
-              border: '1px solid #1976d2',
-              borderRadius: 4,
-              cursor: 'pointer',
-              whiteSpace: 'nowrap',
-            }}
-            title={inLang(uiStr.export, lang)}
-          >
-            {/* Export icon: two stacked files with an arrow */}
-            <svg
-              width="22"
-              height="22"
-              viewBox="0 0 22 22"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <rect
-                x="4"
-                y="4"
-                width="10"
-                height="14"
-                rx="2"
-                fill="#fff"
-                stroke="#1976d2"
-                strokeWidth="1.2"
-              />
-              <rect
-                x="8"
-                y="2"
-                width="10"
-                height="14"
-                rx="2"
-                fill="#e3f2fd"
-                stroke="#1976d2"
-                strokeWidth="1.2"
-              />
-              <path
-                d="M13 10v5m0 0l-2-2m2 2l2-2"
-                stroke="#1976d2"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-          <div style={{ flex: 1 }} />
-          <button
-            onClick={handleSettings}
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              fontSize: 22,
-              marginLeft: 8,
-              color: '#555',
-              padding: 4,
-              alignSelf: 'flex-start',
-            }}
-            aria-label="Settings"
-          >
-            <span role="img" aria-label="Settings">
-              &#9881;
-            </span>
-          </button>
-        </div>
-      </div>
-    );
-  }
+  // USFM view removed - only Map View and Table View remain
   return (
     <div>
       {/* Button Row */}
-      {mapPaneView !== USFM_VIEW && (
+      {(
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
           {/* Icon view buttons */}
           <button
@@ -1019,32 +924,41 @@ export default function DetailsPane({
                     </span>
                   </td>
                   <td style={{ paddingLeft: '8px' }}>
-                    {status === STATUS_GUESSED.toString() && (
+                    {parseInt(status) === STATUS_GUESSED && (
                       <button
                         onClick={() => {
-                          // Find all labels with guessed status and approve them
+                          console.log('[Tally Approve All] Button clicked');
+                          // Approve all guessed renderings for ALL labels with STATUS_GUESSED
                           const updatedData = { ...termRenderings };
-                          let hasChanges = false;
+                          let anyUpdated = false;
 
                           labels.forEach(label => {
-                            if (label.status === STATUS_GUESSED) {
-                              const termId = label.termId;
-                              if (updatedData[termId]) {
-                                updatedData[termId] = {
-                                  ...updatedData[termId],
-                                  isGuessed: false,
-                                };
-                                hasChanges = true;
-                              }
-                            }
+                            if (label.status !== STATUS_GUESSED) return;
+                            
+                            // For each placeName in this label
+                            (label.placeNameIds || []).forEach(placeNameId => {
+                              const placeName = collectionManager.getPlaceName(placeNameId, collectionId);
+                              const terms = placeName?.terms || [];
+                              
+                              // Approve all guessed renderings for all terms
+                              terms.forEach(term => {
+                                if (updatedData[term.termId]?.isGuessed) {
+                                  updatedData[term.termId] = {
+                                    ...updatedData[term.termId],
+                                    isGuessed: false,
+                                  };
+                                  anyUpdated = true;
+                                }
+                              });
+                            });
                           });
 
-                          if (hasChanges) {
+                          if (anyUpdated) {
                             setTermRenderings(updatedData);
-                            // If currently viewing a guessed item, update local state
-                            if (labels[selectedLabelIndex]?.status === STATUS_GUESSED) {
-                              setLocalIsApproved(true);
+                            if (onTriggerStatusRecalc) {
+                              onTriggerStatusRecalc(null); // Full recalc - affects multiple labels
                             }
+                            console.log('[Tally Approve All] Updated and recalculated');
                           }
                         }}
                         style={{
@@ -1075,19 +989,35 @@ export default function DetailsPane({
           background: '#f9f9f9',
         }}
       >
-        <h2>{inLang(labels[selectedLabelIndex]?.gloss, lang)}</h2>{' '}
-        <p>
-          <span style={{ fontStyle: 'italic' }}>
-            ({labels[selectedLabelIndex]?.termId}){' '}
-            <span style={{ display: 'inline-block', width: 12 }} />
-            {transliteration}
-          </span>
-          <br />
-          {inLang(
-            collectionManager.getDefinition(labels[selectedLabelIndex]?.mergeKey, collectionId),
-            lang
-          )}
+        {/* Large gloss from mergekeys or placenames */}
+        <h4 style={{ margin: '8px', marginBottom: 4 }}>
+          {inLang(labels[selectedLabelIndex]?.gloss || { en: labels[selectedLabelIndex]?.mergeKey || '' }, lang)}
+        </h4>
+        {/* Label-level context/definition (only if different from placename context) */}
+        <p style={{ margin: '8px', marginTop: 4, fontSize: '0.9em', color: '#555' }}>
+          {(() => {
+            const currentLabel = labels[selectedLabelIndex];
+            const mergeKeyDef = collectionManager.getMergeKeyDefinition(currentLabel?.mergeKey, collectionId);
+            const placeNameIds = currentLabel?.placeNameIds || [];
+            
+            // Get placename context if available
+            let placeNameContext = '';
+            if (placeNameIds.length > 0) {
+              const firstPlaceNameId = placeNameIds[0];
+              placeNameContext = inLang(collectionManager.getDefinition(firstPlaceNameId, collectionId), lang);
+            }
+            
+            // Show mergeKey definition only if it exists and is different from placename context
+            if (mergeKeyDef && Object.values(mergeKeyDef).some(v => v)) {
+              const mergeKeyText = inLang(mergeKeyDef, lang);
+              if (mergeKeyText && mergeKeyText !== placeNameContext) {
+                return mergeKeyText;
+              }
+            }
+            return '';
+          })()}
         </p>
+        {/* Label vernacular box */}
         <div
           className="vernacularGroup"
           style={{
@@ -1099,10 +1029,82 @@ export default function DetailsPane({
           }}
         >
           {' '}
+          {/* OpCode radio buttons */}
+          <div style={{ marginBottom: 8, display: 'flex', gap: 12, alignItems: 'center', color: statusValue[status].textColor, fontSize: '0.75em' }}>
+            <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+              <input
+                type="radio"
+                name="opCode"
+                value="sync"
+                checked={(labels[selectedLabelIndex]?.opCode || 'sync') === 'sync'}
+                onChange={() => {
+                  const currentLabel = labels[selectedLabelIndex];
+                  console.log(`[DetailsPane] opCode 'sync' radio onChange fired. vernLabel="${currentLabel.vernLabel}"`);
+                  onUpdateVernacular(
+                    currentLabel.mergeKey,
+                    currentLabel.lblTemplate || currentLabel.mergeKey,
+                    currentLabel.vernLabel,
+                    'sync'
+                  );
+                }}
+                style={{ marginRight: 4 }}
+              />
+              {inLang(uiStr.opCodeSync, lang)}
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+              <input
+                type="radio"
+                name="opCode"
+                value="override"
+                checked={labels[selectedLabelIndex]?.opCode === 'override'}
+                onChange={() => {
+                  const currentLabel = labels[selectedLabelIndex];
+                  onUpdateVernacular(
+                    currentLabel.mergeKey,
+                    currentLabel.lblTemplate || currentLabel.mergeKey,
+                    currentLabel.vernLabel,
+                    'override'
+                  );
+                }}
+                style={{ marginRight: 4 }}
+              />
+              {inLang(uiStr.opCodeOverride, lang)}
+              {(() => {
+                const currentLabel = labels[selectedLabelIndex];
+                if (currentLabel?.opCode === 'override') {
+                  const dictValue = labelDictionaryService.getVernacular(currentLabel?.lblTemplate);
+                  return dictValue ? ` "${dictValue}"` : '';
+                }
+                return '';
+              })()}
+              🔒
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+              <input
+                type="radio"
+                name="opCode"
+                value="omit"
+                checked={labels[selectedLabelIndex]?.opCode === 'omit'}
+                onChange={() => {
+                  const currentLabel = labels[selectedLabelIndex];
+                  onUpdateVernacular(
+                    currentLabel.mergeKey,
+                    currentLabel.lblTemplate || currentLabel.mergeKey,
+                    '',
+                    'omit'
+                  );
+                  setVernacularValue('');
+                }}
+                style={{ marginRight: 4 }}
+              />
+              {inLang(uiStr.opCodeOmit, lang)}🚫
+            </label>
+          </div>
           <textarea
             ref={vernacularAutocorrectRef}
             value={vernacularValue}
             onChange={handleVernacularChange}
+            disabled={labels[selectedLabelIndex]?.opCode === 'omit'}
             onKeyDown={e => {
               // Prevent line breaks but allow other keys
               if (e.key === 'Enter') {
@@ -1125,22 +1127,150 @@ export default function DetailsPane({
             spellCheck={false}
             rows={1}
           />{' '}
-          <span
-            style={{
-              color: statusValue[status].textColor,
-              fontSize: '0.8em',
-              lineHeight: '1.2',
-              display: 'block',
-              marginTop: '4px',
-            }}
-          >
-            <span style={{ fontWeight: 'bold' }}>
-              {inLang(uiStr.statusValue[status].text, lang) + ': '}
+          <div>
+            <span
+              style={{
+                color: statusValue[status].textColor,
+                fontSize: '0.8em',
+                lineHeight: '1.2',
+                display: 'inline-block',
+                marginTop: '4px',
+              }}
+            >
+              <span style={{ fontWeight: 'bold' }}>
+                {inLang(uiStr.statusValue[status].text, lang) + ': '}
+              </span>
+              <span dangerouslySetInnerHTML={{
+              __html: (() => {
+                let helpText = inLang(uiStr.statusValue[status].help, lang);
+                
+                // For MULTIPLE_RENDERINGS, collect patterns that don't match the label
+                if (status === STATUS_MULTIPLE_RENDERINGS) {
+                  const currentLabel = labels[selectedLabelIndex];
+                  const placeNameIds = currentLabel?.placeNameIds || [];
+                  const activePlaceNameId = placeNameIds[activeTab] || placeNameIds[0];
+                  const vernLabel = currentLabel?.vernLabel || '';
+                  
+                  if (activePlaceNameId) {
+                    const terms = collectionManager.getTermsForPlace(activePlaceNameId, collectionId) || [];
+                    const allPatterns = [];
+                    terms.forEach(term => {
+                      const termData = termRenderings[term.termId];
+                      if (termData && termData.renderings) {
+                        // Extract patterns with wildcards intact, comments stripped
+                        const patterns = extractRenderingPatterns(termData.renderings);
+                        allPatterns.push(...patterns);
+                      }
+                    });
+                    const uniquePatterns = [...new Set(allPatterns)];
+                    // Filter to show only patterns that don't match the label (the ones that will be confirmed)
+                    const alternatePatterns = uniquePatterns.filter(pattern => {
+                      // Check if pattern matches label using wildcard matching
+                      try {
+                        const regex = new RegExp('^' + pattern.replace(/\*/g, '.*') + '$', 'i');
+                        return !regex.test(vernLabel);
+                      } catch {
+                        return pattern.toLowerCase() !== vernLabel.toLowerCase();
+                      }
+                    });
+                    helpText = helpText.replace('{listOfRenderingPatterns}', "<b>" + alternatePatterns.join(', ') + "</b>");
+                  } else {
+                    helpText = helpText.replace('{listOfRenderingPatterns}', '');
+                  }
+                } else {
+                  helpText = helpText.replace('{listOfRenderingPatterns}', "<b>" + localRenderings.split('\n').filter(l => l.trim()).join(', ') + "</b>");
+                }
+                
+                return helpText;
+              })()
+            }} />
             </span>
-            {inLang(uiStr.statusValue[status].help, lang)}
-            {(status === STATUS_RENDERING_SHORT || status === STATUS_MULTIPLE_RENDERINGS) && ( // If status is "short", show Add Map Form button
-              <button style={{ marginLeft: 8 }} onClick={() => onAddMapForm()}>
-                {inLang(uiStr.addMapForm, lang)}
+            {/* Buttons must be outside the status message span to work properly */}
+            {status === STATUS_MULTIPLE_RENDERINGS && (
+              <>
+                <button 
+                  style={{ marginLeft: 8 }}
+                  onClick={async () => {
+                    // Get active placeNameId and collect its rendering patterns
+                    const currentLabel = labels[selectedLabelIndex];
+                    const placeNameIds = currentLabel?.placeNameIds || [];
+                    const activePlaceNameId = placeNameIds[activeTab] || placeNameIds[0];
+                    
+                    if (activePlaceNameId) {
+                      const vernLabel = currentLabel.vernLabel || '';
+                      
+                      // Collect all unique rendering patterns from terms in this placeName
+                      const terms = collectionManager.getTermsForPlace(activePlaceNameId, collectionId) || [];
+                      const allPatterns = [];
+                      
+                      terms.forEach(term => {
+                        const termData = termRenderings[term.termId];
+                        if (termData && termData.renderings) {
+                          // Extract patterns with wildcards intact, comments stripped
+                          const patterns = extractRenderingPatterns(termData.renderings);
+                          allPatterns.push(...patterns);
+                        }
+                      });
+                      
+                      // Get unique patterns and filter out those that match the label (using wildcard matching)
+                      const uniquePatterns = [...new Set(allPatterns)];
+                      const alternatePatterns = uniquePatterns.filter(pattern => {
+                        // Check if pattern matches label using wildcard matching
+                        try {
+                          const regex = new RegExp('^' + pattern.replace(/\*/g, '.*') + '$', 'i');
+                          return !regex.test(vernLabel);
+                        } catch {
+                          return pattern.toLowerCase() !== vernLabel.toLowerCase();
+                        }
+                      });
+                      
+                      // Add each alternate pattern separately
+                      for (const pattern of alternatePatterns) {
+                        await labelDictionaryService.addAltRendering(activePlaceNameId, [pattern]);
+                      }
+                      
+                      // Trigger status recalculation for this placeName
+                      if (onTriggerStatusRecalc) {
+                        onTriggerStatusRecalc(activePlaceNameId);
+                      }
+                    }
+                  }}
+                >
+                  {inLang(uiStr.confirmPatterns, lang)}
+                </button>
+              </>
+            )}
+            {status === STATUS_GUESSED && (
+              <button 
+                style={{ marginLeft: 8 }}
+                onClick={() => {
+                  // Approve guessed renderings for the current label
+                  const currentLabel = labels[selectedLabelIndex];
+                  const placeNameIds = currentLabel?.placeNameIds || [];
+                  const activePlaceNameId = placeNameIds[activeTab] || placeNameIds[0];
+                  
+                  if (activePlaceNameId) {
+                    const updatedData = { ...termRenderings };
+                    const terms = collectionManager.getTermsForPlace(activePlaceNameId, collectionId) || [];
+                    
+                    // Approve all guessed renderings for terms in this placeName
+                    terms.forEach(term => {
+                      if (updatedData[term.termId]?.isGuessed) {
+                        updatedData[term.termId] = {
+                          ...updatedData[term.termId],
+                          isGuessed: false,
+                        };
+                      }
+                    });
+                    
+                    setTermRenderings(updatedData);
+                    if (onTriggerStatusRecalc) {
+                      onTriggerStatusRecalc(activePlaceNameId);
+                    }
+                  }
+                }}
+              >
+                {inLang(uiStr.approveRendering, lang)}
               </button>
             )}
             {status === STATUS_UNMATCHED && (
@@ -1153,87 +1283,271 @@ export default function DetailsPane({
                 {inLang(uiStr.addToRenderings, lang)}
               </button>
             )}
-            {status === STATUS_GUESSED && ( // If status is "guessed", show Approve rendering button
-              <button
-                style={{ marginLeft: 8 }}
-                onClick={() => {
-                  const termId = labels[selectedLabelIndex].termId;
 
-                  // Update local state
-                  setLocalIsApproved(true);
-
-                  // Create a proper updated termRenderings object
-                  const updatedData = { ...termRenderings };
-                  updatedData[termId] = {
-                    ...updatedData[termId],
-                    isGuessed: false,
-                  };
-
-                  // Update state via parent component handlers
-                  setTermRenderings(updatedData);
-                  onApprovedChange({ target: { checked: true } });
-                }}
-              >
-                {inLang(uiStr.approveRendering, lang)}
-              </button>
-            )}
-          </span>
+          </div>
         </div>
-        <h5>
-          {inLang(uiStr.termRenderings, lang)}{' '}
-          {localRenderings && !localIsApproved ? '(' + inLang(uiStr.guessed, lang) + ')' : ''}
-        </h5>
-        <div className="term-renderings" style={{ margin: '8px' }}>
-          {' '}
-          <AutocorrectTextarea
-            ref={renderingsTextareaRef}
-            value={localRenderings}
-            onChange={e => {
-              console.log('Renderings onChange called with:', e.target.value);
-              const termId = labels[selectedLabelIndex].termId;
-              const newValue = e.target.value;
+        {/* Tabbed section for placeNames */}
+        {(() => {
+          const currentLabel = labels[selectedLabelIndex];
+          const placeNameIds = currentLabel?.placeNameIds || [];
+          
+          if (placeNameIds.length === 0) return null;
+          
+          // Filter out placeNames that have no refs and no context
+          const visiblePlaceNameIds = placeNameIds.filter(placeNameId => {
+            const placeName = collectionManager.getPlaceName(placeNameId, collectionId);
+            const terms = placeName?.terms || [];
+            const hasRefs = terms.some(term => term.refs && term.refs.length > 0);
+            const context = collectionManager.getDefinition(placeNameId, collectionId);
+            const hasContext = context && Object.values(context).some(v => v);
+            return hasRefs || hasContext;
+          });
+          
+          if (visiblePlaceNameIds.length === 0) return null;
+          
+          const showTabs = true; // Always show tabbed interface
+          
+          return (
+            <div style={{ margin: '8px', marginTop: 12 }}>
+              {/* Tabs for placeNames */}
+              {showTabs && (
+                <div style={{ display: 'flex', gap: 0, marginBottom: 0 }}>
+                  {visiblePlaceNameIds.map((placeNameId, index) => {
+                    const placeName = collectionManager.getPlaceName(placeNameId, collectionId);
+                    const placeStatus = currentLabel.perPlaceStatus?.[placeNameId] || 0;
+                    const bgColor = statusValue[placeStatus]?.bkColor || '#f0f0f0';
+                    const textColor = statusValue[placeStatus]?.textColor || '#000';
+                    const isActive = activeTab === index;
+                    
+                    return (
+                      <button
+                        key={placeNameId}
+                        style={{
+                          padding: '8px 16px',
+                          background: bgColor,
+                          color: textColor,
+                          border: '2px solid black',
+                          borderBottom: isActive ? 'none' : '2px solid black',
+                          borderTopLeftRadius: 8,
+                          borderTopRightRadius: 8,
+                          borderBottomLeftRadius: 0,
+                          borderBottomRightRadius: 0,
+                          cursor: 'pointer',
+                          fontSize: '0.9em',
+                          fontWeight: isActive ? 'bold' : 'normal',
+                          marginBottom: isActive ? 0 : 0,
+                          position: 'relative',
+                          top: isActive ? 2 : 0,
+                          zIndex: isActive ? 10 : 1,
+                        }}
+                        onClick={() => onActiveTabChange(index)}
+                      >
+                        {inLang(placeName?.gloss, lang) || placeNameId}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+              
+              {/* Content for active placeName */}
+              {visiblePlaceNameIds.map((placeNameId, index) => {
+                if (showTabs && index !== activeTab) return null;
+                
+                const placeName = collectionManager.getPlaceName(placeNameId, collectionId);
+                const terms = placeName?.terms || [];
+                const isJoined = labelDictionaryService.isJoined(placeNameId);
+                const placeStatus = currentLabel.perPlaceStatus?.[placeNameId] || 0;
+                const bgColor = statusValue[placeStatus]?.bkColor || '#f9f9f9';
+                const textColor = statusValue[placeStatus]?.textColor || '#000';
+                
+                return (
+                  <div 
+                    key={placeNameId} 
+                    style={{ 
+                      marginTop: showTabs ? 0 : 8,
+                      border: showTabs ? '2px solid black' : 'none',
+                      borderRadius: showTabs ? '0 8px 8px 8px' : 0,
+                      padding: showTabs ? '12px' : 0,
+                      background: showTabs ? bgColor : 'transparent',
+                      color: textColor,
+                    }}
+                  >
+                    {/* Context for this placeName */}
+                    {(() => {
+                      const context = collectionManager.getDefinition(placeNameId, collectionId);
+                      
+                      // Always show placename context if it exists
+                      if (context && Object.values(context).some(v => v)) {
+                        return (
+                          <p style={{ margin: '0 0 8px 0', fontSize: '0.9em', fontStyle: 'italic', color: textColor }}>
+                            {inLang(context, lang)}
+                          </p>
+                        );
+                      }
+                      return null;
+                    })()}
+                    {/* Join checkbox for multi-term placeNames */}
+                    {terms.length > 1 && (
+                      <div style={{ marginBottom: 8 }}>
+                        <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+                          <input
+                            type="checkbox"
+                            checked={isJoined}
+                            onChange={(e) => {
+                              const shouldJoin = e.target.checked;
+                              
+                              if (shouldJoin) {
+                                // Check if terms can be joined: all must be identical or only one non-empty
+                                const renderings = terms.map(t => termRenderings[t.termId]?.renderings || '');
+                                const nonEmpty = renderings.filter(r => r.trim());
+                                const uniqueNonEmpty = [...new Set(nonEmpty.map(r => r.trim().toLowerCase()))];
+                                
+                                if (uniqueNonEmpty.length > 1) {
+                                  // Multiple different non-empty renderings
+                                  setAlertMessage(inLang(uiStr.cannotJoinDifferentRenderings || 
+                                    'Cannot join terms with different renderings. Please make them identical first, or clear all but one.', 
+                                    lang));
+                                  return;
+                                }
+                                
+                                // If joining, sync all terms to the first non-empty rendering
+                                if (nonEmpty.length > 0) {
+                                  const masterRendering = nonEmpty[0];
+                                  const updatedData = { ...termRenderings };
+                                  terms.forEach(t => {
+                                    updatedData[t.termId] = {
+                                      ...updatedData[t.termId],
+                                      renderings: masterRendering,
+                                      isGuessed: false,
+                                    };
+                                  });
+                                  setTermRenderings(updatedData);
+                                }
+                              }
+                              
+                              labelDictionaryService.setJoined(placeNameId, shouldJoin);
+                              // Trigger re-render
+                              onUpdateVernacular(
+                                currentLabel.mergeKey,
+                                currentLabel.lblTemplate || currentLabel.mergeKey,
+                                currentLabel.vernLabel,
+                                currentLabel.opCode || 'sync'
+                              );
+                            }}
+                            style={{ marginRight: 6 }}
+                          />
+                          <span style={{ fontSize: '0.9em' }}>{inLang(uiStr.joinCheckbox, lang)}</span>
+                        </label>
+                      </div>
+                    )}
+                    
+                    {/* If joined, show term names above single textarea */}
+                    {isJoined && terms.length > 1 ? (
+                      <div>
+                        {terms.map(term => {
+                          const termGloss = inLang(term.gloss, lang);
+                          const termTranslit = term.transliteration ? ` /${term.transliteration}/` : '';
+                          return (
+                            <div key={term.termId} style={{ fontSize: '0.9em', marginBottom: 4 }}>
+                              <span style={{ fontWeight: 'bold' }}>{term.termId} {termGloss}</span>{termTranslit}
+                            </div>
+                          );
+                        })}
 
-              // Update local state
-              setLocalRenderings(newValue);
-
-              // Create updated renderings data
-              const updatedData = { ...termRenderings };
-
-              // Create entry if it doesn't exist
-              if (!updatedData[termId]) {
-                updatedData[termId] = { renderings: newValue };
-              } else {
-                updatedData[termId] = {
-                  ...updatedData[termId],
-                  renderings: newValue,
-                };
-              }
-
-              // If not approved, auto-approve on edit
-              if (!localIsApproved) {
-                setLocalIsApproved(true);
-                updatedData[termId].isGuessed = false;
-                onApprovedChange({ target: { checked: true } });
-              }
-
-              // Update parent state
-              setTermRenderings(updatedData);
-              onRenderingsChange({ target: { value: newValue } });
-            }}
-            style={{
-              width: '100%',
-              minHeight: '100px',
-              border: '1px solid black',
-              borderRadius: '0.5em',
-              padding: '8px',
-              fontSize: '12px',
-              backgroundColor: localRenderings && !localIsApproved ? '#ffbf8f' : 'white',
-            }}
-            placeholder={inLang(uiStr.enterRenderings, lang)}
-            spellCheck={false}
-          />
-        </div>
+                        {/* Single textarea for joined terms */}
+                        <div style={{ marginTop: 8 }}>
+                          <AutocorrectTextarea
+                            value={termRenderings[terms[0].termId]?.renderings?.replace(/\|\|/g, '\n') || ''}
+                            onChange={e => {
+                              const newValue = e.target.value.replace(/\n/g, '||');
+                              const updatedData = { ...termRenderings };
+                              // Update ALL joined terms with the same rendering
+                              terms.forEach(term => {
+                                updatedData[term.termId] = {
+                                  ...updatedData[term.termId],
+                                  renderings: newValue,
+                                  isGuessed: false,
+                                };
+                              });
+                              setTermRenderings(updatedData);
+                              if (onTriggerStatusRecalc) {
+                                onTriggerStatusRecalc(placeNameId);
+                              }
+                            }}
+                            style={{
+                              width: '100%',
+                              minHeight: '80px',
+                              border: '1px solid #999',
+                              borderRadius: '0.5em',
+                              padding: '6px',
+                              fontSize: '11px',
+                              backgroundColor: termRenderings[terms[0].termId]?.isGuessed ? '#ffbf8f' : 'white',
+                            }}
+                            placeholder={inLang(uiStr.enterRenderings, lang)}
+                            spellCheck={false}
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      /* Not joined or single term - show each term with its own textarea */
+                      terms
+                        .filter(term => term.refs && term.refs.length > 0)
+                        .map(term => {
+                        const termGloss = inLang(term.gloss, lang);
+                        const termTranslit = term.transliteration ? ` /${term.transliteration}/` : '';
+                        const termData = termRenderings[term.termId] || {};
+                        
+                        return (
+                          <div key={term.termId} style={{ marginBottom: 12 }}>
+                            <div style={{ fontSize: '0.9em', marginBottom: 4 }}>
+                              <span style={{ fontWeight: 'bold' }}>{term.termId}</span> {termGloss}{termTranslit}
+                            </div>
+                            <AutocorrectTextarea
+                              value={termData.renderings?.replace(/\|\|/g, '\n') || ''}
+                              onChange={e => {
+                                const newValue = e.target.value.replace(/\n/g, '||');
+                                const updatedData = { ...termRenderings };
+                                updatedData[term.termId] = {
+                                  ...updatedData[term.termId],
+                                  renderings: newValue,
+                                  isGuessed: false,
+                                };
+                                setTermRenderings(updatedData);
+                                if (onTriggerStatusRecalc) {
+                                  onTriggerStatusRecalc(placeNameId);
+                                }
+                              }}
+                              style={{
+                                width: '100%',
+                                minHeight: '50px',
+                                border: '1px solid #999',
+                                borderRadius: '0.5em',
+                                padding: '6px',
+                                fontSize: '11px',
+                                backgroundColor: termData.isGuessed ? '#ffbf8f' : 'white',
+                              }}
+                              placeholder={inLang(uiStr.enterRenderings, lang)}
+                              spellCheck={false}
+                            />
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })()}
       </div>
+      
+      {/* Alert Dialog */}
+      {alertMessage && (
+        <AlertDialog
+          message={alertMessage}
+          onClose={() => setAlertMessage(null)}
+        />
+      )}
     </div>
   );
 }

@@ -60,10 +60,10 @@
     "ne": "अनुवादित लेबल प्रविष्ट गर्नुहोस्"
   },
   "enterRenderings": {
-    "en": "Enter renderings here, one per line.\nOptionally, explicitly mark the map form of the rendering by adding it as a comment that begins with '@'.\ne.g. Misra* (@Misradesh)",
-    "es": "Ingrese los traducciones aquí, uno por línea.\nOpcionalmente, marque explícitamente la forma del mapa agregándola como un comentario que comience con '@'.\np.ej. Misra* (@Misradesh)",
-    "fr": "Entrez les rendus ici, un par ligne.\nOptionnellement, marquez explicitement la forme de la carte en l'ajoutant comme un commentaire commençant par '@'.\np.ex. Misra* (@Misradesh)",
-    "ne": "यहाँ अनुवादहरू प्रविष्ट गर्नुहोस्, प्रत्येक लाइनमा एक।\nवैकल्पिक रूपमा, '@' बाट सुरु हुने टिप्पणीको रूपमा अनुवादको नक्सा रूप स्पष्ट रूपमा चिन्ह लगाउनुहोस्।\nजस्तै: Misra* (@Misradesh)"
+    "en": "Enter renderings here, one per line.",
+    "es": "Ingrese los traducciones aquí, uno por línea.",
+    "fr": "Entrez les rendus ici, un par ligne.",
+    "ne": "यहाँ अनुवादहरू प्रविष्ट गर्नुहोस्, प्रत्येक लाइनमा एक।"
   },
   "export": {
     "en": "Export",
@@ -659,6 +659,48 @@
     "fr": "Abandonner",
     "ne": "त्याग्नुहोस्"
   },
+  "syncDifferencesTitle": {
+    "en": "Dictionary Sync Differences",
+    "es": "Diferencias de sincronización del diccionario",
+    "fr": "Différences de synchronisation du dictionnaire",
+    "ne": "शब्दकोश सिंक भिन्नताहरू"
+  },
+  "syncDifferencesMessage": {
+    "en": "The following labels differ from the dictionary, and are marked for sync:",
+    "es": "Las siguientes etiquetas difieren del diccionario y están marcadas para sincronización:",
+    "fr": "Les étiquettes suivantes diffèrent du dictionnaire et sont marquées pour synchronisation:",
+    "ne": "निम्न लेबलहरू शब्दकोशबाट फरक छन्, र सिंकको लागि चिन्ह लगाइएको छ:"
+  },
+  "gloss": {
+    "en": "Gloss",
+    "es": "Glosa",
+    "fr": "Glose",
+    "ne": "ग्लोस"
+  },
+  "previouslySaved": {
+    "en": "Previously Saved",
+    "es": "Guardado anteriormente",
+    "fr": "Enregistré précédemment",
+    "ne": "पहिले बचत गरिएको"
+  },
+  "dictionary": {
+    "en": "Dictionary",
+    "es": "Diccionario",
+    "fr": "Dictionnaire",
+    "ne": "शब्दकोश"
+  },
+  "setToOverride": {
+    "en": "Keep this (override)",
+    "es": "Mantener esto (anular)",
+    "fr": "Garder ceci (remplacer)",
+    "ne": "यो राख्नुहोस् (ओभरराइड)"
+  },
+  "updateFromDictionary": {
+    "en": "Update with this (sync)",
+    "es": "Actualizar con esto (sincronizar)",
+    "fr": "Mettre à jour avec ceci (sync)",
+    "ne": "यसबाट अपडेट गर्नुहोस् (सिंक)"
+  },
   "labelsSaved": {
     "en": "Labels saved successfully",
     "es": "Etiquetas guardadas exitosamente",
@@ -725,6 +767,36 @@
     "fr": "Erreur lors de la vérification du dossier de modèles",
     "ne": "टेम्प्लेट फोल्डर जाँच गर्दा त्रुटि"
   },
+  "opCodeSync": {
+    "en": "Sync",
+    "es": "Sincronizar",
+    "fr": "Synchroniser",
+    "ne": "समक्रमण"
+  },
+  "opCodeOverride": {
+    "en": "Override",
+    "es": "Sobrescribir",
+    "fr": "Remplacer",
+    "ne": "अधिलेखन"
+  },
+  "opCodeOmit": {
+    "en": "Omit",
+    "es": "Omitir",
+    "fr": "Omettre",
+    "ne": "छाड्नुहोस्"
+  },
+  "joinCheckbox": {
+    "en": "Join term renderings",
+    "es": "Unir traducciones",
+    "fr": "Joindre les rendus",
+    "ne": "वैकल्पिक अनुवादहरू जोड्नुहोस्"
+  },
+  "confirmPatterns": {
+    "en": "Never warn me about this one again",
+    "es": "Confirmar estos patrones",
+    "fr": "Confirmer ces modèles",
+    "ne": "यी ढाँचाहरू पुष्टि गर्नुहोस्"
+  },
   "statusValue": [
     {
       "text": {
@@ -738,6 +810,20 @@
         "es": "Proporcione el texto que se usará en esta etiqueta.",
         "fr": "Fournissez le texte à utiliser pour cette étiquette.",
         "ne": "यस लेबलमा प्रयोग हुने पाठ प्रदान गर्नुहोस्।"
+      }
+    },
+    {
+      "text": {
+        "en": "Partial",
+        "es": "Parcial",
+        "fr": "Partiel",
+        "ne": "आंशिक"
+      },
+      "help": {
+        "en": "Literal text in the template string still needs to be translated.",
+        "es": "El texto literal en la plantilla aún debe traducirse.",
+        "fr": "Le texte littéral dans le modèle doit encore être traduit.",
+        "ne": "टेम्प्लेटमा शाब्दिक पाठ अझै अनुवाद गर्न आवश्यक छ।"
       }
     },
     {
@@ -784,23 +870,23 @@
     },
     {
       "text": {
-        "en": "Matched",
-        "es": "Coincidente",
-        "fr": "Correspondant",
-        "ne": "मिल्यो"
+        "en": "Multiple renderings",
+        "es": "Múltiples traducciones",
+        "fr": "Plusieurs traductions",
+        "ne": "धेरै अनुवादहरू"
       },
       "help": {
-        "en": "The term renderings will be able to supply this label to any other map in the project that needs it.",
-        "es": "Las traducciones del término podrán propocionar esta etiqueta a cualquier otro mapa del proyecto que la necesite.",
-        "fr": "Les traductions du terme pourront fournir cette étiquette à toute autre carte du projet qui en a besoin.",
-        "ne": "शब्द अनुवादहरूले यो लेबल आवश्यक पर्ने अन्य नक्सामा पनि उपलब्ध गराउन सक्छन्।"
+        "en": "This pattern does not match the label: {listOfRenderingPatterns}",
+        "es": "Estos patrones no coinciden con la etiqueta: {listOfRenderingPatterns}.",
+        "fr": "Ces modèles ne correspondent pas à l'étiquette: {listOfRenderingPatterns}.",
+        "ne": "यी ढाँचाहरू लेबलसँग मेल खाँदैनन्: {listOfRenderingPatterns}।"
       }
     },
     {
       "text": {
         "en": "Guessed",
         "es": "Conjeturada",
-        "fr": "Deviné",
+        "fr": "Deviné",
         "ne": "अनुमान गरिएको"
       },
       "help": {
@@ -808,34 +894,6 @@
         "es": "Esta etiqueta coincide con una traducción conjeturada que debe ser aprobada.",
         "fr": "Cette étiquette correspond à une traduction devinée qui doit être approuvée.",
         "ne": "यो लेबल अनुमान गरिएको अनुवादसँग मेल खान्छ, जसलाई स्वीकृत गर्नुपर्छ।"
-      }
-    },
-    {
-      "text": {
-        "en": "Label cannot be derived from rendering",
-        "es": "La etiqueta no puede derivarse de la traducción",
-        "fr": "L'étiquette ne peut pas être dérivée de la traduction",
-        "ne": "लेबल अनुवादबाट व्युत्पन्न गर्न सकिँदैन"
-      },
-      "help": {
-        "en": "The rendering below does not have enough information to produce this label for other maps. If the rendering is correct,",
-        "es": "La traducción abajo no tiene suficiente información para producir esta etiqueta para otros mapas. Si la traducción es correcta,",
-        "fr": "La traduction ci-dessous ne contient pas suffisamment d'informations pour produire cette étiquette pour d'autres cartes. Si la traduction est correcte,",
-        "ne": "तलको अनुवादले अन्य नक्साहरूका लागि यो लेबल उत्पादन गर्न पर्याप्त जानकारी छैन। यदि अनुवाद सही छ भने,"
-      }
-    },
-    {
-      "text": {
-        "en": "Bad explicit form",
-        "es": "Forma explícita incorrecta",
-        "fr": "Forme explicite incorrecte",
-        "ne": "गलत स्पष्ट रूप"
-      },
-      "help": {
-        "en": "The renderings specify an explicit map form, but it is not matched by any rendering.",
-        "es": "Las traducciones especifican una forma explícita para el mapa, pero no coincide con ninguna traducción.",
-        "fr": "Les traductions spécifient une forme explicite pour la carte, mais aucune traduction ne la correspond.",
-        "ne": "अनुवादहरूले स्पष्ट नक्सा रूप तोकेको छ, तर कुनै अनुवादसँग मेल खाँदैन।"
       }
     },
     {
@@ -854,16 +912,16 @@
     },
     {
       "text": {
-        "en": "Multiple renderings",
-        "es": "Múltiples traducciones",
-        "fr": "Plusieurs traductions",
-        "ne": "धेरै अनुवादहरू"
+        "en": "OK",
+        "es": "OK",
+        "fr": "OK",
+        "ne": "ठीक छ"
       },
       "help": {
-        "en": "The renderings list below contains multiple renderings, and does not explicitly specify which is the map form. If multiple rendering are necessary,",
-        "es": "La lista de traducciones abajo contiene múltiples traducciones y no especifica explícitamente cuál es la forma del mapa. Si son necesarias múltiples traducciones,",
-        "fr": "La liste des traductions ci-dessous contient plusieurs traductions et ne spécifie pas explicitement quelle est la forme de la carte. Si plusieurs traductions sont nécessaires,",
-        "ne": "तलको अनुवाद सूचीमा धेरै अनुवादहरू छन्, र यसले स्पष्ट रूपमा नक्सा रूप निर्दिष्ट गर्दैन। यदि धेरै अनुवादहरू आवश्यक छन् भने,"
+        "en": "The term renderings will be able to supply this label to any other map in the project that needs it.",
+        "es": "Las traducciones del término podrán propocionar esta etiqueta a cualquier otro mapa del proyecto que la necesite.",
+        "fr": "Les traductions du terme pourront fournir cette étiquette à toute autre carte du projet qui en a besoin.",
+        "ne": "शब्द अनुवादहरूले यो लेबल आवश्यक पर्ने अन्य नक्सामा पनि उपलब्ध गराउन सक्छन्।"
       }
     }
   ]

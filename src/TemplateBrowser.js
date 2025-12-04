@@ -481,14 +481,14 @@ export default function TemplateBrowser({
               {selectedTemplate && (
                 <div className="template-actions">
                   <button 
-                    onClick={handleSelectDiagram} 
+                    onClick={() => handleSelectDiagram()} 
                     className="select-button"
                   >
                     {inLang(uiStr.selectDiagram, lang) || 'Select Diagram'}
                   </button>
                   {filteredTemplates.length > 1 && (
                     <button 
-                      onClick={handleSelectGroup} 
+                      onClick={() => handleSelectGroup()} 
                       className="select-button"
                     >
                       {inLang(uiStr.selectGroup, lang) || 'Select Group'}

@@ -13,6 +13,7 @@ jest-results.json
 /build
 /dist
 /_LabelerTemplates
+/_LabelerCollections
 /ref
 /versification
 

@@ -1,0 +1,182 @@
+🔍 Starting validation of _LabelerCollections
+
+============================================================
+
+📁 Validating collection: SMR
+
+  Validating map-defs.json...
+  Validating mergekeys.json...
+❌ [SMR] mergekeys.json: Key "altar_of_burned_offering" has complex lblTemplate "Altar of Burned Offering" but missing English context
+❌ [SMR] mergekeys.json: Key "appearance" has complex lblTemplate "Appears after resurrection ({r#LUK 24})" but missing English context
+⚠️  [SMR] mergekeys.json: Key "aroer.3" is not used by any label in map-defs.json
+❌ [SMR] mergekeys.json: Key "ascension" has complex lblTemplate "Discourse; ascension ({r#ACT 1})" but missing English context
+❌ [SMR] mergekeys.json: Key "bells_hp" has complex lblTemplate "Bells" but missing English context
+❌ [SMR] mergekeys.json: Key "birthplace" has complex lblTemplate "Birthplace ({r#MAT 2})" but missing English context
+❌ [SMR] mergekeys.json: Key "blindman" has complex lblTemplate "Blind man healed ({r#MRK 8})" but missing English context
+❌ [SMR] mergekeys.json: Key "boundary" has complex lblTemplate "Boundary between Israel and Judah" but missing English context
+❌ [SMR] mergekeys.json: Key "boundary_persia" has complex lblTemplate "Boundary of the Persian Empire" but missing English context
+❌ [SMR] mergekeys.json: Key "boundary_rome" has complex lblTemplate "Boundary of the Roman Empire" but missing English context
+❌ [SMR] mergekeys.json: Key "breastplate_hp" has complex lblTemplate "Breastplate with 12 Jewels" but missing English context
+❌ [SMR] mergekeys.json: Key "cities_rebuked" has complex lblTemplate "Cities rebuked ({r#LUK 10})" but missing English context
+❌ [SMR] mergekeys.json: Key "confession" has complex lblTemplate "Peter’s Confession ({r#MAT 16})" but missing English context
+❌ [SMR] mergekeys.json: Key "council_chamber" has complex lblTemplate "Council Chamber" but missing English context
+❌ [SMR] mergekeys.json: Key "court_of_gentiles" has complex lblTemplate "Court of the Gentiles" but missing English context
+❌ [SMR] mergekeys.json: Key "court_of_israel" has complex lblTemplate "Court of Israel (Court of Men)" but missing English context
+❌ [SMR] mergekeys.json: Key "court_of_priests" has complex lblTemplate "Court of Priests" but missing English context
+❌ [SMR] mergekeys.json: Key "court_of_women" has complex lblTemplate "Court of Women" but missing English context
+❌ [SMR] mergekeys.json: Key "curtain" has complex lblTemplate "Curtain" but missing English context
+❌ [SMR] mergekeys.json: Key "curtain_wall" has complex lblTemplate "Curtain Wall" but missing English context
+❌ [SMR] mergekeys.json: Key "damascus_gate" has complex lblTemplate "Damascus Gate" but missing English context
+❌ [SMR] mergekeys.json: Key "dan_laish" has complex lblTemplate "{TerritoryOfDan} ({Laish})" but missing English gloss
+❌ [SMR] mergekeys.json: Key "dan_laish" has complex lblTemplate "{TerritoryOfDan} ({Laish})" but missing English context
+❌ [SMR] mergekeys.json: Key "daughter_healed" has complex lblTemplate "Syro-Phoenician woman’s daughter healed ({r#MRK 7})" but missing English context
+❌ [SMR] mergekeys.json: Key "demoniac" has complex lblTemplate "Demoniac healed ({r#MRK 5})" but missing English context
+❌ [SMR] mergekeys.json: Key "entrance" has complex lblTemplate "The Entrance" but missing English context
+❌ [SMR] mergekeys.json: Key "ephod_hp" has complex lblTemplate "Ephod" but missing English context
+❌ [SMR] mergekeys.json: Key "feet_hp" has complex lblTemplate "Bare Feet" but missing English context
+❌ [SMR] mergekeys.json: Key "forum_jerusalem" has complex lblTemplate "Forum" but missing English context
+❌ [SMR] mergekeys.json: Key "garden_gate" has complex lblTemplate "Garden Gate" but missing English context
+❌ [SMR] mergekeys.json: Key "gate" has complex lblTemplate "Gate" but missing English context
+❌ [SMR] mergekeys.json: Key "gaul" has complex lblTemplate "Gallia (Gaul)" but missing English context
+❌ [SMR] mergekeys.json: Key "headband_hp" has complex lblTemplate "Gold Headband" but missing English context
+❌ [SMR] mergekeys.json: Key "headquarters" has complex lblTemplate "Headquarters, site of many miracles ({r#MRK 2})" but missing English context
+❌ [SMR] mergekeys.json: Key "herodian_street" has complex lblTemplate "Herodian Street" but missing English context
+❌ [SMR] mergekeys.json: Key "hezekiahs_tunnel" has complex lblTemplate "Hezekiah’s Tunnel" but missing English context
+❌ [SMR] mergekeys.json: Key "holy_holy" has complex lblTemplate "The Holy of Holies" but missing English context
+❌ [SMR] mergekeys.json: Key "holy_place" has complex lblTemplate "The Holy Place" but missing English context
+❌ [SMR] mergekeys.json: Key "home" has complex lblTemplate "Boyhood home ({r#LUK 2})" but missing English context
+❌ [SMR] mergekeys.json: Key "house_of_caiaphas" has complex lblTemplate "House of Caiaphas" but missing English context
+❌ [SMR] mergekeys.json: Key "hurrians" has complex lblTemplate "Hurrians" but missing English context
+❌ [SMR] mergekeys.json: Key "incense_hp" has complex lblTemplate "Incense Burner" but missing English context
+❌ [SMR] mergekeys.json: Key "jerusalem_title" has complex lblTemplate "Jerusalem in New Testament Times" but missing English context
+❌ [SMR] mergekeys.json: Key "kittim_cyprus" has complex lblTemplate "{Kittim} ({Cyprus})" but missing English gloss
+❌ [SMR] mergekeys.json: Key "kittim_cyprus" has complex lblTemplate "{Kittim} ({Cyprus})" but missing English context
+❌ [SMR] mergekeys.json: Key "lazarus" has complex lblTemplate "Home of Mary, Martha and Lazarus ({r#JHN 11})" but missing English context
+❌ [SMR] mergekeys.json: Key "legend_1" has complex lblTemplate "1. Paul’s First Journey ({R#ACT 13.4–14.28})" but missing English context
+❌ [SMR] mergekeys.json: Key "legend_1" references placeName "ACT 13.4–14.28" which doesn't exist in placenames.json or core-placenames.json
+❌ [SMR] mergekeys.json: Key "legend_2" has complex lblTemplate "2. Paul’s Second Journey ({R#ACT 15.36–18.22})" but missing English context
+❌ [SMR] mergekeys.json: Key "legend_2" references placeName "ACT 15.36–18.22" which doesn't exist in placenames.json or core-placenames.json
+❌ [SMR] mergekeys.json: Key "legend_3" has complex lblTemplate "3. Paul’s Third Journey ({R#ACT 18.23–21.17})" but missing English context
+❌ [SMR] mergekeys.json: Key "legend_3" references placeName "ACT 18.23–21.17" which doesn't exist in placenames.json or core-placenames.json
+❌ [SMR] mergekeys.json: Key "legend_4" has complex lblTemplate "4. Paul’s Journey to Rome ({R#ACT 27.1–28.16})" but missing English context
+❌ [SMR] mergekeys.json: Key "legend_4" references placeName "ACT 27.1–28.16" which doesn't exist in placenames.json or core-placenames.json
+❌ [SMR] mergekeys.json: Key "lepers" has complex lblTemplate "Lepers healed ({r#LUK 17})" but missing English context
+❌ [SMR] mergekeys.json: Key "leptis_magna" has complex lblTemplate "Leptis Magna" but missing English context
+❌ [SMR] mergekeys.json: Key "mari" has complex lblTemplate "Mari" but missing English context
+❌ [SMR] mergekeys.json: Key "onyx_hp" has complex lblTemplate "Onyx Stones on Shoulders" but missing English context
+❌ [SMR] mergekeys.json: Key "passion_wk" has complex lblTemplate "Several visits; passion week ({r#JHN 12})" but missing English context
+❌ [SMR] mergekeys.json: Key "pauls_journey_map" has complex lblTemplate "Paul’s Journeys map" but missing English context
+❌ [SMR] mergekeys.json: Key "persia_title01" has complex lblTemplate "The Persian Empire during the time of Esther" but missing English context
+❌ [SMR] mergekeys.json: Key "philipstravels_title" has complex lblTemplate "Philip’s Travels" but missing English context
+❌ [SMR] mergekeys.json: Key "possible_rte_exodus" has complex lblTemplate "Possible route of the Exodus" but missing English context
+❌ [SMR] mergekeys.json: Key "priests_houses" has complex lblTemplate "Priest’s Houses" but missing English context
+❌ [SMR] mergekeys.json: Key "rameses" references placeName "Rameses" which doesn't exist in placenames.json or core-placenames.json
+❌ [SMR] mergekeys.json: Key "refugecities_title01" has complex lblTemplate "The Cities of Refuge" but missing English context
+❌ [SMR] mergekeys.json: Key "refugecities_title02" references placeName "NUM 35" which doesn't exist in placenames.json or core-placenames.json
+❌ [SMR] mergekeys.json: Key "refugecities_title02" references placeName "JOS 20" which doesn't exist in placenames.json or core-placenames.json
+❌ [SMR] mergekeys.json: Key "river_of_life" has complex lblTemplate "River of Life" but missing English context
+❌ [SMR] mergekeys.json: Key "road_to_bethany" has complex lblTemplate "{to#Bethany}" but missing English context
+❌ [SMR] mergekeys.json: Key "road_to_bethlehem" has complex lblTemplate "{to#Bethlehem}" but missing English context
+❌ [SMR] mergekeys.json: Key "road_to_caesarea" has complex lblTemplate "{to#Caesarea}" but missing English context
+❌ [SMR] mergekeys.json: Key "road_to_joppa" has complex lblTemplate "{to#Joppa}" but missing English context
+❌ [SMR] mergekeys.json: Key "road_to_the_dead_sea" has complex lblTemplate "{to#DeadSea}" but missing English context
+❌ [SMR] mergekeys.json: Key "road_to_the_dead_sea" references placeName "DeadSea" which doesn't exist in placenames.json or core-placenames.json
+❌ [SMR] mergekeys.json: Key "robe_hp" has complex lblTemplate "Robe" but missing English context
+❌ [SMR] mergekeys.json: Key "route_ruth" has complex lblTemplate "Journey from Israel to Moab and back" but missing English context
+❌ [SMR] mergekeys.json: Key "royal_porch" has complex lblTemplate "Royal Porch" but missing English context
+❌ [SMR] mergekeys.json: Key "rt_frm_egypt_to_arabia" has complex lblTemplate "Route from Egypt to Arabia" but missing English context
+❌ [SMR] mergekeys.json: Key "sash_hp" has complex lblTemplate "Sash" but missing English context
+❌ [SMR] mergekeys.json: Key "scripture_hp" has complex lblTemplate "{R#EXO 28}" but missing English context
+❌ [SMR] mergekeys.json: Key "scripture_hp" references placeName "EXO 28" which doesn't exist in placenames.json or core-placenames.json
+❌ [SMR] mergekeys.json: Key "scripture_j1" has complex lblTemplate "{R#ACT 13.4–14.28}" but missing English context
+❌ [SMR] mergekeys.json: Key "scripture_j1" references placeName "ACT 13.4–14.28" which doesn't exist in placenames.json or core-placenames.json
+❌ [SMR] mergekeys.json: Key "scripture_j2" has complex lblTemplate "{R#ACT 15.36–18.22}" but missing English context
+❌ [SMR] mergekeys.json: Key "scripture_j2" references placeName "ACT 15.36–18.22" which doesn't exist in placenames.json or core-placenames.json
+❌ [SMR] mergekeys.json: Key "scripture_j3" has complex lblTemplate "{R#ACT 18.23–21.17}" but missing English context
+❌ [SMR] mergekeys.json: Key "scripture_j3" references placeName "ACT 18.23–21.17" which doesn't exist in placenames.json or core-placenames.json
+❌ [SMR] mergekeys.json: Key "scripture_j4" has complex lblTemplate "{R#ACT 27.1–28.16}" but missing English context
+❌ [SMR] mergekeys.json: Key "scripture_j4" references placeName "ACT 27.1–28.16" which doesn't exist in placenames.json or core-placenames.json
+❌ [SMR] mergekeys.json: Key "scripture_pent" has complex lblTemplate "{R#ACT 2.5-11}" but missing English context
+❌ [SMR] mergekeys.json: Key "scripture_pent" references placeName "ACT 2.5-11" which doesn't exist in placenames.json or core-placenames.json
+❌ [SMR] mergekeys.json: Key "scripture_soldier" has complex lblTemplate "{R#EPH 6.10-18}" but missing English context
+❌ [SMR] mergekeys.json: Key "scripture_soldier" references placeName "EPH 6.10-18" which doesn't exist in placenames.json or core-placenames.json
+❌ [SMR] mergekeys.json: Key "stairs" has complex lblTemplate "stairs" but missing English context
+❌ [SMR] mergekeys.json: Key "storm" has complex lblTemplate "Quiets storm ({r#MAT 8})" but missing English context
+❌ [SMR] mergekeys.json: Key "Temple1_table" has complex lblTemplate "The Table of Showbread" but missing English context
+❌ [SMR] mergekeys.json: Key "Temple2_lamp" has complex lblTemplate "The Lampstand" but missing English context
+❌ [SMR] mergekeys.json: Key "Temple3_altar" has complex lblTemplate "The Altar of Incense" but missing English context
+❌ [SMR] mergekeys.json: Key "Temple4_curtain" has complex lblTemplate "The Curtain" but missing English context
+❌ [SMR] mergekeys.json: Key "Temple5_ark" has complex lblTemplate "The Ark of the Covenant" but missing English context
+❌ [SMR] mergekeys.json: Key "Temple6_cherubim" has complex lblTemplate "The Cherubim" but missing English context
+❌ [SMR] mergekeys.json: Key "the_building" has complex lblTemplate "The Building" but missing English context
+❌ [SMR] mergekeys.json: Key "theater" has complex lblTemplate "Theater" but missing English context
+❌ [SMR] mergekeys.json: Key "title_7church" has complex lblTemplate "Seven Churches of Asia" but missing English context
+❌ [SMR] mergekeys.json: Key "title_abraham_to_canaan" has complex lblTemplate "Abraham’s Journey to Canaan" but missing English context
+❌ [SMR] mergekeys.json: Key "title_abraham_to_egypt" has complex lblTemplate "Abraham Goes to Egypt" but missing English context
+❌ [SMR] mergekeys.json: Key "title_ancient" has complex lblTemplate "Abraham’s World" but missing English context
+❌ [SMR] mergekeys.json: Key "title_canaanHG" has complex lblTemplate "Land of Canaan" but missing English context
+❌ [SMR] mergekeys.json: Key "title_christsministry" has complex lblTemplate "Events in Christ’s Ministry" but missing English context
+❌ [SMR] mergekeys.json: Key "title_conquest" has complex lblTemplate "The Conquest of Canaan" but missing English context
+❌ [SMR] mergekeys.json: Key "title_dn" has complex lblTemplate "The Descendants of Noah" but missing English context
+❌ [SMR] mergekeys.json: Key "title_exodus" has complex lblTemplate "The Exodus from Egypt" but missing English context
+❌ [SMR] mergekeys.json: Key "title_ezekiel_temple" has complex lblTemplate "Ezekiel’s Temple" but missing English context
+❌ [SMR] mergekeys.json: Key "title_holy" has complex lblTemplate "The Holy Land in the Time of Jesus Christ" but missing English context
+❌ [SMR] mergekeys.json: Key "title_hp" has complex lblTemplate "High Priest" but missing English context
+❌ [SMR] mergekeys.json: Key "title_j0" has complex lblTemplate "Paul’s Missionary Journeys" but missing English context
+❌ [SMR] mergekeys.json: Key "title_j1" has complex lblTemplate "Paul’s First Journey" but missing English context
+❌ [SMR] mergekeys.json: Key "title_j2" has complex lblTemplate "Paul’s Second Journey" but missing English context
+❌ [SMR] mergekeys.json: Key "title_j3" has complex lblTemplate "Paul’s Third Journey" but missing English context
+❌ [SMR] mergekeys.json: Key "title_j4" has complex lblTemplate "Paul’s Journey to Rome" but missing English context
+❌ [SMR] mergekeys.json: Key "title_jacob2haran" has complex lblTemplate "Jacob’s Trip to Haran" but missing English context
+❌ [SMR] mergekeys.json: Key "title_jacobreturns" has complex lblTemplate "Return of Jacob" but missing English context
+❌ [SMR] mergekeys.json: Key "title_jerusalem_ill" has complex lblTemplate "Jerusalem in the Time of Christ" but missing English context
+❌ [SMR] mergekeys.json: Key "title_jewish_calendar" has complex lblTemplate "Jewish Calendar" but missing English context
+❌ [SMR] mergekeys.json: Key "title_kingdoms" has complex lblTemplate "Kingdoms of Israel and Judah" but missing English context
+❌ [SMR] mergekeys.json: Key "title_med" has complex lblTemplate "The Mediterranean Area" but missing English context
+❌ [SMR] mergekeys.json: Key "title_pent" has complex lblTemplate "Nations Whose Languages Were Heard at Pentecost" but missing English context
+❌ [SMR] mergekeys.json: Key "title_roman_empire" has complex lblTemplate "The Roman Empire during the time of Christ" but missing English context
+❌ [SMR] mergekeys.json: Key "title_ruth" has complex lblTemplate "Israel and Moab at the time of Naomi and Ruth" but missing English context
+❌ [SMR] mergekeys.json: Key "title_temple1" has complex lblTemplate "The Temple in the Time of Jesus Christ" but missing English context
+❌ [SMR] mergekeys.json: Key "title_temple2" has complex lblTemplate "The Temple Buildings" but missing English context
+❌ [SMR] mergekeys.json: Key "title_temple3" has complex lblTemplate "The Temple Itself" but missing English context
+❌ [SMR] mergekeys.json: Key "title_world" has complex lblTemplate "Map of the World" but missing English context
+❌ [SMR] mergekeys.json: Key "title_worldsimple" has complex lblTemplate "The World" but missing English context
+❌ [SMR] mergekeys.json: Key "tombs" has complex lblTemplate "Tombs" but missing English context
+❌ [SMR] mergekeys.json: Key "towers_pool" has complex lblTemplate "Tower’s Pool" but missing English context
+❌ [SMR] mergekeys.json: Key "transfiguration" has complex lblTemplate "Transfiguration? ({r#MRK 9})" but missing English context
+❌ [SMR] mergekeys.json: Key "tunic_hp" has complex lblTemplate "Tunic of Fine Linen" but missing English context
+❌ [SMR] mergekeys.json: Key "turban_hp" has complex lblTemplate "Special Turban" but missing English context
+❌ [SMR] mergekeys.json: Key "unsuc_inv_of_canaan" has complex lblTemplate "Unsuccessful invasion of Canaan" but missing English context
+❌ [SMR] mergekeys.json: Key "upper_room" has complex lblTemplate "Upper Room" but missing English context
+❌ [SMR] mergekeys.json: Key "valley_gate" has complex lblTemplate "Valley Gate" but missing English context
+❌ [SMR] mergekeys.json: Key "wall_agrippa" has complex lblTemplate "Walls built by Agrippa I" but missing English context
+❌ [SMR] mergekeys.json: Key "wall_jesus" has complex lblTemplate "Walls at the time of Jesus" but missing English context
+❌ [SMR] mergekeys.json: Key "wall_present" has complex lblTemplate "Present day wall" but missing English context
+❌ [SMR] mergekeys.json: Key "wall_uncertain" has complex lblTemplate "Wall of uncertain date" but missing English context
+❌ [SMR] mergekeys.json: Key "water_gate" has complex lblTemplate "Water Gate" but missing English context
+❌ [SMR] mergekeys.json: Key "way_of_shur" has complex lblTemplate "Way of {Shur}" but missing English context
+❌ [SMR] mergekeys.json: Key "way_of_the_philistines" has complex lblTemplate "Way of the Philistines" but missing English context
+❌ [SMR] mergekeys.json: Key "well" has complex lblTemplate "Woman at the well ({r#JHN 4})" but missing English context
+❌ [SMR] mergekeys.json: Key "widows_son" has complex lblTemplate "Widow’s son raised ({r#LUK 7})" but missing English context
+❌ [SMR] mergekeys.json: Key "wine" has complex lblTemplate "Water turned to wine ({r#JHN 2})" but missing English context
+❌ [SMR] mergekeys.json: Key "your_country" has complex lblTemplate "Your Country" but missing English context
+❌ [SMR] mergekeys.json: Key "zacchaeus" has complex lblTemplate "Visits Zacchaeus ({r#LUK 19})" but missing English context
+❌ [SMR] mergekeys.json: Key "title_acts8" has complex lblTemplate "Acts Chapter 8" but missing English context
+❌ [SMR] mergekeys.json: Key "title_samuel_david" has complex lblTemplate "Cities In The Time of Samuel and David" but missing English context
+❌ [SMR] mergekeys.json: Key "title_galilee" has complex lblTemplate "Galilee at the time of Jesus" but missing English context
+❌ [SMR] mergekeys.json: Key "title_israel_tribes" has complex lblTemplate "Israel's Tribal Borders" but missing English context
+❌ [SMR] mergekeys.json: Key "title_exodus_and_canaan" has complex lblTemplate "The Exodus and Canaan" but missing English context
+❌ [SMR] mergekeys.json: Key "title_samuel_to_david" has complex lblTemplate "Time of Samuel to David" but missing English context
+❌ [SMR] mergekeys.json: Key "rome_country" has complex lblTemplate "Rome" but missing English context
+  No placenames.json found (optional)
+
+📁 Validating core-placenames.json
+
+============================================================
+
+📊 VALIDATION SUMMARY
+
+Total Errors: 161
+Total Warnings: 1
+
+❌ Validation failed with errors

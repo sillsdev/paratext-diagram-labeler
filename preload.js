@@ -49,8 +49,21 @@ contextBridge.exposeInMainWorld('electronAPI', {
   loadLabelsFromIdmlTxt: (projectFolder, templateName) =>
     ipcRenderer.invoke('load-labels-from-idml-txt', projectFolder, templateName),
 
-  saveLabelsToIdmlTxt: (projectFolder, templateName, labels) =>
-    ipcRenderer.invoke('save-labels-to-idml-txt', projectFolder, templateName, labels),
+  saveLabelsToIdmlTxt: (projectFolder, templateName, labels, opCodes) =>
+    ipcRenderer.invoke('save-labels-to-idml-txt', projectFolder, templateName, labels, opCodes),
+
+  saveJsonFile: (filePath, data) =>
+    ipcRenderer.invoke('save-json-file', filePath, data),
+
+  readJsonFile: (filePath) =>
+    ipcRenderer.invoke('read-json-file', filePath),
+
+  // Digit conversion and reference formatting
+  convertDigits: (projectFolder, numberString) =>
+    ipcRenderer.invoke('convert-digits', projectFolder, numberString),
+
+  vernRef: (projectFolder, refString, useShort = false) =>
+    ipcRenderer.invoke('vern-ref', projectFolder, refString, useShort),
 
   // Path utilities
   path: {

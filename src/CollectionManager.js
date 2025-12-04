@@ -1,7 +1,9 @@
 import packageInfo from '../package.json';
+import labelTemplateParser from './services/LabelTemplateParser';
+import labelTagRulesService from './services/LabelTagRulesService';
 
 const mergeKeysFile = "mergekeys.json";
-const termListFile = "termlist.json";
+const placeNamesFile = "placenames.json";
 const mapDefsFile = "map-defs.json";
 
 export function getCollectionIdFromTemplate(templateName) {
@@ -71,12 +73,13 @@ export function findCollectionIdAndTemplate(templateName) {
 class CollectionManager {
   constructor() {
     this.availableCollections = new Map(); // id -> collection config from collection.json
-    this.collectionsData = new Map(); // id -> loaded JSON data (mergeKeys, termlist, mapDefs)
+    this.collectionsData = new Map(); // id -> loaded JSON data (mergeKeys, placenames, mapDefs)
     this.appVersion = packageInfo.version; // from package.json 
     this.isInitialized = false;
     this.isLoading = false;
     this.loadError = null;
-    this.coreTermlist = null;
+    this.corePlaceNames = null;
+    this.templateParser = labelTemplateParser;
   }
 
   // Helper functions for collections
@@ -125,13 +128,13 @@ class CollectionManager {
         }
       }
 
-      // 3. Load core termlist (if it exists)
+      // 3. Load core placenames (if it exists)
       try {
-        this.coreTermlist = await window.electronAPI.loadTermsFromJson(templateFolderPath, 'core-termlist.json', projectFolder);
-        console.log('Core termlist loaded successfully:', Object.keys(this.coreTermlist).length, 'terms');
+        this.corePlaceNames = await window.electronAPI.loadFromJson(templateFolderPath, 'core-placenames.json');
+        console.log('Core placenames loaded successfully:', Object.keys(this.corePlaceNames).length, 'place names');
       } catch (error) {
-        console.warn('Core termlist not found or failed to load:', error.message);
-        this.coreTermlist = {};
+        console.warn('Core placenames not found or failed to load:', error.message);
+        this.corePlaceNames = {};
       }
 
       // 4. Load all compatible collections
@@ -165,9 +168,9 @@ class CollectionManager {
 
     try {
       // Load the three standard JSON files in parallel
-      const [mergeKeys, termlist, mapDefs] = await Promise.all([
+      const [mergeKeys, placenames, mapDefs] = await Promise.all([
         window.electronAPI.loadFromJson(config.path, mergeKeysFile),
-        window.electronAPI.loadTermsFromJson(config.path, termListFile, projectFolder),
+        window.electronAPI.loadFromJson(config.path, placeNamesFile),
         window.electronAPI.loadFromJson(config.path, mapDefsFile)
       ]);
 
@@ -179,11 +182,9 @@ class CollectionManager {
         throw new Error(`Empty or missing map definitions in ${mapDefsFile}`);
       }
 
-
-
-      // termlist can be empty, just warn
-      if (!termlist || Object.keys(termlist).length === 0) {
-        console.warn(`Empty or missing term list in ${termListFile} for collection ${collectionId}`);
+      // placenames can be empty, just warn
+      if (!placenames || Object.keys(placenames).length === 0) {
+        console.warn(`Empty or missing placenames in ${placeNamesFile} for collection ${collectionId}`);
       }
 
       // Validate and clean up map definitions - remove duplicate merge keys and labels without merge keys
@@ -223,12 +224,12 @@ class CollectionManager {
         isLoaded: true,
         config: config, // Store the collection.json config
         mergeKeys,
-        termlist: termlist || {},
+        placenames: placenames || {},
         mapDefs,
         normalizedMapDefs,
       });
 
-      console.log(`Collection ${config.name} loaded: ${Object.keys(mapDefs).length} map definitions, ${Object.keys(mergeKeys).length} merge keys, ${Object.keys(termlist).length} terms`);
+      console.log(`Collection ${config.name} loaded: ${Object.keys(mapDefs).length} map definitions, ${Object.keys(mergeKeys).length} merge keys, ${Object.keys(placenames || {}).length} place names`);
       
     } catch (error) {
       console.error(`Failed to load collection ${config.name}:`, error);
@@ -256,11 +257,17 @@ class CollectionManager {
     return data?.mergeKeys || {};
   }
 
-  getTermlist(collectionId) {
+  getMergeKeyDefinition(mergeKey, collectionId) {
+    const mergeKeys = this.getMergeKeys(collectionId);
+    const entry = mergeKeys[mergeKey];
+    return entry?.context || { en: '' };
+  }
+
+  getPlaceNames(collectionId) {
     // Ensure uppercase collection ID for consistency
     const normalizedId = (collectionId || '').toUpperCase();
     const data = this.collectionsData.get(normalizedId);
-    return data?.termlist || {};
+    return data?.placenames || {};
   }
 
   getMapDefs(collectionId) {
@@ -326,44 +333,297 @@ class CollectionManager {
       return mapDef;
     }
 
-    mapDef.labels = mapDef.labels.map((label, idx) => ({
-      ...label,
-      idx,
-      gloss: this.getGloss(label.mergeKey, collectionId),
-      termId: this.getTermId(label.mergeKey, collectionId),
-    }));
+    mapDef.labels = mapDef.labels.map((label, idx) => {
+      const lblTemplate = this.getLabelTemplate(label.mergeKey, collectionId);
+      const placeNameIds = lblTemplate ? this.templateParser.getPlaceNameIds(lblTemplate) : [];
+      const primaryPlaceNameId = placeNameIds.length > 0 ? placeNameIds[0] : null;
+      
+      return {
+        ...label,
+        idx,
+        lblTemplate,
+        gloss: primaryPlaceNameId ? this.getGloss(primaryPlaceNameId, collectionId) : '',
+      };
+    });
 
     return mapDef;
   }
 
-  getTermEntry(termId, collectionId) {
-    let termlist = this.getTermlist(collectionId);
-    if (termlist[termId]) {
-      return termlist[termId];
+  getPlaceName(placeNameId, collectionId) {
+    if (!placeNameId) return null;
+    
+    const placenames = this.getPlaceNames(collectionId);
+    if (placenames[placeNameId]) {
+      return placenames[placeNameId];
     }
-    if (this.coreTermlist[termId]) {
-      return this.coreTermlist[termId];
+    if (this.corePlaceNames && this.corePlaceNames[placeNameId]) {
+      return this.corePlaceNames[placeNameId];
     }
     return null;
   }
 
-  // MergeKeys and Termlist access methods with collection ID parameter
-  getGloss(mergeKey, collectionId) {
-    if (!mergeKey) { return ''; }
-    const termId = this.getTermId(mergeKey, collectionId);
-    if (!termId) {
-      console.warn(`termId not found for mergeKey "${mergeKey}" in ${collectionId} collection`);
+  // Get all terms for a specific place name
+  getTermsForPlace(placeNameId, collectionId) {
+    const placeName = this.getPlaceName(placeNameId, collectionId);
+    if (!placeName || !placeName.terms) {
+      return [];
+    }
+    return placeName.terms;
+  }
+
+  // Get label template from mergeKey
+  getLabelTemplate(mergeKey, collectionId = 'SMR') {
+    if (!mergeKey) return '';
+    
+    const mergeKeys = this.getMergeKeys(collectionId);
+    const entry = mergeKeys[mergeKey];
+    if (!entry) {
+      console.warn(`mergeKey "${mergeKey}" not found in ${collectionId} collection merge keys`);
       return '';
     }
-    const termEntry = this.getTermEntry(termId, collectionId);
-    if (!termEntry) {
-      console.warn(
-        `term ID "${termId}" not found in ${collectionId} collection term list`,
-        this.getTermlist(collectionId)
+    return entry.lblTemplate || '';
+  }
+
+  // Resolve template to get all placeNameIds and references
+  async resolveTemplate(lblTemplate, collectionId, termRenderings = {}, projectFolder = null) {
+    if (!lblTemplate) return { placeNameIds: [], references: [], literalText: '', hasMultiplePlaceNames: false };
+    
+    const parsed = this.templateParser.parseTemplate(lblTemplate);
+    if (parsed.fields.some(f => f.type === 'reference' || f.type === 'number')) {
+      console.log(`[resolveTemplate] Template: "${lblTemplate}", fields:`, parsed.fields);
+    }
+    
+    // Resolve the template by replacing each field with its resolved text
+    let resolvedText = lblTemplate;
+    
+    // Process each field in reverse order to avoid index shifting
+    const sortedFields = [...parsed.fields].sort((a, b) => b.start - a.start);
+    
+    for (const field of sortedFields) {
+      if (field.type === 'reference') {
+        // Scripture reference - convert to vernacular format
+        if (projectFolder && window.electronAPI?.vernRef) {
+          try {
+            const vernacular = await window.electronAPI.vernRef(projectFolder, field.reference, field.useShort);
+            console.log(`[resolveTemplate] Reference "${field.reference}" (${field.useShort ? 'short' : 'abbr'}) -> "${vernacular}"`);
+            resolvedText = resolvedText.substring(0, field.start) + 
+                          vernacular + 
+                          resolvedText.substring(field.end);
+          } catch (error) {
+            console.error(`Error converting reference ${field.reference}:`, error);
+          }
+        } else {
+          console.warn(`[resolveTemplate] Cannot process reference - projectFolder: ${projectFolder}, vernRef available: ${!!window.electronAPI?.vernRef}`);
+        }
+        continue;
+      }
+      
+      if (field.type === 'number') {
+        // Number field - convert digits based on project settings
+        if (projectFolder && window.electronAPI?.convertDigits) {
+          try {
+            const numberStr = field.number;
+            // Convert digits - backend will load settings and use settings.fp
+            const converted = await window.electronAPI.convertDigits(projectFolder, numberStr);
+            resolvedText = resolvedText.substring(0, field.start) + 
+                          converted + 
+                          resolvedText.substring(field.end);
+          } catch (error) {
+            console.error(`Error converting number ${field.number}:`, error);
+          }
+        }
+        continue;
+      }
+      
+      if (field.type === 'placename' || field.type === 'tagged-placename') {
+        const placeNameId = field.placeNameId;
+        const tag = field.tag || null;
+        
+        const placeName = this.getPlaceName(placeNameId, collectionId);
+        if (placeName && placeName.terms && placeName.terms.length > 0) {
+          // Collect unique rendering patterns from ALL terms
+          const allPatterns = [];
+          let hasExplicitMapForm = false;
+          let explicitMapForm = '';
+          
+          for (const term of placeName.terms) {
+            const termData = termRenderings[term.termId];
+            if (termData && termData.renderings) {
+              let renderingsStr = termData.renderings || '';
+              // Strip all asterisks (wildcards)
+              renderingsStr = renderingsStr.replace(/\*/g, '');
+              
+              // Check for explicit map form (e.g., (@misradesh) or (map: misradesh))
+              const mapFormMatch = renderingsStr.match(/\((?:@|map:\s*)([^)]+)\)/);
+              if (mapFormMatch) {
+                hasExplicitMapForm = true;
+                explicitMapForm = mapFormMatch[1];
+                break; // Explicit map form takes precedence
+              } else {
+                // Split into separate rendering items
+                const items = renderingsStr.replace(/\|\|/g, '\n').split(/(\r?\n)/);
+                // Process each item: remove parentheses and their contents, trim space
+                const processedItems = items
+                  .map(item => item.replace(/\([^)]*\)/g, '').trim())
+                  .filter(item => item.length > 0);
+                allPatterns.push(...processedItems);
+              }
+            }
+          }
+          
+          let replacementText = '';
+          
+          if (hasExplicitMapForm) {
+            // Use explicit map form
+            replacementText = explicitMapForm;
+            
+            // Apply tag if present
+            if (tag && labelTagRulesService.isInitialized) {
+              replacementText = labelTagRulesService.applyTag(tag, replacementText);
+            }
+          } else if (allPatterns.length > 0) {
+            // Get unique patterns (case-sensitive to preserve original)
+            const uniquePatterns = [...new Set(allPatterns)];
+            
+            // Apply tag to each pattern if present
+            if (tag && labelTagRulesService.isInitialized) {
+              console.log(`[resolveTemplate] Applying tag "${tag}" to patterns:`, uniquePatterns);
+              const taggedPatterns = uniquePatterns.map(pattern => 
+                labelTagRulesService.applyTag(tag, pattern)
+              );
+              replacementText = taggedPatterns.join('——');
+              console.log(`[resolveTemplate] Tagged result: "${replacementText}"`);
+            } else {
+              console.log(`[resolveTemplate] No tag or service not initialized. tag="${tag}", isInitialized=${labelTagRulesService.isInitialized}`);
+              // Join with double em-dash without tag
+              replacementText = uniquePatterns.join('——');
+            }
+          }
+          
+          // Replace the field in the template with the resolved text
+          if (replacementText) {
+            resolvedText = resolvedText.substring(0, field.start) + 
+                          replacementText + 
+                          resolvedText.substring(field.end);
+          }
+        }
+      }
+    }
+    
+    // Wrap literal text runs with 《》 if template contains fields
+    if (parsed.fields.length > 0 && resolvedText !== lblTemplate) {
+      resolvedText = this.wrapLiteralTextRuns(lblTemplate, resolvedText, parsed.fields);
+    }
+    
+    return {
+      placeNameIds: parsed.placeNameIds,
+      references: parsed.references,
+      hasMultiplePlaceNames: parsed.hasMultiplePlaceNames,
+      literalText: resolvedText === lblTemplate ? '' : resolvedText
+    };
+  }
+  
+  // Wrap literal text runs in original template with 《》
+  wrapLiteralTextRuns(originalTemplate, resolvedText, fields) {
+    // Find literal text runs in the original template
+    // Pattern: \w[\w\s,.'']*\w (word characters, spaces, commas, periods, apostrophes)
+    // But exclude text inside {...} fields
+    
+    // Build a list of field positions in the original template
+    const fieldRanges = fields.map(f => ({ start: f.start, end: f.end }));
+    
+    // Find literal runs in the original template
+    const literalPattern = /\w[\w\s,;.'’-]*\w/gu;
+    let match;
+    const literalRuns = [];
+    
+    while ((match = literalPattern.exec(originalTemplate)) !== null) {
+      const runStart = match.index;
+      const runEnd = match.index + match[0].length;
+      
+      // Check if this run overlaps with any field
+      const overlapsField = fieldRanges.some(field => 
+        (runStart >= field.start && runStart < field.end) ||
+        (runEnd > field.start && runEnd <= field.end) ||
+        (runStart <= field.start && runEnd >= field.end)
       );
+      
+      if (!overlapsField) {
+        let literalText = match[0];
+        
+        // Check if there's a trailing .!? that should be included
+        const nextChar = originalTemplate[runEnd];
+        if (nextChar && '.!?;'.includes(nextChar)) {
+          literalText += nextChar;
+        }
+        
+        literalRuns.push({
+          start: runStart,
+          end: runEnd + (('.!?'.includes(nextChar)) ? 1 : 0),
+          text: literalText
+        });
+      }
+    }
+    
+    // Now we need to find these literal runs in the resolved text and wrap them
+    // Process in reverse order to avoid index shifting
+    literalRuns.reverse();
+    
+    for (const run of literalRuns) {
+      // Find this literal text in the resolved string
+      // It should be at approximately the same position, accounting for field expansions
+      const literalText = run.text;
+      const index = resolvedText.indexOf(literalText);
+      
+      if (index !== -1) {
+        resolvedText = resolvedText.substring(0, index) + 
+                      '《' + literalText + '》' + 
+                      resolvedText.substring(index + literalText.length);
+      }
+    }
+    
+    return resolvedText;
+  }
+
+  // Get gloss for a placeNameId
+  getGloss(placeNameId, collectionId) {
+    if (!placeNameId) return '';
+    
+    const placeName = this.getPlaceName(placeNameId, collectionId);
+    if (!placeName) {
+      console.warn(`placeNameId "${placeNameId}" not found in ${collectionId} collection`);
       return '';
     }
-    return termEntry.gloss || '';
+    return placeName.gloss || '';
+  }
+
+  // Get gloss for a mergeKey with priority: mergekeys.gloss > placenames.gloss > core-placenames.gloss
+  getGlossForMergeKey(mergeKey, collectionId) {
+    if (!mergeKey) return { en: '' };
+    
+    // Priority 1: Check mergekeys.json for gloss override
+    const mergeKeys = this.getMergeKeys(collectionId);
+    const entry = mergeKeys[mergeKey];
+    if (entry && entry.gloss) {
+      return entry.gloss;
+    }
+    
+    // Priority 2-3: Get gloss from placenames (collection-specific) or core-placenames
+    const lblTemplate = entry ? entry.lblTemplate : '';
+    if (lblTemplate) {
+      const parsed = this.templateParser.parseTemplate(lblTemplate);
+      const placeNameIds = parsed.placeNameIds || [];
+      if (placeNameIds.length > 0) {
+        const firstPlaceNameId = placeNameIds[0];
+        const placeName = this.getPlaceName(firstPlaceNameId, collectionId);
+        if (placeName && placeName.gloss) {
+          return placeName.gloss;
+        }
+      }
+    }
+    
+    // Fallback: return mergeKey as English gloss
+    return { en: mergeKey };
   }
 
   getMapxKey(mergeKey, collectionId = 'SMR') {
@@ -376,76 +636,56 @@ class CollectionManager {
     return entry.mapxKey || mergeKey;
   }
 
-  getTermId(mergeKey, collectionId = 'SMR') {
-    if (!mergeKey) { return ''; }
-    const mergeKeys = this.getMergeKeys(collectionId);
-    const entry = mergeKeys[mergeKey];
-    if (!entry) {
-      console.warn(`mergeKey "${mergeKey}" not found in ${collectionId} collection merge keys`);
-      return '';
+  // Get definition (context) for a placeNameId
+  getDefinition(placeNameId, collectionId = 'SMR') {
+    if (!placeNameId) return { en: '' };
+    
+    const placeName = this.getPlaceName(placeNameId, collectionId);
+    if (!placeName) {
+      console.warn(`placeNameId "${placeNameId}" not found in ${collectionId} collection`);
+      return { en: '' };
     }
-    return entry.termId || '';
+    return placeName.context || { en: '' };
   }
 
-  getDefinition(mergeKey, collectionId = 'SMR') {
-    const termId = this.getTermId(mergeKey, collectionId);
-    if (!termId) {
-      console.warn(`termId not found for mergeKey "${mergeKey}" in ${collectionId} collection`);
+  // Get alternative term IDs for a placeNameId
+  getAltTermIds(placeNameId, collectionId = 'SMR') {
+    const placeName = this.getPlaceName(placeNameId, collectionId);
+    if (!placeName || !placeName.altTermIds) {
       return '';
     }
-    const termEntry = this.getTermEntry(termId, collectionId);
-    if (!termEntry) {
-      console.warn(
-        `term ID "${termId}" not found in ${collectionId} collection term list`,
-        this.getTermlist(collectionId)
-      );
-      return '';
-    }
-    return termEntry.context || '';
+    return placeName.altTermIds;
   }
 
-  getAltTermIds(mergeKey, collectionId = 'SMR') {
-    const mergeKeys = this.getMergeKeys(collectionId);
-    const entry = mergeKeys[mergeKey];
-    if (!entry || !entry.altTermIds) {
+  // Get transliteration for a specific term within a placeName
+  getTransliteration(placeNameId, collectionId = 'SMR') {
+    if (!placeNameId) return '';
+    
+    const terms = this.getTermsForPlace(placeNameId, collectionId);
+    if (!terms || terms.length === 0) {
       return '';
     }
-    return entry.altTermIds;
+    // Return transliteration from first term
+    return terms[0].transliteration || '';
   }
 
-  getTransliteration(mergeKey, collectionId = 'SMR') {
-    if (!mergeKey) { return ''; }
-    const termId = this.getTermId(mergeKey, collectionId);
-    if (!termId) {
-      console.warn(`termId not found for mergeKey "${mergeKey}" in ${collectionId} collection`);
-      return '';
-    }
-    const termEntry = this.getTermEntry(termId, collectionId);
-    if (!termEntry) {
-      console.warn(
-        `term ID "${termId}" not found in ${collectionId} collection term list`,
-        this.getTermlist(collectionId)
-      );
-      return '';
-    }
-    return termEntry.transliteration || '';
-  }
-
-  getRefs(mergeKey, collectionId = 'SMR') {
-    const termId = this.getTermId(mergeKey, collectionId);
-    if (!termId) {
-      console.warn(`termId not found for mergeKey "${mergeKey}" in ${collectionId} collection`);
+  // Get all references for a placeNameId (merged from all terms)
+  getRefs(placeNameId, collectionId = 'SMR') {
+    if (!placeNameId) return [];
+    
+    const terms = this.getTermsForPlace(placeNameId, collectionId);
+    if (!terms || terms.length === 0) {
       return [];
     }
-    const termEntry = this.getTermEntry(termId, collectionId);
-    if (!termEntry) {
-      console.warn(
-        `term ID "${termId}" not found in ${collectionId} collection term list`,
-        this.getTermlist(collectionId)
-      );
-      return [];
+    
+    // Merge all refs from all terms (already sorted: NT first, then OT)
+    const allRefs = [];
+    for (const term of terms) {
+      if (term.refs && Array.isArray(term.refs)) {
+        allRefs.push(...term.refs);
+      }
     }
-    return termEntry.refs || [];
+    return allRefs;
   }
 
   async discoverCollections(templateFolderPath) {

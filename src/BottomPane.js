@@ -11,11 +11,11 @@ const FILTER_SHOW_ALL = 'all';
 const FILTER_SHOW_MISSING = 'missing';
 const FILTER_SHOW_UNIQUE = 'unique';
 
-// Bottom Pane component to display a scrollable list of verses referencing the termId
+// Bottom Pane component to display a scrollable list of verses referencing terms in the active placeName
 function BottomPane({
-  termId,
+  termId, // Deprecated - kept for backward compatibility
   mergeKey,
-  renderings,
+  renderings, // Deprecated - computed from placeNameIds
   onAddRendering,
   onReplaceRendering,
   lang,
@@ -26,6 +26,8 @@ function BottomPane({
   setTermRenderings,
   collectionId = 'SMR',
   onReloadExtractedVerses,
+  placeNameIds = [], // NEW: Array of placeNameIds in the label
+  activeTab = 0, // NEW: Index of active placeName tab
 }) {
   const paneRef = React.useRef();
   const [selectedText, setSelectedText] = React.useState('');
@@ -58,36 +60,61 @@ function BottomPane({
       document.removeEventListener('keyup', handleSelectionChange);
     };
   }, []);
-  if (!termId) return <div className="bottom-pane" ref={paneRef} />;
-  const refs = collectionManager.getRefs(mergeKey, collectionId);
-
-  // Prepare renderings: remove comments, split, trim, and convert to regex patterns
-  let renderingList = [];
-  if (renderings) {
-    renderingList = renderings
-      .replace(/\|\|/g, '\n')
-      .split(/(\r?\n)/)
-      .map(r => r.replace(/\(.*/g, '').replace(/.*\)/g, '')) // Remove content in parentheses (comments), even if only partially enclosed. (The user may be typing a comment.)
-      .map(r => r.trim())
-      .filter(r => r.length > 0)
-      .map(r => {
-        let pattern = r;
-        // Insert word boundary at start if not starting with *
-        if (!pattern.startsWith('*')) pattern = MATCH_PRE_B + pattern;
-        // Insert word boundary at end if not ending with *
-        if (!pattern.endsWith('*')) pattern = pattern + MATCH_POST_B;
-        // Replace * [with [\w-]* (word chars + dash)
-        pattern = pattern.replace(/\*/g, MATCH_W + '*');
-        // console.log(`BP: Creating regex for rendering "${r}" with pattern "${pattern}"`);
-        try {
-          return new RegExp(pattern, 'iu');
-        } catch (e) {
-          // Invalid regex, skip it
-          return null;
-        }
-      })
-      .filter(Boolean); // Remove nulls (invalid regexes)
+  
+  // Get active placeName and its terms
+  const activePlaceNameId = placeNameIds[activeTab] || placeNameIds[0];
+  const placeName = activePlaceNameId ? collectionManager.getPlaceName(activePlaceNameId, collectionId) : null;
+  const terms = placeName?.terms || [];
+  
+  if (terms.length === 0) {
+    return <div className="bottom-pane" ref={paneRef} style={{ padding: 16, color: '#666' }}>
+      {inLang({ en: 'No terms found for this label' }, lang)}
+    </div>;
   }
+  
+  // Collect refs from all terms in the active placeName
+  const refs = [];
+  const allTermIds = [];
+  terms.forEach(term => {
+    allTermIds.push(term.termId);
+    if (term.refs) {
+      term.refs.forEach(ref => {
+        if (!refs.includes(ref)) refs.push(ref);
+      });
+    }
+  });
+  
+  // Prepare combined renderings from all terms
+  let renderingList = [];
+  terms.forEach(term => {
+    const termData = termRenderings[term.termId];
+    if (termData && termData.renderings) {
+      const termRenderingPatterns = termData.renderings
+        .replace(/\|\|/g, '\n')
+        .split(/(\r?\n)/)
+        .map(r => r.replace(/\(.*/g, '').replace(/.*\)/g, '')) // Remove content in parentheses (comments), even if only partially enclosed. (The user may be typing a comment.)
+        .map(r => r.trim())
+        .filter(r => r.length > 0)
+        .map(r => {
+          let pattern = r;
+          // Insert word boundary at start if not starting with *
+          if (!pattern.startsWith('*')) pattern = MATCH_PRE_B + pattern;
+          // Insert word boundary at end if not ending with *
+          if (!pattern.endsWith('*')) pattern = pattern + MATCH_POST_B;
+          // Replace * with [\w-]* (word chars + dash)
+          pattern = pattern.replace(/\*/g, MATCH_W + '*');
+          try {
+            return new RegExp(pattern, 'iu');
+          } catch (e) {
+            // Invalid regex, skip it
+            return null;
+          }
+        })
+        .filter(Boolean); // Remove nulls (invalid regexes)
+      
+      renderingList.push(...termRenderingPatterns);
+    }
+  });
 
   // Helper to highlight match in verse text
   function highlightMatch(text, patterns) {
@@ -117,7 +144,14 @@ function BottomPane({
   }
 
   // Compute match tally and filter-specific counts
-  let deniedRefs = termRenderings[termId]?.denials || [];
+  // Collect denials from all terms
+  let deniedRefs = [];
+  terms.forEach(term => {
+    const termDenials = termRenderings[term.termId]?.denials || [];
+    deniedRefs.push(...termDenials);
+  });
+  deniedRefs = [...new Set(deniedRefs)]; // Remove duplicates
+  
   let matchCount = 0;
   let nonEmptyRefCt = 0; // Count of non-empty references
   let missingCount = 0; // Count of missing (non-matching, non-denied) verses

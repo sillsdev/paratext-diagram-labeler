@@ -1,0 +1,32 @@
+newLabelTemplate	oldPlaceName	englishGloss	englishContext
+Apr	Apr	Apr	3 letter abbreviation for the month
+Aug	Aug	Aug	3 letter abbreviation for the month
+Dec	Dec	Dec	3 letter abbreviation for the month
+Feb	Feb	Feb	3 letter abbreviation for the month
+Jan	Jan	Jan	3 letter abbreviation for the month
+Jul	Jul	Jul	3 letter abbreviation for the month
+Jun	Jun	Jun	3 letter abbreviation for the month
+Mar	Mar	Mar	3 letter abbreviation for the month
+May	May	May	3 letter abbreviation for the month
+Nov	Nov	Nov	3 letter abbreviation for the month
+Oct	Oct	Oct	3 letter abbreviation for the month
+Sept	Sept	Sept	3 letter abbreviation for the month
+Purim	Purim	Purim	Hebrew holiday
+Shavot	Shavot	Shavot	Hebrew holiday
+Siwan	Siwan	Siwan	Hebrew holiday
+Sukkot	Sukkot	Sukkot	Hebrew holiday
+Syebat	Syebat	Syebat	Hebrew holiday
+Tamus	Tamus	Tamus	Hebrew holiday
+Tebet	Tebet	Tebet	Hebrew holiday
+Tisyri	Tisyri	Tisyri	Hebrew holiday
+Tu B’Av	TuBav	Tu B’Av	Hebrew holiday
+Tu BiShvat	TuBishvat	Tu BiShvat	Hebrew holiday
+Yom Kippur	YomKippur	Yom Kippur	Hebrew holiday
+Yom Teruah	YomTeruah	Yom Teruah	Hebrew holiday
+Ab	Ab	Ab	Hebrew month
+Adar	Adar	Adar	Hebrew month
+Chanukah	Chanukah	Chanukah	Hebrew month
+Elul	Elul	Elul	Hebrew month
+Iyar	Iyar	Iyar	Hebrew month
+Kislew	Kislew	Kislew	Hebrew month
+Nisan	Nisan	Nisan	Hebrew month

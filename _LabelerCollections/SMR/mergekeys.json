@@ -1,0 +1,4540 @@
+{
+  "ab": {
+    "lblTemplate": "Ab",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Ab",
+      "es": "Ab",
+      "fr": "Ab"
+    },
+    "context": {
+      "en": "Hebrew month",
+      "es": "",
+      "fr": "mois hébraïque"
+    },
+    "altTermIds": "ab"
+  },
+  "abilene": {
+    "lblTemplate": "{Abilene}",
+    "mapxKey": ""
+  },
+  "accad": {
+    "lblTemplate": "{Accad}",
+    "mapxKey": "ACCAD"
+  },
+  "acco": {
+    "lblTemplate": "{Acco}",
+    "mapxKey": "Acco"
+  },
+  "achaia": {
+    "lblTemplate": "{Achaia}",
+    "mapxKey": "ACHAIA"
+  },
+  "adar": {
+    "lblTemplate": "Adar",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Adar",
+      "es": "Adar",
+      "fr": "Adar"
+    },
+    "context": {
+      "en": "Hebrew month",
+      "es": "",
+      "fr": "mois hébraïque"
+    },
+    "altTermIds": "adar"
+  },
+  "adramyttium": {
+    "lblTemplate": "{Adramyttium}",
+    "mapxKey": "Adramyttium"
+  },
+  "adriatic_sea": {
+    "lblTemplate": "{AdriaticSea}",
+    "mapxKey": "ADRIATIC SEA"
+  },
+  "adullam": {
+    "lblTemplate": "{Adullam}",
+    "mapxKey": "Adullam"
+  },
+  "aenon": {
+    "lblTemplate": "{Aenon}",
+    "mapxKey": "Aenon"
+  },
+  "africa": {
+    "lblTemplate": "{Africa}",
+    "mapxKey": ""
+  },
+  "ai": {
+    "lblTemplate": "{Ai}",
+    "mapxKey": "Ai"
+  },
+  "aleppo": {
+    "lblTemplate": "{Aleppo}",
+    "mapxKey": "Aleppo"
+  },
+  "alexandria": {
+    "lblTemplate": "{Alexandria}",
+    "mapxKey": "Alexandria"
+  },
+  "alt_red_sea_crossing": {
+    "lblTemplate": "Alternate routes of {RedSea} crossing",
+    "mapxKey": "Alternate routes of Red Sea crossing",
+    "gloss": {
+      "en": "Alternate routes of Red Sea crossing",
+      "es": "Las rutas alternativas del cruce del Mar Rojo",
+      "fr": "Itinéraires alternatifs pour traverser la mer Rouge"
+    },
+    "context": {
+      "en": "Label in the legend indicating another possible route"
+    },
+    "altTermIds": "alt_red_sea_crossing"
+  },
+  "altar": {
+    "lblTemplate": "{Altar}",
+    "mapxKey": ""
+  },
+  "altar_of_burned_offering": {
+    "lblTemplate": "Altar of Burned Offering",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Altar of Burned Offering",
+      "es": "Altar de ofrendas quemadas",
+      "fr": "Autel des offrandes brûlées"
+    },
+    "altTermIds": "altar_of_burned_offering"
+  },
+  "ammon": {
+    "lblTemplate": "{Ammon}",
+    "mapxKey": "AMMON"
+  },
+  "ammonites": {
+    "lblTemplate": "{Ammonites}",
+    "mapxKey": ""
+  },
+  "amphipolis": {
+    "lblTemplate": "{Amphipolis}",
+    "mapxKey": "Amphipolis"
+  },
+  "antioch_pisidia": {
+    "lblTemplate": "{Antioch.2}",
+    "mapxKey": "Antioch of Pisidia"
+  },
+  "antioch_syria": {
+    "lblTemplate": "{Antioch}",
+    "mapxKey": "Antioch of Syria"
+  },
+  "antipatris": {
+    "lblTemplate": "{Antipatris}",
+    "mapxKey": "Antipatris"
+  },
+  "antonia_fortress": {
+    "lblTemplate": "{AntoniaFortress}",
+    "mapxKey": "Antonia Fortress"
+  },
+  "aphek": {
+    "lblTemplate": "{Aphek}",
+    "mapxKey": "Aphek"
+  },
+  "apollonia": {
+    "lblTemplate": "{Apollonia}",
+    "mapxKey": "Apollonia"
+  },
+  "appearance": {
+    "lblTemplate": "Appears after resurrection ({r#LUK 24})",
+    "mapxKey": "Appears after resurrection (Lk 24)",
+    "gloss": {
+      "en": "Appears after resurrection (Lk 24)",
+      "es": "Aparece después de la resurrección (Lc 24)",
+      "fr": "Apparaît après la résurrection (Lc 24)"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "appearance"
+  },
+  "apr": {
+    "lblTemplate": "Apr",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Apr",
+      "es": "abr",
+      "fr": "Avr"
+    },
+    "context": {
+      "en": "3 letter abbreviation for the month",
+      "es": "",
+      "fr": "Abréviation à 3 lettres du mois"
+    },
+    "altTermIds": "apr"
+  },
+  "aqueduct": {
+    "lblTemplate": "{Aqueduct}",
+    "mapxKey": "Aqueduct"
+  },
+  "arabah": {
+    "lblTemplate": "{Arabah}",
+    "mapxKey": "ARABAH"
+  },
+  "arabia_nt": {
+    "lblTemplate": "{Arabia}",
+    "mapxKey": "ARABIA"
+  },
+  "arabia_ot": {
+    "lblTemplate": "{Arabia}",
+    "mapxKey": "ARABIA"
+  },
+  "arabian_desert": {
+    "lblTemplate": "{ArabianDesert}",
+    "mapxKey": "ARABIAN DESERT"
+  },
+  "arabian_sea": {
+    "lblTemplate": "{ArabianSea}",
+    "mapxKey": ""
+  },
+  "arad": {
+    "lblTemplate": "{Arad}",
+    "mapxKey": "Arad"
+  },
+  "arak_sea": {
+    "lblTemplate": "{ArakSea}",
+    "mapxKey": ""
+  },
+  "aram": {
+    "lblTemplate": "{Aram}",
+    "mapxKey": "ARAM"
+  },
+  "arameans": {
+    "lblTemplate": "{Arameans}",
+    "mapxKey": "ARAMEANS"
+  },
+  "ararat_mtns": {
+    "lblTemplate": "{Ararat}",
+    "mapxKey": "Mountains of Ararat"
+  },
+  "arimathea": {
+    "lblTemplate": "{Arimathea}",
+    "mapxKey": "Arimathea"
+  },
+  "armenia": {
+    "lblTemplate": "{Armenia}",
+    "mapxKey": "ARMENIA"
+  },
+  "aroer": {
+    "lblTemplate": "{Aroer.2}",
+    "mapxKey": "Aroer"
+  },
+  "aroer.3": {
+    "lblTemplate": "{Aroer.3}",
+    "mapxKey": "Aroer"
+  },
+  "arphaxad": {
+    "lblTemplate": "{Arphaxad}",
+    "mapxKey": ""
+  },
+  "arvad": {
+    "lblTemplate": "{Arvad}",
+    "mapxKey": "Arvad"
+  },
+  "ascension": {
+    "lblTemplate": "Discourse; ascension ({r#ACT 1})",
+    "mapxKey": "Discourse; ascension (Ac 1)",
+    "gloss": {
+      "en": "Discourse; ascension (Ac 1)",
+      "es": "El discurso; ascensión (Hch 1)",
+      "fr": "Discours ; ascension (Ac 1)"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "ascension"
+  },
+  "ashdod": {
+    "lblTemplate": "{Ashdod}",
+    "mapxKey": "Ashdod"
+  },
+  "asher": {
+    "lblTemplate": "{TerritoryOfAsher}",
+    "mapxKey": "ASHER"
+  },
+  "ashkelon": {
+    "lblTemplate": "{Ashkelon}",
+    "mapxKey": "Ashkelon"
+  },
+  "ashtaroth": {
+    "lblTemplate": "{Ashtaroth}",
+    "mapxKey": "Ashtaroth"
+  },
+  "asia": {
+    "lblTemplate": "{Asia}",
+    "mapxKey": "ASIA"
+  },
+  "asshur": {
+    "lblTemplate": "{Asshur}",
+    "mapxKey": "Asshur"
+  },
+  "assos": {
+    "lblTemplate": "{Assos}",
+    "mapxKey": "Assos"
+  },
+  "assyria": {
+    "lblTemplate": "{Assyria}",
+    "mapxKey": "ASSYRIA"
+  },
+  "athens": {
+    "lblTemplate": "{Athens}",
+    "mapxKey": "Athens"
+  },
+  "atlantic_ocean": {
+    "lblTemplate": "{AtlanticOcean}",
+    "mapxKey": ""
+  },
+  "attalia": {
+    "lblTemplate": "{Attalia}",
+    "mapxKey": "Attalia"
+  },
+  "aug": {
+    "lblTemplate": "Aug",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Aug",
+      "es": "ago",
+      "fr": "août"
+    },
+    "context": {
+      "en": "3 letter abbreviation for the month",
+      "es": "",
+      "fr": "Abréviation à 3 lettres du mois"
+    },
+    "altTermIds": "aug"
+  },
+  "australia": {
+    "lblTemplate": "{Australia}",
+    "mapxKey": ""
+  },
+  "avaris": {
+    "lblTemplate": "{Avaris}",
+    "mapxKey": "Avaris"
+  },
+  "azekah": {
+    "lblTemplate": "{Azekah}",
+    "mapxKey": "Azekah"
+  },
+  "azotus": {
+    "lblTemplate": "{Azotus}",
+    "mapxKey": "Azotus"
+  },
+  "baal_zephon": {
+    "lblTemplate": "{Baal-zephon}",
+    "mapxKey": "Baal Zephon"
+  },
+  "babylon": {
+    "lblTemplate": "{Babylon}",
+    "mapxKey": "Babylon"
+  },
+  "babylon_nt": {
+    "lblTemplate": "{Babylon}",
+    "mapxKey": "Babylon"
+  },
+  "babylonia": {
+    "lblTemplate": "{Babylonia}",
+    "mapxKey": "BABYLONIA"
+  },
+  "bashan": {
+    "lblTemplate": "{Bashan}",
+    "mapxKey": "BASHAN"
+  },
+  "beautiful_gate": {
+    "lblTemplate": "{BeautifulGate}",
+    "mapxKey": "Beautiful Gate"
+  },
+  "beersheba": {
+    "lblTemplate": "{Beersheba}",
+    "mapxKey": "Beersheba"
+  },
+  "belgica": {
+    "lblTemplate": "{Belgica}",
+    "mapxKey": ""
+  },
+  "bells_hp": {
+    "lblTemplate": "Bells",
+    "mapxKey": "Bells",
+    "gloss": {
+      "en": "Bells",
+      "es": "Las campanas",
+      "fr": "Cloches"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "bells_hp"
+  },
+  "belt_truth": {
+    "lblTemplate": "{BeltTruth}",
+    "mapxKey": "Belt of Truth"
+  },
+  "benjamin": {
+    "lblTemplate": "{TerritoryOfBenjamin}",
+    "mapxKey": "BENJAMIN"
+  },
+  "berea": {
+    "lblTemplate": "{Berea}",
+    "mapxKey": "Berea"
+  },
+  "beth_shean": {
+    "lblTemplate": "{Beth-shan}",
+    "mapxKey": "Beth Shean"
+  },
+  "beth_shemesh": {
+    "lblTemplate": "{Beth-shemesh}",
+    "mapxKey": "Beth-Shemesh"
+  },
+  "bethany": {
+    "lblTemplate": "{Bethany}",
+    "mapxKey": "Bethany"
+  },
+  "bethany_east": {
+    "lblTemplate": "{Bethany.2}",
+    "mapxKey": "Bethany east of the Jordan"
+  },
+  "bethel": {
+    "lblTemplate": "{Bethel}",
+    "mapxKey": "Bethel"
+  },
+  "bethlehem_nt": {
+    "lblTemplate": "{Bethlehem}",
+    "mapxKey": "Bethlehem"
+  },
+  "bethlehem_ot": {
+    "lblTemplate": "{Bethlehem}",
+    "mapxKey": "Bethlehem"
+  },
+  "bethpeor": {
+    "lblTemplate": "{Beth-peor}",
+    "mapxKey": "Beth-peor"
+  },
+  "bethphage": {
+    "lblTemplate": "{Bethphage}",
+    "mapxKey": "Bethphage"
+  },
+  "bethsaida": {
+    "lblTemplate": "{Bethsaida}",
+    "mapxKey": "Bethsaida"
+  },
+  "bezer": {
+    "lblTemplate": "{Bezer}",
+    "mapxKey": ""
+  },
+  "birthplace": {
+    "lblTemplate": "Birthplace ({r#MAT 2})",
+    "mapxKey": "Birthplace (Mt 2)",
+    "gloss": {
+      "en": "Birthplace (Mt 2)",
+      "es": "El lugar de nacimiento (Mt 2)",
+      "fr": "Lieu de naissance (Mt 2)"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "birthplace"
+  },
+  "bithynia": {
+    "lblTemplate": "{Bithynia}",
+    "mapxKey": "BITHYNIA"
+  },
+  "black_sea": {
+    "lblTemplate": "{BlackSea}",
+    "mapxKey": "BLACK SEA"
+  },
+  "blindman": {
+    "lblTemplate": "Blind man healed ({r#MRK 8})",
+    "mapxKey": "Blind man healed (Mk 8)",
+    "gloss": {
+      "en": "Blind man healed (Mk 8)",
+      "es": "Un ciego sanado (Mc 8)",
+      "fr": "Guérison d'un aveugle (Mc 8)"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "blindman"
+  },
+  "boards": {
+    "lblTemplate": "{Boards}",
+    "mapxKey": ""
+  },
+  "boundary": {
+    "lblTemplate": "Boundary between Israel and Judah",
+    "mapxKey": "Boundary between Israel and Judah",
+    "gloss": {
+      "en": "Boundary between Israel and Judah",
+      "es": "La frontera entre Israel y Judá",
+      "fr": "Frontière entre Israël et Juda"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "boundary"
+  },
+  "boundary_persia": {
+    "lblTemplate": "Boundary of the Persian Empire",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Boundary of the Persian Empire",
+      "es": "Los límites del imperio Persa",
+      "fr": "Frontières de l'Empire perse"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "boundary_persia"
+  },
+  "boundary_rome": {
+    "lblTemplate": "Boundary of the Roman Empire",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Boundary of the Roman Empire",
+      "es": "Límites del Imperio Romano",
+      "fr": "Frontières de l'Empire romain"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "boundary_rome"
+  },
+  "bozrah": {
+    "lblTemplate": "{Bozrah.2}",
+    "mapxKey": "Bozrah"
+  },
+  "breast_right": {
+    "lblTemplate": "{BreastRight}",
+    "mapxKey": "Breastplate of Righteousness"
+  },
+  "breastplate_hp": {
+    "lblTemplate": "Breastplate with 12 Jewels",
+    "mapxKey": "Breastplate with 12 Jewels",
+    "gloss": {
+      "en": "Breastplate with 12 Jewels",
+      "es": "La coraza con 12 joyas",
+      "fr": "Cuirasse ornée de 12 joyaux"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "breastplate_hp"
+  },
+  "bridge": {
+    "lblTemplate": "{Bridge}",
+    "mapxKey": "bridge"
+  },
+  "britannia": {
+    "lblTemplate": "{Britannia}",
+    "mapxKey": ""
+  },
+  "cadiz": {
+    "lblTemplate": "{Cadiz}",
+    "mapxKey": ""
+  },
+  "caesarea": {
+    "lblTemplate": "{Caesarea}",
+    "mapxKey": "Caesarea"
+  },
+  "caesarea_philippi": {
+    "lblTemplate": "{CaesareaPhilippi}",
+    "mapxKey": "Caesarea Philippi"
+  },
+  "cana": {
+    "lblTemplate": "{Cana}",
+    "mapxKey": "Cana"
+  },
+  "canaan": {
+    "lblTemplate": "{Canaan}",
+    "mapxKey": "CANAAN"
+  },
+  "capernaum": {
+    "lblTemplate": "{Capernaum}",
+    "mapxKey": "Capernaum"
+  },
+  "cappadocia": {
+    "lblTemplate": "{Cappadocia}",
+    "mapxKey": "CAPPADOCIA"
+  },
+  "carchemish": {
+    "lblTemplate": "{Carchemish}",
+    "mapxKey": "Carchemish"
+  },
+  "carthage": {
+    "lblTemplate": "{Carthage}",
+    "mapxKey": ""
+  },
+  "caspia": {
+    "lblTemplate": "{Caspia}",
+    "mapxKey": ""
+  },
+  "caspian_sea": {
+    "lblTemplate": "{CaspianSea}",
+    "mapxKey": "CASPIAN SEA"
+  },
+  "cauda": {
+    "lblTemplate": "{Cauda}",
+    "mapxKey": "CAUDA"
+  },
+  "cenchrea": {
+    "lblTemplate": "{Cenchreae}",
+    "mapxKey": "Cenchrea"
+  },
+  "chaldea": {
+    "lblTemplate": "{Chaldea}",
+    "mapxKey": "CHALDEA"
+  },
+  "chanukah": {
+    "lblTemplate": "Chanukah",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Chanukah",
+      "es": "Janucá",
+      "fr": "Hanoukka"
+    },
+    "context": {
+      "en": "Hebrew month",
+      "es": "",
+      "fr": "mois hébraïque"
+    },
+    "altTermIds": "chanukah"
+  },
+  "chios": {
+    "lblTemplate": "{Chios}",
+    "mapxKey": "CHIOS"
+  },
+  "chorazin": {
+    "lblTemplate": "{Chorazin}",
+    "mapxKey": "Chorazin"
+  },
+  "cilicia": {
+    "lblTemplate": "{Cilicia}",
+    "mapxKey": "CILICIA"
+  },
+  "cities_rebuked": {
+    "lblTemplate": "Cities rebuked ({r#LUK 10})",
+    "mapxKey": "Cities rebuked (Lk 10)",
+    "gloss": {
+      "en": "Cities rebuked (Lk 10)",
+      "es": "Las ciudades reprendidas (Lc 10)",
+      "fr": "Les villes réprimandées (Lc 10)"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "cities_rebuked"
+  },
+  "cnidus": {
+    "lblTemplate": "{Cnidus}",
+    "mapxKey": "Cnidus"
+  },
+  "colossae": {
+    "lblTemplate": "{Colossae}",
+    "mapxKey": "Colossae"
+  },
+  "confession": {
+    "lblTemplate": "Peter’s Confession ({r#MAT 16})",
+    "mapxKey": "Peter’s Confession (Mt 16)",
+    "gloss": {
+      "en": "Peter’s Confession (Mt 16)",
+      "es": "La confesión de Pedro (Mt 16)",
+      "fr": "La confession de Pierre (Mt 16)"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "confession"
+  },
+  "corinth": {
+    "lblTemplate": "{Corinth}",
+    "mapxKey": "Corinth"
+  },
+  "corsica": {
+    "lblTemplate": "{Corsica}",
+    "mapxKey": ""
+  },
+  "cos": {
+    "lblTemplate": "{Cos}",
+    "mapxKey": "COS"
+  },
+  "council_chamber": {
+    "lblTemplate": "Council Chamber",
+    "mapxKey": "Council Chamber",
+    "gloss": {
+      "en": "Council Chamber",
+      "es": "Salón del Consejo",
+      "fr": "Salle du Conseil"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "council_chamber"
+  },
+  "court": {
+    "lblTemplate": "{Court}",
+    "mapxKey": ""
+  },
+  "court_of_gentiles": {
+    "lblTemplate": "Court of the Gentiles",
+    "mapxKey": "Court of the Gentiles",
+    "gloss": {
+      "en": "Court of the Gentiles",
+      "es": "El patio de los gentiles",
+      "fr": "Cour des Gentils"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "court_of_gentiles"
+  },
+  "court_of_israel": {
+    "lblTemplate": "Court of Israel (Court of Men)",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Court of Israel (Court of Men)",
+      "es": "Patio de Israel (Patio de los Hombres)",
+      "fr": "Tribunal d'Israël (Tribunal des Hommes)"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "court_of_israel"
+  },
+  "court_of_priests": {
+    "lblTemplate": "Court of Priests",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Court of Priests",
+      "es": "El patio de los sacerdotes",
+      "fr": "Cour des prêtres"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "court_of_priests"
+  },
+  "court_of_women": {
+    "lblTemplate": "Court of Women",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Court of Women",
+      "es": "El patio de las mujeres",
+      "fr": "Cour des femmes"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "court_of_women"
+  },
+  "crete": {
+    "lblTemplate": "{Crete}",
+    "mapxKey": "CRETE"
+  },
+  "curtain": {
+    "lblTemplate": "Curtain",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Curtain",
+      "es": "Cortina",
+      "fr": "Rideau"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "curtain"
+  },
+  "curtain_wall": {
+    "lblTemplate": "Curtain Wall",
+    "mapxKey": "Curtain Wall",
+    "gloss": {
+      "en": "Curtain Wall",
+      "es": "Muro de cortina",
+      "fr": "Mur rideau"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "curtain_wall"
+  },
+  "cush": {
+    "lblTemplate": "{Cush.2}",
+    "mapxKey": ""
+  },
+  "cyprus": {
+    "lblTemplate": "{Cyprus}",
+    "mapxKey": "CYPRUS"
+  },
+  "cyrenaica": {
+    "lblTemplate": "{Cyrenaica}",
+    "mapxKey": ""
+  },
+  "cyrene": {
+    "lblTemplate": "{Cyrene}",
+    "mapxKey": "Cyrene"
+  },
+  "dalmatia": {
+    "lblTemplate": "{Dalmatia}",
+    "mapxKey": "DALMATIA"
+  },
+  "damascus_gate": {
+    "lblTemplate": "Damascus Gate",
+    "mapxKey": "Damascus Gate",
+    "gloss": {
+      "en": "Damascus Gate",
+      "es": "La puerta de Damasco",
+      "fr": "Porte de Damas"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "damascus_gate"
+  },
+  "damascus_nt": {
+    "lblTemplate": "{Damascus}",
+    "mapxKey": "Damascus"
+  },
+  "damascus_ot": {
+    "lblTemplate": "{Damascus}",
+    "mapxKey": "Damascus"
+  },
+  "dan": {
+    "lblTemplate": "{TerritoryOfDan}",
+    "mapxKey": "DAN"
+  },
+  "dan_laish": {
+    "lblTemplate": "{TerritoryOfDan} ({Laish})",
+    "mapxKey": "Dan (Laish)"
+  },
+  "danube_river": {
+    "lblTemplate": "{DanubeRiver}",
+    "mapxKey": ""
+  },
+  "daughter_healed": {
+    "lblTemplate": "Syro-Phoenician woman’s daughter healed ({r#MRK 7})",
+    "mapxKey": "Syro-Phoenician woman’s daughter healed (Mk 7)",
+    "gloss": {
+      "en": "Syro-Phoenician woman’s daughter healed (Mk 7)",
+      "es": "La hija de una mujer sirofenicia es curada (Mc 7)",
+      "fr": "Guérison de la fille d’une femme syro-phénicienne (Mc 7)"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "daughter_healed"
+  },
+  "dead_sea": {
+    "lblTemplate": "{SaltSea}",
+    "mapxKey": "Dead Sea"
+  },
+  "debir": {
+    "lblTemplate": "{Debir}",
+    "mapxKey": "Debir"
+  },
+  "dec": {
+    "lblTemplate": "Dec",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Dec",
+      "es": "dic",
+      "fr": "Déc"
+    },
+    "context": {
+      "en": "3 letter abbreviation for the month",
+      "es": "",
+      "fr": "Abréviation à 3 lettres du mois"
+    },
+    "altTermIds": "dec"
+  },
+  "decapolis": {
+    "lblTemplate": "{Decapolis}",
+    "mapxKey": "DECAPOLIS"
+  },
+  "demoniac": {
+    "lblTemplate": "Demoniac healed ({r#MRK 5})",
+    "mapxKey": "Demoniac healed (Mk 5)",
+    "gloss": {
+      "en": "Demoniac healed (Mk 5)",
+      "es": "El endemoniado es curado (Mc 5)",
+      "fr": "Démoniaque guéri (Mc 5)"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "demoniac"
+  },
+  "derbe": {
+    "lblTemplate": "{Derbe}",
+    "mapxKey": "Derbe"
+  },
+  "dibon": {
+    "lblTemplate": "{Dibon}",
+    "mapxKey": "Dibon"
+  },
+  "dor": {
+    "lblTemplate": "{Dor}",
+    "mapxKey": "Dor"
+  },
+  "dothan": {
+    "lblTemplate": "{Dothan}",
+    "mapxKey": "Dothan"
+  },
+  "east": {
+    "lblTemplate": "{East}",
+    "mapxKey": "East"
+  },
+  "ecbatana": {
+    "lblTemplate": "{Ecbatana}",
+    "mapxKey": "Ecbatana"
+  },
+  "edom": {
+    "lblTemplate": "{Edom}",
+    "mapxKey": "EDOM"
+  },
+  "edomites": {
+    "lblTemplate": "{Edomites}",
+    "mapxKey": ""
+  },
+  "edrei": {
+    "lblTemplate": "{Edrei}",
+    "mapxKey": "Edrei"
+  },
+  "eglon": {
+    "lblTemplate": "{q#Eglon}",
+    "mapxKey": "Eglon?",
+    "gloss": {
+      "en": "Eglon?",
+      "es": "Eglón?",
+      "fr": "Églon?"
+    },
+    "context": {
+      "en": "(uncertain location)"
+    }
+  },
+  "egypt_nt": {
+    "lblTemplate": "{Egypt}",
+    "mapxKey": "EGYPT"
+  },
+  "egypt_ot": {
+    "lblTemplate": "{Egypt}",
+    "mapxKey": "EGYPT"
+  },
+  "ekron": {
+    "lblTemplate": "{Ekron}",
+    "mapxKey": "Ekron"
+  },
+  "elam_nt": {
+    "lblTemplate": "{Elam}",
+    "mapxKey": "ELAM"
+  },
+  "elam_ot": {
+    "lblTemplate": "{Elam}",
+    "mapxKey": "ELAM"
+  },
+  "elim": {
+    "lblTemplate": "{q#Elim}",
+    "mapxKey": "Elim",
+    "gloss": {
+      "en": "Elim?"
+    },
+    "context": {
+      "en": "(uncertain location)"
+    }
+  },
+  "elul": {
+    "lblTemplate": "Elul",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Elul",
+      "es": "Elul",
+      "fr": "Elul"
+    },
+    "context": {
+      "en": "Hebrew month",
+      "es": "",
+      "fr": "mois hébraïque"
+    },
+    "altTermIds": "elul"
+  },
+  "emmaus": {
+    "lblTemplate": "{Emmaus}",
+    "mapxKey": "Emmaus"
+  },
+  "endor": {
+    "lblTemplate": "{En-dor}",
+    "mapxKey": "Endor"
+  },
+  "engedi": {
+    "lblTemplate": "{Engedi}",
+    "mapxKey": "En-Gedi"
+  },
+  "enrogel_spring": {
+    "lblTemplate": "{En-rogel}",
+    "mapxKey": "Enrogel Spring"
+  },
+  "entrance": {
+    "lblTemplate": "The Entrance",
+    "mapxKey": "",
+    "gloss": {
+      "en": "The Entrance",
+      "es": "La entrada",
+      "fr": "L'entrée"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "entrance"
+  },
+  "ephesus": {
+    "lblTemplate": "{Ephesus}",
+    "mapxKey": "Ephesus"
+  },
+  "ephod_hp": {
+    "lblTemplate": "Ephod",
+    "mapxKey": "Ephod",
+    "gloss": {
+      "en": "Ephod",
+      "es": "Efod",
+      "fr": "Éphod"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "ephod_hp"
+  },
+  "ephraim_nt": {
+    "lblTemplate": "{TerritoryOfEphraim}",
+    "mapxKey": "EPHRAIM"
+  },
+  "ephraim_ot": {
+    "lblTemplate": "{TerritoryOfEphraim}",
+    "mapxKey": "EPHRAIM"
+  },
+  "ephrath": {
+    "lblTemplate": "{Ephrath}",
+    "mapxKey": ""
+  },
+  "essene_gate": {
+    "lblTemplate": "{EsseneGate}",
+    "mapxKey": "Essene Gate"
+  },
+  "etham": {
+    "lblTemplate": "{Etham}",
+    "mapxKey": "Etham"
+  },
+  "ethiopia": {
+    "lblTemplate": "{Ethiopia}",
+    "mapxKey": "Ethiopia"
+  },
+  "euphrates_river": {
+    "lblTemplate": "{Euphrates}",
+    "mapxKey": "Euphrates River"
+  },
+  "europe": {
+    "lblTemplate": "{Europe}",
+    "mapxKey": ""
+  },
+  "ezion_geber": {
+    "lblTemplate": "{Ezion-geber}",
+    "mapxKey": "Ezion Geber"
+  },
+  "fair_havens": {
+    "lblTemplate": "{FairHavens}",
+    "mapxKey": "Fair Havens"
+  },
+  "feb": {
+    "lblTemplate": "Feb",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Feb",
+      "es": "feb",
+      "fr": "Fév"
+    },
+    "context": {
+      "en": "3 letter abbreviation for the month",
+      "es": "",
+      "fr": "Abréviation à 3 lettres du mois"
+    },
+    "altTermIds": "feb"
+  },
+  "feet_hp": {
+    "lblTemplate": "Bare Feet",
+    "mapxKey": "Bare Feet",
+    "gloss": {
+      "en": "Bare Feet",
+      "es": "Los pies descalzos",
+      "fr": "pieds nus"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "feet_hp"
+  },
+  "field_of_blood": {
+    "lblTemplate": "{FieldOfBlood}",
+    "mapxKey": "Field of Blood"
+  },
+  "forum_jerusalem": {
+    "lblTemplate": "Forum",
+    "mapxKey": "Forum",
+    "gloss": {
+      "en": "Forum",
+      "es": "Foro",
+      "fr": "Forum"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "forum_jerusalem"
+  },
+  "forum_of_appius": {
+    "lblTemplate": "{ForumOfAppius}",
+    "mapxKey": "Forum of Appius"
+  },
+  "gad": {
+    "lblTemplate": "{TerritoryOfGad}",
+    "mapxKey": "GAD"
+  },
+  "gadara": {
+    "lblTemplate": "{Gadara}",
+    "mapxKey": "Gadara"
+  },
+  "galatia": {
+    "lblTemplate": "{Galatia}",
+    "mapxKey": "GALATIA"
+  },
+  "galilee_nt": {
+    "lblTemplate": "{Galilee}",
+    "mapxKey": "GALILEE"
+  },
+  "galilee_ot": {
+    "lblTemplate": "{Galilee}",
+    "mapxKey": "GALILEE"
+  },
+  "garden_gate": {
+    "lblTemplate": "Garden Gate",
+    "mapxKey": "Garden Gate",
+    "gloss": {
+      "en": "Garden Gate",
+      "es": "La puerta del jardín",
+      "fr": "Porte du jardin"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "garden_gate"
+  },
+  "gate": {
+    "lblTemplate": "Gate",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Gate",
+      "es": "Puerta",
+      "fr": "Grille"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "gate"
+  },
+  "gath": {
+    "lblTemplate": "{q#Gath}",
+    "mapxKey": "Gath",
+    "gloss": {
+      "en": "Gath?",
+      "es": "Gat?",
+      "fr": "Gath?"
+    },
+    "context": {
+      "en": "(uncertain location)"
+    }
+  },
+  "gaul": {
+    "lblTemplate": "Gallia (Gaul)",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Gallia (Gaul)",
+      "es": "Galia",
+      "fr": "Gallia (Gaule)"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "gaul"
+  },
+  "gaza_nt": {
+    "lblTemplate": "{Gaza}",
+    "mapxKey": "Gaza"
+  },
+  "gaza_ot": {
+    "lblTemplate": "{Gaza}",
+    "mapxKey": "Gaza"
+  },
+  "gebal_byblos": {
+    "lblTemplate": "{Gebal}",
+    "mapxKey": "Gebal (Byblos)"
+  },
+  "gennesaret": {
+    "lblTemplate": "{Gennesaret}",
+    "mapxKey": "Gennesaret"
+  },
+  "gerasa": {
+    "lblTemplate": "{Gerasa}",
+    "mapxKey": "Gerasa"
+  },
+  "gethsemane": {
+    "lblTemplate": "{Gethsemane}",
+    "mapxKey": "Gethsemane"
+  },
+  "gezer": {
+    "lblTemplate": "{Gezer}",
+    "mapxKey": "Gezer"
+  },
+  "gibeah": {
+    "lblTemplate": "{Gibeah}",
+    "mapxKey": "Gibeah"
+  },
+  "gibeon": {
+    "lblTemplate": "{Gibeon}",
+    "mapxKey": "Gibeon"
+  },
+  "gihon_spring": {
+    "lblTemplate": "{Gihon.2}",
+    "mapxKey": "Gihon Spring"
+  },
+  "gilead": {
+    "lblTemplate": "{Gilead}",
+    "mapxKey": "GILEAD"
+  },
+  "gilgal": {
+    "lblTemplate": "{Gilgal.3}",
+    "mapxKey": "Gilgal"
+  },
+  "golan": {
+    "lblTemplate": "{Golan}",
+    "mapxKey": "Golan"
+  },
+  "golgotha": {
+    "lblTemplate": "{Golgotha}",
+    "mapxKey": "Golgotha"
+  },
+  "gomer": {
+    "lblTemplate": "{Gomer}",
+    "mapxKey": ""
+  },
+  "goshen": {
+    "lblTemplate": "{Goshen}",
+    "mapxKey": "GOSHEN"
+  },
+  "great_sea": {
+    "lblTemplate": "{GreatSea}",
+    "mapxKey": ""
+  },
+  "greece": {
+    "lblTemplate": "{Greece}",
+    "mapxKey": "GREECE"
+  },
+  "gulf_of_aqaba": {
+    "lblTemplate": "{RedSea.2}",
+    "mapxKey": "Gulf of Aqaba"
+  },
+  "ham": {
+    "lblTemplate": "{Ham}",
+    "mapxKey": ""
+  },
+  "hamath": {
+    "lblTemplate": "{Hamath}",
+    "mapxKey": "HAMATH"
+  },
+  "haran": {
+    "lblTemplate": "{Haran}",
+    "mapxKey": "Haran"
+  },
+  "hazor": {
+    "lblTemplate": "{Hazor}",
+    "mapxKey": "Hazor"
+  },
+  "headband_hp": {
+    "lblTemplate": "Gold Headband",
+    "mapxKey": "Gold Headband",
+    "gloss": {
+      "en": "Gold Headband",
+      "es": "La diadema dorada",
+      "fr": "bandeau doré"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "headband_hp"
+  },
+  "headquarters": {
+    "lblTemplate": "Headquarters, site of many miracles ({r#MRK 2})",
+    "mapxKey": "Headquarters, site of many miracles (Mk 2)",
+    "gloss": {
+      "en": "Headquarters, site of many miracles (Mk 2)",
+      "es": "La sede; el lugar de muchos milagros (Mc 2)",
+      "fr": "Siège social, lieu de nombreux miracles (Mc 2)"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "headquarters"
+  },
+  "hebron": {
+    "lblTemplate": "{Hebron}",
+    "mapxKey": "Hebron"
+  },
+  "heliopolis": {
+    "lblTemplate": "{Heliopolis}",
+    "mapxKey": "Heliopolis"
+  },
+  "helmet_salvation": {
+    "lblTemplate": "{HelmetSalvation}",
+    "mapxKey": "Helmet of Salvation"
+  },
+  "herod_antipas_palace": {
+    "lblTemplate": "{HerodAntipasPalace}",
+    "mapxKey": "Herod Antipas’ Palace"
+  },
+  "herodian_street": {
+    "lblTemplate": "Herodian Street",
+    "mapxKey": "Herodian Street",
+    "gloss": {
+      "en": "Herodian Street",
+      "es": "La calle Herodiana",
+      "fr": "Rue Héroïdienne"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "herodian_street"
+  },
+  "herods_palace": {
+    "lblTemplate": "{HerodsPalace}",
+    "mapxKey": "Herod’s Palace"
+  },
+  "heshbon": {
+    "lblTemplate": "{Heshbon}",
+    "mapxKey": "Heshbon"
+  },
+  "hezekiahs_tunnel": {
+    "lblTemplate": "Hezekiah’s Tunnel",
+    "mapxKey": "Hezekiah’s Tunnel",
+    "gloss": {
+      "en": "Hezekiah’s Tunnel",
+      "es": "Túnel de Ezequías",
+      "fr": "Le tunnel d'Ézéchias"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "hezekiahs_tunnel"
+  },
+  "hierapolis": {
+    "lblTemplate": "{Hierapolis}",
+    "mapxKey": "Hierapolis"
+  },
+  "hinnom_valley": {
+    "lblTemplate": "{HinnomValley}",
+    "mapxKey": "Hinnom Valley"
+  },
+  "hittites": {
+    "lblTemplate": "{Hittites}",
+    "mapxKey": "HITTITES"
+  },
+  "hivites": {
+    "lblTemplate": "{Hivites}",
+    "mapxKey": ""
+  },
+  "holy_holy": {
+    "lblTemplate": "The Holy of Holies",
+    "mapxKey": "The Holy of Holies",
+    "gloss": {
+      "en": "The Holy of Holies",
+      "es": "El Santo de los Santos",
+      "fr": "Le Saint des Saints"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "holy_holy"
+  },
+  "holy_land_map": {
+    "lblTemplate": "Map of Israel",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Holy Land map",
+      "es": "El mapa de Tierra Santa",
+      "fr": "Carte de la Terre Sainte"
+    },
+    "context": {
+      "en": "Identifies the part of the world covered by the map of Israel",
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "holy_land_map"
+  },
+  "holy_place": {
+    "lblTemplate": "The Holy Place",
+    "mapxKey": "The Holy Place",
+    "gloss": {
+      "en": "The Holy Place",
+      "es": "El Lugar Santo",
+      "fr": "Le lieu saint"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "holy_place"
+  },
+  "home": {
+    "lblTemplate": "Boyhood home ({r#LUK 2})",
+    "mapxKey": "Boyhood home (Lk 2)",
+    "gloss": {
+      "en": "Boyhood home (Lk 2)",
+      "es": "La casa de la infancia (Lc 2)",
+      "fr": "Maison d'enfance (Lc 2)"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "home"
+  },
+  "hormah": {
+    "lblTemplate": "{Hormah}",
+    "mapxKey": "Hormah"
+  },
+  "house_of_caiaphas": {
+    "lblTemplate": "House of Caiaphas",
+    "mapxKey": "House of Caiaphas",
+    "gloss": {
+      "en": "House of Caiaphas",
+      "es": "La casa de Caifás",
+      "fr": "Maison de Caïphe"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "house_of_caiaphas"
+  },
+  "hurrians": {
+    "lblTemplate": "Hurrians",
+    "mapxKey": "HURRIANS",
+    "gloss": {
+      "en": "Hurrians",
+      "es": "Hurrianos",
+      "fr": "Hourrites"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "hurrians"
+  },
+  "iconium": {
+    "lblTemplate": "{Iconium}",
+    "mapxKey": "Iconium"
+  },
+  "idumea": {
+    "lblTemplate": "{Idumea}",
+    "mapxKey": "IDUMEA"
+  },
+  "illyricum": {
+    "lblTemplate": "{Illyricum}",
+    "mapxKey": "ILLYRICUM"
+  },
+  "incense_hp": {
+    "lblTemplate": "Incense Burner",
+    "mapxKey": "Incense Burner",
+    "gloss": {
+      "en": "Incense Burner",
+      "es": "El quemador de incienso",
+      "fr": "Brûleur d'encens"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "incense_hp"
+  },
+  "india": {
+    "lblTemplate": "{India}",
+    "mapxKey": ""
+  },
+  "indian_ocean": {
+    "lblTemplate": "{IndianOcean}",
+    "mapxKey": ""
+  },
+  "indus_river": {
+    "lblTemplate": "{IndusRiver}",
+    "mapxKey": ""
+  },
+  "inner_court": {
+    "lblTemplate": "{InnerCourt}",
+    "mapxKey": ""
+  },
+  "inner_north_gate": {
+    "lblTemplate": "{InnerNorthGate}",
+    "mapxKey": ""
+  },
+  "israel": {
+    "lblTemplate": "{Israel}",
+    "mapxKey": "ISRAEL"
+  },
+  "israel_pool": {
+    "lblTemplate": "{IsraelPool}",
+    "mapxKey": "Israel Pool"
+  },
+  "issachar": {
+    "lblTemplate": "{TerritoryOfIssachar}",
+    "mapxKey": "ISSACHAR"
+  },
+  "italy": {
+    "lblTemplate": "{Italy}",
+    "mapxKey": "ITALY"
+  },
+  "ituraea": {
+    "lblTemplate": "{Ituraea}",
+    "mapxKey": ""
+  },
+  "iyar": {
+    "lblTemplate": "Iyar",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Iyar",
+      "es": "Iyar",
+      "fr": "Iyar"
+    },
+    "context": {
+      "en": "Hebrew month",
+      "es": "",
+      "fr": "mois hébraïque"
+    },
+    "altTermIds": "iyar"
+  },
+  "jabesh": {
+    "lblTemplate": "{Jabesh-gilead}",
+    "mapxKey": "Jabesh Gilead"
+  },
+  "jabneel": {
+    "lblTemplate": "{Jabneel}",
+    "mapxKey": "Jabneel"
+  },
+  "jabneh": {
+    "lblTemplate": "{Jabneh}",
+    "mapxKey": "Jabneh"
+  },
+  "jacobs_well": {
+    "lblTemplate": "{JacobsWell}",
+    "mapxKey": "Jacob’s Well"
+  },
+  "jamnia": {
+    "lblTemplate": "{Jabneh}",
+    "mapxKey": "Jamnia"
+  },
+  "jan": {
+    "lblTemplate": "Jan",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Jan",
+      "es": "ene",
+      "fr": "Jan"
+    },
+    "context": {
+      "en": "3 letter abbreviation for the month",
+      "es": "",
+      "fr": "Abréviation à 3 lettres du mois"
+    },
+    "altTermIds": "jan"
+  },
+  "japheth": {
+    "lblTemplate": "{Japheth}",
+    "mapxKey": ""
+  },
+  "jarmuth": {
+    "lblTemplate": "{Jarmuth}",
+    "mapxKey": "Jarmuth"
+  },
+  "javan": {
+    "lblTemplate": "{Javan}",
+    "mapxKey": ""
+  },
+  "jaxartes_river": {
+    "lblTemplate": "{JaxartesRiver}",
+    "mapxKey": ""
+  },
+  "jericho_nt": {
+    "lblTemplate": "{Jericho}",
+    "mapxKey": "Jericho"
+  },
+  "jericho_ot": {
+    "lblTemplate": "{Jericho}",
+    "mapxKey": "Jericho"
+  },
+  "jerusalem_nt": {
+    "lblTemplate": "{Jerusalem}",
+    "mapxKey": "Jerusalem"
+  },
+  "jerusalem_ot": {
+    "lblTemplate": "{Jerusalem}",
+    "mapxKey": "Jerusalem"
+  },
+  "jerusalem_title": {
+    "lblTemplate": "Jerusalem in New Testament Times",
+    "mapxKey": "Jerusalem in New Testament Times",
+    "gloss": {
+      "en": "Jerusalem in New Testament Times",
+      "es": "Jerusalén en los tiempos del Nuevo Testamento",
+      "fr": "Jérusalem au temps du Nouveau Testament"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "jerusalem_title"
+  },
+  "jezreel": {
+    "lblTemplate": "{Jezreel.2}",
+    "mapxKey": "Jezreel"
+  },
+  "jokneam": {
+    "lblTemplate": "{Jokneam}",
+    "mapxKey": "Jokneam"
+  },
+  "joppa_nt": {
+    "lblTemplate": "{Joppa}",
+    "mapxKey": "Joppa"
+  },
+  "joppa_ot": {
+    "lblTemplate": "{Joppa}",
+    "mapxKey": "Joppa"
+  },
+  "jordan_river_nt": {
+    "lblTemplate": "{Jordan}",
+    "mapxKey": "Jordan River"
+  },
+  "jordan_river_ot": {
+    "lblTemplate": "{Jordan}",
+    "mapxKey": "Jordan River"
+  },
+  "judah": {
+    "lblTemplate": "{TerritoryOfJudah}",
+    "mapxKey": "JUDAH"
+  },
+  "judea": {
+    "lblTemplate": "{Judea}",
+    "mapxKey": "JUDEA"
+  },
+  "jul": {
+    "lblTemplate": "Jul",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Jul",
+      "es": "jul",
+      "fr": "Juillet"
+    },
+    "context": {
+      "en": "3 letter abbreviation for the month",
+      "es": "",
+      "fr": "Abréviation à 3 lettres du mois"
+    },
+    "altTermIds": "jul"
+  },
+  "jun": {
+    "lblTemplate": "Jun",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Jun",
+      "es": "jun",
+      "fr": "Juin"
+    },
+    "context": {
+      "en": "3 letter abbreviation for the month",
+      "es": "",
+      "fr": "Abréviation à 3 lettres du mois"
+    },
+    "altTermIds": "jun"
+  },
+  "kadesh": {
+    "lblTemplate": "{Kadesh}",
+    "mapxKey": "Kadesh"
+  },
+  "kadesh_barnea": {
+    "lblTemplate": "{Kadesh-barnea}",
+    "mapxKey": "Kadesh Barnea"
+  },
+  "kedar": {
+    "lblTemplate": "{Kedar}",
+    "mapxKey": "KEDAR"
+  },
+  "kedesh": {
+    "lblTemplate": "{Kedesh}",
+    "mapxKey": "Kedesh"
+  },
+  "kidron_valley": {
+    "lblTemplate": "{Kidron}",
+    "mapxKey": "Kidron Valley"
+  },
+  "kir_hareseth": {
+    "lblTemplate": "{Kir-hareseth}",
+    "mapxKey": "Kir Hareseth"
+  },
+  "kiriath_jearim": {
+    "lblTemplate": "{Kiriath-jearim}",
+    "mapxKey": "Kiriath-Jearim"
+  },
+  "kislew": {
+    "lblTemplate": "Kislew",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Kislew",
+      "es": "Kislew",
+      "fr": "Kislew"
+    },
+    "context": {
+      "en": "Hebrew month",
+      "es": "",
+      "fr": "mois hébraïque"
+    },
+    "altTermIds": "kislew"
+  },
+  "tttest_kittim_cyprus": {
+    "lblTemplate": "{tttestKittim} ({Cyprus} / {Jericho}) ",
+    "mapxKey": "KITTIM (CYPRUS)",
+    "gloss": {
+      "en": "Kittim (Cyprus)",
+      "es": "Kítim (Chipre)",
+      "fr": "Kittim (Chypre)"
+    },
+    "context": {
+      "en": "Kittim is the OT name for the island of Cyprus and its people. In the NT, Kittim may refer more broadly to the region of Greece.",
+      "es": "Descendientes de Javan, hijo de Jafet; = Grecia",
+      "fr": "descendants de Javan, fils de Japhet ; Grèce ?"
+    },
+    "altTermIds": "tttest_kittim_cyprus"
+  },
+  "kittim_cyprus": {
+    "lblTemplate": "{Kittim} ({Cyprus})",
+    "mapxKey": "KITTIM (CYPRUS)"
+  },
+  "lachish": {
+    "lblTemplate": "{Lachish}",
+    "mapxKey": "Lachish"
+  },
+  "laodicea": {
+    "lblTemplate": "{Laodicea}",
+    "mapxKey": "Laodicea"
+  },
+  "lasea": {
+    "lblTemplate": "{Lasea}",
+    "mapxKey": "Lasea"
+  },
+  "laver": {
+    "lblTemplate": "Laver",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Laver",
+      "es": "El lavabo",
+      "fr": "Laver"
+    },
+    "context": {
+      "en": "a large basin or bowl used for ceremonial washing.",
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "laver"
+  },
+  "lazarus": {
+    "lblTemplate": "Home of Mary, Martha and Lazarus ({r#JHN 11})",
+    "mapxKey": "Home of Mary, Martha and Lazarus (Jn 11)",
+    "gloss": {
+      "en": "Home of Mary, Martha and Lazarus (Jn 11)",
+      "es": "La casa de María, Marta y Lázaro (Jn 11)",
+      "fr": "Maison de Marie, Marthe et Lazare (Jn 11)"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "lazarus"
+  },
+  "legend_1": {
+    "lblTemplate": "1. Paul’s First Journey ({R#ACT 13.4–14.28})",
+    "mapxKey": "1. Paul’s First Journey (Acts 13:4–14:28)",
+    "gloss": {
+      "en": "1. Paul’s First Journey (Acts 13:4–14:28)",
+      "es": "1. El primer viaje de Pablo (Hch 13:4–14:28)",
+      "fr": "1. Le premier voyage de Paul (Actes 13:4–14:28)"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "legend_1"
+  },
+  "legend_2": {
+    "lblTemplate": "2. Paul’s Second Journey ({R#ACT 15.36–18.22})",
+    "mapxKey": "2. Paul’s Second Journey (Acts 15:36–18:22)",
+    "gloss": {
+      "en": "2. Paul’s Second Journey (Acts 15:36–18:22)",
+      "es": "2. El segundo viaje de Pablo (Hch 15:36–18:22)",
+      "fr": "2. Le deuxième voyage de Paul (Actes 15:36–18:22)"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "legend_2"
+  },
+  "legend_3": {
+    "lblTemplate": "3. Paul’s Third Journey ({R#ACT 18.23–21.17})",
+    "mapxKey": "3. Paul’s Third Journey (Acts 18:23–21:17)",
+    "gloss": {
+      "en": "3. Paul’s Third Journey (Acts 18:23–21:17)",
+      "es": "3. El tercer viaje de Pablo (Hch 18:23--21:17)",
+      "fr": "3. Le troisième voyage de Paul (Actes 18:23–21:17)"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "legend_3"
+  },
+  "legend_4": {
+    "lblTemplate": "4. Paul’s Journey to Rome ({R#ACT 27.1–28.16})",
+    "mapxKey": "4. Paul’s Journey to Rome (Acts 27:1–28:16)",
+    "gloss": {
+      "en": "4. Paul’s Journey to Rome (Acts 27:1–28:16)",
+      "es": "4. El viaje de Pablo a Roma (Hch 27:1--28:16)",
+      "fr": "4. Le voyage de Paul à Rome (Actes 27:1–28:16)"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "legend_4"
+  },
+  "lepers": {
+    "lblTemplate": "Lepers healed ({r#LUK 17})",
+    "mapxKey": "Lepers healed (Lk 17)",
+    "gloss": {
+      "en": "Lepers healed (Lk 17)",
+      "es": "Los leprosos curados (Lc 17)",
+      "fr": "Guérison des lépreux (Lc 17)"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "lepers"
+  },
+  "leptis_magna": {
+    "lblTemplate": "Leptis Magna",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Leptis Magna",
+      "es": "Leptis Magna",
+      "fr": "Leptis Magna"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "leptis_magna"
+  },
+  "libnah": {
+    "lblTemplate": "{Libnah.2}",
+    "mapxKey": ""
+  },
+  "libya_nt": {
+    "lblTemplate": "{Libya}",
+    "mapxKey": "LIBYA"
+  },
+  "londinium": {
+    "lblTemplate": "{Londinium}",
+    "mapxKey": ""
+  },
+  "lud": {
+    "lblTemplate": "{Pul}",
+    "mapxKey": ""
+  },
+  "lycaonia": {
+    "lblTemplate": "{Lycaonia}",
+    "mapxKey": "LYCAONIA"
+  },
+  "lycia": {
+    "lblTemplate": "{Lycia}",
+    "mapxKey": "LYCIA"
+  },
+  "lydda": {
+    "lblTemplate": "{Lydda}",
+    "mapxKey": "Lydda"
+  },
+  "lydia": {
+    "lblTemplate": "{Lydia}",
+    "mapxKey": "LYDIA"
+  },
+  "lystra": {
+    "lblTemplate": "{Lystra}",
+    "mapxKey": "Lystra"
+  },
+  "maccabean_palace": {
+    "lblTemplate": "{MaccabeanPalace}",
+    "mapxKey": "Maccabean Palace"
+  },
+  "macedonia": {
+    "lblTemplate": "{Macedonia}",
+    "mapxKey": "MACEDONIA"
+  },
+  "madai": {
+    "lblTemplate": "{Madai}",
+    "mapxKey": ""
+  },
+  "magadan": {
+    "lblTemplate": "{Magadan}",
+    "mapxKey": "Magadan"
+  },
+  "mahanaim": {
+    "lblTemplate": "{Mahanaim}",
+    "mapxKey": "Mahanaim"
+  },
+  "main_gate": {
+    "lblTemplate": "{MainGate}",
+    "mapxKey": ""
+  },
+  "makkedah": {
+    "lblTemplate": "{Makkedah}",
+    "mapxKey": "Makkedah"
+  },
+  "malta": {
+    "lblTemplate": "{Malta}",
+    "mapxKey": "MALTA"
+  },
+  "mamre": {
+    "lblTemplate": "{Mamre}",
+    "mapxKey": ""
+  },
+  "manasseh_east": {
+    "lblTemplate": "{TerritoryOfEastManasseh}",
+    "mapxKey": "Manasseh (East)"
+  },
+  "manasseh_west": {
+    "lblTemplate": "{TerritoryOfWestManasseh}",
+    "mapxKey": "Manasseh (West)"
+  },
+  "mar": {
+    "lblTemplate": "Mar",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Mar",
+      "es": "mar",
+      "fr": "Mar"
+    },
+    "context": {
+      "en": "3 letter abbreviation for the month",
+      "es": "",
+      "fr": "Abréviation à 3 lettres du mois"
+    },
+    "altTermIds": "mar"
+  },
+  "marah": {
+    "lblTemplate": "{q#Marah}",
+    "mapxKey": "Marah",
+    "gloss": {
+      "en": "Marah?",
+      "es": "Mara?",
+      "fr": "Mara?"
+    },
+    "context": {
+      "en": "(uncertain location)"
+    }
+  },
+  "mareshah": {
+    "lblTemplate": "{Mareshah}",
+    "mapxKey": "Mareshah"
+  },
+  "mari": {
+    "lblTemplate": "Mari",
+    "mapxKey": "Mari",
+    "gloss": {
+      "en": "Mari",
+      "es": "Mari",
+      "fr": "Mari"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "mari"
+  },
+  "markhesywan": {
+    "lblTemplate": "Markhesywan",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Markhesywan",
+      "es": "Markhesywan",
+      "fr": "Markhesywan"
+    },
+    "context": {
+      "en": "Hebrew month",
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "markhesywan"
+  },
+  "mauretania": {
+    "lblTemplate": "{Mauretania}",
+    "mapxKey": ""
+  },
+  "may": {
+    "lblTemplate": "May",
+    "mapxKey": "",
+    "gloss": {
+      "en": "May",
+      "es": "may",
+      "fr": "Peut"
+    },
+    "context": {
+      "en": "3 letter abbreviation for the month",
+      "es": "",
+      "fr": "Abréviation à 3 lettres du mois"
+    },
+    "altTermIds": "may"
+  },
+  "medeba": {
+    "lblTemplate": "{Medeba}",
+    "mapxKey": "Medeba"
+  },
+  "media_nt": {
+    "lblTemplate": "{Media}",
+    "mapxKey": "MEDIA"
+  },
+  "media_ot": {
+    "lblTemplate": "{Media}",
+    "mapxKey": "MEDIA"
+  },
+  "mediterranean_sea": {
+    "lblTemplate": "{MediterraneanSea}",
+    "mapxKey": "MEDITERRANEAN SEA"
+  },
+  "megiddo": {
+    "lblTemplate": "{Megiddo}",
+    "mapxKey": "Megiddo"
+  },
+  "memphis": {
+    "lblTemplate": "{Memphis}",
+    "mapxKey": "Memphis"
+  },
+  "meshech": {
+    "lblTemplate": "{Meshech}",
+    "mapxKey": ""
+  },
+  "mesopotamia_nt": {
+    "lblTemplate": "{Mesopotamia}",
+    "mapxKey": "MESOPOTAMIA"
+  },
+  "mesopotamia_ot": {
+    "lblTemplate": "{Mesopotamia}",
+    "mapxKey": ""
+  },
+  "midian": {
+    "lblTemplate": "{Midian}",
+    "mapxKey": "MIDIAN"
+  },
+  "miletus": {
+    "lblTemplate": "{Miletus}",
+    "mapxKey": "Miletus"
+  },
+  "mitylene": {
+    "lblTemplate": "{Mitylene}",
+    "mapxKey": "Mitylene"
+  },
+  "mizpa": {
+    "lblTemplate": "{Mizpah}",
+    "mapxKey": "Mizpa/Mizpeh"
+  },
+  "mizpah_of_moab": {
+    "lblTemplate": "{Mizpeh}",
+    "mapxKey": "Mizpah of Moab"
+  },
+  "mizraim": {
+    "lblTemplate": "{Mizraim}",
+    "mapxKey": ""
+  },
+  "moab": {
+    "lblTemplate": "{Moab}",
+    "mapxKey": "MOAB"
+  },
+  "moabites": {
+    "lblTemplate": "{Moabites}",
+    "mapxKey": ""
+  },
+  "mount_of_olives": {
+    "lblTemplate": "{OlivesMount}",
+    "mapxKey": "Mount of Olives"
+  },
+  "mt_carmel": {
+    "lblTemplate": "{CarmelMount}",
+    "mapxKey": "Mt. Carmel"
+  },
+  "mt_ebal": {
+    "lblTemplate": "{EbalMount}",
+    "mapxKey": "Mt. Ebal"
+  },
+  "mt_gerizim": {
+    "lblTemplate": "{GerizimMount}",
+    "mapxKey": "MT. Gerizim"
+  },
+  "mt_gilboa": {
+    "lblTemplate": "{GilboaMount}",
+    "mapxKey": "Mt. Gilboa"
+  },
+  "mt_hermon": {
+    "lblTemplate": "{HermonMount}",
+    "mapxKey": "MT. Hermon"
+  },
+  "mt_lebanon": {
+    "lblTemplate": "{LebanonMount}",
+    "mapxKey": "Lebanon Mountains"
+  },
+  "mt_nebo": {
+    "lblTemplate": "{NeboMount}",
+    "mapxKey": "Mt. Nebo"
+  },
+  "mt_seir": {
+    "lblTemplate": "{Seir}",
+    "mapxKey": ""
+  },
+  "mt_sinai_horeb": {
+    "lblTemplate": "{SinaiMount}",
+    "mapxKey": "Mt. Sinai Horeb"
+  },
+  "mt_tabor": {
+    "lblTemplate": "{TaborMount}",
+    "mapxKey": "Mt. Tabor"
+  },
+  "myra": {
+    "lblTemplate": "{Myra}",
+    "mapxKey": "Myra"
+  },
+  "mysia": {
+    "lblTemplate": "{Mysia}",
+    "mapxKey": "MYSIA"
+  },
+  "nain": {
+    "lblTemplate": "{Nain}",
+    "mapxKey": "Nain"
+  },
+  "naphtali": {
+    "lblTemplate": "{TerritoryOfNaphtali}",
+    "mapxKey": "Naphtali"
+  },
+  "nazareth": {
+    "lblTemplate": "{Nazareth}",
+    "mapxKey": "Nazareth"
+  },
+  "neapolis": {
+    "lblTemplate": "{Neapolis}",
+    "mapxKey": "Neapolis"
+  },
+  "nicopolis": {
+    "lblTemplate": "{Nicopolis}",
+    "mapxKey": "Nicopolis"
+  },
+  "nile_river": {
+    "lblTemplate": "{Nile}",
+    "mapxKey": "Nile River"
+  },
+  "nineveh": {
+    "lblTemplate": "{Nineveh}",
+    "mapxKey": "Nineveh"
+  },
+  "nippur": {
+    "lblTemplate": "{Nippur}",
+    "mapxKey": "Nippur"
+  },
+  "nisan": {
+    "lblTemplate": "Nisan",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Nisan",
+      "es": "Nisan",
+      "fr": "Nissan"
+    },
+    "context": {
+      "en": "Hebrew month",
+      "es": "",
+      "fr": "mois hébraïque"
+    },
+    "altTermIds": "nisan"
+  },
+  "north": {
+    "lblTemplate": "{North}",
+    "mapxKey": "North"
+  },
+  "north_america": {
+    "lblTemplate": "{NorthAmerica}",
+    "mapxKey": ""
+  },
+  "north_sea": {
+    "lblTemplate": "{NorthSea}",
+    "mapxKey": ""
+  },
+  "nov": {
+    "lblTemplate": "Nov",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Nov",
+      "es": "nov",
+      "fr": "Nov"
+    },
+    "context": {
+      "en": "3 letter abbreviation for the month",
+      "es": "",
+      "fr": "Abréviation à 3 lettres du mois"
+    },
+    "altTermIds": "nov"
+  },
+  "numidia": {
+    "lblTemplate": "{Numidia}",
+    "mapxKey": ""
+  },
+  "nuzi": {
+    "lblTemplate": "{Nuzi}",
+    "mapxKey": "Nuzi"
+  },
+  "oct": {
+    "lblTemplate": "Oct",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Oct",
+      "es": "oct",
+      "fr": "Octobre"
+    },
+    "context": {
+      "en": "3 letter abbreviation for the month",
+      "es": "",
+      "fr": "Abréviation à 3 lettres du mois"
+    },
+    "altTermIds": "oct"
+  },
+  "onyx_hp": {
+    "lblTemplate": "Onyx Stones on Shoulders",
+    "mapxKey": "Onyx Stones on Shoulders",
+    "gloss": {
+      "en": "Onyx Stones on Shoulders",
+      "es": "Las piedras de ónice en los hombros",
+      "fr": "Pierres d'onyx sur les épaules"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "onyx_hp"
+  },
+  "orontes_river": {
+    "lblTemplate": "{OrontesRiver}",
+    "mapxKey": "Orontes River"
+  },
+  "outer_court_rooms": {
+    "lblTemplate": "{OuterCourtRooms}",
+    "mapxKey": ""
+  },
+  "outer_east_gate": {
+    "lblTemplate": "{OuterEastGate}",
+    "mapxKey": ""
+  },
+  "outer_north_gate": {
+    "lblTemplate": "{OuterNorthGate}",
+    "mapxKey": ""
+  },
+  "outer_south_gate": {
+    "lblTemplate": "{OuterSouthGate}",
+    "mapxKey": ""
+  },
+  "oxus_river": {
+    "lblTemplate": "{OxusRiver}",
+    "mapxKey": ""
+  },
+  "pacific_ocean": {
+    "lblTemplate": "{PacificOcean}",
+    "mapxKey": ""
+  },
+  "paddan_aram": {
+    "lblTemplate": "{Paddan-aram}",
+    "mapxKey": "Paddan Aram"
+  },
+  "palestine": {
+    "lblTemplate": "{Palestine}",
+    "mapxKey": "PALESTINE"
+  },
+  "pamphylia": {
+    "lblTemplate": "{Pamphylia}",
+    "mapxKey": "PAMPHYLIA"
+  },
+  "paphos": {
+    "lblTemplate": "{Paphos}",
+    "mapxKey": "Paphos"
+  },
+  "paris": {
+    "lblTemplate": "{Lutetia}",
+    "mapxKey": ""
+  },
+  "parthia": {
+    "lblTemplate": "{Parthia}",
+    "mapxKey": "PARTHIA"
+  },
+  "passion_wk": {
+    "lblTemplate": "Several visits; passion week ({r#JHN 12})",
+    "mapxKey": "Several visits; passion week (Jn 12)",
+    "gloss": {
+      "en": "Several visits; passion week (Jn 12)",
+      "es": "Varias visitas; la semana de la pasión (Jn 12)",
+      "fr": "Plusieurs visites ; semaine de la Passion (12 juin)"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "passion_wk"
+  },
+  "passover_ot": {
+    "lblTemplate": "{Passover}",
+    "mapxKey": ""
+  },
+  "patara": {
+    "lblTemplate": "{Patara}",
+    "mapxKey": "Patara"
+  },
+  "patmos": {
+    "lblTemplate": "{Patmos}",
+    "mapxKey": "Patmos"
+  },
+  "pauls_journey_map": {
+    "lblTemplate": "Paul’s Journeys map",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Paul’s Journeys map",
+      "es": "El mapa de los viajes de Paul",
+      "fr": "Carte des voyages de Paul"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "pauls_journey_map"
+  },
+  "peniel": {
+    "lblTemplate": "{Penuel}",
+    "mapxKey": ""
+  },
+  "peraea": {
+    "lblTemplate": "{Peraea}",
+    "mapxKey": "PERAEA"
+  },
+  "perga": {
+    "lblTemplate": "{Perga}",
+    "mapxKey": "Perga"
+  },
+  "pergamum": {
+    "lblTemplate": "{Pergamum}",
+    "mapxKey": "Pergamum"
+  },
+  "persia": {
+    "lblTemplate": "{Persia}",
+    "mapxKey": "PERSIA"
+  },
+  "persia_title01": {
+    "lblTemplate": "The Persian Empire during the time of Esther",
+    "mapxKey": "",
+    "gloss": {
+      "en": "The Persian Empire during the time of Esther",
+      "es": "El imperio Persa en los tiempos de Ester",
+      "fr": "L'Empire perse à l'époque d'Esther"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "persia_title01"
+  },
+  "persian_gulf": {
+    "lblTemplate": "{PersianGulf}",
+    "mapxKey": "PERSIAN GULF"
+  },
+  "philadelphia": {
+    "lblTemplate": "{Philadelphia}",
+    "mapxKey": "Philadelphia"
+  },
+  "philippi": {
+    "lblTemplate": "{Philippi}",
+    "mapxKey": "Philippi"
+  },
+  "philipstravels_title": {
+    "lblTemplate": "Philip’s Travels",
+    "mapxKey": "Philip’s Travels",
+    "gloss": {
+      "en": "Philip’s Travels",
+      "es": "Los viajes de Felipe",
+      "fr": "Les voyages de Philippe"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "philipstravels_title"
+  },
+  "philistia": {
+    "lblTemplate": "{Philistia}",
+    "mapxKey": "PHILISTIA"
+  },
+  "philistines": {
+    "lblTemplate": "{Philistines}",
+    "mapxKey": ""
+  },
+  "phoenicia": {
+    "lblTemplate": "{Phoenicia}",
+    "mapxKey": "PHOENICIA"
+  },
+  "phoenix": {
+    "lblTemplate": "{Phoenix}",
+    "mapxKey": "Phoenix"
+  },
+  "phrygia": {
+    "lblTemplate": "{Phrygia}",
+    "mapxKey": "PHRYGIA"
+  },
+  "pinnacle_of_temple": {
+    "lblTemplate": "{PinnacleOfTemple}",
+    "mapxKey": "Pinnacle of Temple"
+  },
+  "pisidia": {
+    "lblTemplate": "{Pisidia}",
+    "mapxKey": "PISIDIA"
+  },
+  "pithom": {
+    "lblTemplate": "{Pithom}",
+    "mapxKey": "Pithom"
+  },
+  "poles": {
+    "lblTemplate": "Poles",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Poles",
+      "es": "Postes",
+      "fr": "Pôles"
+    },
+    "context": {
+      "en": "long, round pieces of wood used to support something",
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "poles"
+  },
+  "pontus": {
+    "lblTemplate": "{Pontus}",
+    "mapxKey": "PONTUS"
+  },
+  "pool_of_bethzatha": {
+    "lblTemplate": "{Bethesda}",
+    "mapxKey": "Pool of Bethesda"
+  },
+  "pool_of_siloam": {
+    "lblTemplate": "{Siloam}",
+    "mapxKey": "Pool of Siloam"
+  },
+  "possible_rte_exodus": {
+    "lblTemplate": "Possible route of the Exodus",
+    "mapxKey": "Possible route of the Exodus",
+    "gloss": {
+      "en": "Possible route of the Exodus",
+      "es": "Una ruta posible del Éxodo",
+      "fr": "Itinéraire possible de l'Exode"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "possible_rte_exodus"
+  },
+  "praetorium": {
+    "lblTemplate": "{Praetorium}",
+    "mapxKey": "Praetorium"
+  },
+  "priests_houses": {
+    "lblTemplate": "Priest’s Houses",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Priest’s Houses",
+      "es": "Casas de los sacerdotes",
+      "fr": "Maisons de prêtres"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "priests_houses"
+  },
+  "ptolemais": {
+    "lblTemplate": "{Ptolemais}",
+    "mapxKey": "Ptolemais"
+  },
+  "punon": {
+    "lblTemplate": "{Punon}",
+    "mapxKey": "Punon"
+  },
+  "purim": {
+    "lblTemplate": "Purim",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Purim",
+      "es": "Purim",
+      "fr": "Pourim"
+    },
+    "context": {
+      "en": "Hebrew holiday",
+      "es": "",
+      "fr": "fête hébraïque"
+    },
+    "altTermIds": "purim"
+  },
+  "put": {
+    "lblTemplate": "{Put}",
+    "mapxKey": ""
+  },
+  "puteoli": {
+    "lblTemplate": "{Puteoli}",
+    "mapxKey": "Puteoli"
+  },
+  "quantir": {
+    "lblTemplate": "{Quantir}",
+    "mapxKey": "Quantir"
+  },
+  "rabbah": {
+    "lblTemplate": "{Rabbah}",
+    "mapxKey": "Rabbah"
+  },
+  "ramah": {
+    "lblTemplate": "{Ramah}",
+    "mapxKey": "Ramah"
+  },
+  "rameses": {
+    "lblTemplate": "{Rameses}",
+    "mapxKey": "Rameses"
+  },
+  "ramoth": {
+    "lblTemplate": "{Ramoth-gilead}",
+    "mapxKey": "Ramoth"
+  },
+  "ramoth_gilead": {
+    "lblTemplate": "{Ramoth-gilead}",
+    "mapxKey": "Ramoth Gilead"
+  },
+  "red_sea": {
+    "lblTemplate": "{RedSea}",
+    "mapxKey": "RED SEA"
+  },
+  "refugecities_title01": {
+    "lblTemplate": "The Cities of Refuge",
+    "mapxKey": "",
+    "gloss": {
+      "en": "The Cities of Refuge",
+      "es": "Las ciudades de refugio",
+      "fr": "Les villes refuges"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "refugecities_title01"
+  },
+  "refugecities_title02": {
+    "lblTemplate": "({R#NUM 35} and {R#JOS 20})",
+    "mapxKey": "",
+    "gloss": {
+      "en": "(Numbers 35 and Joshua 20)",
+      "es": "(Números 35 y Josué 20)",
+      "fr": "(Nombres 35 et Josué 20)"
+    },
+    "context": {
+      "en": "Chapters in which the Cities of Refuge are Described",
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "refugecities_title02"
+  },
+  "reuben": {
+    "lblTemplate": "{TerritoryOfReuben}",
+    "mapxKey": "Reuben"
+  },
+  "rhegium": {
+    "lblTemplate": "{Rhegium}",
+    "mapxKey": "Rhegium"
+  },
+  "rhodes": {
+    "lblTemplate": "{Rhodes}",
+    "mapxKey": "RHODES"
+  },
+  "riblah": {
+    "lblTemplate": "{Riblah}",
+    "mapxKey": "Riblah"
+  },
+  "river_arnon": {
+    "lblTemplate": "{Arnon}",
+    "mapxKey": "Arnon River"
+  },
+  "river_jabbok": {
+    "lblTemplate": "{Jabbok}",
+    "mapxKey": "Jabbok River"
+  },
+  "river_of_life": {
+    "lblTemplate": "River of Life",
+    "mapxKey": "",
+    "gloss": {
+      "en": "River of Life",
+      "es": "El río de la vida",
+      "fr": "Rivière de la vie"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "river_of_life"
+  },
+  "river_yarmuk": {
+    "lblTemplate": "{RiverYarmuk}",
+    "mapxKey": "Yarmuk River"
+  },
+  "river_zered": {
+    "lblTemplate": "{Zered}",
+    "mapxKey": "Zered River"
+  },
+  "road_to_bethany": {
+    "lblTemplate": "{to#Bethany}",
+    "mapxKey": "Road to Bethany",
+    "gloss": {
+      "en": "To Bethany",
+      "es": "El camino de Betania",
+      "fr": "Route de Béthanie"
+    },
+    "context": {
+       "en": "Or 'Road to Bethany'",
+     "es": "",
+      "fr": ""
+    },
+    "altTermIds": "road_to_bethany"
+  },
+  "road_to_bethlehem": {
+    "lblTemplate": "{to#Bethlehem}",
+    "mapxKey": "Road to Bethlehem",
+    "gloss": {
+      "en": "To Bethlehem",
+      "es": "Camino de Belén",
+      "fr": "Route de Bethléem"
+    },
+    "context": {
+      "en": "Or 'Road to Bethlehem'",
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "road_to_bethlehem"
+  },
+  "road_to_caesarea": {
+    "lblTemplate": "{to#Caesarea}",
+    "mapxKey": "To Caesarea",
+    "gloss": {
+      "en": "Road to Caesarea",
+      "es": "El camino de Cesarea",
+      "fr": "Route de Césarée"
+    },
+    "context": {
+      "en": "Or 'Road to Caesarea'",
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "road_to_caesarea"
+  },
+  "road_to_jericho": {
+    "lblTemplate": "{to#Jericho}",
+    "mapxKey": "Road to Jericho",
+    "gloss": {
+      "en": "To Jericho",
+      "es": "El camino de Jericó",
+      "fr": "Route de Jéricho"
+    },
+    "context": {
+      "en": "Or 'Road to Jericho'",
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "road_to_jericho"
+  },
+  "road_to_joppa": {
+    "lblTemplate": "{to#Joppa}",
+    "mapxKey": "Road to Joppa",
+    "gloss": {
+      "en": "To Joppa",
+      "es": "El camino de Jope",
+      "fr": "Route de Joppé"
+    },
+    "context": {
+      "en": "Or 'Road to Joppa'",
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "road_to_joppa"
+  },
+  "road_to_the_dead_sea": {
+    "lblTemplate": "{to#DeadSea}",
+    "mapxKey": "Road to the Dead Sea",
+    "gloss": {
+      "en": "To the Dead Sea",
+      "es": "El camino al Mar Muerto",
+      "fr": "Route vers la mer Morte"
+    },
+    "context": {
+      "en": "Or 'Road to the Dead Sea'",
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "road_to_the_dead_sea"
+  },
+  "robe_hp": {
+    "lblTemplate": "Robe",
+    "mapxKey": "Robe",
+    "gloss": {
+      "en": "Robe",
+      "es": "Túnica",
+      "fr": "Peignoir"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "robe_hp"
+  },
+  "rome": {
+    "lblTemplate": "{Rome}",
+    "mapxKey": "Rome"
+  },
+  "route_ruth": {
+    "lblTemplate": "Journey from Israel to Moab and back",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Journey from Israel to Moab and back",
+      "es": "El viaje de ida y vuelta de Israel a Moab",
+      "fr": "Voyage d'Israël à Moab et retour"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "route_ruth"
+  },
+  "royal_porch": {
+    "lblTemplate": "Royal Porch",
+    "mapxKey": "Royal Porch",
+    "gloss": {
+      "en": "Royal Porch",
+      "es": "El pórtico Real",
+      "fr": "Porche royal"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "royal_porch"
+  },
+  "rt_frm_egypt_to_arabia": {
+    "lblTemplate": "Route from Egypt to Arabia",
+    "mapxKey": "Route from Egypt to Arabia",
+    "gloss": {
+      "en": "Route from Egypt to Arabia",
+      "es": "La ruta de Egipto a Arabia",
+      "fr": "Itinéraire d'Égypte en Arabie"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "rt_frm_egypt_to_arabia"
+  },
+  "salamis": {
+    "lblTemplate": "{Salamis}",
+    "mapxKey": "Salamis"
+  },
+  "salim": {
+    "lblTemplate": "{Salim}",
+    "mapxKey": "Salim"
+  },
+  "salmone": {
+    "lblTemplate": "{Salmone}",
+    "mapxKey": "Salmone"
+  },
+  "samaria_city_nt": {
+    "lblTemplate": "{Samaria}",
+    "mapxKey": "Samaria"
+  },
+  "samaria_city_ot": {
+    "lblTemplate": "{Samaria}",
+    "mapxKey": "Samaria"
+  },
+  "samaria_region": {
+    "lblTemplate": "{Samaria.2}",
+    "mapxKey": "SAMARIA"
+  },
+  "samos": {
+    "lblTemplate": "{Samos}",
+    "mapxKey": "SAMOS"
+  },
+  "samothrace": {
+    "lblTemplate": "{Samothrace}",
+    "mapxKey": "SAMOTHRACE"
+  },
+  "sardinia": {
+    "lblTemplate": "{Sardinia}",
+    "mapxKey": ""
+  },
+  "sardis": {
+    "lblTemplate": "{Sardis}",
+    "mapxKey": "Sardis"
+  },
+  "sash_hp": {
+    "lblTemplate": "Sash",
+    "mapxKey": "Sash",
+    "gloss": {
+      "en": "Sash",
+      "es": "El cinturón",
+      "fr": "Ceinture"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "sash_hp"
+  },
+  "scale_k": {
+    "lblTemplate": "{ScaleK}",
+    "mapxKey": "Kilometers"
+  },
+  "scale_m": {
+    "lblTemplate": "{ScaleM}",
+    "mapxKey": "Miles"
+  },
+  "scripture_hp": {
+    "lblTemplate": "{R#EXO 28}",
+    "mapxKey": "Exodus 28",
+    "gloss": {
+      "en": "Exodus 28",
+      "es": "Éxodo 28",
+      "fr": "Exode 28"
+    },
+    "altTermIds": "scripture_hp"
+  },
+  "scripture_j1": {
+    "lblTemplate": "{R#ACT 13.4–14.28}",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Acts 13:4–14:28",
+      "es": "Hechos 13:4–14:28",
+      "fr": "Actes 13:4–14:28"
+    },
+    "altTermIds": "scripture_j1"
+  },
+  "scripture_j2": {
+    "lblTemplate": "{R#ACT 15.36–18.22}",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Acts 15:36–18:22",
+      "es": "Hechos 15:36–18:22",
+      "fr": "Actes 15:36–18:22"
+    },
+    "altTermIds": "scripture_j2"
+  },
+  "scripture_j3": {
+    "lblTemplate": "{R#ACT 18.23–21.17}",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Acts 18:23–21:17",
+      "es": "Hechos 18:23–21:17",
+      "fr": "Actes 18:23–21:17"
+    },
+    "altTermIds": "scripture_j3"
+  },
+  "scripture_j4": {
+    "lblTemplate": "{R#ACT 27.1–28.16}",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Acts 27:1–28:16",
+      "es": "Hechos 27.1–28:16",
+      "fr": "Actes 27:1–28:16"
+    },
+    "altTermIds": "scripture_j4"
+  },
+  "scripture_pent": {
+    "lblTemplate": "{R#ACT 2.5-11}",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Acts 2:5-11",
+      "es": "Hechos 2.5-11",
+      "fr": "Actes 2:5-11"
+    },
+    "altTermIds": "scripture_pent"
+  },
+  "scripture_soldier": {
+    "lblTemplate": "{R#EPH 6.10-18}",
+    "mapxKey": "Ephesians 6:10-18",
+    "gloss": {
+      "en": "Ephesians 6:10-18",
+      "es": "Efesios 6:10-18",
+      "fr": "Éphésiens 6:10-18"
+    },
+    "altTermIds": "scripture_soldier"
+  },
+  "scythia": {
+    "lblTemplate": "{Scythia}",
+    "mapxKey": ""
+  },
+  "sea_of_galilee_nt": {
+    "lblTemplate": "{GalileeSea}",
+    "mapxKey": "Sea of Galilee"
+  },
+  "sea_of_galilee_ot": {
+    "lblTemplate": "{GalileeSeaOT}",
+    "mapxKey": "Sea of Chinnereth (Galilee)"
+  },
+  "seleucia": {
+    "lblTemplate": "{Seleucia}",
+    "mapxKey": "Seleucia"
+  },
+  "sept": {
+    "lblTemplate": "Sept",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Sept",
+      "es": "sep",
+      "fr": "Sept"
+    },
+    "context": {
+      "en": "3 letter abbreviation for the month",
+      "es": "",
+      "fr": "Abréviation à 3 lettres du mois"
+    },
+    "altTermIds": "sept"
+  },
+  "serpents_pool": {
+    "lblTemplate": "{SerpentsPool}",
+    "mapxKey": "Serpent’s Pool"
+  },
+  "shavot": {
+    "lblTemplate": "Shavot",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Shavot",
+      "es": "Shavot",
+      "fr": "Shavot"
+    },
+    "context": {
+      "en": "Hebrew holiday",
+      "es": "",
+      "fr": "fête hébraïque"
+    },
+    "altTermIds": "shavot"
+  },
+  "shechem_nt": {
+    "lblTemplate": "{Shechem}",
+    "mapxKey": "Shechem"
+  },
+  "shechem_ot": {
+    "lblTemplate": "{Shechem}",
+    "mapxKey": "Shechem"
+  },
+  "sheep_gate": {
+    "lblTemplate": "{SheepGate}",
+    "mapxKey": "Sheep Gate"
+  },
+  "shem": {
+    "lblTemplate": "{Shem}",
+    "mapxKey": ""
+  },
+  "shield_faith": {
+    "lblTemplate": "{ShieldFaith}",
+    "mapxKey": "Shield of Faith"
+  },
+  "shiloh": {
+    "lblTemplate": "{Shiloh}",
+    "mapxKey": "Shiloh"
+  },
+  "shittim": {
+    "lblTemplate": "{Shittim}",
+    "mapxKey": "Shittim"
+  },
+  "shoes_gospel": {
+    "lblTemplate": "{ShoesGospel}",
+    "mapxKey": "Shoes of the Gospel of Peace"
+  },
+  "shunem": {
+    "lblTemplate": "{Shunem}",
+    "mapxKey": "Shunem"
+  },
+  "sicily": {
+    "lblTemplate": "{Sicily}",
+    "mapxKey": "SICILY"
+  },
+  "sidon_nt": {
+    "lblTemplate": "{Sidon}",
+    "mapxKey": "Sidon"
+  },
+  "sidon_ot": {
+    "lblTemplate": "{Sidon}",
+    "mapxKey": "Sidon"
+  },
+  "sidonians": {
+    "lblTemplate": "{Sidonians}",
+    "mapxKey": "SIDONIANS"
+  },
+  "simeon": {
+    "lblTemplate": "{TerritoryOfSimeon}",
+    "mapxKey": "SIMEON"
+  },
+  "sinai": {
+    "lblTemplate": "{Sinai}",
+    "mapxKey": "SINAI"
+  },
+  "siwan": {
+    "lblTemplate": "Siwan",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Siwan",
+      "es": "Siwan",
+      "fr": "Siwan"
+    },
+    "context": {
+      "en": "Hebrew holiday",
+      "es": "",
+      "fr": "fête hébraïque"
+    },
+    "altTermIds": "siwan"
+  },
+  "smyrna": {
+    "lblTemplate": "{Smyrna}",
+    "mapxKey": "Smyrna"
+  },
+  "solomons_pool": {
+    "lblTemplate": "{SolomonsPool}",
+    "mapxKey": "Solomon’s Pool"
+  },
+  "solomons_porch": {
+    "lblTemplate": "{SolomonsPortico}",
+    "mapxKey": "Solomon’s Porch"
+  },
+  "south": {
+    "lblTemplate": "{South}",
+    "mapxKey": "South"
+  },
+  "south_america": {
+    "lblTemplate": "{SouthAmerica}",
+    "mapxKey": ""
+  },
+  "south-east_kitchen": {
+    "lblTemplate": "{South-eastKitchen}",
+    "mapxKey": ""
+  },
+  "south-west_kitchen": {
+    "lblTemplate": "{South-westKitchen}",
+    "mapxKey": ""
+  },
+  "spain": {
+    "lblTemplate": "{Spain}",
+    "mapxKey": "Hispania (Spain)"
+  },
+  "stairs": {
+    "lblTemplate": "stairs",
+    "mapxKey": "stairs",
+    "gloss": {
+      "en": "stairs",
+      "es": "las escaleras",
+      "fr": "escaliers"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "stairs"
+  },
+  "storm": {
+    "lblTemplate": "Quiets storm ({r#MAT 8})",
+    "mapxKey": "Quiets storm (Mt 8)",
+    "gloss": {
+      "en": "Quiets storm (Mt 8)",
+      "es": "Jesús calma la tempestad (Mt 8)",
+      "fr": "L'orage se calme (Mt 8)"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "storm"
+  },
+  "succoth": {
+    "lblTemplate": "{Succoth}",
+    "mapxKey": "Succoth"
+  },
+  "sukkot": {
+    "lblTemplate": "Sukkot",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Sukkot",
+      "es": "Sucot",
+      "fr": "Souccot"
+    },
+    "context": {
+      "en": "Hebrew holiday",
+      "es": "",
+      "fr": "fête hébraïque"
+    },
+    "altTermIds": "sukkot"
+  },
+  "susa": {
+    "lblTemplate": "{Susa}",
+    "mapxKey": "Susa"
+  },
+  "sword_word": {
+    "lblTemplate": "{SwordWord}",
+    "mapxKey": "Sword of the Spirit (Word of God)"
+  },
+  "sychar": {
+    "lblTemplate": "{Sychar}",
+    "mapxKey": "Sychar"
+  },
+  "syebat": {
+    "lblTemplate": "Syebat",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Syebat",
+      "es": "Syebat",
+      "fr": "Syebat"
+    },
+    "context": {
+      "en": "Hebrew holiday",
+      "es": "",
+      "fr": "fête hébraïque"
+    },
+    "altTermIds": "syebat"
+  },
+  "syracuse": {
+    "lblTemplate": "{Syracuse}",
+    "mapxKey": "Syracuse"
+  },
+  "syria_nt": {
+    "lblTemplate": "{Syria}",
+    "mapxKey": "SYRIA"
+  },
+  "syria_ot": {
+    "lblTemplate": "{Syria.ot}",
+    "mapxKey": "SYRIA"
+  },
+  "syrtis": {
+    "lblTemplate": "{Syrtis}",
+    "mapxKey": "SYRTIS"
+  },
+  "taanach": {
+    "lblTemplate": "{Taanach}",
+    "mapxKey": "Taanach"
+  },
+  "tamar": {
+    "lblTemplate": "{Tamar}",
+    "mapxKey": "Tamar"
+  },
+  "tamus": {
+    "lblTemplate": "Tamus",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Tamus",
+      "es": "Tamus",
+      "fr": "Tamus"
+    },
+    "context": {
+      "en": "Hebrew holiday",
+      "es": "",
+      "fr": "fête hébraïque"
+    },
+    "altTermIds": "tamus"
+  },
+  "tappuah": {
+    "lblTemplate": "{Tappuah.2}",
+    "mapxKey": "Tappuah"
+  },
+  "tarsus": {
+    "lblTemplate": "{Tarsus}",
+    "mapxKey": "Tarsus"
+  },
+  "taurus_mtns": {
+    "lblTemplate": "{TaurusMtns}",
+    "mapxKey": "TAURUS MTNS"
+  },
+  "tebet": {
+    "lblTemplate": "Tebet",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Tebet",
+      "es": "Tebet",
+      "fr": "Tebet"
+    },
+    "context": {
+      "en": "Hebrew holiday",
+      "es": "",
+      "fr": "fête hébraïque"
+    },
+    "altTermIds": "tebet"
+  },
+  "tekoa": {
+    "lblTemplate": "{Tekoa}",
+    "mapxKey": "Tekoa"
+  },
+  "teman": {
+    "lblTemplate": "{Teman}",
+    "mapxKey": "Teman"
+  },
+  "temple": {
+    "lblTemplate": "{Temple}",
+    "mapxKey": "Temple"
+  },
+  "Temple1_table": {
+    "lblTemplate": "The Table of Showbread",
+    "mapxKey": "Table of Show Bread",
+    "gloss": {
+      "en": "The Table of Showbread",
+      "es": "La mesa del pan de la Presencia",
+      "fr": "La Table des Pains de Proposition"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "Temple1_table"
+  },
+  "Temple2_lamp": {
+    "lblTemplate": "The Lampstand",
+    "mapxKey": "Lampstand",
+    "gloss": {
+      "en": "The Lampstand",
+      "es": "El candelabro",
+      "fr": "Le lampadaire"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "Temple2_lamp"
+  },
+  "Temple3_altar": {
+    "lblTemplate": "The Altar of Incense",
+    "mapxKey": "Altar of Incense",
+    "gloss": {
+      "en": "The Altar of Incense",
+      "es": "El altar del incienso",
+      "fr": "L'autel des parfums"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "Temple3_altar"
+  },
+  "Temple4_curtain": {
+    "lblTemplate": "The Curtain",
+    "mapxKey": "",
+    "gloss": {
+      "en": "The Curtain",
+      "es": "La cortina",
+      "fr": "Le rideau"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "Temple4_curtain"
+  },
+  "Temple5_ark": {
+    "lblTemplate": "The Ark of the Covenant",
+    "mapxKey": "Ark of the Covenant",
+    "gloss": {
+      "en": "The Ark of the Covenant",
+      "es": "El arca del pacto",
+      "fr": "L'Arche d'Alliance"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "Temple5_ark"
+  },
+  "Temple6_cherubim": {
+    "lblTemplate": "The Cherubim",
+    "mapxKey": "",
+    "gloss": {
+      "en": "The Cherubim",
+      "es": "Los querubines",
+      "fr": "Les Chérubins"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "Temple6_cherubim"
+  },
+  "the_building": {
+    "lblTemplate": "The Building",
+    "mapxKey": "",
+    "gloss": {
+      "en": "The Building",
+      "es": "El edificio",
+      "fr": "Le bâtiment"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "the_building"
+  },
+  "the_negev": {
+    "lblTemplate": "{Negeb}",
+    "mapxKey": "THE NEGEV"
+  },
+  "theater": {
+    "lblTemplate": "Theater",
+    "mapxKey": "Theater",
+    "gloss": {
+      "en": "Theater",
+      "es": "El teatro",
+      "fr": "Théâtre"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "theater"
+  },
+  "thessalonica": {
+    "lblTemplate": "{Thessalonica}",
+    "mapxKey": "Thessalonica"
+  },
+  "thrace": {
+    "lblTemplate": "{Thrace}",
+    "mapxKey": "THRACE"
+  },
+  "three_taverns": {
+    "lblTemplate": "{ThreeTaverns}",
+    "mapxKey": "Three Taverns"
+  },
+  "thyatira": {
+    "lblTemplate": "{Thyatira}",
+    "mapxKey": "Thyatira"
+  },
+  "tiberias": {
+    "lblTemplate": "{Tiberias}",
+    "mapxKey": "Tiberias"
+  },
+  "tigris_river": {
+    "lblTemplate": "{Tigris}",
+    "mapxKey": "Tigris River"
+  },
+  "timnah": {
+    "lblTemplate": "{Timnah.1}",
+    "mapxKey": "Timnah"
+  },
+  "tirzah": {
+    "lblTemplate": "{Tirzah}",
+    "mapxKey": "Tirzah"
+  },
+  "tisyri": {
+    "lblTemplate": "Tisyri",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Tisyri",
+      "es": "Tisyri",
+      "fr": "Tisyri"
+    },
+    "context": {
+      "en": "Hebrew holiday",
+      "es": "",
+      "fr": "fête hébraïque"
+    },
+    "altTermIds": "tisyri"
+  },
+  "title_7church": {
+    "lblTemplate": "Seven Churches of Asia",
+    "mapxKey": "Seven Churches of Asia",
+    "gloss": {
+      "en": "Seven Churches of Asia",
+      "es": "Las siete iglesias de Asia",
+      "fr": "Sept églises d'Asie"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_7church"
+  },
+  "title_abraham_to_canaan": {
+    "lblTemplate": "Abraham’s Journey to Canaan",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Abraham’s Journey to Canaan",
+      "es": "El viaje de Abraham a Canaán",
+      "fr": "Le voyage d'Abraham vers Canaan"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_abraham_to_canaan"
+  },
+  "title_abraham_to_egypt": {
+    "lblTemplate": "Abraham Goes to Egypt",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Abraham Goes to Egypt",
+      "es": "Abraham va a Egipto",
+      "fr": "Abraham se rend en Égypte"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_abraham_to_egypt"
+  },
+  "title_africa": {
+    "lblTemplate": "{TitleAfrica}",
+    "mapxKey": ""
+  },
+  "title_ancient": {
+    "lblTemplate": "Abraham’s World",
+    "mapxKey": "Abraham’s World",
+    "gloss": {
+      "en": "The Ancient World (Abraham’s World)",
+      "es": "El mundo antiguo (El mundo de Abraham)",
+      "fr": "Le monde antique (le monde d’Abraham)"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_ancient"
+  },
+  "title_canaanHG": {
+    "lblTemplate": "Land of Canaan",
+    "mapxKey": "Canaan  (Time of the Patriarchs)",
+    "gloss": {
+      "en": "Land of Canaan",
+      "es": "La tierra de Canaán",
+      "fr": "Terre de Canaan"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_canaanHG"
+  },
+  "title_christsministry": {
+    "lblTemplate": "Events in Christ’s Ministry",
+    "mapxKey": "Events In Christ’s Ministry",
+    "gloss": {
+      "en": "Events in Christ’s Ministry",
+      "es": "Los acontecimientos en el ministerio de Cristo",
+      "fr": "Événements du ministère du Christ"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_christsministry"
+  },
+  "title_conquest": {
+    "lblTemplate": "The Conquest of Canaan",
+    "mapxKey": "The Conquest of Canaan",
+    "gloss": {
+      "en": "The Conquest of Canaan",
+      "es": "La conquista de Canaán",
+      "fr": "La conquête de Canaan"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_conquest"
+  },
+  "title_dn": {
+    "lblTemplate": "The Descendants of Noah",
+    "mapxKey": "",
+    "gloss": {
+      "en": "The Descendants of Noah",
+      "es": "Los descendientes de Noé",
+      "fr": "Les descendants de Noé"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_dn"
+  },
+  "title_exodus": {
+    "lblTemplate": "The Exodus from Egypt",
+    "mapxKey": "The Exodus from Egypt",
+    "gloss": {
+      "en": "The Exodus from Egypt",
+      "es": "El éxodo de Egipto",
+      "fr": "L'Exode d'Égypte"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_exodus"
+  },
+  "title_ezekiel_temple": {
+    "lblTemplate": "Ezekiel’s Temple",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Ezekiel’s Temple",
+      "es": "El templo de Ezequiel",
+      "fr": "Le temple d'Ézéchiel"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_ezekiel_temple"
+  },
+  "title_holy": {
+    "lblTemplate": "The Holy Land in the Time of Jesus Christ",
+    "mapxKey": "Israel in the Time of Jesus",
+    "gloss": {
+      "en": "The Holy Land in the Time of Jesus Christ",
+      "es": "La Tierra Santa en tiempos de Jesucristo",
+      "fr": "La Terre Sainte au temps de Jésus-Christ"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_holy"
+  },
+  "title_hp": {
+    "lblTemplate": "High Priest",
+    "mapxKey": "High Priest",
+    "gloss": {
+      "en": "High Priest",
+      "es": "El sumo sacerdote",
+      "fr": "Grand prêtre"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_hp"
+  },
+  "title_j0": {
+    "lblTemplate": "Paul’s Missionary Journeys",
+    "mapxKey": "Places Paul Visited",
+    "gloss": {
+      "en": "Paul’s Missionary Journeys",
+      "es": "Los viajes misioneros de Pablo",
+      "fr": "Les voyages missionnaires de Paul"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_j0"
+  },
+  "title_j1": {
+    "lblTemplate": "Paul’s First Journey",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Paul’s First Journey",
+      "es": "El primer viaje de Pablo",
+      "fr": "Le premier voyage de Paul"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_j1"
+  },
+  "title_j2": {
+    "lblTemplate": "Paul’s Second Journey",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Paul’s Second Journey",
+      "es": "El segundo viaje de Pablo",
+      "fr": "Le deuxième voyage de Paul"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_j2"
+  },
+  "title_j3": {
+    "lblTemplate": "Paul’s Third Journey",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Paul’s Third Journey",
+      "es": "El tercer viaje de Pablo",
+      "fr": "Le troisième voyage de Paul"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_j3"
+  },
+  "title_j4": {
+    "lblTemplate": "Paul’s Journey to Rome",
+    "mapxKey": "Paul's Fourth Journey (to Rome)",
+    "gloss": {
+      "en": "Paul’s Journey to Rome",
+      "es": "El viaje de Pablo a Roma",
+      "fr": "Le voyage de Paul à Rome"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_j4"
+  },
+  "title_jacob2haran": {
+    "lblTemplate": "Jacob’s Trip to Haran",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Jacob’s Trip to Haran",
+      "es": "El viaje de Jacob a Harán",
+      "fr": "Le voyage de Jacob à Haran"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_jacob2haran"
+  },
+  "title_jacobreturns": {
+    "lblTemplate": "Return of Jacob",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Return of Jacob",
+      "es": "El retorno de Jacob",
+      "fr": "Le retour de Jacob"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_jacobreturns"
+  },
+  "title_jerusalem_ill": {
+    "lblTemplate": "Jerusalem in the Time of Christ",
+    "mapxKey": "Jerusalem in the time of Christ",
+    "gloss": {
+      "en": "Jerusalem in the Time of Christ",
+      "es": "Jerusalén en tiempos de Cristo",
+      "fr": "Jérusalem au temps du Christ"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_jerusalem_ill"
+  },
+  "title_jewish_calendar": {
+    "lblTemplate": "Jewish Calendar",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Jewish Calendar",
+      "es": "Calendario judío",
+      "fr": "Calendrier juif"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_jewish_calendar"
+  },
+  "title_kingdoms": {
+    "lblTemplate": "Kingdoms of Israel and Judah",
+    "mapxKey": "Kingdoms of Israel and Judah",
+    "gloss": {
+      "en": "Kingdoms of Israel and Judah",
+      "es": "Los reinos de Israel y Judá",
+      "fr": "Royaumes d'Israël et de Juda"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_kingdoms"
+  },
+  "title_med": {
+    "lblTemplate": "The Mediterranean Area",
+    "mapxKey": "The Mediterranean Area",
+    "gloss": {
+      "en": "The Mediterranean Area",
+      "es": "El área mediterránea",
+      "fr": "La région méditerranéenne"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_med"
+  },
+  "title_pent": {
+    "lblTemplate": "Nations Whose Languages Were Heard at Pentecost",
+    "mapxKey": "Nations Whose Languages Were Heard at Pentecost",
+    "gloss": {
+      "en": "Nations Whose Languages Were Heard at Pentecost",
+      "es": "Pentecostés (Naciones cuyas lenguas se oyeron en Pentecostés)",
+      "fr": "Nations dont les langues ont été entendues à la Pentecôte"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_pent"
+  },
+  "title_roman_empire": {
+    "lblTemplate": "The Roman Empire during the time of Christ",
+    "mapxKey": "The Roman Empire during the time of Christ",
+    "gloss": {
+      "en": "The Roman Empire during the time of Christ",
+      "es": "El Imperio Romano en tiempos de Cristo",
+      "fr": "L'Empire romain à l'époque du Christ"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_roman_empire"
+  },
+  "title_ruth": {
+    "lblTemplate": "Israel and Moab at the time of Naomi and Ruth",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Israel and Moab at the time of Naomi and Ruth",
+      "es": "Israel y Moab en la época de Noemí y Rut",
+      "fr": "Israël et Moab à l'époque de Naomi et Ruth"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_ruth"
+  },
+  "title_soldier": {
+    "lblTemplate": "{TitleSoldier}",
+    "mapxKey": "The Armor of God"
+  },
+  "title_tabernacle": {
+    "lblTemplate": "{TitleTabernacle}",
+    "mapxKey": "The Tabernacle"
+  },
+  "title_temple1": {
+    "lblTemplate": "The Temple in the Time of Jesus Christ",
+    "mapxKey": "",
+    "gloss": {
+      "en": "The Temple in the Time of Jesus Christ",
+      "es": "El Templo en el tiempo de Jesucristo",
+      "fr": "Le Temple au temps de Jésus-Christ"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_temple1"
+  },
+  "title_temple2": {
+    "lblTemplate": "The Temple Buildings",
+    "mapxKey": "",
+    "gloss": {
+      "en": "The Temple Buildings",
+      "es": "Los edificios del templo",
+      "fr": "Les bâtiments du temple"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_temple2"
+  },
+  "title_temple3": {
+    "lblTemplate": "The Temple Itself",
+    "mapxKey": "",
+    "gloss": {
+      "en": "The Temple Itself",
+      "es": "El propio templo",
+      "fr": "Le Temple lui-même"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_temple3"
+  },
+  "title_world": {
+    "lblTemplate": "Map of the World",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Map of the World",
+      "es": "El mapa del mundo",
+      "fr": "Carte du monde"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_world"
+  },
+  "title_worldsimple": {
+    "lblTemplate": "The World",
+    "mapxKey": "",
+    "gloss": {
+      "en": "The World",
+      "es": "El Mundo",
+      "fr": "Le monde"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_worldsimple"
+  },
+  "tombs": {
+    "lblTemplate": "Tombs",
+    "mapxKey": "Tombs",
+    "gloss": {
+      "en": "Tombs",
+      "es": "Las tumbas",
+      "fr": "Tombeaux"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "tombs"
+  },
+  "tower_of_Antonia": {
+    "lblTemplate": "{AntoniaFortress}",
+    "mapxKey": ""
+  },
+  "towers_pool": {
+    "lblTemplate": "Tower’s Pool",
+    "mapxKey": "Tower’s Pool",
+    "gloss": {
+      "en": "Tower’s Pool",
+      "es": "La piscina de la Torre",
+      "fr": "Piscine de la tour"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "towers_pool"
+  },
+  "trachonitis": {
+    "lblTemplate": "{Trachonitis}",
+    "mapxKey": ""
+  },
+  "trade_routes": {
+    "lblTemplate": "Trade Routes",
+    "mapxKey": "Trade routes",
+    "gloss": {
+      "en": "Trade routes",
+      "es": "Las rutas comerciales",
+      "fr": "routes commerciales"
+    },
+    "context": {
+      "en": "Trade routes",
+      "es": "Las rutas comerciales",
+      "fr": "routes commerciales"
+    },
+    "altTermIds": "trade_routes"
+  },
+  "transfiguration": {
+    "lblTemplate": "Transfiguration? ({r#MRK 9})",
+    "mapxKey": "Transfiguration? (Mk 9)",
+    "gloss": {
+      "en": "Transfiguration? (Mk 9)",
+      "es": "¿La transfiguración? (Mc 9)",
+      "fr": "Transfiguration ? (Mc 9)"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "transfiguration"
+  },
+  "troas": {
+    "lblTemplate": "{Troas}",
+    "mapxKey": "Troas"
+  },
+  "tu_bav": {
+    "lblTemplate": "Tu B’Av",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Tu B’Av",
+      "es": "Tu B'Av",
+      "fr": "Tu B’Av"
+    },
+    "context": {
+      "en": "Hebrew holiday",
+      "es": "",
+      "fr": "fête hébraïque"
+    },
+    "altTermIds": "tu_bav"
+  },
+  "tu_bishvat": {
+    "lblTemplate": "Tu BiShvat",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Tu BiShvat",
+      "es": "Tu BiShvat",
+      "fr": "Tu BiShvat"
+    },
+    "context": {
+      "en": "Hebrew holiday",
+      "es": "",
+      "fr": "fête hébraïque"
+    },
+    "altTermIds": "tu_bishvat"
+  },
+  "tubal": {
+    "lblTemplate": "{Tubal}",
+    "mapxKey": ""
+  },
+  "tunic_hp": {
+    "lblTemplate": "Tunic of Fine Linen",
+    "mapxKey": "Tunic of Fine Linen",
+    "gloss": {
+      "en": "Tunic of Fine Linen",
+      "es": "La túnica de lino fino",
+      "fr": "Tunique en lin fin"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "tunic_hp"
+  },
+  "turban_hp": {
+    "lblTemplate": "Special Turban",
+    "mapxKey": "Special Turban",
+    "gloss": {
+      "en": "Special Turban",
+      "es": "El turbante especial",
+      "fr": "Turban spécial"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "turban_hp"
+  },
+  "tyre_nt": {
+    "lblTemplate": "{Tyre}",
+    "mapxKey": "Tyre"
+  },
+  "tyre_ot": {
+    "lblTemplate": "{Tyre}",
+    "mapxKey": "Tyre"
+  },
+  "tyropoeon_valley": {
+    "lblTemplate": "{TyropoeonValley}",
+    "mapxKey": "Tyropoeon Valley"
+  },
+  "ugarit": {
+    "lblTemplate": "{Ugarit}",
+    "mapxKey": "Ugarit"
+  },
+  "unleavened_bread": {
+    "lblTemplate": "Unleavened Bread",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Unleavened Bread",
+      "es": "",
+      "fr": ""
+    },
+    "context": {
+      "en": "Hebrew holiday",
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "unleavened_bread"
+  },
+  "unsuc_inv_of_canaan": {
+    "lblTemplate": "Unsuccessful invasion of Canaan",
+    "mapxKey": "Unsuccessful invasion of Canaan",
+    "gloss": {
+      "en": "Unsuccessful invasion of Canaan",
+      "es": "La invasión infructuosa de Canaán",
+      "fr": "Invasion infructueuse de Canaan"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "unsuc_inv_of_canaan"
+  },
+  "upper_room": {
+    "lblTemplate": "Upper Room",
+    "mapxKey": "Upper Room",
+    "gloss": {
+      "en": "Upper Room",
+      "es": "El cuarto en el piso de arriba",
+      "fr": "Chambre haute"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "upper_room"
+  },
+  "ur": {
+    "lblTemplate": "{Ur}",
+    "mapxKey": "Ur"
+  },
+  "valley_gate": {
+    "lblTemplate": "Valley Gate",
+    "mapxKey": "Valley Gate",
+    "gloss": {
+      "en": "Valley Gate",
+      "es": "Puerta del Valle",
+      "fr": "Porte de la Vallée"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "valley_gate"
+  },
+  "wall_agrippa": {
+    "lblTemplate": "Walls built by Agrippa I",
+    "mapxKey": "Walls built by Agrippa I",
+    "gloss": {
+      "en": "Walls built by Agrippa I",
+      "es": "Los muros construidos por Agripa I",
+      "fr": "Murs construits par Agrippa Ier"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "wall_agrippa"
+  },
+  "wall_jesus": {
+    "lblTemplate": "Walls at the time of Jesus",
+    "mapxKey": "Walls at the time of Jesus",
+    "gloss": {
+      "en": "Walls at the time of Jesus",
+      "es": "Los muros en tiempos de Jesús",
+      "fr": "Les murs à l'époque de Jésus"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "wall_jesus"
+  },
+  "wall_present": {
+    "lblTemplate": "Present day wall",
+    "mapxKey": "Present day wall",
+    "gloss": {
+      "en": "Present day wall",
+      "es": "El muro actual",
+      "fr": "Mur actuel"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "wall_present"
+  },
+  "wall_uncertain": {
+    "lblTemplate": "Wall of uncertain date",
+    "mapxKey": "Wall of uncertain date",
+    "gloss": {
+      "en": "Wall of uncertain date",
+      "es": "Muro de fecha incierta",
+      "fr": "Mur de date incertaine"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "wall_uncertain"
+  },
+  "water_gate": {
+    "lblTemplate": "Water Gate",
+    "mapxKey": "Water Gate",
+    "gloss": {
+      "en": "Water Gate",
+      "es": "La puerta de las Aguas",
+      "fr": "Porte d'eau"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "water_gate"
+  },
+  "way_of_shur": {
+    "lblTemplate": "Way of {Shur}",
+    "mapxKey": "Way of Shur",
+    "gloss": {
+      "en": "Way of Shur",
+      "es": "Camino de Shur",
+      "fr": "Voie de Shur"
+    },
+    "context": {
+      "en": "",
+      "es": "",
+      "fr": ""
+    }
+  },
+  "way_of_the_philistines": {
+    "lblTemplate": "Way of the Philistines",
+    "mapxKey": "Way of the Philistines",
+    "gloss": {
+      "en": "Way of the Philistines",
+      "es": "Camino de los filisteos",
+      "fr": "La voie des Philistins"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "way_of_the_philistines"
+  },
+  "well": {
+    "lblTemplate": "Woman at the well ({r#JHN 4})",
+    "mapxKey": "Woman at the well (Jn 4)",
+    "gloss": {
+      "en": "Woman at the well (Jn 4)",
+      "es": "La mujer junto al pozo (Jn 4)",
+      "fr": "La femme au puits (Jn 4)"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "well"
+  },
+  "west": {
+    "lblTemplate": "{West}",
+    "mapxKey": "West"
+  },
+  "widows_son": {
+    "lblTemplate": "Widow’s son raised ({r#LUK 7})",
+    "mapxKey": "Widow’s son raised (Lk 7)",
+    "gloss": {
+      "en": "Widow’s son raised (Lk 7)",
+      "es": "El hijo resucitado de la viuda (Lc 7)",
+      "fr": "Le fils de la veuve ressuscité (Lc 7)"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "widows_son"
+  },
+  "wilderness_of_paran": {
+    "lblTemplate": "{WildernessOfParan}",
+    "mapxKey": "Wilderness of Paran"
+  },
+  "wilderness_of_zin": {
+    "lblTemplate": "{Zin}",
+    "mapxKey": "Wilderness of Zin"
+  },
+  "wine": {
+    "lblTemplate": "Water turned to wine ({r#JHN 2})",
+    "mapxKey": "Water turned to wine (Jn 2)",
+    "gloss": {
+      "en": "Water turned to wine (Jn 2)",
+      "es": "El agua se convierte en vino (Jn 2)",
+      "fr": "L'eau changée en vin (Jn 2)"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "wine"
+  },
+  "yom_kippur": {
+    "lblTemplate": "Yom Kippur",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Yom Kippur",
+      "es": "Yom Kippur",
+      "fr": "Yom Kippour"
+    },
+    "context": {
+      "en": "Hebrew holiday",
+      "es": "",
+      "fr": "fête hébraïque"
+    },
+    "altTermIds": "yom_kippur"
+  },
+  "yom_teruah": {
+    "lblTemplate": "Yom Teruah",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Yom Teruah",
+      "es": "Yom Teruah",
+      "fr": "Yom Teruah"
+    },
+    "context": {
+      "en": "Hebrew holiday",
+      "es": "",
+      "fr": "fête hébraïque"
+    },
+    "altTermIds": "yom_teruah"
+  },
+  "your_country": {
+    "lblTemplate": "Your Country",
+    "mapxKey": "",
+    "gloss": {
+      "en": "Your Country",
+      "es": "Su país",
+      "fr": "Votre pays"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "your_country"
+  },
+  "zacchaeus": {
+    "lblTemplate": "Visits Zacchaeus ({r#LUK 19})",
+    "mapxKey": "Visits Zacchaeus (Lk 19)",
+    "gloss": {
+      "en": "Visits Zacchaeus (Lk 19)",
+      "es": "La visita a Zaqueo (Lc 19)",
+      "fr": "Visite à Zachée (Lc 19)"
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "zacchaeus"
+  },
+  "zaphon": {
+    "lblTemplate": "{Zaphon}",
+    "mapxKey": "Zaphon"
+  },
+  "zarephath_nt": {
+    "lblTemplate": "{Zarephath}",
+    "mapxKey": "Zarephath"
+  },
+  "zarephath_ot": {
+    "lblTemplate": "{Zarephath}",
+    "mapxKey": "Zarephath"
+  },
+  "zebulun": {
+    "lblTemplate": "{TerritoryOfZebulun}",
+    "mapxKey": "ZEBULUN"
+  },
+  "ziklag": {
+    "lblTemplate": "{q#Ziklag}",
+    "mapxKey": "Ziklag",
+    "gloss": {
+      "en": "Ziklag?",
+      "es": "Siclag?",
+      "fr": "Ziklag?"
+    },
+    "context": {
+      "en": "(uncertain location)"
+    }
+  },
+  "zoar": {
+    "lblTemplate": "{Zoar}",
+    "mapxKey": "Zoar"
+  },
+  "zobah": {
+    "lblTemplate": "{Zobah}",
+    "mapxKey": "ZOBAH"
+  },
+  "babel": {
+    "lblTemplate": "{Babel}",
+    "mapxKey": "Babel"
+  },
+  "salem": {
+    "lblTemplate": "{Salem}",
+    "mapxKey": "Salem"
+  },
+  "mt_hor": {
+    "lblTemplate": "{HorMount}",
+    "mapxKey": "Mt. Hor"
+  },
+  "title_acts8": {
+    "lblTemplate": "Acts Chapter 8",
+    "mapxKey": "Acts Chapter 8",
+    "gloss": {
+      "en": "Acts Chapter 8",
+      "es": "",
+      "fr": ""
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_acts8"
+  },
+  "amalek": {
+    "lblTemplate": "{Amalek}",
+    "mapxKey": "AMALEK"
+  },
+  "berothai": {
+    "lblTemplate": "{Berothai}",
+    "mapxKey": "Berothai"
+  },
+  "beth-aven": {
+    "lblTemplate": "{Beth-aven.2}",
+    "mapxKey": "Beth-aven"
+  },
+  "bezek": {
+    "lblTemplate": "{Bezek.2}",
+    "mapxKey": "Bezek"
+  },
+  "brook_besor": {
+    "lblTemplate": "{Besor}",
+    "mapxKey": "Brook Besor"
+  },
+  "title_samuel_david": {
+    "lblTemplate": "Cities In The Time of Samuel and David",
+    "mapxKey": "Cities In The Time of Samuel and David",
+    "gloss": {
+      "en": "Cities In The Time of Samuel and David",
+      "es": "",
+      "fr": ""
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_samuel_david"
+  },
+  "maon_desert": {
+    "lblTemplate": "{MaonDesert}",
+    "mapxKey": "Desert of Maon"
+  },
+  "dumah": {
+    "lblTemplate": "{Dumah.2}",
+    "mapxKey": "Dumah"
+  },
+  "ebenezer": {
+    "lblTemplate": "{Ebenezer}",
+    "mapxKey": "Ebenezer"
+  },
+  "title_galilee": {
+    "lblTemplate": "Galilee at the time of Jesus",
+    "mapxKey": "Galilee at the time of Jesus",
+    "gloss": {
+      "en": "Galilee at the time of Jesus",
+      "es": "",
+      "fr": ""
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_galilee"
+  },
+  "geba": {
+    "lblTemplate": "{Geba}",
+    "mapxKey": "Geba"
+  },
+  "gerar": {
+    "lblTemplate": "{Gerar}",
+    "mapxKey": "Gerar"
+  },
+  "geshur": {
+    "lblTemplate": "{Geshur}",
+    "mapxKey": "Geshur"
+  },
+  "havilah": {
+    "lblTemplate": "{Havilah}",
+    "mapxKey": "HAVILAH"
+  },
+  "title_israel_tribes": {
+    "lblTemplate": "Israel's Tribal Borders",
+    "mapxKey": "Israel's Tribal Borders",
+    "gloss": {
+      "en": "Israel's Tribal Borders",
+      "es": "",
+      "fr": ""
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_israel_tribes"
+  },
+  "jebus": {
+    "lblTemplate": "{Jebus} ({Jerusalem})",
+    "mapxKey": "Jebus (Jerusalem)",
+    "gloss": {
+      "en": "Jebus (Jerusalem)",
+      "es": "",
+      "fr": ""
+    },
+    "context": {
+      "en": "Jebus is a town of the Jebusites that later became Jerusalem.",
+      "es": "",
+      "fr": ""
+    }
+  },
+  "jonah": {
+    "lblTemplate": "{Jonah}",
+    "mapxKey": "Jonah"
+  },
+  "keilah": {
+    "lblTemplate": "{Keilah}",
+    "mapxKey": "Keilah"
+  },
+  "kenite": {
+    "lblTemplate": "{Kenite}",
+    "mapxKey": "KENITE"
+  },
+  "lo-debar": {
+    "lblTemplate": "{Lo-debar}",
+    "mapxKey": "Lo-debar"
+  },
+  "maacah": {
+    "lblTemplate": "{Maacah}",
+    "mapxKey": "Maacah"
+  },
+  "maon": {
+    "lblTemplate": "{Maon}",
+    "mapxKey": "Maon"
+  },
+  "michmash": {
+    "lblTemplate": "{Michmash}",
+    "mapxKey": "Michmash"
+  },
+  "paran": {
+    "lblTemplate": "{Paran}",
+    "mapxKey": "Paran"
+  },
+  "rehoboth": {
+    "lblTemplate": "{Rehoboth}",
+    "mapxKey": "Rehoboth"
+  },
+  "shur": {
+    "lblTemplate": "{Shur}",
+    "mapxKey": "Shur"
+  },
+  "socoh": {
+    "lblTemplate": "{Socoh}",
+    "mapxKey": "Socoh"
+  },
+  "tarshish": {
+    "lblTemplate": "{Tarshish}",
+    "mapxKey": "Tarshish"
+  },
+  "telaim": {
+    "lblTemplate": "{Telaim}",
+    "mapxKey": "Telaim"
+  },
+  "title_exodus_and_canaan": {
+    "lblTemplate": "The Exodus and Canaan",
+    "mapxKey": "The Exodus and Canaan",
+    "gloss": {
+      "en": "The Exodus and Canaan",
+      "es": "",
+      "fr": ""
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_exodus_and_canaan"
+  },
+  "title_samuel_to_david": {
+    "lblTemplate": "Time of Samuel to David",
+    "mapxKey": "Time of Samuel to David",
+    "gloss": {
+      "en": "Time of Samuel to David",
+      "es": "",
+      "fr": ""
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "title_samuel_to_david"
+  },
+  "tob": {
+    "lblTemplate": "{Tob}",
+    "mapxKey": "Tob"
+  },
+  "valley_elah": {
+    "lblTemplate": "{ElahValley}",
+    "mapxKey": "Valley of Elah"
+  },
+  "ziph": {
+    "lblTemplate": "{Ziph}",
+    "mapxKey": "Ziph"
+  },
+  "rome_country": {
+    "lblTemplate": "Rome",
+    "mapxKey": "Rome",
+    "gloss": {
+      "en": "Rome",
+      "es": "",
+      "fr": ""
+    },
+    "context": {
+      "es": "",
+      "fr": ""
+    },
+    "altTermIds": "rome_country"
+  }
+}

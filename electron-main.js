@@ -63,6 +63,162 @@ let curProjectFolder = '';
 let settings = {};
 // let templatesDir = path.join(app.getPath('pictures'), '!All Map Samples');
 
+// Digit conversion mappings for 19 writing scripts
+const digitScripts = {
+  Arab: ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'],
+  Beng: ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'],
+  Deva: ['०', '१', '२', '३', '४', '५', '६', '७', '८', '९'],
+  Gujr: ['૦', '૧', '૨', '૩', '૪', '૫', '૬', '૭', '૮', '૯'],
+  Guru: ['੦', '੧', '੨', '੩', '੪', '੫', '੬', '੭', '੮', '੯'],
+  Knda: ['೦', '೧', '೨', '೩', '೪', '೫', '೬', '೭', '೮', '೯'],
+  Khmr: ['០', '១', '២', '៣', '៤', '៥', '៦', '៧', '៨', '៩'],
+  Laoo: ['໐', '໑', '໒', '໓', '໔', '໕', '໖', '໗', '໘', '໙'],
+  Limb: ['᥆', '᥇', '᥈', '᥉', '᥊', '᥋', '᥌', '᥍', '᥎', '᥏'],
+  Mlym: ['൦', '൧', '൨', '൩', '൪', '൫', '൬', '൭', '൮', '൯'],
+  Mong: ['᠐', '᠑', '᠒', '᠓', '᠔', '᠕', '᠖', '᠗', '᠘', '᠙'],
+  Mymr: ['၀', '၁', '၂', '၃', '၄', '၅', '၆', '၇', '၈', '၉'],
+  Orya: ['୦', '୧', '୨', '୩', '୪', '୫', '୬', '୭', '୮', '୯'],
+  Taml: ['௦', '௧', '௨', '௩', '௪', '௫', '௬', '௭', '௮', '௯'],
+  Telu: ['౦', '౧', '౨', '౩', '౪', '౫', '౬', '౭', '౮', '౯'],
+  Thai: ['๐', '๑', '๒', '๓', '๔', '๕', '๖', '๗', '๘', '๙'],
+  Tibt: ['༠', '༡', '༢', '༣', '༤', '༥', '༦', '༧', '༨', '༩'],
+  Aran: ['٠', '١', '٢', '٣', '۴', '۵', '۶', '٧', '٨', '٩'],
+  Arabext: ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹']
+};
+
+// Convert Western digits (0-9) to specified script
+function convertDigits(numberString, scriptCode) {
+  if (!scriptCode || !digitScripts[scriptCode]) {
+    return numberString;
+  }
+  const digits = digitScripts[scriptCode];
+  return numberString.replace(/\d/g, digit => digits[parseInt(digit)]);
+}
+
+// Book abbreviations mapping (loaded from BookNames.xml)
+let bookAbbrev = {};
+let bookShort = {};
+
+function tokenizeBibleRefs(str) {
+  // Remove all whitespace first
+  const clean = str.replace(/\s/g, '');
+
+  const tokens = [];
+  let i = 0;
+
+  const BOOK_REGEX = /^[1-4]?[A-Z]{2,3}/;  // e.g., MAT, LUK, 2CH, 1KI
+  const NUM_REGEX  = /^\d+/;
+  const SEP_REGEX  = /^[:.,;–—-]/;        // all your separators + dashes
+
+  while (i < clean.length) {
+    const rest = clean.slice(i);
+
+    // 1. Book code
+    let match = rest.match(BOOK_REGEX);
+    if (match) {
+      tokens.push({ type: 'book', value: match[0] });
+      i += match[0].length;
+      continue;
+    }
+
+    // 2. Number
+    match = rest.match(NUM_REGEX);
+    if (match) {
+      tokens.push({ type: 'num', value: match[0] });
+      i += match[0].length;
+      continue;
+    }
+
+    // 3. Separator
+    match = rest.match(SEP_REGEX);
+    if (match) {
+      const sepChar = match[0];
+
+      let value = sepChar;
+      let type = 'sep';
+
+      // Special rule: ; followed directly by a book code → becomes passage separator "#"
+      if (sepChar === ';' && clean.slice(i + 1).match(BOOK_REGEX)) {
+        value = '#';
+        // type stays 'sep' — or you could use 'passageSep' if you want to distinguish
+      }
+
+      tokens.push({ type, value });
+      i += sepChar.length;
+      continue;
+    }
+
+    // Fallback (should never happen with valid input)
+    i++;
+  }
+
+  return tokens;
+}
+
+// Convert scripture reference to vernacular format
+// useShort: true for R# (short names), false for r# (abbreviated names)
+function vernRef(refString, useShort = false) {
+  // console.log(`[vernRef] Input: "${refString}", useShort: ${useShort}`);
+  // console.log(`[vernRef] Settings:`, { cv: settings.cv, vrange: settings.vrange, crange: settings.crange, nosp: settings.nosp, fp: settings.fp });
+  // console.log(`[vernRef] Book abbreviations loaded:`, Object.keys(bookAbbrev).length, useShort ? '(short)' : '(abbreviated)');
+  
+  // Tokenize the reference string
+  const tokens = tokenizeBibleRefs(refString);
+
+    
+  // Transform tokens based on settings
+  let result = '';
+  
+  for (let i = 0; i < tokens.length; i++) {
+    const token = tokens[i];
+    
+    if (token.type === 'book') {
+      // Replace book code with appropriate name (short or abbreviated)
+      let bookName;
+      if (useShort) {
+        // R# - prefer short name, fallback to abbreviated, then code
+        bookName = bookShort[token.value] || bookAbbrev[token.value] || token.value;
+      } else {
+        // r# - prefer abbreviated name, fallback to short, then code
+        bookName = bookAbbrev[token.value] || bookShort[token.value] || token.value;
+      }
+      result += bookName;
+      
+      // Add space after book name if nosp is false
+      if (!settings.nosp) {
+        result += ' ';
+      }
+    } else if (token.type === 'num') {
+      // Convert digits to script if fp is set
+      result += convertDigits(token.value, settings.digits);
+    } else if (token.value === '.') {
+      // Chapter-verse separator
+      result += settings.cv || ':';
+    } else if (token.value === ',') {
+      // sequence indicator
+      result += settings.seq || ',';
+    } else if (token.value === '-') {
+      // Verse range separator
+      result += settings.vrange || '-';
+    } else if (token.value === '–') {
+      // Chapter range separator
+      result += settings.crange || '–';
+    } else if (token.value === '#') {
+      // Book separator
+      result += settings.bsep || '; ';
+    } else if (token.value === ';') {
+      // Chapter separator
+      result += settings.csep || '; ';
+    } else {
+      // Log an unexpected token value
+      console.warn(`[vernRef] Unexpected token value: "${token.value}"`);
+    }
+  }
+  // Append final punctuation
+  result += settings.fp || '';
+  return result;
+}
+
 // Reference to the main window for focus restoration
 let mainWindow = null;
 
@@ -119,6 +275,75 @@ async function loadSettings(projectFolder) {
     if (defaultFontMatch) {
       settings.defaultFont = defaultFontMatch[1];
     }
+    
+    // Extract reference formatting properties
+    const nospMatch = rawContents.match(/<NoSpaceBetweenBookAndChapter>(True|False)<\/NoSpaceBetweenBookAndChapter>/);
+    if (nospMatch) {
+      settings.nosp = nospMatch[1] === 'True';
+    }
+    
+    const cvMatch = rawContents.match(/<ChapterVerseSeparator>(.*?)<\/ChapterVerseSeparator>/);
+    if (cvMatch) {
+      settings.cv = cvMatch[1];
+    }
+    
+    const seqMatch = rawContents.match(/<SequenceIndicator>(.*?)<\/SequenceIndicator>/);
+    if (seqMatch) {
+      settings.seq = seqMatch[1];
+    }
+    
+    const vrangeMatch = rawContents.match(/<RangeIndicator>(.*?)<\/RangeIndicator>/);
+    if (vrangeMatch) {
+      settings.vrange = vrangeMatch[1];
+    }
+    
+    const crangeMatch = rawContents.match(/<ChapterRangeSeparator>(.*?)<\/ChapterRangeSeparator>/);
+    if (crangeMatch) {
+      settings.crange = crangeMatch[1];
+    }
+    
+    const bsepMatch = rawContents.match(/<BookSequenceSeparator>(.*?)<\/BookSequenceSeparator>/);
+    if (bsepMatch) {
+      settings.bsep = bsepMatch[1];
+    }
+    
+    const csepMatch = rawContents.match(/<ChapterSequenceSeparator>(.*?)<\/ChapterSequenceSeparator>/);
+    if (csepMatch) {
+      settings.csep = csepMatch[1];
+    }
+    
+    const fpMatch = rawContents.match(/<ReferenceFinalPunctuation>(.*?)<\/ReferenceFinalPunctuation>/);
+    if (fpMatch) {
+      settings.fp = fpMatch[1];
+    }
+
+    // Temporarily hard-code digits to Western
+    settings.digits = 'Latn';
+    
+    // Load book names from BookNames.xml
+    const bookNamesPath = path.join(curProjectFolder, 'BookNames.xml');
+    if (fs.existsSync(bookNamesPath)) {
+      try {
+        const bookNamesXml = await fs.promises.readFile(bookNamesPath, 'utf8');
+        const parser = new xml2js.Parser();
+        const bookNamesData = await parser.parseStringPromise(bookNamesXml);
+        
+        bookAbbrev = {};
+        bookShort = {};
+        if (bookNamesData.BookNames && bookNamesData.BookNames.book) {
+          for (const book of bookNamesData.BookNames.book) {
+            const code = book.$.code;
+            // Store both abbreviated and short names
+            bookAbbrev[code] = book.$.abbr || book.$.short || code;
+            bookShort[code] = book.$.short || book.$.abbr || code;
+          }
+        }
+        console.log(`[Settings] Loaded ${Object.keys(bookAbbrev).length} book names (short & abbreviated) from BookNames.xml`);
+      } catch (error) {
+        console.error(`[Settings] Failed to parse BookNames.xml:`, error);
+      }
+    }
+    
     console.log(`[Settings] Loaded settings from ${settingsPath}`, settings);
   } catch (error) {
     console.error(`[Settings] Failed to load settings from ${settingsPath}:`, error);
@@ -419,8 +644,7 @@ function createWindow() {
   if (isDev) {
     // For development: load React dev server
     win.loadURL('http://localhost:3000');
-    // Open DevTools in development mode
-    win.webContents.openDevTools();
+    // win.webContents.openDevTools(); // DevTools disabled by default; uncomment to enable
   } else {
     // For production: load built files
     const indexPath = path.join(__dirname, 'index.html');
@@ -607,7 +831,6 @@ function bookName(bookNum) {
   let start = (bookNum * 6) + (settings.use41 ? 0 : 2);
   let length = (settings.useMAT ? 3 : 0) + (settings.use41 ? 2 : 0);
   const bookScheme = bookSchemes.slice(start, start + length);
-  console.log(`[BookName] Book number: ${bookNum}, Start: ${start}, Length: ${length}, Use MAT: ${settings.useMAT}, Use 41: ${settings.use41}, Book scheme: ${bookScheme}, pre: ${settings.pre}, post: ${settings.post}`);
   return path.join(curProjectFolder, settings.pre + bookScheme + settings.post);
 }
 
@@ -736,12 +959,14 @@ ipcMain.handle('load-labels-from-idml-txt', async (event, projectFolder, templat
   try {
     const projectName = settings.name;
     const filename = `${templateName} @${projectName}.idml.txt`;
+    const jsonFilename = `${templateName} @${projectName}.idml.json`;
     const sharedLabelerPath = path.join(projectFolder, 'shared', 'labeler');
     const filePath = path.join(sharedLabelerPath, filename);
+    const jsonFilePath = path.join(sharedLabelerPath, jsonFilename);
     
     if (!fs.existsSync(filePath)) {
       console.log(`.IDML.TXT file not found: ${filePath}`);
-      return { success: true, labels: null };
+      return { success: true, labels: null, opCodes: null };
     }
     
     // Read and decode the file
@@ -764,7 +989,7 @@ ipcMain.handle('load-labels-from-idml-txt', async (event, projectFolder, templat
     const lines = fileText.split('\n').map(line => line.trim()).filter(line => line.length > 0);
     if (lines.length < 2) {
       console.log('Invalid .IDML.TXT file format');
-      return { success: true, labels: null };
+      return { success: true, labels: null, opCodes: null };
     }
     
     const mergeKeys = lines[0].split('\t');
@@ -775,11 +1000,26 @@ ipcMain.handle('load-labels-from-idml-txt', async (event, projectFolder, templat
       for (let i = 0; i < mergeKeys.length; i++) {
         labels[mergeKeys[i]] = verns[i];
       }
+      
+      // Try to load JSON file with opCodes
+      let opCodes = {};
+      if (fs.existsSync(jsonFilePath)) {
+        try {
+          const jsonContent = fs.readFileSync(jsonFilePath, 'utf8');
+          const jsonData = JSON.parse(jsonContent);
+          opCodes = jsonData.opCodes || {};
+          console.log(`Loaded opCodes from ${jsonFilename}:`, opCodes);
+        } catch (jsonError) {
+          console.error('Error reading JSON file:', jsonError);
+          // Continue without opCodes if JSON fails to parse
+        }
+      }
+      
       console.log(`Loaded labels from ${filename}:`, labels);
-      return { success: true, labels };
+      return { success: true, labels, opCodes };
     } else {
       console.log('Mismatch between merge keys and vernacular labels');
-      return { success: true, labels: null };
+      return { success: true, labels: null, opCodes: null };
     }
   } catch (e) {
     console.error('Error loading .IDML.TXT file:', e);
@@ -788,11 +1028,12 @@ ipcMain.handle('load-labels-from-idml-txt', async (event, projectFolder, templat
 });
 
 // Save labels to .IDML.TXT file in shared/labeler folder
-ipcMain.handle('save-labels-to-idml-txt', async (event, projectFolder, templateName, labels) => {
+ipcMain.handle('save-labels-to-idml-txt', async (event, projectFolder, templateName, labels, opCodes = {}) => {
   await loadSettings(projectFolder);
   try {
     const projectName = settings.name;
     const filename = `${templateName} @${projectName}.idml.txt`;
+    const jsonFilename = `${templateName} @${projectName}.idml.json`;
     const sharedPath = path.join(projectFolder, 'shared');
     const sharedLabelerPath = path.join(sharedPath, 'labeler');
     
@@ -805,6 +1046,7 @@ ipcMain.handle('save-labels-to-idml-txt', async (event, projectFolder, templateN
     }
     
     const filePath = path.join(sharedLabelerPath, filename);
+    const jsonFilePath = path.join(sharedLabelerPath, jsonFilename);
     
     // Build IDML data merge format
     const mergeKeys = Object.keys(labels);
@@ -817,8 +1059,14 @@ ipcMain.handle('save-labels-to-idml-txt', async (event, projectFolder, templateN
     // Write with BOM and UTF-16 LE encoding
     await fs.promises.writeFile(filePath, '\uFEFF' + data, { encoding: 'utf16le' });
     
-    console.log(`Labels saved to ${filename}`);
-    return { success: true, filePath };
+    // Save JSON file with opCodes
+    const jsonData = {
+      opCodes: opCodes || {}
+    };
+    await fs.promises.writeFile(jsonFilePath, JSON.stringify(jsonData, null, 2), { encoding: 'utf8' });
+    
+    console.log(`Labels saved to ${filename} and ${jsonFilename}`);
+    return { success: true, filePath, jsonFilePath };
   } catch (e) {
     console.error('Error saving .IDML.TXT file:', e);
     return { success: false, error: e.message };
@@ -1486,6 +1734,74 @@ ipcMain.handle('save-to-json', async (event, jsonPath, jsonFilename, settings) =
   return saveToJson(jsonPath, jsonFilename, settings);
 });
 
+// Handler to save JSON file
+ipcMain.handle('save-json-file', async (event, filePath, data) => {
+  try {
+    const normalizedPath = path.normalize(filePath);
+    console.log(`Saving JSON file to: ${normalizedPath}`);
+    
+    // Ensure directory exists
+    const dir = path.dirname(normalizedPath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    
+    // Write JSON file
+    fs.writeFileSync(normalizedPath, JSON.stringify(data, null, 2), 'utf8');
+    console.log(`Successfully saved JSON file: ${normalizedPath}`);
+    
+    return { success: true };
+  } catch (error) {
+    console.error(`Error saving JSON file: ${error.message}`);
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('read-json-file', async (event, filePath) => {
+  try {
+    const normalizedPath = path.normalize(filePath);
+    console.log(`Reading JSON file from: ${normalizedPath}`);
+    
+    // Check if file exists
+    if (!fs.existsSync(normalizedPath)) {
+      throw new Error(`File not found: ${normalizedPath}`);
+    }
+    
+    // Read and parse JSON file
+    const content = fs.readFileSync(normalizedPath, 'utf8');
+    const data = JSON.parse(content);
+    console.log(`Successfully read JSON file: ${normalizedPath}`);
+    
+    return data;
+  } catch (error) {
+    console.error(`Error reading JSON file: ${error.message}`);
+    throw error;
+  }
+});
+
+// Handler for converting digits to specified script
+ipcMain.handle('convert-digits', async (event, projectFolder, numberString) => {
+  try {
+    await loadSettings(projectFolder);
+    const scriptCode = settings.fp || null;
+    return convertDigits(numberString, scriptCode);
+  } catch (error) {
+    console.error(`Error converting digits:`, error);
+    return numberString; // Return original on error
+  }
+});
+
+// Handler for converting scripture reference to vernacular format
+ipcMain.handle('vern-ref', async (event, projectFolder, refString, useShort = false) => {
+  try {
+    await loadSettings(projectFolder);
+    return vernRef(refString, useShort);
+  } catch (error) {
+    console.error(`Error converting reference:`, error);
+    return refString; // Return original on error
+  }
+});
+
 // Handler to check path status
 ipcMain.handle('stat-path', async (event, filePath) => {
   try {
@@ -2151,14 +2467,14 @@ ipcMain.handle('getDefaultTemplateFolder', async (event) => {
       const contents = fs.readdirSync(workingDir);
       debugInfo.push(`Working dir contents (${contents.length} items): ${contents.slice(0, 10).join(', ')}${contents.length > 10 ? '...' : ''}`);
       
-      // Specifically check for _LabelerTemplates in the list
-      const hasTemplateFolder = contents.includes('_LabelerTemplates');
-      debugInfo.push(`_LabelerTemplates in directory listing: ${hasTemplateFolder}`);
+      // Specifically check for _LabelerCollections in the list
+      const hasTemplateFolder = contents.includes('_LabelerCollections');
+      debugInfo.push(`_LabelerCollections in directory listing: ${hasTemplateFolder}`);
     } catch (err) {
       debugInfo.push(`Failed to read working dir: ${err.message}`);
     }
     
-    const templateFolderPath = path.join(workingDir, '_LabelerTemplates');
+    const templateFolderPath = path.join(workingDir, '_LabelerCollections');
     debugInfo.push(`Template folder path: ${templateFolderPath}`);
     
     try {

@@ -57,7 +57,7 @@ export default function TableView({
               const isSelected = selectedLabelIndex === label.idx;
               return (
                 <tr
-                  key={label.termId}
+                  key={label.mergeKey}
                   style={{
                     fontWeight: isSelected ? 'bold' : 'normal',
                     cursor: 'pointer',
@@ -75,7 +75,12 @@ export default function TableView({
                       ref={el => (inputRefs.current[i] = el)}
                       type="text"
                       value={label.vernLabel || ''}
-                      onChange={e => onUpdateVernacular(label.termId, e.target.value)}
+                      onChange={e => onUpdateVernacular(
+                        label.mergeKey, 
+                        label.lblTemplate || label.mergeKey, 
+                        e.target.value,
+                        label.opCode || 'sync'
+                      )}
                       onFocus={() => onSelectLabel(label)}
                       onKeyDown={e => {
                         if (e.key === 'ArrowDown') {
@@ -93,11 +98,32 @@ export default function TableView({
                     />{' '}
                   </td>
                   <Frac
-                    value={getMatchTally(
-                      termRenderings[label.termId],
-                      collectionManager.getRefs(label.mergeKey, collectionId),
-                      extractedVerses
-                    )}
+                    value={(() => {
+                      // Aggregate match tallies from all terms in all placeNames
+                      let totalMatches = 0;
+                      let totalRefs = 0;
+                      let anyDenials = false;
+                      
+                      if (label.placeNameIds && label.placeNameIds.length > 0) {
+                        label.placeNameIds.forEach(placeNameId => {
+                          const terms = collectionManager.getTermsForPlace(placeNameId, collectionId) || [];
+                          terms.forEach(term => {
+                            if (termRenderings[term.termId]) {
+                              const [matches, refs, denials] = getMatchTally(
+                                termRenderings[term.termId],
+                                term.refs || [],
+                                extractedVerses
+                              );
+                              totalMatches += matches;
+                              totalRefs += refs;
+                              anyDenials = anyDenials || denials;
+                            }
+                          });
+                        });
+                        return [totalMatches, totalRefs, anyDenials];
+                      }
+                      return null;
+                    })()}
                   />
                   <td>
                     <span

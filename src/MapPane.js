@@ -268,6 +268,13 @@ export default function MapPane({
       const yLeaflet = imageHeight - label.y;
       return { ...label, yLeaflet };
     });
+  
+  // Debug: Log first 3 labels to see their status values
+  if (transformedLabels.length > 0) {
+    const labelInfo = transformedLabels.slice(0, 3).map(l => `${l.mergeKey}:${l.status}`).join(', ');
+    console.log('[MapPane] Rendering with labels:', labelInfo);
+  }
+  
   return (
     <MapContainer
       crs={crs}
@@ -324,7 +331,7 @@ export default function MapPane({
       {transformedLabels.length > 0
         ? transformedLabels.map(label => (
             <Marker
-              key={label.termId}
+              key={`${label.mergeKey}-${label.status}`}
               position={[label.yLeaflet, label.x]}
               icon={createLabel(
                 label.vernLabel || `(${inLang(label.gloss, lang)})`,
@@ -335,15 +342,33 @@ export default function MapPane({
                 selectedLabelIndex === label.idx,
                 labelScale,
                 labelOpacity,
-                showFrac
-                  ? frac(
-                      getMatchTally(
-                        termRenderings[label.termId],
-                        collectionManager.getRefs(label.mergeKey, collectionId),
-                        extractedVerses
-                      ),
-                      true
-                    )
+                label.opCode,
+                label.lines,
+                showFrac && label.placeNameIds?.length > 0
+                  ? (() => {
+                      // Aggregate match tallies from all terms in all placeNames
+                      let totalMatches = 0;
+                      let totalRefs = 0;
+                      let anyDenials = false;
+                      
+                      label.placeNameIds.forEach(placeNameId => {
+                        const terms = collectionManager.getTermsForPlace(placeNameId, collectionId) || [];
+                        terms.forEach(term => {
+                          if (termRenderings[term.termId]) {
+                            const [matches, refs, denials] = getMatchTally(
+                              termRenderings[term.termId],
+                              term.refs || [],
+                              extractedVerses
+                            );
+                            totalMatches += matches;
+                            totalRefs += refs;
+                            anyDenials = anyDenials || denials;
+                          }
+                        });
+                      });
+                      
+                      return frac([totalMatches, totalRefs, anyDenials], true);
+                    })()
                   : ''
               )}
               eventHandlers={{ click: () => onSelectLabel(label) }}
@@ -365,8 +390,12 @@ function createLabel(
   isSelected = false,
   labelScale = 1,
   labelOpacity = 85,
+  opCode = 'sync',
+  lines = 1,
   extra
 ) {
+  // Add visual indicator for override and omit opCodes
+  const opCodeIndicator = opCode === 'override' ? '🔒' : opCode === 'omit' ? '🚫' : '';
   const isLeft = align === 'left';
   const isCenter = align === 'center';
   const backgroundColor = statusValue[status].bkColor;
@@ -377,11 +406,84 @@ function createLabel(
   const fontSizePx = baseFontSize * (0.7 + 0.1 * (4 - size));
   // Use em units for all scalable properties
   const textOpacity = Math.min(Math.round(labelOpacity * 1.2), 100);
+  
+  // Use the lines property from the label definition (defaults to 1)
+  const numLines = lines || 1;
+  
+  // Function to balance text across multiple lines by inserting line breaks
+  const balanceTextLines = (text, targetLines) => {
+    if (targetLines === 1) return text;
+    
+    // Split into words
+    const words = text.split(/\s+/);
+    if (words.length < targetLines) return text; // Not enough words to split
+    
+    // Calculate target characters per line (with some tolerance)
+    const totalChars = text.length;
+    const targetCharsPerLine = totalChars / targetLines;
+    
+    // Build lines by trying to balance actual character counts
+    const lines = [];
+    let currentLine = '';
+    let currentLength = 0;
+    
+    for (let i = 0; i < words.length; i++) {
+      const word = words[i];
+      const wordLength = word.length + (currentLine ? 1 : 0); // +1 for space
+      const nextWord = i < words.length - 1 ? words[i + 1] : null;
+      
+      // Add word to current line
+      if (currentLine) {
+        currentLine += ' ' + word;
+        currentLength += wordLength;
+      } else {
+        currentLine = word;
+        currentLength = word.length;
+      }
+      
+      // Decide if we should break here
+      if (lines.length < targetLines - 1) {
+        // Calculate how far we are from the target
+        const distanceFromTarget = Math.abs(currentLength - targetCharsPerLine);
+        
+        // Calculate what the distance would be if we add the next word
+        const nextWordLength = nextWord ? nextWord.length + 1 : 0;
+        const distanceWithNext = Math.abs(currentLength + nextWordLength - targetCharsPerLine);
+        
+        // Don't break if current line starts with opening punctuation and is very short
+        const startsWithOpening = /^[([\]{《]/.test(currentLine);
+        const tooShortToBreak = currentLength < targetCharsPerLine * 0.3;
+        
+        // Break if we're at or past target, and adding next word would be worse
+        // But avoid breaking too early after opening punctuation
+        if (nextWord && 
+            currentLength >= targetCharsPerLine * 0.5 && // At least 50% of target
+            !(startsWithOpening && tooShortToBreak) &&
+            distanceWithNext > distanceFromTarget) {
+          // Start new line
+          lines.push(currentLine);
+          currentLine = '';
+          currentLength = 0;
+        }
+      }
+    }
+    
+    // Add final line
+    if (currentLine) lines.push(currentLine);
+    
+    return lines.join('<br>');
+  };
+  
+  // Apply line balancing to label text
+  const fullText = labelText + opCodeIndicator + (extra || '');
+  const balancedLabel = balanceTextLines(fullText, numLines);
+  const lineHeightEm = 1.2;
+  
   const baseStyle = [
     `color: color-mix(in srgb, ${textColor} ${textOpacity}%, transparent);`,
     `font-size: ${fontSizePx}px;`,
     'font-weight: bold;',
-    'white-space: nowrap;',
+    numLines > 1 ? 'white-space: pre;' : 'white-space: nowrap;', // pre = only break on explicit line breaks
     `background: ${
       backgroundColor
         ? `color-mix(in srgb, ${backgroundColor} ${labelOpacity}%, transparent)`
@@ -389,9 +491,17 @@ function createLabel(
     };`,
     'padding: 0 0.5em;', // 0px top/bottom, 0.5em left/right
     'border-radius: 0.83em;', // 10px if font-size is 12px
-    'line-height: 1.6em;', // scale height of label
+    `line-height: ${lineHeightEm}em;`, // scale height of label
     'position: absolute;',
   ];
+  
+  // Add multi-line specific styles when needed
+  if (numLines > 1) {
+    baseStyle.push(
+      'display: inline-block;',
+      'text-align: center;' // Center text within the label
+    );
+  }
   if (isCenter) {
     baseStyle.push(
       `left: 50%;`,
@@ -412,7 +522,7 @@ function createLabel(
     } width: 2em; height: 2em; position: relative;">
       <span class="${
         isSelected ? 'selected-label' : 'unselected-label'
-      }" style="${spanStyle}">${labelText}${extra}</span>
+      }" style="${spanStyle}">${balancedLabel}</span>
     </div>
   `;
 

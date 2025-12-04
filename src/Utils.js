@@ -7,25 +7,22 @@ import {
   STATUS_MULTIPLE,
   STATUS_NO_RENDERINGS,
   STATUS_UNMATCHED,
-  STATUS_MATCHED,
   STATUS_GUESSED,
-  STATUS_RENDERING_SHORT,
-  STATUS_BAD_EXPLICIT_FORM,
-  STATUS_INCOMPLETE,
   STATUS_MULTIPLE_RENDERINGS,
+  STATUS_INCOMPLETE,
+  STATUS_OK,
 } from './constants.js';
 
 export const statusValue = [
-  { bkColor: 'dimgray', textColor: 'white', sort: 1 }, // 0  - blank
-  { bkColor: 'cyan', textColor: 'black', sort: 5 }, // 1 - multiple
-  { bkColor: 'blue', textColor: 'white', sort: 3 }, // 2 - no renderings
-  { bkColor: 'yellow', textColor: 'black', sort: 4 }, // 3 - unmatched
-  { bkColor: 'white', textColor: 'black', sort: 0 }, // 4 - matched
-  { bkColor: '#FF8000', textColor: 'black', sort: 2 }, // 5 - guessed : #FF8000 : #e56300
-  { bkColor: 'crimson', textColor: 'white', sort: 6 }, // 6 - Rendering shorter than label
-  { bkColor: 'magenta', textColor: 'black', sort: 7 }, // 7 - Bad explicit form
-  { bkColor: '#80FF00', textColor: 'black', sort: 8 }, // 8 - Incomplete : #80FF00
-  { bkColor: 'purple', textColor: 'white', sort: 9 }, // 9 - Multiple renderings
+  { bkColor: 'dimgray', textColor: 'white', sort: 0 }, // 0 - Blank
+  { bkColor: 'dimgray', textColor: 'white', sort: 1 }, // 1 - Partial (same as blank)
+  { bkColor: 'cyan', textColor: 'black', sort: 2 }, // 2 - Multiple Options
+  { bkColor: 'blue', textColor: 'white', sort: 3 }, // 3 - No renderings
+  { bkColor: 'yellow', textColor: 'black', sort: 4 }, // 4 - Unmatched label
+  { bkColor: 'purple', textColor: 'white', sort: 5 }, // 5 - Multiple renderings
+  { bkColor: '#FF8000', textColor: 'black', sort: 6 }, // 6 - Guessed
+  { bkColor: '#80FF00', textColor: 'black', sort: 7 }, // 7 - Incomplete
+  { bkColor: 'white', textColor: 'black', sort: 8 }, // 8 - Perfect (OK)
 ];
 
 export function prettyRef(ref) {
@@ -118,7 +115,7 @@ export function getStatus(termRenderings, termId, vernLabel, refs, extractedVers
     return STATUS_BLANK; //{ status: "Blank", color: "crimson" };
   }
 
-  if (vernLabel.includes('—')) {
+  if (vernLabel.includes('——')) {
     return STATUS_MULTIPLE; //{ status: "Must select one", color: "darkorange" };
   }
 
@@ -136,17 +133,10 @@ export function getStatus(termRenderings, termId, vernLabel, refs, extractedVers
   if (vernLabel === mapForm) {
     if (entry.isGuessed) return STATUS_GUESSED; // "Guessed rendering not yet approved"
     // console.log(`Non-guessed Vernacular label matches map form: ${vernLabel}`);
-    if (/\(@.+\)/.test(entry.renderings)) {
-      // If mapForm came from an explicit rendering (e.g., (@misradesh))
-      // console.log(`Explicit map form: ${vernLabel}`);
-      if (!wordMatchesRenderings(mapForm, entry.renderings, false)) {
-        // console.log(`Explicit map form '${vernLabel}' does not match renderings.`);
-        return STATUS_BAD_EXPLICIT_FORM; // Explicit map form does not match rendering
-      }
-    }
+    // Note: Explicit map form validation removed in new architecture
     const matchedTally = getMatchTally(entry, refs, extractedVerses);
     if (matchedTally[0] === matchedTally[1]) {
-      return STATUS_MATCHED; // : "Approved"
+      return STATUS_OK; // : "Approved"
     } else {
       return STATUS_INCOMPLETE; // "Incomplete" - some refs matched, but not all
     }
@@ -154,10 +144,151 @@ export function getStatus(termRenderings, termId, vernLabel, refs, extractedVers
 
   // vernLabel !== mapForm
   return wordMatchesRenderings(vernLabel, entry.renderings, false)
-    ? /\S\s*\n\s*\S/.test(entry.renderings)
-      ? STATUS_MULTIPLE_RENDERINGS
-      : STATUS_RENDERING_SHORT
+    ? STATUS_MULTIPLE_RENDERINGS  // Multiple patterns detected
     : STATUS_UNMATCHED;
+}
+
+/**
+ * Calculate status for a placeName by considering all its terms together.
+ * This handles multi-term placeNames (e.g., NT + OT) where terms may have
+ * different renderings or one term may have no rendering (auto-join case).
+ */
+export function getPlaceNameStatus(termRenderings, terms, vernLabel, extractedVerses, placeNameId = null, labelDictionaryService = null) {
+  // Ensure vernLabel is a string
+  vernLabel = (vernLabel && typeof vernLabel === 'string') ? vernLabel.trim() : '';
+  console.log(`[getPlaceNameStatus] placeNameId="${placeNameId}", vernLabel: "${vernLabel}"`, Array.from(vernLabel).map(c => c.charCodeAt(0).toString(16)));
+  
+  // If the vernacular Label is empty, return STATUS_BLANK
+  if (!vernLabel) {
+    console.log(`[getPlaceNameStatus] Returning STATUS_BLANK (empty vernLabel)`);
+    return STATUS_BLANK;
+  }
+
+  // If the vernacular label contains double em-dash, return STATUS_MULTIPLE
+  if (vernLabel.includes('——')) {
+    console.log(`[getPlaceNameStatus] Returning STATUS_MULTIPLE (contains ——)`);
+    return STATUS_MULTIPLE;
+  }
+
+  // If the PlaceName has no terms with refs, return STATUS_OK
+  if (!terms || terms.length === 0 || !terms.some(t => t.refs && t.refs.length > 0)) {
+    return STATUS_OK;
+  }
+
+  // Build an array allPatterns[], a list of all unique (case-insensitively) rendering patterns
+  const allPatternsSet = new Map(); // Use Map to track case-insensitive uniqueness
+  const termIsGuessed = [];
+  const termsWithRefs = [];
+
+  for (const term of terms) {
+    const entry = termRenderings[term.termId];
+    if (!entry || !entry.renderings) continue;
+    
+    // Extract patterns (with wildcards, without comments)
+    const patterns = extractRenderingPatterns(entry.renderings);
+    for (const pattern of patterns) {
+      const lowerPattern = pattern.toLowerCase();
+      if (!allPatternsSet.has(lowerPattern)) {
+        allPatternsSet.set(lowerPattern, pattern); // Store original case
+      }
+    }
+    
+    termIsGuessed.push(entry.isGuessed || false);
+    if (term.refs && term.refs.length > 0) {
+      termsWithRefs.push({ entry, refs: term.refs });
+    }
+  }
+
+  const allPatterns = Array.from(allPatternsSet.values());
+
+  // If allPatterns is empty, return STATUS_NO_RENDERINGS
+  if (allPatterns.length === 0) {
+    return STATUS_NO_RENDERINGS;
+  }
+
+  // Make two arrays: matchesLabel[] and doesntMatchLabel[]
+  const matchesLabel = [];
+  const doesntMatchLabel = [];
+
+  for (const pattern of allPatterns) {
+    // Check if label matches this pattern using wildcard matching
+    const matches = patternMatchesLabel(vernLabel, pattern);
+    if (matches) {
+      matchesLabel.push(pattern);
+    } else {
+      doesntMatchLabel.push(pattern);
+    }
+  }
+
+  // If matchesLabel is empty, return STATUS_UNMATCHED
+  if (matchesLabel.length === 0) {
+    console.log(`[getPlaceNameStatus] STATUS_UNMATCHED for "${placeNameId}": vernLabel="${vernLabel}", allPatterns=${JSON.stringify(allPatterns)}`);
+    return STATUS_UNMATCHED;
+  }
+
+  // If doesntMatchLabel is not empty, check against AltApproved list
+  if (doesntMatchLabel.length > 0) {
+    const needsChecked = [];
+    const altApproved = labelDictionaryService ? labelDictionaryService.getAltRenderings(placeNameId) : [];
+    
+    for (const pattern of doesntMatchLabel) {
+      // Case-insensitive comparison
+      const isApproved = altApproved.some(approved => approved.toLowerCase() === pattern.toLowerCase());
+      if (!isApproved) {
+        needsChecked.push(pattern);
+      }
+    }
+    
+    // If the needsChecked list is not empty, return STATUS_MULTIPLE_RENDERINGS
+    if (needsChecked.length > 0) {
+      return STATUS_MULTIPLE_RENDERINGS;
+    }
+  }
+
+  // If any of the PlaceName's terms is a guessed rendering, return STATUS_GUESSED
+  const anyGuessed = termIsGuessed.some(g => g);
+  if (anyGuessed) {
+    return STATUS_GUESSED;
+  }
+
+  // Get the tally of found references. If any are missing and not denied, return STATUS_INCOMPLETE
+  if (termsWithRefs.length > 0) {
+    let totalMatched = 0;
+    let totalRefs = 0;
+    let anyDenials = false;
+    
+    for (const { entry, refs } of termsWithRefs) {
+      const [matched, total, denials] = getMatchTally(entry, refs, extractedVerses);
+      totalMatched += matched;
+      totalRefs += total;
+      anyDenials = anyDenials || denials;
+    }
+    
+    if (totalMatched < totalRefs) {
+      return STATUS_INCOMPLETE;
+    }
+  }
+
+  // Return STATUS_OK
+  return STATUS_OK;
+}
+
+/**
+ * Check if a label matches a pattern (with wildcards).
+ * @param {string} label - The vernacular label
+ * @param {string} pattern - The rendering pattern (may contain * wildcards)
+ * @returns {boolean} True if the label matches the pattern
+ */
+function patternMatchesLabel(label, pattern) {
+  try {
+    const regexPattern = convertParatextWildcardsToRegex(pattern);
+    // Use word boundaries instead of anchors to match pattern anywhere in label
+    const regex = new RegExp(MATCH_PRE_B + regexPattern + MATCH_POST_B, 'iu');
+    return regex.test(label);
+  } catch (e) {
+    // Invalid regex, treat as non-match
+    return false;
+  }
 }
 
 export function getMapForm(termRenderings, termId, altTermIds) {
@@ -203,11 +334,27 @@ function getMapFormStrict(termRenderings, termId) {
     })
     .filter(item => item.length > 0);
 
-  // Join with em-dash and return
-  return processedItems.join('—');
+  // Join with double em-dash and return
+  return processedItems.join('——');
 }
 
 // Check if a word matches any of the renderings, returning a 1-based index of the match.
+/**
+ * Extract rendering patterns from a renderings string, stripping comments but keeping wildcards.
+ * Comments are defined as text within parentheses.
+ * @param {string} renderings - The renderings string (may contain || separators)
+ * @returns {string[]} Array of patterns with comments removed but wildcards intact
+ */
+export function extractRenderingPatterns(renderings) {
+  if (!renderings) return [];
+  return renderings
+    .replace(/\|\|/g, '\n')
+    .split(/(\r?\n)/)
+    .map(r => r.replace(/\s*\([^)]*\)?\s*/g, '')) // Remove comments in parentheses
+    .map(r => r.trim())
+    .filter(r => r.length > 0);
+}
+
 export function wordMatchesRenderings(word, renderings, anchored = true) {
   let renderingList = [];
   renderingList = renderings
