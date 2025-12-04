@@ -126,6 +126,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
   const [selectedVariant, setSelectedVariant] = useState(0); // 0 means no variants, 1+ for actual variants
   const [resetZoomFlag, setResetZoomFlag] = useState(false); // For controlling Leaflet map
   const [activeTab, setActiveTab] = useState(0); // Active placeName tab in DetailsPane
+  const [isBottomPaneExpanded, setIsBottomPaneExpanded] = useState(false); // Toggle bottom pane width
   const isDraggingVertical = useRef(false);
   const isDraggingHorizontal = useRef(false);
   const vernacularInputRef = useRef(null);
@@ -1841,12 +1842,18 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
 
   return (
     <div className="app-container">
-      {' '}
-      <div className="top-section" style={{ flex: `0 0 ${topHeight}%` }}>
-        {' '}
-        <div className="map-pane" style={{ flex: `0 0 ${mapWidth}%` }}>
-          {' '}
-          {mapPaneView === MAP_VIEW && mapDef.mapView && (
+      {!isBottomPaneExpanded ? (
+        // Collapsed layout: Map + Bottom on left, Details full-height on right
+        <div className="main-layout" style={{ display: 'flex', flex: 1, minHeight: 0 }}>
+          <div className="left-column" style={{ 
+            display: 'flex', 
+            flexDirection: 'column',
+            flex: `0 0 ${mapWidth}%`,
+            minWidth: 0,
+            minHeight: 0
+          }}>
+            <div className="map-pane" style={{ flex: `0 0 ${topHeight}%`, minHeight: 0 }}>
+            {mapPaneView === MAP_VIEW && mapDef.mapView && (
             <>
               {imageData === undefined && (
                 <div
@@ -1917,15 +1924,53 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
             />
           )}
           {/* USFM View removed - USFM only used for template selection */}
-        </div>
-        <div
-          className="vertical-divider"
-          onMouseDown={handleVerticalDragStart}
-          dangerouslySetInnerHTML={{ __html: '‖<br />‖' }}
-        />
-        <div className="details-pane" style={{ flex: `0 0 ${100 - mapWidth}%` }}>
-          {' '}
-          <DetailsPane
+            </div>
+            <div className="horizontal-divider" onMouseDown={handleHorizontalDragStart}>
+              ═════
+            </div>
+            <div className="bottom-pane" style={{ flex: `0 0 ${100 - topHeight}%`, position: 'relative' }}>
+              <button
+                onClick={() => setIsBottomPaneExpanded(!isBottomPaneExpanded)}
+                style={{
+                  position: 'absolute',
+                  top: '5px',
+                  right: '5px',
+                  zIndex: 100,
+                  padding: '4px 8px',
+                  cursor: 'pointer',
+                  border: '1px solid #ccc',
+                  borderRadius: '4px',
+                  background: 'white',
+                  fontSize: '14px'
+                }}
+                title={isBottomPaneExpanded ? 'Collapse to map width' : 'Expand to full width'}
+              >
+                {isBottomPaneExpanded ? '⮜' : '⮞'}
+              </button>
+              <BottomPane
+                placeNameIds={labels[selectedLabelIndex]?.placeNameIds || []}
+                activeTab={activeTab}
+                mergeKey={labels[selectedLabelIndex]?.mergeKey}
+                onAddRendering={handleAddRendering}
+                onReplaceRendering={handleReplaceRendering}
+                lang={lang}
+                termRenderings={termRenderings}
+                setRenderings={setRenderings}
+                onDenialsChanged={handleDenialsChanged}
+                extractedVerses={extractedVerses}
+                setTermRenderings={setTermRenderings}
+                collectionId={currentCollectionId}
+                onReloadExtractedVerses={handleReloadExtractedVerses}
+              />
+            </div>
+          </div>
+          <div
+            className="vertical-divider"
+            onMouseDown={handleVerticalDragStart}
+            dangerouslySetInnerHTML={{ __html: '‖<br />‖' }}
+          />
+          <div className="details-pane" style={{ flex: `0 0 ${100 - mapWidth}%`, display: 'flex', flexDirection: 'column' }}>
+            <DetailsPane
             selectedLabelIndex={selectedLabelIndex}
             onUpdateVernacular={handleUpdateVernacular}
             onNextLabel={handleNextLabel}
@@ -1972,28 +2017,178 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
             activeTab={activeTab} // Pass active placeName tab
             onActiveTabChange={setActiveTab} // Pass tab change handler
           />
+          </div>
         </div>
-      </div>
-      <div className="horizontal-divider" onMouseDown={handleHorizontalDragStart}>
-        ═════
-      </div>{' '}
-      <div className="bottom-pane" style={{ flex: `0 0 ${100 - topHeight}%` }}>
-        <BottomPane
-          placeNameIds={labels[selectedLabelIndex]?.placeNameIds || []}
-          activeTab={activeTab}
-          mergeKey={labels[selectedLabelIndex]?.mergeKey}
-          onAddRendering={handleAddRendering}
-          onReplaceRendering={handleReplaceRendering}
-          lang={lang}
-          termRenderings={termRenderings}
-          setRenderings={setRenderings}
-          onDenialsChanged={handleDenialsChanged}
-          extractedVerses={extractedVerses}
-          setTermRenderings={setTermRenderings}
-          collectionId={currentCollectionId} // Pass the collection ID
-          onReloadExtractedVerses={handleReloadExtractedVerses}
-        />
-      </div>{' '}
+      ) : (
+        // Expanded layout: Map left, Details right (top), Bottom below both
+        <>
+          <div className="top-section" style={{ flex: `0 0 ${topHeight}%` }}>
+            <div className="map-pane" style={{ flex: `0 0 ${mapWidth}%` }}>
+              {mapPaneView === MAP_VIEW && mapDef.mapView && (
+                <>
+                  {imageData === undefined && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: '10px',
+                        right: '10px',
+                        background: 'rgba(255,255,0,0.8)',
+                        color: 'black',
+                        padding: '5px 10px',
+                        borderRadius: '5px',
+                        zIndex: 1001,
+                        fontSize: '12px',
+                      }}
+                    >
+                      {inLang(uiStr.loadingImage, lang)}
+                    </div>
+                  )}
+                  {imageData === null && imageError && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: '10px',
+                        right: '10px',
+                        background: 'rgba(255,100,100,0.9)',
+                        color: 'white',
+                        padding: '5px 10px',
+                        borderRadius: '5px',
+                        zIndex: 1001,
+                        fontSize: '12px',
+                        maxWidth: '80%',
+                      }}
+                    >
+                      {imageError}
+                    </div>
+                  )}
+                  <MapPane
+                    imageUrl={imageData}
+                    labels={memoizedLabels}
+                    onSelectLabel={memoizedHandleSelectLabel}
+                    selectedLabelIndex={selectedLabelIndex}
+                    labelScale={labelScale}
+                    labelOpacity={labelOpacity}
+                    mapDef={memoizedMapDef}
+                    termRenderings={termRenderings}
+                    lang={lang}
+                    resetZoomFlag={resetZoomFlag}
+                    setResetZoomFlag={setResetZoomFlag}
+                    extractedVerses={extractedVerses}
+                    collectionId={currentCollectionId}
+                    showFrac={showFrac}
+                    selectedVariant={selectedVariant}
+                  />
+                </>
+              )}
+              {mapPaneView === TABLE_VIEW && (
+                <TableView
+                  labels={labels}
+                  selectedLabelIndex={selectedLabelIndex}
+                  onSelectLabel={handleSelectLabel}
+                  onUpdateVernacular={handleUpdateVernacular}
+                  termRenderings={termRenderings}
+                  onNextLabel={handleNextLabel}
+                  lang={lang}
+                  extractedVerses={extractedVerses}
+                  collectionId={currentCollectionId}
+                  selectedVariant={selectedVariant}
+                />
+              )}
+            </div>
+            <div
+              className="vertical-divider"
+              onMouseDown={handleVerticalDragStart}
+              dangerouslySetInnerHTML={{ __html: '‖<br />‖' }}
+            />
+            <div className="details-pane" style={{ flex: `0 0 ${100 - mapWidth}%` }}>
+              <DetailsPane
+                selectedLabelIndex={selectedLabelIndex}
+                onUpdateVernacular={handleUpdateVernacular}
+                onNextLabel={handleNextLabel}
+                renderings={renderings}
+                isApproved={isApproved}
+                onRenderingsChange={handleRenderingsChange}
+                onApprovedChange={handleApprovedChange}
+                termRenderings={termRenderings}
+                labels={labels}
+                onTriggerStatusRecalc={(placeNameId = null) => {
+                  setStatusRecalcTrigger(prev => ({
+                    timestamp: prev.timestamp + 1,
+                    affectedPlaceNameId: placeNameId,
+                    affectedLabelMergeKey: null
+                  }));
+                }}
+                onSwitchView={handleSwitchView}
+                mapPaneView={mapPaneView}
+                onSetView={async viewIdx => {
+                  if (viewIdx === MAP_VIEW && !mapDef.mapView) return;
+                  setMapPaneView(viewIdx);
+                }}
+                onShowSettings={() => setShowSettings(true)}
+                mapDef={mapDef}
+                onBrowseMapTemplate={handleBrowseMapTemplate}
+                vernacularInputRef={vernacularInputRef}
+                renderingsTextareaRef={renderingsTextareaRef}
+                lang={lang}
+                setTermRenderings={setTermRenderings}
+                onCreateRendering={handleReplaceRendering}
+                onExit={handleExitWithPrompt}
+                selectedVariant={selectedVariant}
+                onVariantChange={handleVariantChange}
+                mapxPath={mapxPath}
+                idmlPath={idmlPath}
+                hasUnsavedChanges={hasUnsavedChanges}
+                onSaveLabels={handleSaveLabels}
+                onRevertLabels={handleRevertLabels}
+                templateGroup={templateGroup}
+                templateGroupIndex={templateGroupIndex}
+                onPreviousTemplate={handlePreviousTemplate}
+                onNextTemplate={handleNextTemplate}
+                activeTab={activeTab}
+                onActiveTabChange={setActiveTab}
+              />
+            </div>
+          </div>
+          <div className="horizontal-divider" onMouseDown={handleHorizontalDragStart}>
+            ═════
+          </div>
+          <div className="bottom-pane" style={{ flex: `0 0 ${100 - topHeight}%`, position: 'relative' }}>
+            <button
+              onClick={() => setIsBottomPaneExpanded(!isBottomPaneExpanded)}
+              style={{
+                position: 'absolute',
+                top: '5px',
+                right: '5px',
+                zIndex: 100,
+                padding: '4px 8px',
+                cursor: 'pointer',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                background: 'white',
+                fontSize: '14px'
+              }}
+              title={isBottomPaneExpanded ? 'Collapse to map width' : 'Expand to full width'}
+            >
+              {isBottomPaneExpanded ? '⮜' : '⮞'}
+            </button>
+            <BottomPane
+              placeNameIds={labels[selectedLabelIndex]?.placeNameIds || []}
+              activeTab={activeTab}
+              mergeKey={labels[selectedLabelIndex]?.mergeKey}
+              onAddRendering={handleAddRendering}
+              onReplaceRendering={handleReplaceRendering}
+              lang={lang}
+              termRenderings={termRenderings}
+              setRenderings={setRenderings}
+              onDenialsChanged={handleDenialsChanged}
+              extractedVerses={extractedVerses}
+              setTermRenderings={setTermRenderings}
+              collectionId={currentCollectionId}
+              onReloadExtractedVerses={handleReloadExtractedVerses}
+            />
+          </div>
+        </>
+      )}
       <SettingsModal
         open={showSettings}
         onClose={() => setShowSettings(false)}

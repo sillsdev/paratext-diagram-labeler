@@ -491,6 +491,7 @@ function BottomPane({
                         </button>
                       </td>
                       <td
+                        className="context-text"
                         style={{
                           padding: '2px 0 2px 8px',
                           verticalAlign: 'top',
