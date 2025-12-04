@@ -11,7 +11,7 @@ import {
 } from './constants.js';
 import { collectionManager, getCollectionIdFromTemplate, findCollectionIdAndTemplate } from './CollectionManager';
 import { getMapDef } from './MapData';
-import { inLang, statusValue, getMapForm, wordMatchesRenderings, extractRenderingPatterns } from './Utils.js';
+import { inLang, statusValue, getMapForm, extractRenderingPatterns } from './Utils.js';
 import { settingsService } from './services/SettingsService.js';
 import labelDictionaryService from './services/LabelDictionaryService.js';
 import { AutocorrectTextarea } from './components/AutocorrectTextarea';
@@ -55,7 +55,6 @@ export default function DetailsPane({
   activeTab = 0,
   onActiveTabChange,
 }) {
-  const [localIsApproved, setLocalIsApproved] = useState(isApproved);
   const [localRenderings, setLocalRenderings] = useState(renderings);
   const [showTemplateInfo, setShowTemplateInfo] = useState(false);
   const [templateData, setTemplateData] = useState({});

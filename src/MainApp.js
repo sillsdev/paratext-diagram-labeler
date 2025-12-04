@@ -75,19 +75,6 @@ function getTemplateNameFromUsfm(usfm) {
   return templateName;
 }
 
-function usfmFromMap(map, lang) {
-  console.log('Converting map to USFM (only \\fig field):', map);
-  // Only return the \fig...\fig* field, not the full USFM with labels
-  // Labels are now stored in .idml.txt files
-  let usfm = '';
-  if (map.fig && !/^\\fig/.test(map.fig)) {
-    usfm = `\\fig ${map.fig}\\fig*`;
-  } else if (map.fig) {
-    usfm = map.fig;
-  }
-  return usfm;
-}
-
 function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermRenderings }) {
   //   console.log('MainApp initialized with collectionsFolder prop:', collectionsFolder);
 
@@ -114,8 +101,8 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
   const [selectedLabelIndex, setSelectedLabelIndex] = useState(0);
   const [mapWidth, setMapWidth] = useState(70);
   const [topHeight, setTopHeight] = useState(80);
-  const [renderings, setRenderings] = useState('');
-  const [isApproved, setIsApproved] = useState(false);
+  const [renderings, setRenderings] = useState(''); // OBSOLETE: kept for BottomPane compatibility
+  const [isApproved] = useState(false); // OBSOLETE: kept for DetailsPane compatibility (read-only)
   const [mapPaneView, setMapPaneView] = useState(MAP_VIEW); // Default to MAP_VIEW, will be updated after loading
   const [labelScale, setLabelScale] = useState(() => {
     const saved = localStorage.getItem('labelScale'); // Persist labelScale in localStorage
@@ -370,7 +357,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
       console.log(`Error updating labels:`, e);
     }
 
-    
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectFolder, mapDef, isInitialized]); 
 
   // setExtractedVerses when projectFolder or template changes
@@ -401,6 +388,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
         alert(inLang(uiStr.failedToRequestVerses, lang) + (verses && verses.error ? ' ' + verses.error : ''));
       }
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectFolder, placeNameIdsKey, mapDef.template, isInitialized, lang]);
 
   // Recalculate status when extractedVerses becomes available (but only update status, not the whole label)
@@ -492,6 +480,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
       return updatedLabels;
     });
     console.log('[Status Recalc] Status recalculation complete');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [extractedVerses, termRenderings, mapDef.template, statusRecalcTrigger.timestamp]);
 
   // Load autocorrect file when project folder or initialization state changes
@@ -510,6 +499,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
 
     // In NEW architecture, renderings are handled per placeName in DetailsPane
     // No need to set top-level renderings here based on termId
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedLabelIndex, termRenderings, labels]);
 
   // Handler to set the selected label (e.g. Label clicked)
@@ -594,6 +584,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
         affectedLabelMergeKey: mergeKey
       }));
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 
@@ -623,6 +614,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
       setSelectedLabelIndex(nextLabelIndex);
       handleSelectLabel(nextLabel);
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [labels, selectedLabelIndex, handleSelectLabel, selectedVariant]
   );
 
@@ -752,6 +744,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
     setLabels(restoredLabels);
     setHasUnsavedChanges(false);
     console.log('Labels reverted to last saved state');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasUnsavedChanges, savedLabels, labels, termRenderings, extractedVerses, mapDef.template]);
 
   // Helper function to prompt user about unsaved changes
@@ -819,6 +812,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
     if (canProceed) {
       onExit();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [promptUnsavedChanges, onExit]);
 
   // Handler for map image browse
@@ -1235,12 +1229,13 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
     handleSelectLabel,
     extractedVerses,
     projectFolder,
-    mapDef.template,
     setSelectedVariant,
     setSavedLabels,
     setHasUnsavedChanges,
     setMapPaneView,
-    setResetZoomFlag
+    setResetZoomFlag,
+    setTermRenderings
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   ]);
 
   // Store the function in a ref for stable reference
@@ -1394,6 +1389,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
       setTermRenderings(updatedData);
       setStatusRecalcTrigger(prev => prev + 1);
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [selectedLabelIndex, labels, termRenderings, mapDef.template]
   );
 
@@ -1441,6 +1437,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
       
       setStatusRecalcTrigger(prev => prev + 1);
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [selectedLabelIndex, labels, termRenderings, mapDef.template, handleUpdateVernacular]
   );
 
@@ -1514,6 +1511,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
         console.error('Error reloading extracted verses:', error);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [projectFolder, isInitialized, mapDef.template, mapDef.labels]
   );
 
@@ -1592,6 +1590,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
         }
       };
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Add listeners for navigation events from menu
@@ -1648,6 +1647,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
         return { ...label, status };
       })
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [termRenderings, extractedVerses, mapDef.template]);
 
   // Debounced save of termRenderings to disk via IPC

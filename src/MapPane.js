@@ -451,7 +451,7 @@ function createLabel(
         const distanceWithNext = Math.abs(currentLength + nextWordLength - targetCharsPerLine);
         
         // Don't break if current line starts with opening punctuation and is very short
-        const startsWithOpening = /^[(\[{《]/.test(currentLine);
+        const startsWithOpening = /^[([\]{《]/.test(currentLine);
         const tooShortToBreak = currentLength < targetCharsPerLine * 0.3;
         
         // Break if we're at or past target, and adding next word would be worse
