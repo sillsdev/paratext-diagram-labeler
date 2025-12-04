@@ -145,7 +145,6 @@ export default function DetailsPane({
     const newVernacular = currentLabel?.vernLabel || '';
     console.log(`[DetailsPane] Syncing vernacular for ${currentLabel?.mergeKey}: "${newVernacular}"`);
     setVernacularValue(newVernacular);
-    setLocalIsApproved(isApproved);
     setLocalRenderings(renderings);
   }, [selectedLabelIndex, isApproved, renderings, labels, setVernacularValue]);
 
