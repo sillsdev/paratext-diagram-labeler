@@ -1387,7 +1387,11 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
       });
       
       setTermRenderings(updatedData);
-      setStatusRecalcTrigger(prev => prev + 1);
+      setStatusRecalcTrigger(prev => ({
+        timestamp: prev.timestamp + 1,
+        affectedPlaceNameId: placeNameId,
+        affectedLabelMergeKey: null
+      }));
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [selectedLabelIndex, labels, termRenderings, mapDef.template]
@@ -1435,7 +1439,11 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
         currentLabel.opCode || 'sync'
       );
       
-      setStatusRecalcTrigger(prev => prev + 1);
+      setStatusRecalcTrigger(prev => ({
+        timestamp: prev.timestamp + 1,
+        affectedPlaceNameId: placeNameId,
+        affectedLabelMergeKey: null
+      }));
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [selectedLabelIndex, labels, termRenderings, mapDef.template, handleUpdateVernacular]
@@ -1618,7 +1626,8 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
         }
       };
     }
-  }, [mapPaneView, handleNextLabel]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Memoize labels and mapDef to prevent MapPane remounts
   const memoizedLabels = useMemo(() => labels, [labels]);
