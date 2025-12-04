@@ -56,6 +56,12 @@ class LabelTagRulesService {
       this.tagRules = {};
       console.log('[LabelTagRulesService] No LabelTagRules.json found or error reading, using empty rules. Error:', error.message);
     }
+    
+    // Apply default rule for 'q' tag if not present
+    if (!this.tagRules['q']) {
+      this.tagRules['q'] = [["$", "?"]];
+      console.log('[LabelTagRulesService] Applied default rule for "q" tag: [["$", "?"]]');
+    }
   }
 
   /**
