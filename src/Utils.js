@@ -182,6 +182,12 @@ export function getPlaceNameStatus(termRenderings, terms, vernLabel, extractedVe
 
   for (const term of terms) {
     const entry = termRenderings[term.termId];
+    
+    // If ANY term with refs has no renderings, return STATUS_NO_RENDERINGS
+    if (term.refs && term.refs.length > 0 && (!entry || !entry.renderings)) {
+      return STATUS_NO_RENDERINGS;
+    }
+    
     if (!entry || !entry.renderings) continue;
     
     // Extract patterns (with wildcards, without comments)

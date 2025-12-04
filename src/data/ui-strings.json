@@ -738,7 +738,7 @@
     "ne": "टेम्प्लेट फोल्डर फेला परेन। कृपया नक्सा टेम्प्लेटहरू भएको फोल्डरको स्थान निर्दिष्ट गर्नुहोस्।"
   },
   "specifyProjectFolder": {
-    "en": "Please specify the location of your Paratext project folder",
+    "en": "Please select your Paratext project, or specify the location of its folder",
     "es": "Especifique la ubicación de su carpeta de proyecto de Paratext",
     "fr": "Veuillez spécifier l'emplacement de votre dossier de projet Paratext",
     "ne": "कृपया आफ्नो Paratext परियोजना फोल्डरको स्थान निर्दिष्ट गर्नुहोस्"
@@ -848,10 +848,10 @@
         "ne": "अनुवाद छैन"
       },
       "help": {
-        "en": "Your project does not yet contain any renderings for this term.",
-        "es": "Su proyecto aún no contiene ninguna traducción para este término.",
-        "fr": "Votre projet ne contient pas encore de traduction pour ce terme.",
-        "ne": "तपाईंको परियोजनामा यो शब्दको लागि कुनै अनुवाद छैन।"
+        "en": "There is a term that has no rendering patterns to match in the verse text.",
+        "es": "Hay un término que no tiene patrones de traducción para hacer coincidir en el texto del versículo.",
+        "fr": "Il existe un terme qui n'a pas de modèles de traduction pour correspondre au texte du verset.",
+        "ne": "पदको पाठमा मिलाउनको लागि कुनै अनुवाद ढाँचा नभएको शब्द छ।"
       }
     },
     {
