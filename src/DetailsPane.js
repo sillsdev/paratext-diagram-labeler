@@ -1379,7 +1379,7 @@ export default function DetailsPane({
                       // Always show placename context if it exists
                       if (context && Object.values(context).some(v => v)) {
                         return (
-                          <p style={{ margin: '0 0 8px 0', fontSize: '0.9em', fontStyle: 'italic', color: textColor }}>
+                          <p className="context-text" style={{ margin: '0 0 8px 0', fontStyle: 'italic', color: textColor }}>
                             {inLang(context, lang)}
                           </p>
                         );
