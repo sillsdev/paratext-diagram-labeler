@@ -637,9 +637,10 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
   const handleVerticalDrag = e => {
     if (!isDraggingVertical.current) return;
     console.log('Vertical dragging:', e.clientX);
-    const container = document.querySelector('.top-section');
+    // Use .main-layout for collapsed layout, .top-section for expanded layout
+    const container = document.querySelector('.main-layout') || document.querySelector('.top-section');
     if (!container) {
-      console.error('Top section not found');
+      console.error('Main layout or top section not found');
       return;
     }
     const containerRect = container.getBoundingClientRect();
@@ -2202,6 +2203,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
         setShowFrac={setShowFrac}
         templatePaths={templatePaths}
         setTemplatePaths={setTemplatePaths}
+        projectFolder={projectFolder}
       />{' '}
       {showTemplateBrowser && (
         <TemplateBrowser

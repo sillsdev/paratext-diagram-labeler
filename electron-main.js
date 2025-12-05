@@ -58,9 +58,10 @@ if (process.platform === 'linux') {
   }
 }
 
-// Settings relating to Settings.xml
+// Settings relating to Settings.xml and LabelerProjectSettings.json
 let curProjectFolder = '';
-let settings = {};
+let xmlProjectSettings = {};
+let jsonProjectSettings = {};
 // let templatesDir = path.join(app.getPath('pictures'), '!All Map Samples');
 
 // Digit conversion mappings for 19 writing scripts
@@ -185,37 +186,37 @@ function vernRef(refString, useShort = false) {
       result += bookName;
       
       // Add space after book name if nosp is false
-      if (!settings.nosp) {
+      if (!xmlProjectSettings.nosp) {
         result += ' ';
       }
     } else if (token.type === 'num') {
       // Convert digits to script if fp is set
-      result += convertDigits(token.value, settings.digits);
+      result += convertDigits(token.value, jsonProjectSettings.digits);
     } else if (token.value === '.') {
       // Chapter-verse separator
-      result += settings.cv || ':';
+      result += xmlProjectSettings.cv || ':';
     } else if (token.value === ',') {
       // sequence indicator
-      result += settings.seq || ',';
+      result += xmlProjectSettings.seq || ',';
     } else if (token.value === '-') {
       // Verse range separator
-      result += settings.vrange || '-';
+      result += xmlProjectSettings.vrange || '-';
     } else if (token.value === '–') {
       // Chapter range separator
-      result += settings.crange || '–';
+      result += xmlProjectSettings.crange || '–';
     } else if (token.value === '#') {
       // Book separator
-      result += settings.bsep || '; ';
+      result += xmlProjectSettings.bsep || '; ';
     } else if (token.value === ';') {
       // Chapter separator
-      result += settings.csep || '; ';
+      result += xmlProjectSettings.csep || '; ';
     } else {
       // Log an unexpected token value
       console.warn(`[vernRef] Unexpected token value: "${token.value}"`);
     }
   }
   // Append final punctuation
-  result += settings.fp || '';
+  result += xmlProjectSettings.fp || '';
   return result;
 }
 
@@ -229,8 +230,9 @@ async function loadSettings(projectFolder) {
     return;
   }
   curProjectFolder = projectFolder;
-  const settingsPath = path.join(curProjectFolder, 'Settings.xml');
-  settings = { 
+  const xmlSettingsPath = path.join(curProjectFolder, 'Settings.xml');
+  const jsonSettingsPath = path.join(curProjectFolder, 'LabelerProjectSettings.json');
+  xmlProjectSettings = { 
     language: path.basename(curProjectFolder),
     pre: '',
     post: path.basename(curProjectFolder) + '.sfm',
@@ -239,87 +241,85 @@ async function loadSettings(projectFolder) {
     versification: '4',
     name: path.basename(curProjectFolder),
   }
+  jsonProjectSettings = { "digits": "Latn" }; // default to Western digits
 
   try {
-    const rawContents = await fs.promises.readFile(settingsPath, 'utf8');
+    const rawContents = await fs.promises.readFile(xmlSettingsPath, 'utf8');
     // extract the Naming attributes
     const match = rawContents.match(/<Naming PrePart="(.*)" PostPart="(.*)" BookNameForm="(.*)"/);
     if (match) {
-      settings.pre = match[1];
-      settings.post = match[2];
-      settings.useMAT = match[3].includes('MAT');
-      settings.use41 = match[3].includes('41');
+      xmlProjectSettings.pre = match[1];
+      xmlProjectSettings.post = match[2];
+      xmlProjectSettings.useMAT = match[3].includes('MAT');
+      xmlProjectSettings.use41 = match[3].includes('41');
     }
     // if rawContents contains <Versification> tag, extract it
     const versificationMatch = rawContents.match(/<Versification>(\d+)<\/Versification>/);
     if (versificationMatch) {
-      settings.versification = versificationMatch[1];
+      xmlProjectSettings.versification = versificationMatch[1];
     } 
     // if rawContents contains <Language> tag, extract it
     const languageMatch = rawContents.match(/<Language>(.*?)<\/Language>/);
     if (languageMatch) {
-      settings.language = languageMatch[1];
+      xmlProjectSettings.language = languageMatch[1];
     }   
     // if rawContents contains <LanguageIsoCode> tag, extract it
     const languageCodeMatch = rawContents.match(/<LanguageIsoCode>(.*?)<\/LanguageIsoCode>/);
     if (languageCodeMatch) {
-      settings.languageCode = languageCodeMatch[1];
+      xmlProjectSettings.languageCode = languageCodeMatch[1];
     }
     // if rawContents contains <Name> tag, extract it
     const nameMatch = rawContents.match(/<Name>(.*?)<\/Name>/);
     if (nameMatch) {
-      settings.name = nameMatch[1];
+      xmlProjectSettings.name = nameMatch[1];
     }
     // if rawContents contains <DefaultFont> tag, extract it
     const defaultFontMatch = rawContents.match(/<DefaultFont>(.*?)<\/DefaultFont>/);
     if (defaultFontMatch) {
-      settings.defaultFont = defaultFontMatch[1];
+      xmlProjectSettings.defaultFont = defaultFontMatch[1];
     }
     
     // Extract reference formatting properties
     const nospMatch = rawContents.match(/<NoSpaceBetweenBookAndChapter>(True|False)<\/NoSpaceBetweenBookAndChapter>/);
     if (nospMatch) {
-      settings.nosp = nospMatch[1] === 'True';
+      xmlProjectSettings.nosp = nospMatch[1] === 'True';
     }
     
     const cvMatch = rawContents.match(/<ChapterVerseSeparator>(.*?)<\/ChapterVerseSeparator>/);
     if (cvMatch) {
-      settings.cv = cvMatch[1];
+      xmlProjectSettings.cv = cvMatch[1];
     }
     
     const seqMatch = rawContents.match(/<SequenceIndicator>(.*?)<\/SequenceIndicator>/);
     if (seqMatch) {
-      settings.seq = seqMatch[1];
+      xmlProjectSettings.seq = seqMatch[1];
     }
     
     const vrangeMatch = rawContents.match(/<RangeIndicator>(.*?)<\/RangeIndicator>/);
     if (vrangeMatch) {
-      settings.vrange = vrangeMatch[1];
+      xmlProjectSettings.vrange = vrangeMatch[1];
     }
     
     const crangeMatch = rawContents.match(/<ChapterRangeSeparator>(.*?)<\/ChapterRangeSeparator>/);
     if (crangeMatch) {
-      settings.crange = crangeMatch[1];
+      xmlProjectSettings.crange = crangeMatch[1];
     }
     
     const bsepMatch = rawContents.match(/<BookSequenceSeparator>(.*?)<\/BookSequenceSeparator>/);
     if (bsepMatch) {
-      settings.bsep = bsepMatch[1];
+      xmlProjectSettings.bsep = bsepMatch[1];
     }
     
     const csepMatch = rawContents.match(/<ChapterSequenceSeparator>(.*?)<\/ChapterSequenceSeparator>/);
     if (csepMatch) {
-      settings.csep = csepMatch[1];
+      xmlProjectSettings.csep = csepMatch[1];
     }
     
     const fpMatch = rawContents.match(/<ReferenceFinalPunctuation>(.*?)<\/ReferenceFinalPunctuation>/);
     if (fpMatch) {
-      settings.fp = fpMatch[1];
+      xmlProjectSettings.fp = fpMatch[1];
     }
 
-    // Temporarily hard-code digits to Western
-    settings.digits = 'Latn';
-    
     // Load book names from BookNames.xml
     const bookNamesPath = path.join(curProjectFolder, 'BookNames.xml');
     if (fs.existsSync(bookNamesPath)) {
@@ -344,9 +344,22 @@ async function loadSettings(projectFolder) {
       }
     }
     
-    console.log(`[Settings] Loaded settings from ${settingsPath}`, settings);
+    console.log(`[Settings] Loaded settings from ${xmlSettingsPath}`, xmlProjectSettings);
   } catch (error) {
-    console.error(`[Settings] Failed to load settings from ${settingsPath}:`, error);
+    console.error(`[Settings] Failed to load settings from ${xmlSettingsPath}:`, error);
+  }
+
+  // Now load LabelerProjectSettings.json if it exists
+  try {
+    if (fs.existsSync(jsonSettingsPath)) {
+      const jsonContents = await fs.promises.readFile(jsonSettingsPath, 'utf8');
+      jsonProjectSettings = JSON.parse(jsonContents);
+      console.log(`[Settings] Loaded settings from ${jsonSettingsPath}`, jsonProjectSettings);
+    } else {
+      console.log(`[Settings] No LabelerProjectSettings.json found at ${jsonSettingsPath}, using defaults`);
+    }
+  } catch (error) {
+    console.error(`[Settings] Failed to load settings from ${jsonSettingsPath}:`, error);
   }
 }
 
@@ -828,10 +841,10 @@ function BCV(ref) {
 function bookName(bookNum) {
   const bookSchemes =
     '01GEN,02EXO,03LEV,04NUM,05DEU,06JOS,07JDG,08RUT,091SA,102SA,111KI,122KI,131CH,142CH,15EZR,16NEH,17EST,18JOB,19PSA,20PRO,21ECC,22SNG,23ISA,24JER,25LAM,26EZK,27DAN,28HOS,29JOL,30AMO,31OBA,32JON,33MIC,34NAM,35HAB,36ZEP,37HAG,38ZEC,39MAL,41MAT,42MRK,43LUK,44JHN,45ACT,46ROM,471CO,482CO,49GAL,50EPH,51PHP,52COL,531TH,542TH,551TI,562TI,57TIT,58PHM,59HEB,60JAS,611PE,622PE,631JN,642JN,653JN,66JUD,67REV,68TOB,69JDT,70ESG,71WIS,72SIR,73BAR,74LJE,75S3Y,76SUS,77BEL,781MA,792MA,803MA,814MA,821ES,832ES,84MAN,85PS2,86ODA,87PSS,A4EZA,A55EZ,A66EZ,B2DAG,B3PS3,B42BA,B5LBA,B6JUB,B7ENO,B81MQ,B92MQ,C03MQ,C1REP,C24BA,C3LAO,A0FRT,A1BAK,A2OTH,A7INT,A8CNC,A9GLO,B0TDX,B1NDX,94XXA,95XXB,96XXC,97XXD,98XXE,99XXF';
-  let start = (bookNum * 6) + (settings.use41 ? 0 : 2);
-  let length = (settings.useMAT ? 3 : 0) + (settings.use41 ? 2 : 0);
+  let start = (bookNum * 6) + (xmlProjectSettings.use41 ? 0 : 2);
+  let length = (xmlProjectSettings.useMAT ? 3 : 0) + (xmlProjectSettings.use41 ? 2 : 0);
   const bookScheme = bookSchemes.slice(start, start + length);
-  return path.join(curProjectFolder, settings.pre + bookScheme + settings.post);
+  return path.join(curProjectFolder, xmlProjectSettings.pre + bookScheme + xmlProjectSettings.post);
 }
 
 async function termsXmlToObject(xmlString) {
@@ -957,7 +970,7 @@ ipcMain.handle('save-term-renderings', async (event, projectFolder, saveToDemo, 
 ipcMain.handle('load-labels-from-idml-txt', async (event, projectFolder, templateName) => {
   await loadSettings(projectFolder);
   try {
-    const projectName = settings.name;
+    const projectName = xmlProjectSettings.name;
     const filename = `${templateName} @${projectName}.idml.txt`;
     const jsonFilename = `${templateName} @${projectName}.idml.json`;
     const sharedLabelerPath = path.join(projectFolder, 'shared', 'labeler');
@@ -1031,7 +1044,7 @@ ipcMain.handle('load-labels-from-idml-txt', async (event, projectFolder, templat
 ipcMain.handle('save-labels-to-idml-txt', async (event, projectFolder, templateName, labels, opCodes = {}) => {
   await loadSettings(projectFolder);
   try {
-    const projectName = settings.name;
+    const projectName = xmlProjectSettings.name;
     const filename = `${templateName} @${projectName}.idml.txt`;
     const jsonFilename = `${templateName} @${projectName}.idml.json`;
     const sharedPath = path.join(projectFolder, 'shared');
@@ -1698,9 +1711,9 @@ function convertReferencesToVersification(terms, versification) {
 async function loadTermsFromJson(jsonPath, jsonFilename, projectFolder) {
   await loadSettings(projectFolder);
   var terms = loadFromJson(jsonPath, jsonFilename);
-  if (settings.versification > 1) {
+  if (xmlProjectSettings.versification > 1) {
     // Convert references to the appropriate versification
-    terms = convertReferencesToVersification(terms, settings.versification);
+    terms = convertReferencesToVersification(terms, xmlProjectSettings.versification);
   }
   return terms;
 }
@@ -1779,11 +1792,71 @@ ipcMain.handle('read-json-file', async (event, filePath) => {
   }
 });
 
+ipcMain.handle('write-json-file', async (event, filePath, data) => {
+  try {
+    const normalizedPath = path.normalize(filePath);
+    console.log(`Writing JSON file to: ${normalizedPath}`);
+    
+    // Write JSON file with pretty formatting
+    await fs.promises.writeFile(
+      normalizedPath,
+      JSON.stringify(data, null, 2),
+      'utf8'
+    );
+    console.log(`Successfully wrote JSON file: ${normalizedPath}`);
+    
+    return { success: true };
+  } catch (error) {
+    console.error(`Error writing JSON file: ${error.message}`);
+    throw error;
+  }
+});
+
+// Handler for getting project settings
+ipcMain.handle('get-project-settings', async (event, projectFolder) => {
+  if (!projectFolder) {
+    return { digits: 'Latn' };
+  }
+  try {
+    await loadSettings(projectFolder);
+    return jsonProjectSettings;
+  } catch (error) {
+    console.error('[Settings] Failed to get project settings:', error);
+    return { digits: 'Latn' };
+  }
+});
+
+// Handler for setting project settings
+ipcMain.handle('set-project-settings', async (event, projectFolder, newSettings) => {
+  if (!projectFolder) {
+    return { success: false, error: 'No project folder specified' };
+  }
+  
+  try {
+    // Update in-memory settings
+    jsonProjectSettings = { ...jsonProjectSettings, ...newSettings };
+    
+    // Write to disk
+    const jsonSettingsPath = path.join(projectFolder, 'LabelerProjectSettings.json');
+    await fs.promises.writeFile(
+      jsonSettingsPath,
+      JSON.stringify(jsonProjectSettings, null, 2),
+      'utf8'
+    );
+    
+    console.log(`[Settings] Saved project settings to ${jsonSettingsPath}`, jsonProjectSettings);
+    return { success: true };
+  } catch (error) {
+    console.error('[Settings] Failed to save project settings:', error);
+    return { success: false, error: error.message };
+  }
+});
+
 // Handler for converting digits to specified script
 ipcMain.handle('convert-digits', async (event, projectFolder, numberString) => {
   try {
     await loadSettings(projectFolder);
-    const scriptCode = settings.fp || null;
+    const scriptCode = jsonProjectSettings.digits || 'Latn';
     return convertDigits(numberString, scriptCode);
   } catch (error) {
     console.error(`Error converting digits:`, error);
@@ -2284,12 +2357,12 @@ ipcMain.handle(
         }
       } else if (format === 'mapx-full') { // mapx-full
         // Use settings loaded from Settings.xml instead of frontend parameters
-        const actualLanguage = settings.language || language;
-        const actualLanguageCode = settings.languageCode || languageCode;
+        const actualLanguage = xmlProjectSettings.language || language;
+        const actualLanguageCode = xmlProjectSettings.languageCode || languageCode;
         const localeId = actualLanguageCode
           .replace(/:+/g, '_')
           .replace(/_$/g, '');
-        const defaultFont = settings.defaultFont || 'Arial';
+        const defaultFont = xmlProjectSettings.defaultFont || 'Arial';
         
         if (!mapxPath) {
           throw new Error('MAPX template file path not provided. Please configure MAPX paths in Settings.');
@@ -2341,7 +2414,7 @@ ipcMain.handle(
       }
 
       // Generate suggested filename
-      const projectName = settings.name;
+      const projectName = xmlProjectSettings.name;
       let suggestedFilename;
       let fileExtension;
       let dialogTitle;

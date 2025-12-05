@@ -14,6 +14,8 @@ import { getMapDef } from './MapData';
 import { inLang, statusValue, getMapForm, extractRenderingPatterns } from './Utils.js';
 import { settingsService } from './services/SettingsService.js';
 import labelDictionaryService from './services/LabelDictionaryService.js';
+import labelTagRulesService from './services/LabelTagRulesService.js';
+import labelTemplateParser from './services/LabelTemplateParser.js';
 import { AutocorrectTextarea } from './components/AutocorrectTextarea';
 import { useAutocorrect } from './hooks/useAutocorrect';
 import AlertDialog from './components/AlertDialog';
@@ -55,6 +57,9 @@ export default function DetailsPane({
   activeTab = 0,
   onActiveTabChange,
 }) {
+  // Get collectionId early for use in hooks
+  const collectionId = getCollectionIdFromTemplate(mapDef.template);
+  
   const [localRenderings, setLocalRenderings] = useState(renderings);
   const [showTemplateInfo, setShowTemplateInfo] = useState(false);
   const [templateData, setTemplateData] = useState({});
@@ -62,6 +67,53 @@ export default function DetailsPane({
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [selectedExportFormat, setSelectedExportFormat] = useState('idml-full');
   const [lastUsedExportFormat, setLastUsedExportFormat] = useState(null);
+  
+  // State for rule tabs
+  const [ruleTabModes, setRuleTabModes] = useState({}); // { tagName: 'simple' | 'advanced' }
+  const [ruleTabData, setRuleTabData] = useState({}); // { tagName: [[find, replace], ...] }
+  const [previousActiveTab, setPreviousActiveTab] = useState(activeTab);
+
+  // Reset rule tab mode to simple when switching away from a rule tab, if rules are simple
+  useEffect(() => {
+    const currentLabel = labels[selectedLabelIndex];
+    if (!currentLabel?.lblTemplate) return;
+    
+    // Recalculate collectionId inside the effect to ensure it's always fresh
+    const currentCollectionId = getCollectionIdFromTemplate(mapDef.template);
+    
+    const parsed = labelTemplateParser.parseTemplate(currentLabel.lblTemplate);
+    const taggedFields = parsed.fields.filter(f => f.type === 'tagged-placename' && f.tag);
+    const uniqueTags = [...new Set(taggedFields.map(f => f.tag))];
+    const ruleTags = uniqueTags;
+    
+    const placeNameIds = currentLabel?.placeNameIds || [];
+    const visiblePlaceNameIds = placeNameIds.filter(placeNameId => {
+      const placeName = collectionManager.getPlaceName(placeNameId, currentCollectionId);
+      const terms = placeName?.terms || [];
+      const hasRefs = terms.some(term => term.refs && term.refs.length > 0);
+      const context = collectionManager.getDefinition(placeNameId, currentCollectionId);
+      const hasContext = context && Object.values(context).some(v => v);
+      return hasRefs || hasContext;
+    });
+    
+    // Check if previous tab was a rule tab
+    const previousTabWasRule = previousActiveTab >= visiblePlaceNameIds.length;
+    
+    if (previousTabWasRule && previousActiveTab !== activeTab) {
+      const previousTagIndex = previousActiveTab - visiblePlaceNameIds.length;
+      if (previousTagIndex >= 0 && previousTagIndex < ruleTags.length) {
+        const previousTag = ruleTags[previousTagIndex];
+        const rules = ruleTabData[previousTag] || labelTagRulesService.getRulesForTag(previousTag);
+        
+        // Reset to simple mode if rules are simple
+        if (labelTagRulesService.isSimpleRuleSet(rules)) {
+          setRuleTabModes(prev => ({ ...prev, [previousTag]: 'simple' }));
+        }
+      }
+    }
+    
+    setPreviousActiveTab(activeTab);
+  }, [activeTab, selectedLabelIndex, labels, ruleTabData, previousActiveTab, mapDef.template]);
 
   // Set export format based on last-used or precedence order when dialog opens
   useEffect(() => {
@@ -164,7 +216,6 @@ export default function DetailsPane({
   // Use the status from the label object which is already calculated in App.js
   // This is more reliable than recalculating it here
   const status = labels[selectedLabelIndex]?.status || 0;
-  const collectionId = getCollectionIdFromTemplate(mapDef.template);
   let transliteration = collectionManager.getTransliteration(
     labels[selectedLabelIndex]?.mergeKey,
     collectionId
@@ -197,7 +248,6 @@ export default function DetailsPane({
     // Update the vernacular input using resolved template or getMapForm
     if (selectedLabelIndex >= 0 && selectedLabelIndex < labels.length) {
       const currentLabel = labels[selectedLabelIndex];
-      const collectionId = getCollectionIdFromTemplate(mapDef.template);
       const projectFolder = settingsService.getProjectFolder();
       
       // Try to resolve template first
@@ -1286,12 +1336,21 @@ export default function DetailsPane({
 
           </div>
         </div>
-        {/* Tabbed section for placeNames */}
+        {/* Tabbed section for placeNames and rule tags */}
         {(() => {
           const currentLabel = labels[selectedLabelIndex];
           const placeNameIds = currentLabel?.placeNameIds || [];
           
-          if (placeNameIds.length === 0) return null;
+          // Extract rule tags from the template
+          const ruleTags = [];
+          if (currentLabel?.lblTemplate) {
+            const parsed = labelTemplateParser.parseTemplate(currentLabel.lblTemplate);
+            const taggedFields = parsed.fields.filter(f => f.type === 'tagged-placename' && f.tag);
+            const uniqueTags = [...new Set(taggedFields.map(f => f.tag))];
+            ruleTags.push(...uniqueTags);
+          }
+          
+          if (placeNameIds.length === 0 && ruleTags.length === 0) return null;
           
           // Filter out placeNames that have no refs and no context
           const visiblePlaceNameIds = placeNameIds.filter(placeNameId => {
@@ -1303,15 +1362,16 @@ export default function DetailsPane({
             return hasRefs || hasContext;
           });
           
-          if (visiblePlaceNameIds.length === 0) return null;
+          if (visiblePlaceNameIds.length === 0 && ruleTags.length === 0) return null;
           
           const showTabs = true; // Always show tabbed interface
           
           return (
             <div style={{ margin: '8px', marginTop: 12 }}>
-              {/* Tabs for placeNames */}
+              {/* Tabs for placeNames and rule tags */}
               {showTabs && (
                 <div style={{ display: 'flex', gap: 0, marginBottom: 0 }}>
+                  {/* PlaceName tabs */}
                   {visiblePlaceNameIds.map((placeNameId, index) => {
                     const placeName = collectionManager.getPlaceName(placeNameId, collectionId);
                     const placeStatus = currentLabel.perPlaceStatus?.[placeNameId] || 0;
@@ -1343,6 +1403,53 @@ export default function DetailsPane({
                         onClick={() => onActiveTabChange(index)}
                       >
                         {inLang(placeName?.gloss, lang) || placeNameId}
+                      </button>
+                    );
+                  })}
+                  
+                  {/* Rule tag tabs */}
+                  {ruleTags.map((tag, tagIndex) => {
+                    const tabIndex = visiblePlaceNameIds.length + tagIndex;
+                    const isActive = activeTab === tabIndex;
+                    const bgColor = '#e8f4f8';
+                    const textColor = '#004080';
+                    
+                    return (
+                      <button
+                        key={`rule-${tag}`}
+                        style={{
+                          padding: '8px 16px',
+                          background: isActive ? bgColor : '#f5f5f5',
+                          color: textColor,
+                          border: '2px solid black',
+                          borderBottom: isActive ? 'none' : '2px solid black',
+                          borderTopLeftRadius: 8,
+                          borderTopRightRadius: 8,
+                          borderBottomLeftRadius: 0,
+                          borderBottomRightRadius: 0,
+                          cursor: 'pointer',
+                          fontSize: '0.9em',
+                          fontWeight: isActive ? 'bold' : 'normal',
+                          marginBottom: isActive ? 0 : 0,
+                          position: 'relative',
+                          top: isActive ? 2 : 0,
+                          zIndex: isActive ? 10 : 1,
+                        }}
+                        onClick={() => {
+                          // Load rules for this tag when tab is activated
+                          const rules = labelTagRulesService.getRulesForTag(tag);
+                          setRuleTabData(prev => ({ ...prev, [tag]: rules }));
+                          
+                          // Determine mode based on whether rules are simple
+                          if (!ruleTabModes[tag]) {
+                            const isSimple = labelTagRulesService.isSimpleRuleSet(rules);
+                            setRuleTabModes(prev => ({ ...prev, [tag]: isSimple ? 'simple' : 'advanced' }));
+                          }
+                          
+                          onActiveTabChange(tabIndex);
+                        }}
+                      >
+                        {inLang(uiStr.rule, lang)}: {tag}
                       </button>
                     );
                   })}
@@ -1532,6 +1639,234 @@ export default function DetailsPane({
                           </div>
                         );
                       })
+                    )}
+                  </div>
+                );
+              })}
+              
+              {/* Content for rule tags */}
+              {ruleTags.map((tag, tagIndex) => {
+                const tabIndex = visiblePlaceNameIds.length + tagIndex;
+                if (showTabs && activeTab !== tabIndex) return null;
+                
+                const rules = ruleTabData[tag] || labelTagRulesService.getRulesForTag(tag);
+                const mode = ruleTabModes[tag] || (labelTagRulesService.isSimpleRuleSet(rules) ? 'simple' : 'advanced');
+                
+                // Handler to save rules and re-propose label
+                const handleSaveRules = async (newRules) => {
+                  try {
+                    await labelTagRulesService.setRulesForTag(tag, newRules);
+                    setRuleTabData(prev => ({ ...prev, [tag]: newRules }));
+                    
+                    // Re-propose the vernacular label
+                    if (currentLabel.lblTemplate) {
+                      const projectFolder = settingsService.getProjectFolder();
+                      const resolved = await collectionManager.resolveTemplate(
+                        currentLabel.lblTemplate, 
+                        collectionId, 
+                        termRenderings, 
+                        projectFolder
+                      );
+                      
+                      if (resolved?.literalText) {
+                        onUpdateVernacular(
+                          currentLabel.mergeKey,
+                          currentLabel.lblTemplate,
+                          resolved.literalText,
+                          currentLabel.opCode || 'sync'
+                        );
+                      }
+                    }
+                  } catch (error) {
+                    console.error('Error saving rules:', error);
+                    setAlertMessage(`Error saving rules: ${error.message}`);
+                  }
+                };
+                
+                return (
+                  <div
+                    key={`rule-content-${tag}`}
+                    style={{
+                      marginTop: 0,
+                      border: '2px solid black',
+                      borderRadius: '0 8px 8px 8px',
+                      padding: '12px',
+                      background: '#f9f9f9',
+                    }}
+                  >
+                    
+                    {mode === 'simple' ? (
+                      // Simple mode UI
+                      <div>
+                        <div style={{ marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <input
+                            type="text"
+                            value={(() => {
+                              const prefixRule = rules.find(r => r[0] === '^');
+                              if (prefixRule) return prefixRule[1];
+                              if (rules.length === 0) return `${tag}#`;
+                              return '';
+                            })()}
+                            onChange={(e) => {
+                              const newValue = e.target.value;
+                              let newRules = [...rules.filter(r => r[0] !== '^')];
+                              if (newValue) {
+                                newRules.unshift(['^', newValue]);
+                              }
+                              handleSaveRules(newRules);
+                            }}
+                            style={{
+                              width: '60px',
+                              padding: '6px 8px',
+                              border: '1px solid #999',
+                              borderRadius: 4,
+                              fontSize: '13px',
+                            }}
+                            placeholder={inLang(uiStr.prefix, lang)}
+                          />
+                          <span style={{ fontSize: '1.2em', fontWeight: 'bold' }}>___</span>
+                          <input
+                            type="text"
+                            value={(() => {
+                              const suffixRule = rules.find(r => r[0] === '$');
+                              return suffixRule ? suffixRule[1] : '';
+                            })()}
+                            onChange={(e) => {
+                              const newValue = e.target.value;
+                              let newRules = [...rules.filter(r => r[0] !== '$')];
+                              if (newValue) {
+                                newRules.push(['$', newValue]);
+                              }
+                              handleSaveRules(newRules);
+                            }}
+                            style={{
+                              width: '60px',
+                              padding: '6px 8px',
+                              border: '1px solid #999',
+                              borderRadius: 4,
+                              fontSize: '13px',
+                            }}
+                            placeholder={inLang(uiStr.suffix, lang)}
+                          />
+                        </div>
+                        
+                        <button
+                          onClick={() => {
+                            setRuleTabModes(prev => ({ ...prev, [tag]: 'advanced' }));
+                          }}
+                          style={{
+                            padding: '6px 12px',
+                            background: '#4CAF50',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: 4,
+                            cursor: 'pointer',
+                            fontSize: '0.9em',
+                          }}
+                        >
+                          {inLang(uiStr.advancedRules, lang)}
+                        </button>
+                      </div>
+                    ) : (
+                      // Advanced mode UI
+                      <div>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 12 }}>
+                          <thead>
+                            <tr style={{ background: '#e0e0e0' }}>
+                              <th style={{ padding: '8px', border: '1px solid #999', textAlign: 'left' }}>
+                                {inLang(uiStr.findRegex, lang)}
+                              </th>
+                              <th style={{ padding: '8px', border: '1px solid #999', textAlign: 'left' }}>
+                                {inLang(uiStr.replace, lang)}
+                              </th>
+                              <th style={{ padding: '8px', border: '1px solid #999', width: '50px' }}></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {rules.map((rule, ruleIndex) => (
+                              <tr key={ruleIndex}>
+                                <td style={{ padding: '4px', border: '1px solid #999' }}>
+                                  <input
+                                    type="text"
+                                    value={rule[0]}
+                                    onChange={(e) => {
+                                      const newRules = [...rules];
+                                      newRules[ruleIndex] = [e.target.value, rule[1]];
+                                      handleSaveRules(newRules);
+                                    }}
+                                    style={{
+                                      width: '100%',
+                                      padding: '4px',
+                                      border: '1px solid #ccc',
+                                      borderRadius: 2,
+                                      fontSize: '12px',
+                                      fontFamily: 'monospace',
+                                    }}
+                                  />
+                                </td>
+                                <td style={{ padding: '4px', border: '1px solid #999' }}>
+                                  <input
+                                    type="text"
+                                    value={rule[1]}
+                                    onChange={(e) => {
+                                      const newRules = [...rules];
+                                      newRules[ruleIndex] = [rule[0], e.target.value];
+                                      handleSaveRules(newRules);
+                                    }}
+                                    style={{
+                                      width: '100%',
+                                      padding: '4px',
+                                      border: '1px solid #ccc',
+                                      borderRadius: 2,
+                                      fontSize: '12px',
+                                      fontFamily: 'monospace',
+                                    }}
+                                  />
+                                </td>
+                                <td style={{ padding: '4px', border: '1px solid #999', textAlign: 'center' }}>
+                                  <button
+                                    onClick={() => {
+                                      const newRules = rules.filter((_, i) => i !== ruleIndex);
+                                      handleSaveRules(newRules);
+                                    }}
+                                    style={{
+                                      background: '#f44336',
+                                      color: 'white',
+                                      border: 'none',
+                                      borderRadius: 3,
+                                      padding: '4px 8px',
+                                      cursor: 'pointer',
+                                      fontSize: '14px',
+                                    }}
+                                    title={inLang(uiStr.remove, lang)}
+                                  >
+                                    ⮾
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                        
+                        <button
+                          onClick={() => {
+                            const newRules = [...rules, ['', '']];
+                            handleSaveRules(newRules);
+                          }}
+                          style={{
+                            padding: '6px 12px',
+                            background: '#2196F3',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: 4,
+                            cursor: 'pointer',
+                            fontSize: '0.9em',
+                            marginRight: 8,
+                          }}
+                        >
+                          + {inLang(uiStr.addRule, lang)}
+                        </button>
+                      </div>
                     )}
                   </div>
                 );

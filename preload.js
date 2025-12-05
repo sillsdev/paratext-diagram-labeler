@@ -58,7 +58,14 @@ contextBridge.exposeInMainWorld('electronAPI', {
   readJsonFile: (filePath) =>
     ipcRenderer.invoke('read-json-file', filePath),
 
+  writeJsonFile: (filePath, data) =>
+    ipcRenderer.invoke('write-json-file', filePath, data),
+
   // Digit conversion and reference formatting
+  getProjectSettings: (projectFolder) =>
+    ipcRenderer.invoke('get-project-settings', projectFolder),
+  setProjectSettings: (projectFolder, settings) =>
+    ipcRenderer.invoke('set-project-settings', projectFolder, settings),
   convertDigits: (projectFolder, numberString) =>
     ipcRenderer.invoke('convert-digits', projectFolder, numberString),
 
