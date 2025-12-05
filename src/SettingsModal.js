@@ -269,11 +269,11 @@ export default function SettingsModal({
         {projectFolder && (
           <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px solid #eee' }}>
             <h3 style={{ marginTop: 0, marginBottom: 12, fontSize: '1.1em' }}>
-              {inLang(uiStr.projectSettings || { en: 'Project Settings' }, lang)}
+              {inLang(uiStr.projectSettings, lang)}
             </h3>
             <div style={{ marginBottom: 16 }}>
               <label style={{ fontWeight: 'bold', display: 'block', marginBottom: 4 }}>
-                {inLang(uiStr.numberScript || { en: 'Number Script' }, lang)}:
+                {inLang(uiStr.numberScript, lang)}:
               </label>
               <select
                 value={numberScript}

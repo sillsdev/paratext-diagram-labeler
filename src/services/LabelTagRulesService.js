@@ -124,6 +124,55 @@ class LabelTagRulesService {
   getDefinedTags() {
     return Object.keys(this.tagRules);
   }
+
+  /**
+   * Get rules for a specific tag
+   * @param {string} tag - The tag name
+   * @returns {Array<[string, string]>} Array of [find, replace] rules
+   */
+  getRulesForTag(tag) {
+    return this.tagRules[tag] || [];
+  }
+
+  /**
+   * Set rules for a specific tag
+   * @param {string} tag - The tag name
+   * @param {Array<[string, string]>} rules - Array of [find, replace] rules
+   */
+  async setRulesForTag(tag, rules) {
+    this.tagRules[tag] = rules;
+    await this.saveRules();
+  }
+
+  /**
+   * Save rules to LabelTagRules.json
+   */
+  async saveRules() {
+    if (!this.projectFolder) {
+      throw new Error('Project folder not set. Call initialize() first.');
+    }
+
+    const rulesPath = `${this.projectFolder}/LabelTagRules.json`;
+    console.log(`[LabelTagRulesService] Saving rules to: ${rulesPath}`);
+    
+    try {
+      await window.electronAPI.writeJsonFile(rulesPath, this.tagRules);
+      console.log('[LabelTagRulesService] Rules saved successfully');
+    } catch (error) {
+      console.error('[LabelTagRulesService] Error saving rules:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Check if a rule-set is "simple" (empty or only contains ^ and $ rules)
+   * @param {Array<[string, string]>} rules - Array of [find, replace] rules
+   * @returns {boolean}
+   */
+  isSimpleRuleSet(rules) {
+    if (!rules || rules.length === 0) return true;
+    return rules.every(rule => rule[0] === '^' || rule[0] === '$');
+  }
 }
 
 // Create singleton instance

@@ -179,6 +179,60 @@
     "fr": "Paramètres",
     "ne": "सेटिङहरू"
   },
+  "projectSettings": {
+    "en": "Project Settings",
+    "es": "Configuración del Proyecto",
+    "fr": "Paramètres du Projet",
+    "ne": "परियोजना सेटिङहरू"
+  },
+  "numberScript": {
+    "en": "Number Script",
+    "es": "Sistema de Numeración",
+    "fr": "Système de Numération",
+    "ne": "संख्या लिपि"
+  },
+  "rule": {
+    "en": "Rule",
+    "es": "Regla",
+    "fr": "Règle",
+    "ne": "नियम"
+  },
+  "prefix": {
+    "en": "Prefix",
+    "es": "Prefijo",
+    "fr": "Préfixe",
+    "ne": "उपसर्ग"
+  },
+  "suffix": {
+    "en": "Suffix",
+    "es": "Sufijo",
+    "fr": "Suffixe",
+    "ne": "प्रत्यय"
+  },
+  "advancedRules": {
+    "en": "Advanced rules",
+    "es": "Reglas avanzadas",
+    "fr": "Règles avancées",
+    "ne": "उन्नत नियमहरू"
+  },
+  "addRule": {
+    "en": "Add Rule",
+    "es": "Agregar Regla",
+    "fr": "Ajouter une Règle",
+    "ne": "नियम थप्नुहोस्"
+  },
+  "findRegex": {
+    "en": "Find Regex",
+    "es": "Buscar Regex",
+    "fr": "Rechercher Regex",
+    "ne": "Regex खोज्नुहोस्"
+  },
+  "replace": {
+    "en": "Replace",
+    "es": "Reemplazar",
+    "fr": "Remplacer",
+    "ne": "प्रतिस्थापन गर्नुहोस्"
+  },
   "status": {
     "en": "Status",
     "es": "Estado",

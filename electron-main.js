@@ -1792,6 +1792,26 @@ ipcMain.handle('read-json-file', async (event, filePath) => {
   }
 });
 
+ipcMain.handle('write-json-file', async (event, filePath, data) => {
+  try {
+    const normalizedPath = path.normalize(filePath);
+    console.log(`Writing JSON file to: ${normalizedPath}`);
+    
+    // Write JSON file with pretty formatting
+    await fs.promises.writeFile(
+      normalizedPath,
+      JSON.stringify(data, null, 2),
+      'utf8'
+    );
+    console.log(`Successfully wrote JSON file: ${normalizedPath}`);
+    
+    return { success: true };
+  } catch (error) {
+    console.error(`Error writing JSON file: ${error.message}`);
+    throw error;
+  }
+});
+
 // Handler for getting project settings
 ipcMain.handle('get-project-settings', async (event, projectFolder) => {
   if (!projectFolder) {
