@@ -3,6 +3,8 @@ import { inLang } from './Utils.js';
 import uiStr from './data/ui-strings.json';
 import packageInfo from '../package.json';
 
+import { useState, useEffect } from 'react';
+
 // Settings Modal Dialog
 export default function SettingsModal({ 
   open, 
@@ -16,9 +18,59 @@ export default function SettingsModal({
   showFrac, 
   setShowFrac,
   templatePaths,
-  setTemplatePaths
+  setTemplatePaths,
+  projectFolder
 }) {
   const electronAPI = window.electronAPI;
+  const [numberScript, setNumberScript] = useState('Latn');
+  
+  // Number script options with sample digits
+  const numberScriptOptions = [
+    { value: 'Latn', label: 'European (Western Arabic) [0123456789]' },
+    { value: 'Arab', label: 'Arabic (Eastern Arabic) [٠١٢٣٤٥٦٧٨٩]' },
+    { value: 'Deva', label: 'Devanagari [०१२३४५६७८९]' },
+    { value: 'Beng', label: 'Bengali [০১২৩৪৫৬৭৮৯]' },
+    { value: 'Guru', label: 'Gurmukhi [੦੧੨੩੪੫੬੭੮੯]' },
+    { value: 'Gujr', label: 'Gujarati [૦૧૨૩૪૫૬૭૮૯]' },
+    { value: 'Orya', label: 'Odia [୦୧୨୩୪୫୬୭୮୯]' },
+    { value: 'Taml', label: 'Tamil [௦௧௨௩௪௫௬௭௮௯]' },
+    { value: 'Telu', label: 'Telugu [౦౧౨౩౪౫౬౭౮౯]' },
+    { value: 'Knda', label: 'Kannada [೦೧೨೩೪೫೬೭೮೯]' },
+    { value: 'Mlym', label: 'Malayalam [൦൧൨൩൪൫൬൭൮൯]' },
+    { value: 'Thai', label: 'Thai [๐๑๒๓๔๕๖๗๘๙]' },
+    { value: 'Laoo', label: 'Lao [໐໑໒໓໔໕໖໗໘໙]' },
+    { value: 'Tibt', label: 'Tibetan [༠༡༢༣༤༥༦༧༨༩]' },
+    { value: 'Mymr', label: 'Myanmar [၀၁၂၃၄၅၆၇၈၉]' },
+    { value: 'Aran', label: 'Arabic (Perso-Arabic) [٠١٢٣٤٥٦٧٨٩]' },
+    { value: 'Arabext', label: 'Arabic Extended [۰۱۲۳۴۵۶۷۸۹]' }
+  ];
+  
+  // Load project settings when modal opens
+  useEffect(() => {
+    if (open && projectFolder && electronAPI?.getProjectSettings) {
+      electronAPI.getProjectSettings(projectFolder).then(settings => {
+        setNumberScript(settings.digits || 'Latn');
+      }).catch(error => {
+        console.error('Failed to load project settings:', error);
+      });
+    }
+  }, [open, projectFolder, electronAPI]);
+  
+  const handleNumberScriptChange = async (newScript) => {
+    setNumberScript(newScript);
+    if (projectFolder && electronAPI?.setProjectSettings) {
+      try {
+        const result = await electronAPI.setProjectSettings(projectFolder, { digits: newScript });
+        if (!result.success) {
+          console.error('Failed to save number script:', result.error);
+          alert('Failed to save number script: ' + result.error);
+        }
+      } catch (error) {
+        console.error('Error saving number script:', error);
+        alert('Error saving number script: ' + error.message);
+      }
+    }
+  };
   
   const handleAddTemplatePath = async () => {
     if (!electronAPI) {
@@ -139,7 +191,7 @@ export default function SettingsModal({
           </label>
         </div>
 
-        {/* MAPX Paths Section */}
+        {/* MAPX and IDML Paths Section */}
         <div style={{ marginBottom: 16 }}>
           <div style={{ fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
             {inLang(uiStr.templatePaths, lang)}:
@@ -212,6 +264,37 @@ export default function SettingsModal({
             </button>
           </div>
         </div>
+        
+        {/* Project Settings */}
+        {projectFolder && (
+          <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px solid #eee' }}>
+            <h3 style={{ marginTop: 0, marginBottom: 12, fontSize: '1.1em' }}>
+              {inLang(uiStr.projectSettings || { en: 'Project Settings' }, lang)}
+            </h3>
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ fontWeight: 'bold', display: 'block', marginBottom: 4 }}>
+                {inLang(uiStr.numberScript || { en: 'Number Script' }, lang)}:
+              </label>
+              <select
+                value={numberScript}
+                onChange={(e) => handleNumberScriptChange(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '6px 8px',
+                  fontSize: '0.95em',
+                  borderRadius: 4,
+                  border: '1px solid #ccc'
+                }}
+              >
+                {numberScriptOptions.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        )}
         
         {/* Version information */}
         <div style={{ 

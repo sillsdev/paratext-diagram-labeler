@@ -2202,6 +2202,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
         setShowFrac={setShowFrac}
         templatePaths={templatePaths}
         setTemplatePaths={setTemplatePaths}
+        projectFolder={projectFolder}
       />{' '}
       {showTemplateBrowser && (
         <TemplateBrowser
