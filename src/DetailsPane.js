@@ -78,6 +78,9 @@ export default function DetailsPane({
     const currentLabel = labels[selectedLabelIndex];
     if (!currentLabel?.lblTemplate) return;
     
+    // Recalculate collectionId inside the effect to ensure it's always fresh
+    const currentCollectionId = getCollectionIdFromTemplate(mapDef.template);
+    
     const parsed = labelTemplateParser.parseTemplate(currentLabel.lblTemplate);
     const taggedFields = parsed.fields.filter(f => f.type === 'tagged-placename' && f.tag);
     const uniqueTags = [...new Set(taggedFields.map(f => f.tag))];
@@ -85,10 +88,10 @@ export default function DetailsPane({
     
     const placeNameIds = currentLabel?.placeNameIds || [];
     const visiblePlaceNameIds = placeNameIds.filter(placeNameId => {
-      const placeName = collectionManager.getPlaceName(placeNameId, collectionId);
+      const placeName = collectionManager.getPlaceName(placeNameId, currentCollectionId);
       const terms = placeName?.terms || [];
       const hasRefs = terms.some(term => term.refs && term.refs.length > 0);
-      const context = collectionManager.getDefinition(placeNameId, collectionId);
+      const context = collectionManager.getDefinition(placeNameId, currentCollectionId);
       const hasContext = context && Object.values(context).some(v => v);
       return hasRefs || hasContext;
     });
@@ -110,7 +113,7 @@ export default function DetailsPane({
     }
     
     setPreviousActiveTab(activeTab);
-  }, [activeTab, selectedLabelIndex, labels, ruleTabData, previousActiveTab, collectionId]);
+  }, [activeTab, selectedLabelIndex, labels, ruleTabData, previousActiveTab, mapDef.template]);
 
   // Set export format based on last-used or precedence order when dialog opens
   useEffect(() => {
@@ -1835,6 +1838,7 @@ export default function DetailsPane({
                                       cursor: 'pointer',
                                       fontSize: '14px',
                                     }}
+                                    title={inLang(uiStr.remove, lang)}
                                   >
                                     ⮾
                                   </button>

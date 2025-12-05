@@ -533,7 +533,7 @@
     "fr": "Ajouter chemin de modèle",
     "ne": "टेम्प्लेट पथ थप्नुहोस्"
   },
-  "removeTemplatePath": {
+  "remove": {
     "en": "Remove",
     "es": "Eliminar",
     "fr": "Supprimer",

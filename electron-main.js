@@ -1827,14 +1827,14 @@ ipcMain.handle('get-project-settings', async (event, projectFolder) => {
 });
 
 // Handler for setting project settings
-ipcMain.handle('set-project-settings', async (event, projectFolder, settings) => {
+ipcMain.handle('set-project-settings', async (event, projectFolder, newSettings) => {
   if (!projectFolder) {
     return { success: false, error: 'No project folder specified' };
   }
   
   try {
     // Update in-memory settings
-    jsonProjectSettings = { ...jsonProjectSettings, ...settings };
+    jsonProjectSettings = { ...jsonProjectSettings, ...newSettings };
     
     // Write to disk
     const jsonSettingsPath = path.join(projectFolder, 'LabelerProjectSettings.json');

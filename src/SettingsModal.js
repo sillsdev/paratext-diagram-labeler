@@ -1,9 +1,9 @@
+import { useState, useEffect } from 'react';
 import supportedLanguages from './data/ui-languages.json';
 import { inLang } from './Utils.js';
 import uiStr from './data/ui-strings.json';
 import packageInfo from '../package.json';
 
-import { useState, useEffect } from 'react';
 
 // Settings Modal Dialog
 export default function SettingsModal({ 
@@ -241,7 +241,7 @@ export default function SettingsModal({
                       cursor: 'pointer'
                     }}
                   >
-                    {inLang(uiStr.removeTemplatePath, lang)}
+                    {inLang(uiStr.remove, lang)}
                   </button>
                 </div>
               ))
