@@ -1,6 +1,6 @@
-name: Upload release to software.sil.org
+name: Upload release to SIL software server
 
-# This workflow downloads release assets from GitHub and uploads them to the SIL software website.
+# This workflow uploads release assets from GitHub to the SIL software server.
 # It generates .download_info metadata files for each installer package.
 #
 # Required Repository Secrets (Settings → Secrets and variables → Actions → Secrets):
@@ -11,9 +11,8 @@ name: Upload release to software.sil.org
 #   PROJECT_NAME: Display name of the project (e.g., "Paratext Diagram Labeler")
 #   PROJECT_FOLDER: Folder name for downloads (e.g., "labeler")
 #
-# Required Repository Variables (Settings → Secrets and variables → Actions → Variables):
-# that could be better implemented as Organization Variables by someone with the "Manage 
-# organization Actions variables" permission.
+# Required Variables that should be (but are not yet) provided as Organization Variables, 
+# so must currently be defined as repository variables:
 #   SFTP_HOST: SFTP server hostname (e.g., "software.sil.org")
 #   SFTP_TARGET_DIR: Base directory path without project folder (e.g., "/var/www/virtual/software.sil.org/htdocs/downloads/r")
 #
