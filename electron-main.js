@@ -2488,6 +2488,41 @@ ipcMain.handle(
             });
           }
         });
+        
+        // Convert numeric Merge_Key variants if using non-Latin digit system
+        const digitScript = jsonProjectSettings.digits || 'Latn';
+        if (digitScript !== 'Latn') {
+          console.log(`Converting numeric Merge_Key variants to ${digitScript} digit system`);
+          
+          // Build a set of merge keys we've already processed
+          const processedMergeKeys = new Set(labels.map(label => label.mergeKey).filter(Boolean));
+          
+          // Find all Merge_Key variants with numeric text that we haven't processed
+          const numericMergeKeyRegex = /<Variant Language="Merge_Key">\s*\n\s*<Text>([\d\s.,+-]+)<\/Text>\s*\n\s*<\/Variant>/gm;
+          
+          data = data.replace(numericMergeKeyRegex, (match, numericText) => {
+            // Check if this merge key was already processed (has a label)
+            if (processedMergeKeys.has(numericText.trim())) {
+              return match; // Already has a vernacular variant, skip
+            }
+            
+            // Convert the numeric text to project's digit system
+            const convertedNumber = convertDigits(numericText, digitScript);
+            
+            if (convertedNumber !== numericText) {
+              console.log(`  Converting numeric Merge_Key variant: "${numericText}" -> "${convertedNumber}"`);
+              
+              // Extract whitespace structure from the match
+              const whitespaceMatch = match.match(/^(\s*)<Variant/);
+              const whitespace1 = whitespaceMatch ? whitespaceMatch[1] : '        ';
+              
+              // Insert the converted variant after the Merge_Key variant
+              return `${match}\n${whitespace1}<Variant Language="${actualLanguage}">\n${whitespace1}    <Text>${convertedNumber}</Text>\n${whitespace1}</Variant>`;
+            }
+            
+            return match;
+          });
+        }
 
       }
 
