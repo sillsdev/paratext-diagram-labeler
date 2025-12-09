@@ -2,6 +2,151 @@
 
 ============================================================
 
+📁 Validating collection: BOB
+
+  Validating map-defs.json...
+  Validating mergekeys.json...
+❌ [BOB] mergekeys.json: Key "1 Sam. 1.3, 19, 24, 2.11" has complex lblTemplate "{r#1SA 1.3,19,24; 2.11}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "1 Sam. 1.3, 19, 24, 2.11" has complex lblTemplate "{r#1SA 1.3,19,24; 2.11}" but missing English context
+❌ [BOB] mergekeys.json: Invalid reference format in lblTemplate "{r#1SA 1.3,19,24; 2.11}" for key "1 Sam. 1.3, 19, 24, 2.11": r#1SA 1.3,19,24; 2.11
+❌ [BOB] mergekeys.json: Key "1 Sam. 13.15" has complex lblTemplate "{r#1SA 13.15}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "1 Sam. 13.15" has complex lblTemplate "{r#1SA 13.15}" but missing English context
+❌ [BOB] mergekeys.json: Key "1 Sam. 13.17" has complex lblTemplate "{r#1SA 13.17}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "1 Sam. 13.17" has complex lblTemplate "{r#1SA 13.17}" but missing English context
+❌ [BOB] mergekeys.json: Key "1 Sam. 13.18" has complex lblTemplate "{r#1SA 13.18}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "1 Sam. 13.18" has complex lblTemplate "{r#1SA 13.18}" but missing English context
+❌ [BOB] mergekeys.json: Key "1 Sam. 13.3" has complex lblTemplate "{r#1SA 13.3}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "1 Sam. 13.3" has complex lblTemplate "{r#1SA 13.3}" but missing English context
+❌ [BOB] mergekeys.json: Key "1 Sam. 13.5" has complex lblTemplate "{r#1SA 13.5}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "1 Sam. 13.5" has complex lblTemplate "{r#1SA 13.5}" but missing English context
+❌ [BOB] mergekeys.json: Key "1 Sam. 27.2" has complex lblTemplate "{r#1SA 27.2}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "1 Sam. 27.2" has complex lblTemplate "{r#1SA 27.2}" but missing English context
+❌ [BOB] mergekeys.json: Key "1 Sam. 27.6" has complex lblTemplate "{r#1SA 27.6}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "1 Sam. 27.6" has complex lblTemplate "{r#1SA 27.6}" but missing English context
+❌ [BOB] mergekeys.json: Key "1 Sam. 27.8" has complex lblTemplate "{r#1SA 27.8}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "1 Sam. 27.8" has complex lblTemplate "{r#1SA 27.8}" but missing English context
+❌ [BOB] mergekeys.json: Key "1 Sam. 4.1" has complex lblTemplate "{r#1SA 4.1}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "1 Sam. 4.1" has complex lblTemplate "{r#1SA 4.1}" but missing English context
+❌ [BOB] mergekeys.json: Key "1 Sam. 4.2, 10" has complex lblTemplate "{r#1SA 4.2, 10}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "1 Sam. 4.2, 10" has complex lblTemplate "{r#1SA 4.2, 10}" but missing English context
+❌ [BOB] mergekeys.json: Invalid reference format in lblTemplate "{r#1SA 4.2, 10}" for key "1 Sam. 4.2, 10": r#1SA 4.2, 10
+❌ [BOB] mergekeys.json: Key "1 Sam. 4.4" has complex lblTemplate "{r#1SA 4.4}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "1 Sam. 4.4" has complex lblTemplate "{r#1SA 4.4}" but missing English context
+❌ [BOB] mergekeys.json: Key "1 Sam. 5.1" has complex lblTemplate "{r#1SA 5.1}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "1 Sam. 5.1" has complex lblTemplate "{r#1SA 5.1}" but missing English context
+❌ [BOB] mergekeys.json: Key "1 Sam. 5.10" has complex lblTemplate "{r#1SA 5.10}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "1 Sam. 5.10" has complex lblTemplate "{r#1SA 5.10}" but missing English context
+❌ [BOB] mergekeys.json: Key "1 Sam. 5.8" has complex lblTemplate "{r#1SA 5.8}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "1 Sam. 5.8" has complex lblTemplate "{r#1SA 5.8}" but missing English context
+❌ [BOB] mergekeys.json: Key "1 Sam. 6.12" has complex lblTemplate "{r#1SA 6.12}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "1 Sam. 6.12" has complex lblTemplate "{r#1SA 6.12}" but missing English context
+❌ [BOB] mergekeys.json: Key "1 Sam. 7.1" has complex lblTemplate "{r#1SA 7.1}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "1 Sam. 7.1" has complex lblTemplate "{r#1SA 7.1}" but missing English context
+❌ [BOB] mergekeys.json: Key "2 Sam. 2.12" has complex lblTemplate "{r#2SA 2.12}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "2 Sam. 2.12" has complex lblTemplate "{r#2SA 2.12}" but missing English context
+❌ [BOB] mergekeys.json: Key "2 Sam. 2.29" has complex lblTemplate "{r#2SA 2.29}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "2 Sam. 2.29" has complex lblTemplate "{r#2SA 2.29}" but missing English context
+❌ [BOB] mergekeys.json: Key "2 Sam. 2.32" has complex lblTemplate "{r#2SA 2.32}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "2 Sam. 2.32" has complex lblTemplate "{r#2SA 2.32}" but missing English context
+❌ [BOB] mergekeys.json: Key "2 Sam. 3.16" has complex lblTemplate "{r#2SA 3.16}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "2 Sam. 3.16" has complex lblTemplate "{r#2SA 3.16}" but missing English context
+❌ [BOB] mergekeys.json: Key "2 Sam. 3.20" has complex lblTemplate "{r#2SA 3.20}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "2 Sam. 3.20" has complex lblTemplate "{r#2SA 3.20}" but missing English context
+❌ [BOB] mergekeys.json: Key "2 Sam. 8.1; 1 Chron. 18.1" has complex lblTemplate "{r#2SA 8.1; 1CH 18.1}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "2 Sam. 8.1; 1 Chron. 18.1" has complex lblTemplate "{r#2SA 8.1; 1CH 18.1}" but missing English context
+❌ [BOB] mergekeys.json: Invalid reference format in lblTemplate "{r#2SA 8.1; 1CH 18.1}" for key "2 Sam. 8.1; 1 Chron. 18.1": r#2SA 8.1; 1CH 18.1
+❌ [BOB] mergekeys.json: Key "2 Sam. 8.13-14; 1 Chron. 18.12-13" has complex lblTemplate "{r#2SA 8.13-14; 1CH 18.12-13}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "2 Sam. 8.13-14; 1 Chron. 18.12-13" has complex lblTemplate "{r#2SA 8.13-14; 1CH 18.12-13}" but missing English context
+❌ [BOB] mergekeys.json: Invalid reference format in lblTemplate "{r#2SA 8.13-14; 1CH 18.12-13}" for key "2 Sam. 8.13-14; 1 Chron. 18.12-13": r#2SA 8.13-14; 1CH 18.12-13
+❌ [BOB] mergekeys.json: Key "2 Sam. 8.2; 1 Chron. 18.2" has complex lblTemplate "{r#2SA 8.2; 1CH 18.2}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "2 Sam. 8.2; 1 Chron. 18.2" has complex lblTemplate "{r#2SA 8.2; 1CH 18.2}" but missing English context
+❌ [BOB] mergekeys.json: Invalid reference format in lblTemplate "{r#2SA 8.2; 1CH 18.2}" for key "2 Sam. 8.2; 1 Chron. 18.2": r#2SA 8.2; 1CH 18.2
+❌ [BOB] mergekeys.json: Key "2 Sam. 8.3-4; 1 Chron. 18.3-4" has complex lblTemplate "{r#2SA 8.3-4; 1CH 18.3-4}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "2 Sam. 8.3-4; 1 Chron. 18.3-4" has complex lblTemplate "{r#2SA 8.3-4; 1CH 18.3-4}" but missing English context
+❌ [BOB] mergekeys.json: Invalid reference format in lblTemplate "{r#2SA 8.3-4; 1CH 18.3-4}" for key "2 Sam. 8.3-4; 1 Chron. 18.3-4": r#2SA 8.3-4; 1CH 18.3-4
+❌ [BOB] mergekeys.json: Key "2 Sam. 8.5-6 1 Chron. 18.5-6" has complex lblTemplate "{r#2SA 8.5-6; 1CH 18.5-6}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "2 Sam. 8.5-6 1 Chron. 18.5-6" has complex lblTemplate "{r#2SA 8.5-6; 1CH 18.5-6}" but missing English context
+❌ [BOB] mergekeys.json: Invalid reference format in lblTemplate "{r#2SA 8.5-6; 1CH 18.5-6}" for key "2 Sam. 8.5-6 1 Chron. 18.5-6": r#2SA 8.5-6; 1CH 18.5-6
+❌ [BOB] mergekeys.json: Key "Abner defects to David" has complex lblTemplate "Abner defects to David" but missing English context
+❌ [BOB] mergekeys.json: Key "Abner leads Ish-Bosheth’s men" has complex lblTemplate "Abner leads Ish-Bosheth’s men" but missing English context
+❌ [BOB] mergekeys.json: Key "Aijalon" references placeName "Aijalon" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Amalekites" references placeName "Amalekites" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Aroer" references placeName "Aroer" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Bahurim" references placeName "Bahurim" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Battle" references placeName "Battle" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Beth Horon" references placeName "Beth-horon" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Bozrah" references placeName "Bozrah" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Brook of Egypt" references placeName "BrookOfEgypt" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Campaign of Saul" has complex lblTemplate "Campaign of Saul" but missing English context
+❌ [BOB] mergekeys.json: Key "Campaign of the Philistines" has complex lblTemplate "Campaign of the Philistines" but missing English context
+❌ [BOB] mergekeys.json: Key "Carmel" references placeName "Carmel" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "David’s campaigns" has complex lblTemplate "David’s campaigns" but missing English context
+❌ [BOB] mergekeys.json: Key "David’s southern raids" has complex lblTemplate "David’s southern raids" but missing English context
+❌ [BOB] mergekeys.json: Key "Elkanah, Hannah, and Samuel travel to and from Shiloh" has complex lblTemplate "{Elkanah, Hannah, and Samuel travel to and from Shiloh}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "Elkanah, Hannah, and Samuel travel to and from Shiloh" has complex lblTemplate "{Elkanah, Hannah, and Samuel travel to and from Shiloh}" but missing English context
+❌ [BOB] mergekeys.json: Key "Elkanah, Hannah, and Samuel travel to and from Shiloh" references placeName "Elkanah, Hannah, and Samuel travel to and from Shiloh" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Ephraim" references placeName "Ephraim" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Four Hours’ Walk" has complex lblTemplate "{Four Hours’ Walk}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "Four Hours’ Walk" has complex lblTemplate "{Four Hours’ Walk}" but missing English context
+❌ [BOB] mergekeys.json: Key "Four Hours’ Walk" references placeName "Four Hours’ Walk" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "from Philistia" has complex lblTemplate "{from#Philistia}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "from Philistia" has complex lblTemplate "{from#Philistia}" but missing English context
+❌ [BOB] mergekeys.json: Key "Geshurites / Girzites?" has complex lblTemplate "{Geshurites} / {q#Girzites}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "Geshurites / Girzites?" has complex lblTemplate "{Geshurites} / {q#Girzites}" but missing English context
+❌ [BOB] mergekeys.json: Key "Geshurites / Girzites?" references placeName "Geshurites" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Geshurites / Girzites?" references placeName "Girzites" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Gilgal" references placeName "Gilgal" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Hakilah" references placeName "Hakilah" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Hill Country of Ephraim" has complex lblTemplate "Hill Country of {TerritoryOfEphraim}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "Hill Country of Ephraim" has complex lblTemplate "Hill Country of {TerritoryOfEphraim}" but missing English context
+❌ [BOB] mergekeys.json: Key "Israelite desertions (1 Sam. 13.6-7)" has complex lblTemplate "Israelite desertions ({r#1SA 13.6-7})" but missing English gloss
+❌ [BOB] mergekeys.json: Key "Israelite desertions (1 Sam. 13.6-7)" has complex lblTemplate "Israelite desertions ({r#1SA 13.6-7})" but missing English context
+❌ [BOB] mergekeys.json: Key "Israelites gather for battle (1 Sam. 4.1)" has complex lblTemplate "Israelites gather for battle ({r#1SA 4.1})" but missing English gloss
+❌ [BOB] mergekeys.json: Key "Israelites gather for battle (1 Sam. 4.1)" has complex lblTemplate "Israelites gather for battle ({r#1SA 4.1})" but missing English context
+❌ [BOB] mergekeys.json: Key "Joab leads David’s men" has complex lblTemplate "Joab leads David’s men" but missing English context
+❌ [BOB] mergekeys.json: Key "Jonathan raids Geba" has complex lblTemplate "Jonathan raids Geba" but missing English context
+❌ [BOB] mergekeys.json: Key "Kenites" references placeName "Kenites" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "km" references placeName "km" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Kun" references placeName "Kun" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Litani R." references placeName "Litani" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Lod" references placeName "Lod" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Manasseh" references placeName "TerritoryOfManasseh" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "mi" references placeName "mi" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Mikmash" references placeName "Mikmash" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Movement of the Ark" has complex lblTemplate "Movement of the Ark" but missing English context
+❌ [BOB] mergekeys.json: Key "One Day’s Walk" has complex lblTemplate "{One Day’s Walk}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "One Day’s Walk" has complex lblTemplate "{One Day’s Walk}" but missing English context
+❌ [BOB] mergekeys.json: Key "One Day’s Walk" references placeName "One Day’s Walk" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "One Hour’s Walk" has complex lblTemplate "{One Hour’s Walk}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "One Hour’s Walk" has complex lblTemplate "{One Hour’s Walk}" but missing English context
+❌ [BOB] mergekeys.json: Key "One Hour’s Walk" references placeName "One Hour’s Walk" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Ophrah" references placeName "Ophrah" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Orontes R." references placeName "Orontes" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Philistine raiding parties" has complex lblTemplate "Philistine raiding parties" but missing English context
+❌ [BOB] mergekeys.json: Key "Philistines gather for battle (1 Sam. 4.1)" has complex lblTemplate "Philistines gather for battle ({r#1SA 4.1})" but missing English gloss
+❌ [BOB] mergekeys.json: Key "Philistines gather for battle (1 Sam. 4.1)" has complex lblTemplate "Philistines gather for battle ({r#1SA 4.1})" but missing English context
+❌ [BOB] mergekeys.json: Key "Road" references placeName "Road" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Shual" references placeName "Shual" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Sirah" references placeName "Sirah" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Tebah" references placeName "Tebah" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "The Ark is brought to the Israelite army" has complex lblTemplate "The Ark is brought to the Israelite army" but missing English context
+❌ [BOB] mergekeys.json: Key "Three Days’ Walk" has complex lblTemplate "{Three Days’ Walk}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "Three Days’ Walk" has complex lblTemplate "{Three Days’ Walk}" but missing English context
+❌ [BOB] mergekeys.json: Key "Three Days’ Walk" references placeName "Three Days’ Walk" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Timnah" references placeName "Timnah" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "to Gad and Gilead" has complex lblTemplate "to {Gad} and {Gilead}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "to Gad and Gilead" has complex lblTemplate "to {Gad} and {Gilead}" but missing English context
+❌ [BOB] mergekeys.json: Key "to Gad and Gilead" references placeName "Gad" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Travels of David" has complex lblTemplate "Travels of David" but missing English context
+❌ [BOB] mergekeys.json: Key "Uncertain location" has complex lblTemplate "{Uncertain location}" but missing English gloss
+❌ [BOB] mergekeys.json: Key "Uncertain location" has complex lblTemplate "{Uncertain location}" but missing English context
+❌ [BOB] mergekeys.json: Key "Uncertain location" references placeName "Uncertain location" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Valley of Salt" references placeName "ValleyOfSalt" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Valley of Zeboyim" references placeName "ValleyOfZeboyim" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Yarmuk R." references placeName "Yarmuk" which doesn't exist in placenames.json or core-placenames.json
+❌ [BOB] mergekeys.json: Key "Zered Brook" references placeName "ZeredBrook" which doesn't exist in placenames.json or core-placenames.json
+  No placenames.json found (optional)
+
 📁 Validating collection: SMR
 
   Validating map-defs.json...
@@ -75,11 +220,6 @@
 ❌ [SMR] mergekeys.json: Key "refugecities_title02" references placeName "NUM 35" which doesn't exist in placenames.json or core-placenames.json
 ❌ [SMR] mergekeys.json: Key "refugecities_title02" references placeName "JOS 20" which doesn't exist in placenames.json or core-placenames.json
 ❌ [SMR] mergekeys.json: Key "river_of_life" has complex lblTemplate "River of Life" but missing English context
-❌ [SMR] mergekeys.json: Key "road_to_bethany" has complex lblTemplate "{to#Bethany}" but missing English context
-❌ [SMR] mergekeys.json: Key "road_to_bethlehem" has complex lblTemplate "{to#Bethlehem}" but missing English context
-❌ [SMR] mergekeys.json: Key "road_to_caesarea" has complex lblTemplate "{to#Caesarea}" but missing English context
-❌ [SMR] mergekeys.json: Key "road_to_joppa" has complex lblTemplate "{to#Joppa}" but missing English context
-❌ [SMR] mergekeys.json: Key "road_to_the_dead_sea" has complex lblTemplate "{to#DeadSea}" but missing English context
 ❌ [SMR] mergekeys.json: Key "road_to_the_dead_sea" references placeName "DeadSea" which doesn't exist in placenames.json or core-placenames.json
 ❌ [SMR] mergekeys.json: Key "robe_hp" has complex lblTemplate "Robe" but missing English context
 ❌ [SMR] mergekeys.json: Key "route_ruth" has complex lblTemplate "Journey from Israel to Moab and back" but missing English context
@@ -176,7 +316,7 @@
 
 📊 VALIDATION SUMMARY
 
-Total Errors: 161
+Total Errors: 295
 Total Warnings: 1
 
 ❌ Validation failed with errors

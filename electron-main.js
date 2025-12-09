@@ -2321,6 +2321,84 @@ ipcMain.handle(
           
           console.log(`Modified ${modifiedStoryFiles.size} story files`);
           
+          // Step 5.5: Convert numeric content to project digit system if needed
+          const digitScript = jsonProjectSettings.digits || 'Latn';
+          if (digitScript !== 'Latn') {
+            console.log(`Converting numeric content to ${digitScript} digit system`);
+            
+            // Process all story files that weren't modified for merge fields
+            for (const storyFile of storyFileList) {
+              if (modifiedStoryFiles.has(storyFile)) {
+                continue; // Skip files we already processed
+              }
+              
+              const storyPath = path.join(storiesDir, storyFile);
+              const storyXml = fs.readFileSync(storyPath, 'utf8');
+              const storyData = await parser.parseStringPromise(storyXml);
+              
+              let numericContentModified = false;
+              
+              // Recursively find and convert numeric Content elements
+              const convertNumericContent = (obj) => {
+                if (!obj || typeof obj !== 'object') return;
+                
+                // Look for Content properties
+                if (obj.Content !== undefined) {
+                  if (Array.isArray(obj.Content)) {
+                    obj.Content.forEach((content, idx) => {
+                      if (typeof content === 'string' && /^[\d\s.,+-]+$/.test(content.trim())) {
+                        // Content is a string that contains only numbers, spaces, and decimal/formatting chars
+                        const converted = convertDigits(content, digitScript);
+                        if (converted !== content) {
+                          obj.Content[idx] = converted;
+                          numericContentModified = true;
+                          console.log(`  Converted numeric content in ${storyFile}: "${content}" -> "${converted}"`);
+                        }
+                      } else if (content._ && typeof content._ === 'string' && /^[\d\s.,+-]+$/.test(content._.trim())) {
+                        // Content is an object with _ property containing numeric text
+                        const converted = convertDigits(content._, digitScript);
+                        if (converted !== content._) {
+                          content._ = converted;
+                          numericContentModified = true;
+                          console.log(`  Converted numeric content in ${storyFile}: "${content._}" -> "${converted}"`);
+                        }
+                      }
+                    });
+                  } else if (typeof obj.Content === 'string' && /^[\d\s.,+-]+$/.test(obj.Content.trim())) {
+                    // Content is a direct string property containing numeric text
+                    const converted = convertDigits(obj.Content, digitScript);
+                    if (converted !== obj.Content) {
+                      obj.Content = converted;
+                      numericContentModified = true;
+                      console.log(`  Converted numeric content in ${storyFile}: "${obj.Content}" -> "${converted}"`);
+                    }
+                  }
+                }
+                
+                // Recurse through all properties
+                for (const key in obj) {
+                  if (Array.isArray(obj[key])) {
+                    obj[key].forEach(item => convertNumericContent(item));
+                  } else if (typeof obj[key] === 'object') {
+                    convertNumericContent(obj[key]);
+                  }
+                }
+              };
+              
+              convertNumericContent(storyData);
+              
+              if (numericContentModified) {
+                // Write modified story file back
+                const modifiedXml = builder.buildObject(storyData);
+                fs.writeFileSync(storyPath, modifiedXml, 'utf8');
+                modifiedStoryFiles.add(storyFile);
+                console.log(`Modified ${storyFile} for numeric content conversion`);
+              }
+            }
+            
+            console.log(`Total story files modified (merge fields + numeric content): ${modifiedStoryFiles.size}`);
+          }
+          
           // Step 6: Re-zip the IDML
           const outputZip = new AdmZip();
           
