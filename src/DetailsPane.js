@@ -67,6 +67,7 @@ export default function DetailsPane({
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [selectedExportFormat, setSelectedExportFormat] = useState('idml-full');
   const [lastUsedExportFormat, setLastUsedExportFormat] = useState(null);
+  const [showResetDialog, setShowResetDialog] = useState(false);
   
   // State for rule tabs
   const [ruleTabModes, setRuleTabModes] = useState({}); // { tagName: 'simple' | 'advanced' }
@@ -578,19 +579,24 @@ export default function DetailsPane({
             </>
           )}
           <button
-            onClick={onRevertLabels}
-            disabled={!hasUnsavedChanges}
+            onClick={() => {
+              if (hasUnsavedChanges) {
+                setShowResetDialog(true);
+              } else {
+                onRevertLabels();
+              }
+            }}
             style={{
               background: 'none',
               border: 'none',
-              cursor: hasUnsavedChanges ? 'pointer' : 'not-allowed',
+              cursor: 'pointer',
               padding: 0,
               marginLeft: 1,
-              opacity: hasUnsavedChanges ? 1 : 0.3,
+              opacity: 1,
             }}
-            title={inLang(uiStr.revertChanges, lang)}
+            title={inLang(uiStr.reset, lang)}
           >
-            {/* Revert icon: curved arrow going left */}
+            {/* Reset icon: curved arrow going left */}
             <svg
               width="22"
               height="22"
@@ -600,7 +606,7 @@ export default function DetailsPane({
             >
               <path
                 d="M8 11h8M8 11l3 3m-3-3l3-3M16 11a5 5 0 1 1-5-5"
-                stroke={hasUnsavedChanges ? '#ff9800' : '#999'}
+                stroke={hasUnsavedChanges ? '#ff9800' : 'rgba(15, 72, 15, 1)'}
                 strokeWidth="1.8"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -1882,6 +1888,68 @@ export default function DetailsPane({
           message={alertMessage}
           onClose={() => setAlertMessage(null)}
         />
+      )}
+      
+      {/* Reset Confirmation Dialog */}
+      {showResetDialog && (
+        <div
+          style={{
+            position: 'fixed',
+            left: 0,
+            top: 0,
+            width: '100vw',
+            height: '100vh',
+            zIndex: 1000,
+            background: 'rgba(0,0,0,0.4)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <div
+            style={{
+              background: 'white',
+              borderRadius: 10,
+              padding: 24,
+              minWidth: 400,
+              maxWidth: 500,
+              boxShadow: '0 4px 24px #0008',
+              position: 'relative',
+            }}
+          >
+            <h4 style={{ marginTop: 0 }}>{inLang(uiStr.discardChanges, lang)}</h4>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: 20 }}>
+              <button
+                onClick={() => setShowResetDialog(false)}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: 4,
+                  border: '1px solid #ccc',
+                  background: '#f5f5f5',
+                  cursor: 'pointer',
+                }}
+              >
+                {inLang(uiStr.cancel, lang)}
+              </button>
+              <button
+                onClick={() => {
+                  setShowResetDialog(false);
+                  onRevertLabels();
+                }}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: 4,
+                  border: '1px solid #ff9800',
+                  background: '#ff9800',
+                  color: 'white',
+                  cursor: 'pointer',
+                }}
+              >
+                {inLang(uiStr.discard, lang)}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

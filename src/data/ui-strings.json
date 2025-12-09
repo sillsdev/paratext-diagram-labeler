@@ -689,11 +689,23 @@
     "fr": "Enregistrer les Modifications",
     "ne": "परिवर्तनहरू बचत गर्नुहोस्"
   },
+  "reset": {
+    "en": "Reset",
+    "es": "Reiniciar",
+    "fr": "Réinitialiser",
+    "ne": "रिसेट गर्नुहोस्"
+  },
   "revertChanges": {
     "en": "Revert Changes",
     "es": "Revertir Cambios",
     "fr": "Annuler les Modifications",
     "ne": "परिवर्तनहरू पूर्ववत गर्नुहोस्"
+  },
+  "discardChanges": {
+    "en": "Discard changes?",
+    "es": "¿Descartar cambios?",
+    "fr": "Abandonner les modifications?",
+    "ne": "परिवर्तनहरू त्याग्ने?"
   },
   "unsavedChanges": {
     "en": "Unsaved Changes",
@@ -765,7 +777,13 @@
     "en": "Labels reverted to last saved state",
     "es": "Etiquetas revertidas al último estado guardado",
     "fr": "Étiquettes rétablies au dernier état enregistré",
-    "ne": "लेबलहरू अन्तिम बचत अवस्थामा पूर्ववत गरियो"
+    "ne": "लेबलहरू अन्तिम बचत गरिएको स्थितिमा पूर्ववत गरियो"
+  },
+  "labelsReset": {
+    "en": "Labels reset and re-proposed",
+    "es": "Etiquetas reiniciadas y repropuestas",
+    "fr": "Étiquettes réinitialisées et reproposées",
+    "ne": "लेबलहरू रिसेट र पुन: प्रस्तावित"
   },
   "errorSavingLabels": {
     "en": "Error saving labels",

@@ -136,9 +136,8 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
   // const [termRenderings, setTermRenderings] = useState(); 
   // const [termRenderingsLoading, setTermRenderingsLoading] = useState(false); // Guard against multiple loads
   
-  // Track unsaved changes and saved state for .idml.txt files
+  // Track unsaved changes for .idml.txt files
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const [savedLabels, setSavedLabels] = useState({}); // Store the last saved state to allow reverting
 
   // Template Browser state
   const [showTemplateBrowser, setShowTemplateBrowser] = useState(false);
@@ -703,7 +702,6 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
       );
       
       if (result.success) {
-        setSavedLabels({ ...labelsToSave });
         setHasUnsavedChanges(false);
         console.log('Labels saved successfully to .IDML.TXT file:', result.filePath);
         
@@ -726,29 +724,6 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
   }, [mapDef.template, labels, projectFolder, lang]);
 
   // Handler to revert labels to last saved state
-  const handleRevertLabels = useCallback(() => {
-    if (!hasUnsavedChanges) return;
-    
-    // Restore labels from saved labels
-    const currentTermRenderings = { ...termRenderings };
-    const restoredLabels = labels.map(label => {
-      const savedLabel = savedLabels[label.mergeKey] || '';
-      const status = getStatus(
-        currentTermRenderings,
-        label.termId,
-        savedLabel,
-        collectionManager.getRefs(label.mergeKey, getCollectionIdFromTemplate(mapDef.template)),
-        extractedVerses
-      );
-      return { ...label, vernLabel: savedLabel, status };
-    });
-    
-    setLabels(restoredLabels);
-    setHasUnsavedChanges(false);
-    console.log('Labels reverted to last saved state');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasUnsavedChanges, savedLabels, labels, termRenderings, extractedVerses, mapDef.template]);
-
   // Helper function to prompt user about unsaved changes
   const promptUnsavedChanges = useCallback(async () => {
     if (!hasUnsavedChanges) return true; // No changes, proceed
@@ -1012,14 +987,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
         };
       }));
       
-      // Store this as the reset point
-      const resetPointLabels = {};
-      initialLabels.forEach(label => {
-        if (label.mergeKey) {
-          resetPointLabels[label.mergeKey] = label.vernLabel || '';
-        }
-      });
-      setSavedLabels(resetPointLabels);
+      // Clear unsaved changes flag
       setHasUnsavedChanges(false);
       
       // Second pass: Check for sync labels that differ from dictionary
@@ -1232,13 +1200,42 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
     extractedVerses,
     projectFolder,
     setSelectedVariant,
-    setSavedLabels,
     setHasUnsavedChanges,
     setMapPaneView,
     setResetZoomFlag,
     setTermRenderings
     // eslint-disable-next-line react-hooks/exhaustive-deps
   ]);
+
+  // Reset/revert handler - reloads the current template from scratch
+  const handleRevertLabels = useCallback(async () => {
+    // Reset by reloading the current template from scratch
+    const currentTemplate = mapDef.template;
+    const currentFig = mapDef.fig;
+    const currentMapView = mapDef.mapView;
+    
+    console.log('[Reset] Reloading template:', currentTemplate);
+    
+    // Clear unsaved changes flag immediately
+    setHasUnsavedChanges(false);
+    
+    // Reload label dictionary from disk to discard in-memory changes
+    console.log('[Reset] Reloading label dictionary from disk...');
+    await labelDictionaryService.loadAll();
+    
+    // Reload the template - this will reset all labels to their initial state
+    await loadTemplate(currentTemplate, currentFig, false, currentMapView);
+    
+    // Trigger full status recalculation after reset
+    console.log('[Reset] Triggering status recalculation...');
+    setStatusRecalcTrigger(prev => ({
+      timestamp: prev.timestamp + 1,
+      affectedPlaceNameId: null,
+      affectedLabelMergeKey: null
+    }));
+    
+    console.log('[Reset] Template reloaded');
+  }, [mapDef.template, mapDef.fig, mapDef.mapView, loadTemplate]);
 
   // Store the function in a ref for stable reference
   useEffect(() => {
