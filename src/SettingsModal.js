@@ -19,10 +19,16 @@ export default function SettingsModal({
   setShowFrac,
   templatePaths,
   setTemplatePaths,
-  projectFolder
+  projectFolder,
+  collectionId,
+  collectionsFolder
 }) {
   const electronAPI = window.electronAPI;
   const [numberScript, setNumberScript] = useState('Latn');
+  const [showImportDialog, setShowImportDialog] = useState(false);
+  const [importTargetLanguages, setImportTargetLanguages] = useState([]);
+  const [selectedTargetLanguage, setSelectedTargetLanguage] = useState('');
+  const [importXmlPath, setImportXmlPath] = useState('');
   
   // Number script options with sample digits
   const numberScriptOptions = [
@@ -91,6 +97,57 @@ export default function SettingsModal({
 
   const handleRemoveTemplatePath = (pathToRemove) => {
     setTemplatePaths(templatePaths.filter(path => path !== pathToRemove));
+  };
+
+  const handleImportMapCreatorDictionary = async () => {
+    if (!electronAPI?.selectXmlFile) {
+      alert('File selection not supported');
+      return;
+    }
+    
+    try {
+      const xmlPath = await electronAPI.selectXmlFile();
+      if (!xmlPath) return;
+      
+      // Parse XML to get target languages
+      const targetLanguages = await electronAPI.parseMapCreatorDictionary(xmlPath);
+      if (!targetLanguages || targetLanguages.length === 0) {
+        alert('No target languages found with en_US source in the selected file.');
+        return;
+      }
+      
+      setImportXmlPath(xmlPath);
+      setImportTargetLanguages(targetLanguages);
+      setSelectedTargetLanguage(targetLanguages[0]);
+      setShowImportDialog(true);
+    } catch (error) {
+      console.error('Error selecting XML file:', error);
+      alert('Error reading XML file: ' + error.message);
+    }
+  };
+
+  const handleConfirmImport = async () => {
+    if (!selectedTargetLanguage || !importXmlPath) return;
+    
+    try {
+      const result = await electronAPI.importMapCreatorDictionary({
+        xmlPath: importXmlPath,
+        targetLanguage: selectedTargetLanguage,
+        projectFolder: projectFolder,
+        collectionId: collectionId,
+        collectionsFolder: collectionsFolder
+      });
+      
+      if (result.success) {
+        alert(`Successfully imported ${result.count} items into the Labeler dictionary.`);
+        setShowImportDialog(false);
+      } else {
+        alert('Import failed: ' + (result.error || 'Unknown error'));
+      }
+    } catch (error) {
+      console.error('Error importing dictionary:', error);
+      alert('Import error: ' + error.message);
+    }
   };
 
   if (!open) return null;
@@ -193,8 +250,24 @@ export default function SettingsModal({
 
         {/* MAPX and IDML Paths Section */}
         <div style={{ marginBottom: 16 }}>
-          <div style={{ fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
-            {inLang(uiStr.templatePaths, lang)}:
+          <div style={{ fontWeight: 'bold', marginBottom: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+            <span>{inLang(uiStr.templatePaths, lang)}:</span>
+            <button
+              onClick={handleAddTemplatePath}
+              title={inLang(uiStr.addTemplatePath, lang)}
+              style={{
+                padding: '2px 8px',
+                fontSize: '1.2em',
+                backgroundColor: '#007bff',
+                color: 'white',
+                border: 'none',
+                borderRadius: 4,
+                cursor: 'pointer',
+                lineHeight: 1
+              }}
+            >
+              +
+            </button>
           </div>
           <div style={{ 
             border: '1px solid #ccc', 
@@ -247,22 +320,6 @@ export default function SettingsModal({
               ))
             )}
           </div>
-          <div style={{ textAlign: 'center' }}>
-            <button
-              onClick={handleAddTemplatePath}
-              style={{
-                padding: '6px 12px',
-                fontSize: '0.9em',
-                backgroundColor: '#007bff',
-                color: 'white',
-                border: 'none',
-                borderRadius: 4,
-                cursor: 'pointer'
-              }}
-            >
-              {inLang(uiStr.addTemplatePath, lang)}
-            </button>
-          </div>
         </div>
         
         {/* Project Settings */}
@@ -271,17 +328,17 @@ export default function SettingsModal({
             <h3 style={{ marginTop: 0, marginBottom: 12, fontSize: '1.1em' }}>
               {inLang(uiStr.projectSettings, lang)}
             </h3>
-            <div style={{ marginBottom: 16 }}>
-              <label style={{ fontWeight: 'bold', display: 'block', marginBottom: 4 }}>
+            <div style={{ marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
+              <label style={{ fontWeight: 'bold', whiteSpace: 'nowrap' }}>
                 {inLang(uiStr.numberScript, lang)}:
               </label>
               <select
                 value={numberScript}
                 onChange={(e) => handleNumberScriptChange(e.target.value)}
                 style={{
-                  width: '100%',
-                  padding: '6px 8px',
-                  fontSize: '0.95em',
+                  flex: 1,
+                  padding: '4px 8px',
+                  fontSize: '0.9em',
                   borderRadius: 4,
                   border: '1px solid #ccc'
                 }}
@@ -292,6 +349,23 @@ export default function SettingsModal({
                   </option>
                 ))}
               </select>
+            </div>
+            <div style={{ marginBottom: 16, textAlign: 'center' }}>
+              <button
+                onClick={handleImportMapCreatorDictionary}
+                disabled={!projectFolder}
+                style={{
+                  padding: '6px 12px',
+                  fontSize: '0.9em',
+                  backgroundColor: projectFolder ? '#28a745' : '#ccc',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: 4,
+                  cursor: projectFolder ? 'pointer' : 'not-allowed'
+                }}
+              >
+                Import Map Creator dictionary
+              </button>
             </div>
           </div>
         )}
@@ -315,6 +389,87 @@ export default function SettingsModal({
           </button>
         </div>
       </div>
+      
+      {/* Import Dialog */}
+      {showImportDialog && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            background: 'rgba(0,0,0,0.4)',
+            zIndex: 2000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <div
+            style={{
+              background: '#fff',
+              borderRadius: 8,
+              padding: 24,
+              minWidth: 400,
+              boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+            }}
+          >
+            <h3 style={{ marginTop: 0, marginBottom: 16 }}>Import Map Creator Dictionary</h3>
+            <label style={{ display: 'block', fontWeight: 'bold', marginBottom: 8 }}>
+              Select the target language to import into the Labeler dictionary:
+            </label>
+            <select
+              value={selectedTargetLanguage}
+              onChange={(e) => setSelectedTargetLanguage(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '8px',
+                fontSize: '1em',
+                borderRadius: 4,
+                border: '1px solid #ccc',
+                marginBottom: 20
+              }}
+            >
+              {importTargetLanguages.map(lang => (
+                <option key={lang} value={lang}>
+                  {lang}
+                </option>
+              ))}
+            </select>
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setShowImportDialog(false)}
+                style={{
+                  padding: '6px 16px',
+                  fontSize: '0.95em',
+                  backgroundColor: '#6c757d',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: 4,
+                  cursor: 'pointer'
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmImport}
+                style={{
+                  padding: '6px 16px',
+                  fontSize: '0.95em',
+                  backgroundColor: '#007bff',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: 4,
+                  cursor: 'pointer'
+                }}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

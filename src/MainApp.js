@@ -444,7 +444,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
           : STATUS_OK;
         
         // Check for STATUS_PARTIAL (contains 《》)
-        const vernLabel = label.vernLabel || '';
+        const vernLabel = typeof label.vernLabel === 'string' ? label.vernLabel : (label.vernLabel || '');
         if (vernLabel && (vernLabel.includes('《') || vernLabel.includes('》')) && calculatedStatus > STATUS_PARTIAL) {
           calculatedStatus = STATUS_PARTIAL;
         }
@@ -458,7 +458,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
       
       // Calculate status for labels WITHOUT placeNameIds (e.g., {r#REF}, {number#123})
       // These don't have terms/renderings to validate against, so only BLANK, PARTIAL, or OK:
-      const vernLabel = (label.vernLabel || '').trim();
+      const vernLabel = typeof label.vernLabel === 'string' ? label.vernLabel.trim() : String(label.vernLabel || '').trim();
       let newStatus;
       if (!vernLabel) {
         newStatus = STATUS_BLANK;
@@ -2201,6 +2201,8 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
         templatePaths={templatePaths}
         setTemplatePaths={setTemplatePaths}
         projectFolder={projectFolder}
+        collectionId={getCollectionIdFromTemplate(mapDef.template)}
+        collectionsFolder={collectionsFolder}
       />{' '}
       {showTemplateBrowser && (
         <TemplateBrowser

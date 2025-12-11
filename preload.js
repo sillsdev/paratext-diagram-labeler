@@ -10,6 +10,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   selectProjectFolder: () => ipcRenderer.invoke('select-project-folder'),
 
+  selectXmlFile: () => ipcRenderer.invoke('select-xml-file'),
+
+  parseMapCreatorDictionary: (xmlPath) => ipcRenderer.invoke('parse-map-creator-dictionary', xmlPath),
+
+  importMapCreatorDictionary: (options) => ipcRenderer.invoke('import-map-creator-dictionary', options),
+
   discoverParatextProjects: () => ipcRenderer.invoke('discover-paratext-projects'),
 
   getFilteredVerses: (folder, curRefs) =>

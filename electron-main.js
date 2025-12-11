@@ -1311,6 +1311,154 @@ ipcMain.handle('select-project-folder', async event => {
   return result.filePaths[0];
 });
 
+// Handler for selecting XML file for Map Creator dictionary import
+ipcMain.handle('select-xml-file', async event => {
+  const result = await dialog.showOpenDialog({
+    properties: ['openFile'],
+    filters: [
+      { name: 'XML Files', extensions: ['xml'] },
+      { name: 'All Files', extensions: ['*'] }
+    ],
+    title: 'Select Map Creator Dictionary XML File',
+    // Force non-native dialog on Linux to avoid GTK conflicts
+    ...(process.platform === 'linux' && { 
+      defaultPath: require('os').homedir()
+    })
+  });
+  if (result.canceled || !result.filePaths.length) {
+    return null;
+  }
+  return result.filePaths[0];
+});
+
+// Handler to parse Map Creator dictionary XML and extract target languages
+ipcMain.handle('parse-map-creator-dictionary', async (event, xmlPath) => {
+  try {
+    const xmlContent = fs.readFileSync(xmlPath, 'utf8');
+    const parser = new xml2js.Parser();
+    const result = await parser.parseStringPromise(xmlContent);
+    
+    // Extract unique target languages from dictionaries with en_US source
+    const targetLanguages = [];
+    const dictionaries = result?.DictionarySet?.Dictionary || [];
+    
+    for (const dict of dictionaries) {
+      if (dict.$?.SourceLanguage === 'en_US' && dict.$?.TargetLanguage) {
+        const targetLang = dict.$.TargetLanguage;
+        if (!targetLanguages.includes(targetLang)) {
+          targetLanguages.push(targetLang);
+        }
+      }
+    }
+    
+    return targetLanguages;
+  } catch (error) {
+    console.error('Error parsing Map Creator dictionary:', error);
+    throw error;
+  }
+});
+
+// Handler to import Map Creator dictionary into Labeler dictionary
+ipcMain.handle('import-map-creator-dictionary', async (event, options) => {
+  const { xmlPath, targetLanguage, projectFolder, collectionId, collectionsFolder } = options;
+  
+  try {
+    // Read and parse the XML file
+    const xmlContent = fs.readFileSync(xmlPath, 'utf8');
+    const parser = new xml2js.Parser();
+    const result = await parser.parseStringPromise(xmlContent);
+    
+    // Find the dictionary with matching source and target languages
+    const dictionaries = result?.DictionarySet?.Dictionary || [];
+    let selectedDict = null;
+    
+    for (const dict of dictionaries) {
+      if (dict.$?.SourceLanguage === 'en_US' && dict.$?.TargetLanguage === targetLanguage) {
+        selectedDict = dict;
+        break;
+      }
+    }
+    
+    if (!selectedDict || !selectedDict.Translation) {
+      return { success: false, error: 'No translations found for selected language' };
+    }
+    
+    // Load mergekeys.json for the collection
+    const mergeKeysPath = path.join(collectionsFolder, collectionId, 'mergekeys.json');
+    
+    if (!fs.existsSync(mergeKeysPath)) {
+      return { success: false, error: `mergekeys.json not found for collection ${collectionId}` };
+    }
+    
+    const mergeKeys = JSON.parse(fs.readFileSync(mergeKeysPath, 'utf8'));
+    
+    // Build lookup: mapxKey → lblTemplate (case-sensitive first, then case-insensitive)
+    const exactLookup = {}; // case-sensitive
+    const lowerLookup = {}; // case-insensitive fallback
+    
+    for (const [mergeKey, data] of Object.entries(mergeKeys)) {
+      if (data.mapxKey && data.lblTemplate) {
+        const mapxKey = data.mapxKey;
+        const lblTemplate = data.lblTemplate;
+        
+        // Exact match (case-sensitive)
+        if (!exactLookup[mapxKey]) {
+          exactLookup[mapxKey] = lblTemplate;
+        }
+        
+        // Lowercase match (case-insensitive fallback)
+        const lowerKey = mapxKey.toLowerCase();
+        if (!lowerLookup[lowerKey]) {
+          lowerLookup[lowerKey] = lblTemplate;
+        }
+      }
+    }
+    
+    // Load existing LabelDictionary.json
+    const labelDictPath = path.join(projectFolder, 'LabelDictionary.json');
+    let labelDict = {};
+    
+    if (fs.existsSync(labelDictPath)) {
+      try {
+        labelDict = JSON.parse(fs.readFileSync(labelDictPath, 'utf8'));
+      } catch (error) {
+        console.warn('Error reading existing LabelDictionary.json:', error);
+      }
+    }
+    
+    // Process translations
+    let importCount = 0;
+    const translations = selectedDict.Translation || [];
+    
+    for (const trans of translations) {
+      const source = trans.$?.Source;
+      const target = trans.$?.Target;
+      
+      if (!source || !target) continue;
+      
+      // Look up lblTemplate from mapxKey
+      let lblTemplate = exactLookup[source]; // Try exact match first
+      if (!lblTemplate) {
+        lblTemplate = lowerLookup[source.toLowerCase()]; // Fallback to case-insensitive
+      }
+      
+      if (lblTemplate) {
+        // Add to dictionary - simple key-value format
+        labelDict[lblTemplate] = target;
+        importCount++;
+      }
+    }
+    
+    // Save updated dictionary
+    fs.writeFileSync(labelDictPath, JSON.stringify(labelDict, null, 2), 'utf8');
+    
+    return { success: true, count: importCount };
+  } catch (error) {
+    console.error('Error importing Map Creator dictionary:', error);
+    return { success: false, error: error.message };
+  }
+});
+
 // Handler for selecting template files (images or IDML merge files)
 // ipcMain.handle('select-template-file', async (event) => {
 //   try {
