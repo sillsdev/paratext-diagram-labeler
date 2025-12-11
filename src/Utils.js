@@ -13,6 +13,14 @@ import {
   STATUS_OK,
 } from './constants.js';
 
+/**
+ * Normalize Unicode string to NFC form for consistent comparison.
+ * This ensures canonically equivalent strings are treated as equal.
+ */
+function normalizeUnicode(str) {
+  return str ? str.normalize('NFC') : str;
+}
+
 export const statusValue = [
   { bkColor: 'dimgray', textColor: 'white', sort: 0 }, // 0 - Blank
   { bkColor: 'dimgray', textColor: 'white', sort: 1 }, // 1 - Partial (same as blank)
@@ -130,7 +138,7 @@ export function getStatus(termRenderings, termId, vernLabel, refs, extractedVers
     return STATUS_NO_RENDERINGS; // { status: "No renderings", color: "indianred" };
   }
 
-  if (vernLabel === mapForm) {
+  if (normalizeUnicode(vernLabel) === normalizeUnicode(mapForm)) {
     if (entry.isGuessed) return STATUS_GUESSED; // "Guessed rendering not yet approved"
     // console.log(`Non-guessed Vernacular label matches map form: ${vernLabel}`);
     // Note: Explicit map form validation removed in new architecture
@@ -154,8 +162,8 @@ export function getStatus(termRenderings, termId, vernLabel, refs, extractedVers
  * different renderings or one term may have no rendering (auto-join case).
  */
 export function getPlaceNameStatus(termRenderings, terms, vernLabel, extractedVerses, placeNameId = null, labelDictionaryService = null) {
-  // Ensure vernLabel is a string
-  vernLabel = (vernLabel && typeof vernLabel === 'string') ? vernLabel.trim() : '';
+  // Ensure vernLabel is a string and normalize Unicode
+  vernLabel = (vernLabel && typeof vernLabel === 'string') ? normalizeUnicode(vernLabel.trim()) : '';
   console.log(`[getPlaceNameStatus] placeNameId="${placeNameId}", vernLabel: "${vernLabel}"`, Array.from(vernLabel).map(c => c.charCodeAt(0).toString(16)));
   
   // If the vernacular Label is empty, return STATUS_BLANK
@@ -287,10 +295,13 @@ export function getPlaceNameStatus(termRenderings, terms, vernLabel, extractedVe
  */
 function patternMatchesLabel(label, pattern) {
   try {
-    const regexPattern = convertParatextWildcardsToRegex(pattern);
+    // Normalize both label and pattern for Unicode-insensitive comparison
+    const normalizedLabel = normalizeUnicode(label);
+    const normalizedPattern = normalizeUnicode(pattern);
+    const regexPattern = convertParatextWildcardsToRegex(normalizedPattern);
     // Use word boundaries instead of anchors to match pattern anywhere in label
     const regex = new RegExp(MATCH_PRE_B + regexPattern + MATCH_POST_B, 'iu');
-    return regex.test(label);
+    return regex.test(normalizedLabel);
   } catch (e) {
     // Invalid regex, treat as non-match
     return false;
@@ -362,12 +373,14 @@ export function extractRenderingPatterns(renderings) {
 }
 
 export function wordMatchesRenderings(word, renderings, anchored = true) {
+  // Normalize the word for Unicode-insensitive comparison
+  const normalizedWord = normalizeUnicode(word);
   let renderingList = [];
   renderingList = renderings
     .replace(/\|\|/g, '\n')
     .split(/(\r?\n)/)
     .map(r => r.replace(/\(.*/g, '').replace(/.*\)/g, '')) // Remove content in parentheses (comments), even if only partially enclosed. (The user may be typing a comment.)
-    .map(r => r.trim())
+    .map(r => normalizeUnicode(r.trim())) // Normalize each rendering pattern
     .filter(r => r.length > 0)
     .map(r => convertParatextWildcardsToRegex(r));
 
@@ -379,7 +392,7 @@ export function wordMatchesRenderings(word, renderings, anchored = true) {
       //   `Checking word "${word}" against rendering "${rendering}" with pattern "${pattern}"`
       // );
       const regex = new RegExp(pattern, 'iu');
-      if (regex.test(word)) {
+      if (regex.test(normalizedWord)) {
         // console.log(`Word "${word}" matches rendering "${rendering}"`);
         return i + 1; // Return 1-based index
       } else {
