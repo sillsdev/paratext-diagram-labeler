@@ -1,13 +1,14 @@
 import React from 'react';
 import { FaPencilAlt } from 'react-icons/fa';
 import uiStr from './data/ui-strings.json';
-import { CheckmarkIcon, DeniedCheckmarkIcon, CrossIcon, NoneIcon, ShowAllIcon, ShowMissingIcon, ShowUniqueIcon } from './TermIcons';
+import { CheckmarkIcon, DeniedCheckmarkIcon, CrossIcon, NoneIcon, ShowAllIcon, ShowHideEmptyIcon, ShowMissingIcon, ShowUniqueIcon } from './TermIcons';
 import { MATCH_PRE_B, MATCH_POST_B, MATCH_W } from './constants.js';
 import { collectionManager } from './CollectionManager';
 import { inLang, prettyRef } from './Utils.js';
 
 // Filter mode constants
 const FILTER_SHOW_ALL = 'all';
+const FILTER_HIDE_EMPTY = 'hideEmpty';
 const FILTER_SHOW_MISSING = 'missing';
 const FILTER_SHOW_UNIQUE = 'unique';
 
@@ -33,7 +34,7 @@ function BottomPane({
   const [selectedText, setSelectedText] = React.useState('');
   // Add a local state to force re-render on denial toggle
   const [denialToggle, setDenialToggle] = React.useState(false);
-  const [filterMode, setFilterMode] = React.useState(FILTER_SHOW_ALL);
+  const [filterMode, setFilterMode] = React.useState(FILTER_HIDE_EMPTY);
 
   React.useEffect(() => {
     function handleSelectionChange() {
@@ -253,6 +254,27 @@ function BottomPane({
             <ShowAllIcon />
           </button>
           
+          {/* Hide Empty Verses Button */}
+          <button
+            style={{
+              fontSize: 13,
+              padding: '4px 4px',
+              borderRadius: 0,
+              background: filterMode === FILTER_HIDE_EMPTY ? '#d0eaff' : undefined,
+              border: filterMode === FILTER_HIDE_EMPTY ? '2px inset #2196f3' : '1px solid #b2dfdb',
+              cursor: 'pointer',
+              height: 22,
+              minWidth: 22,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            onClick={() => setFilterMode(FILTER_HIDE_EMPTY)}
+            title={inLang(uiStr.hideEmptyVerses, lang)}
+          >
+            <ShowHideEmptyIcon />
+          </button>
+          
           {/* Show Missing Button */}
           <button
             style={{
@@ -300,6 +322,7 @@ function BottomPane({
         </div>
         <span style={{ marginLeft: 8 }}>
           {filterMode === FILTER_SHOW_ALL && `${inLang(uiStr.found, lang)}: ${matchCount}/${nonEmptyRefCt}`}
+          {filterMode === FILTER_HIDE_EMPTY && `${inLang(uiStr.found, lang)}: ${matchCount}/${nonEmptyRefCt}`}
           {filterMode === FILTER_SHOW_MISSING && `${inLang(uiStr.missing, lang)}: ${missingCount}/${nonEmptyRefCt}`}
           {filterMode === FILTER_SHOW_UNIQUE && `${inLang(uiStr.unique, lang)}: ${uniqueCount}`}
         </span>
@@ -369,7 +392,9 @@ function BottomPane({
                   // Apply filtering logic
                   let shouldShow = true;
                   
-                  if (filterMode === FILTER_SHOW_MISSING) {
+                  if (filterMode === FILTER_HIDE_EMPTY) {
+                    shouldShow = !!verse;
+                  } else if (filterMode === FILTER_SHOW_MISSING) {
                     shouldShow = verse && !hasMatch && !isDenied;
                   } else if (filterMode === FILTER_SHOW_UNIQUE) {
                     if (!hasMatch || !verse) {

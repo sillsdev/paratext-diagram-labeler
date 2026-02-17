@@ -269,6 +269,12 @@
     "fr": "Afficher tous les versets",
     "ne": "सबै पदहरू देखाउनुहोस्"
   },
+  "hideEmptyVerses": {
+    "en": "Hide empty verses",
+    "es": "Ocultar versículos vacíos",
+    "fr": "Masquer les versets vides",
+    "ne": "खाली पदहरू लुकाउनुहोस्"
+  },
   "showUniqueForms": {
     "en": "Show unique forms",
     "es": "Mostrar formas únicas",

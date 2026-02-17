@@ -996,12 +996,17 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
         if (label.opCode === 'sync' && label.lblTemplate) {
           const dictValue = labelDictionaryService.getVernacular(label.lblTemplate);
           if (dictValue && dictValue !== label.vernLabel) {
-            syncDifferences.push({
-              mergeKey: label.mergeKey,
-              gloss: inLang(label.gloss || { en: label.mergeKey }, lang),
-              savedValue: label.vernLabel || '',
-              dictValue: dictValue
-            });
+            if (!label.vernLabel || label.vernLabel.trim() === '') {
+              // Saved value was blank — silently adopt dictionary value
+              label.vernLabel = dictValue;
+            } else {
+              syncDifferences.push({
+                mergeKey: label.mergeKey,
+                gloss: inLang(label.gloss || { en: label.mergeKey }, lang),
+                savedValue: label.vernLabel || '',
+                dictValue: dictValue
+              });
+            }
           }
         }
       });

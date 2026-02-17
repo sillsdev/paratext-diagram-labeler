@@ -91,6 +91,13 @@ export default function TemplateBrowser({
         }
       }
       
+      // Diagnostic: log which templates were detected as saved
+      const savedTemplates = Object.entries(cache).filter(([_, saved]) => saved).map(([name]) => name);
+      console.log(`[TemplateBrowser] Saved files check complete. ${savedTemplates.length} saved templates found:`, savedTemplates);
+      if (savedTemplates.length === 0) {
+        console.log('[TemplateBrowser] No saved templates detected. Total templates checked:', Object.keys(cache).length);
+      }
+      
       setSavedFilesCache(cache);
     };
     
