@@ -92,6 +92,16 @@ export function ShowAllIcon() {
   );
 }
 
+// ShowHideEmptyIcon: Gray filter with blue "..." at lower left
+export function ShowHideEmptyIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" style={{ verticalAlign: 'middle' }}>
+      <path d="M3 6h14l-4 4v6l-2-2v-4L3 6z" fill="#666" stroke="#666" strokeWidth="1"/>
+      <text x="5" y="18" textAnchor="middle" fill="#1976d2" fontSize="14" fontWeight="bold">…</text>
+    </svg>
+  );
+}
+
 // ShowMissingIcon: Gray filter with red X at base
 export function ShowMissingIcon() {
   return (

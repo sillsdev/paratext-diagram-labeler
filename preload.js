@@ -47,6 +47,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   restoreWindowFocus: () => ipcRenderer.invoke('restore-window-focus'),
 
+  showMessageBox: (options) => ipcRenderer.invoke('show-message-box', options),
+
   // selectTemplateFile: () => ipcRenderer.invoke('select-template-file'),
 
   discoverCollections: templateFolderPath =>

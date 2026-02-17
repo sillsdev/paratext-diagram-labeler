@@ -1,13 +1,14 @@
 import React from 'react';
 import { FaPencilAlt } from 'react-icons/fa';
 import uiStr from './data/ui-strings.json';
-import { CheckmarkIcon, DeniedCheckmarkIcon, CrossIcon, NoneIcon, ShowAllIcon, ShowMissingIcon, ShowUniqueIcon } from './TermIcons';
+import { CheckmarkIcon, DeniedCheckmarkIcon, CrossIcon, NoneIcon, ShowAllIcon, ShowHideEmptyIcon, ShowMissingIcon, ShowUniqueIcon } from './TermIcons';
 import { MATCH_PRE_B, MATCH_POST_B, MATCH_W } from './constants.js';
 import { collectionManager } from './CollectionManager';
 import { inLang, prettyRef } from './Utils.js';
 
 // Filter mode constants
 const FILTER_SHOW_ALL = 'all';
+const FILTER_HIDE_EMPTY = 'hideEmpty';
 const FILTER_SHOW_MISSING = 'missing';
 const FILTER_SHOW_UNIQUE = 'unique';
 
@@ -33,7 +34,7 @@ function BottomPane({
   const [selectedText, setSelectedText] = React.useState('');
   // Add a local state to force re-render on denial toggle
   const [denialToggle, setDenialToggle] = React.useState(false);
-  const [filterMode, setFilterMode] = React.useState(FILTER_SHOW_ALL);
+  const [filterMode, setFilterMode] = React.useState(FILTER_HIDE_EMPTY);
 
   React.useEffect(() => {
     function handleSelectionChange() {
@@ -75,11 +76,14 @@ function BottomPane({
   // Collect refs from all terms in the active placeName
   const refs = [];
   const allTermIds = [];
+  const refToTermIds = {}; // Map each ref to the term(s) that own it
   terms.forEach(term => {
     allTermIds.push(term.termId);
     if (term.refs) {
       term.refs.forEach(ref => {
         if (!refs.includes(ref)) refs.push(ref);
+        if (!refToTermIds[ref]) refToTermIds[ref] = [];
+        if (!refToTermIds[ref].includes(term.termId)) refToTermIds[ref].push(term.termId);
       });
     }
   });
@@ -253,6 +257,27 @@ function BottomPane({
             <ShowAllIcon />
           </button>
           
+          {/* Hide Empty Verses Button */}
+          <button
+            style={{
+              fontSize: 13,
+              padding: '4px 4px',
+              borderRadius: 0,
+              background: filterMode === FILTER_HIDE_EMPTY ? '#d0eaff' : undefined,
+              border: filterMode === FILTER_HIDE_EMPTY ? '2px inset #2196f3' : '1px solid #b2dfdb',
+              cursor: 'pointer',
+              height: 22,
+              minWidth: 22,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            onClick={() => setFilterMode(FILTER_HIDE_EMPTY)}
+            title={inLang(uiStr.hideEmptyVerses, lang)}
+          >
+            <ShowHideEmptyIcon />
+          </button>
+          
           {/* Show Missing Button */}
           <button
             style={{
@@ -300,6 +325,7 @@ function BottomPane({
         </div>
         <span style={{ marginLeft: 8 }}>
           {filterMode === FILTER_SHOW_ALL && `${inLang(uiStr.found, lang)}: ${matchCount}/${nonEmptyRefCt}`}
+          {filterMode === FILTER_HIDE_EMPTY && `${inLang(uiStr.found, lang)}: ${matchCount}/${nonEmptyRefCt}`}
           {filterMode === FILTER_SHOW_MISSING && `${inLang(uiStr.missing, lang)}: ${missingCount}/${nonEmptyRefCt}`}
           {filterMode === FILTER_SHOW_UNIQUE && `${inLang(uiStr.unique, lang)}: ${uniqueCount}`}
         </span>
@@ -369,7 +395,9 @@ function BottomPane({
                   // Apply filtering logic
                   let shouldShow = true;
                   
-                  if (filterMode === FILTER_SHOW_MISSING) {
+                  if (filterMode === FILTER_HIDE_EMPTY) {
+                    shouldShow = !!verse;
+                  } else if (filterMode === FILTER_SHOW_MISSING) {
                     shouldShow = verse && !hasMatch && !isDenied;
                   } else if (filterMode === FILTER_SHOW_UNIQUE) {
                     if (!hasMatch || !verse) {
@@ -403,19 +431,22 @@ function BottomPane({
 
                   // Handler must be in this scope
                   const handleToggleDenied = () => {
-                    const data = termRenderings;
-                    let denials = Array.isArray(data[termId]?.denials)
-                      ? [...data[termId].denials]
-                      : [];
-                    if (isDenied) {
-                      denials = denials.filter(r => r !== refId);
-                    } else {
-                      if (!denials.includes(refId)) denials.push(refId);
-                    }
-                    if (!data[termId]) data[termId] = {};
-                    data[termId].denials = denials;
-                    const updatedData = { ...data };
-                    setTermRenderings(updatedData);
+                    const data = { ...termRenderings };
+                    // Toggle denial on all terms that own this ref
+                    const ownerTermIds = refToTermIds[refId] || [];
+                    ownerTermIds.forEach(tid => {
+                      let denials = Array.isArray(data[tid]?.denials)
+                        ? [...data[tid].denials]
+                        : [];
+                      if (isDenied) {
+                        denials = denials.filter(r => r !== refId);
+                      } else {
+                        if (!denials.includes(refId)) denials.push(refId);
+                      }
+                      if (!data[tid]) data[tid] = {};
+                      data[tid] = { ...data[tid], denials };
+                    });
+                    setTermRenderings(data);
                     if (typeof setRenderings === 'function') setRenderings(r => r + '');
                     setDenialToggle(t => !t);
                     if (typeof onDenialsChanged === 'function') onDenialsChanged(); // <-- update labels in App
@@ -474,12 +505,20 @@ function BottomPane({
                               } else {
                                 console.warn(`Failed to send reference to Paratext: ${result.error}`);
                                 alert(inLang(uiStr.couldNotSendToParatext, lang) + (result.error ? ': ' + result.error : ''));
+                                return;
                               }
                             } catch (error) {
                               console.error('Error broadcasting reference:', error);
                               alert(inLang(uiStr.errorSendingToParatext, lang) + (error.message ? ': ' + error.message : ''));
+                              return;
                             }
-                            alert(inLang(uiStr.paratextInstructions, lang).replace('{reference}', prettyRef(refId)));
+                            // Use Electron's dialog which properly awaits user response
+                            await window.electronAPI.showMessageBox({
+                              type: 'info',
+                              buttons: ['OK'],
+                              title: 'Paratext',
+                              message: inLang(uiStr.paratextInstructions, lang).replace('{reference}', prettyRef(refId)),
+                            });
                             // Reload the extracted verses to reflect changes
                             if (onReloadExtractedVerses) {
                               await onReloadExtractedVerses(termId, mergeKey);

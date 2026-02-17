@@ -978,7 +978,48 @@ ipcMain.handle('load-labels-from-idml-txt', async (event, projectFolder, templat
     const jsonFilePath = path.join(sharedLabelerPath, jsonFilename);
     
     if (!fs.existsSync(filePath)) {
-      console.log(`.IDML.TXT file not found: ${filePath}`);
+      console.log(`[loadLabels] .IDML.TXT file not found: ${filePath}`);
+      
+      // Diagnostic: list files in directory and find near-matches
+      if (fs.existsSync(sharedLabelerPath)) {
+        try {
+          const allFiles = fs.readdirSync(sharedLabelerPath);
+          const idmlFiles = allFiles.filter(f => f.toLowerCase().endsWith('.idml.txt'));
+          
+          // Find near-matches using first 15 chars of template name
+          const templatePrefix = templateName.substring(0, 15).toLowerCase();
+          const nearMatches = idmlFiles.filter(f => f.toLowerCase().includes(templatePrefix));
+          
+          if (nearMatches.length > 0) {
+            console.log(`[loadLabels DIAGNOSTIC] Expected filename: "${filename}"`);
+            console.log(`[loadLabels DIAGNOSTIC] Near-matches on disk:`, nearMatches);
+            nearMatches.forEach(nm => {
+              // Character-by-character comparison to reveal invisible differences
+              const maxLen = Math.max(nm.length, filename.length);
+              for (let i = 0; i < maxLen; i++) {
+                const expectedChar = filename.charCodeAt(i);
+                const actualChar = nm.charCodeAt(i);
+                if (expectedChar !== actualChar) {
+                  console.log(`[loadLabels DIAGNOSTIC] First char difference at index ${i}: expected '${filename[i] || 'EOF'}' (U+${(expectedChar || 0).toString(16).padStart(4, '0')}) vs actual '${nm[i] || 'EOF'}' (U+${(actualChar || 0).toString(16).padStart(4, '0')})`);
+                  // Log surrounding context
+                  const start = Math.max(0, i - 5);
+                  const end = Math.min(maxLen, i + 10);
+                  console.log(`[loadLabels DIAGNOSTIC]   Expected context: "${filename.substring(start, end)}"`);
+                  console.log(`[loadLabels DIAGNOSTIC]   Actual context:   "${nm.substring(start, end)}"`);
+                  break;
+                }
+              }
+            });
+          } else {
+            console.log(`[loadLabels DIAGNOSTIC] No near-matches found for template "${templateName}". All .idml.txt files:`, idmlFiles);
+          }
+        } catch (dirErr) {
+          console.log(`[loadLabels DIAGNOSTIC] Could not list directory: ${dirErr.message}`);
+        }
+      } else {
+        console.log(`[loadLabels DIAGNOSTIC] shared/labeler directory does not exist: ${sharedLabelerPath}`);
+      }
+      
       return { success: true, labels: null, opCodes: null };
     }
     
@@ -999,41 +1040,56 @@ ipcMain.handle('load-labels-from-idml-txt', async (event, projectFolder, templat
     }
     
     // Parse IDML data merge format
-    const lines = fileText.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+    // Only strip CR/LF, NOT tabs — tabs are the field delimiter and leading tabs represent empty first values
+    const lines = fileText.split('\n').map(line => line.replace(/\r$/, '')).filter(line => line.length > 0);
     if (lines.length < 2) {
       console.log('Invalid .IDML.TXT file format');
       return { success: true, labels: null, opCodes: null };
     }
     
-    const mergeKeys = lines[0].split('\t');
-    const verns = lines[1].split('\t');
+    const mergeKeys = lines[0].split('\t').map(k => k.trim());
+    const verns = lines[1].split('\t').map(v => v.trim());
     
     const labels = {};
-    if (verns.length === mergeKeys.length) {
-      for (let i = 0; i < mergeKeys.length; i++) {
-        labels[mergeKeys[i]] = verns[i];
-      }
+    if (verns.length !== mergeKeys.length) {
+      // Log detailed mismatch info but proceed with what we have
+      console.warn(`[loadLabels] Count mismatch in ${filename}: ${mergeKeys.length} merge keys vs ${verns.length} vernacular labels. Loading ${Math.min(mergeKeys.length, verns.length)} pairs.`);
       
-      // Try to load JSON file with opCodes
-      let opCodes = {};
-      if (fs.existsSync(jsonFilePath)) {
-        try {
-          const jsonContent = fs.readFileSync(jsonFilePath, 'utf8');
-          const jsonData = JSON.parse(jsonContent);
-          opCodes = jsonData.opCodes || {};
-          console.log(`Loaded opCodes from ${jsonFilename}:`, opCodes);
-        } catch (jsonError) {
-          console.error('Error reading JSON file:', jsonError);
-          // Continue without opCodes if JSON fails to parse
-        }
+      // Show the extra/missing entries for debugging
+      if (mergeKeys.length > verns.length) {
+        console.warn(`[loadLabels] Extra merge keys without values:`, mergeKeys.slice(verns.length));
+      } else {
+        console.warn(`[loadLabels] Extra vernacular values without keys:`, verns.slice(mergeKeys.length));
       }
-      
-      console.log(`Loaded labels from ${filename}:`, labels);
-      return { success: true, labels, opCodes };
-    } else {
-      console.log('Mismatch between merge keys and vernacular labels');
+    }
+    
+    // Load as many key-value pairs as we can (use the shorter of the two arrays)
+    const pairCount = Math.min(mergeKeys.length, verns.length);
+    for (let i = 0; i < pairCount; i++) {
+      labels[mergeKeys[i]] = verns[i];
+    }
+    
+    if (pairCount === 0) {
+      console.log(`[loadLabels] No label pairs found in ${filename}`);
       return { success: true, labels: null, opCodes: null };
     }
+    
+    // Try to load JSON file with opCodes
+    let opCodes = {};
+    if (fs.existsSync(jsonFilePath)) {
+      try {
+        const jsonContent = fs.readFileSync(jsonFilePath, 'utf8');
+        const jsonData = JSON.parse(jsonContent);
+        opCodes = jsonData.opCodes || {};
+        console.log(`Loaded opCodes from ${jsonFilename}:`, opCodes);
+      } catch (jsonError) {
+        console.error('Error reading JSON file:', jsonError);
+        // Continue without opCodes if JSON fails to parse
+      }
+    }
+    
+    console.log(`Loaded ${Object.keys(labels).length} labels from ${filename}`);
+    return { success: true, labels, opCodes };
   } catch (e) {
     console.error('Error loading .IDML.TXT file:', e);
     return { success: false, error: e.message };
@@ -1591,8 +1647,8 @@ function cleanUsfmText(usfmText) {
   // Remove section headings, parallel passage refs, etc.
   usfmText = usfmText.replace(/\\s[0-9]? .*/g, '');
   usfmText = usfmText.replace(/\\r .*/g, '');
-  usfmText = usfmText.replace(/\\p/g, '');
-  usfmText = usfmText.replace(/\\q[0-9]?/g, '');
+  usfmText = usfmText.replace(/\\p[a-z]*/g, '');
+  usfmText = usfmText.replace(/\\q[a-z0-9]*/g, '');
   // Remove formatting markers but keep their content
   usfmText = usfmText.replace(/\\[a-zA-Z0-9]+\*/g, '');
   usfmText = usfmText.replace(/\\[a-zA-Z0-9]+/g, '');
@@ -1600,6 +1656,10 @@ function cleanUsfmText(usfmText) {
   usfmText = usfmText.replace(/\\w ([^|]+)\|[^\\]+\\w\*/g, '$1');
   // Remove extra whitespace
   usfmText = usfmText.replace(/\s+/g, ' ').trim();
+  // If the result contains no letter characters, treat as empty
+  if (!/\p{L}/u.test(usfmText)) {
+    return '';
+  }
   return usfmText;
 }
 
@@ -3041,6 +3101,17 @@ class Program
   catch (error) {
     console.error('Error broadcasting reference:', error);
     return { success: false, error: error.message };
+  }
+});
+
+// Handler to show a message box dialog from the renderer process
+ipcMain.handle('show-message-box', async (event, options) => {
+  try {
+    const result = await dialog.showMessageBox(mainWindow, options);
+    return result;
+  } catch (error) {
+    console.error('Error showing message box:', error);
+    return { response: 0 };
   }
 });
 
