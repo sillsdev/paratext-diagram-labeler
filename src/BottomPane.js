@@ -76,11 +76,14 @@ function BottomPane({
   // Collect refs from all terms in the active placeName
   const refs = [];
   const allTermIds = [];
+  const refToTermIds = {}; // Map each ref to the term(s) that own it
   terms.forEach(term => {
     allTermIds.push(term.termId);
     if (term.refs) {
       term.refs.forEach(ref => {
         if (!refs.includes(ref)) refs.push(ref);
+        if (!refToTermIds[ref]) refToTermIds[ref] = [];
+        if (!refToTermIds[ref].includes(term.termId)) refToTermIds[ref].push(term.termId);
       });
     }
   });
@@ -428,19 +431,22 @@ function BottomPane({
 
                   // Handler must be in this scope
                   const handleToggleDenied = () => {
-                    const data = termRenderings;
-                    let denials = Array.isArray(data[termId]?.denials)
-                      ? [...data[termId].denials]
-                      : [];
-                    if (isDenied) {
-                      denials = denials.filter(r => r !== refId);
-                    } else {
-                      if (!denials.includes(refId)) denials.push(refId);
-                    }
-                    if (!data[termId]) data[termId] = {};
-                    data[termId].denials = denials;
-                    const updatedData = { ...data };
-                    setTermRenderings(updatedData);
+                    const data = { ...termRenderings };
+                    // Toggle denial on all terms that own this ref
+                    const ownerTermIds = refToTermIds[refId] || [];
+                    ownerTermIds.forEach(tid => {
+                      let denials = Array.isArray(data[tid]?.denials)
+                        ? [...data[tid].denials]
+                        : [];
+                      if (isDenied) {
+                        denials = denials.filter(r => r !== refId);
+                      } else {
+                        if (!denials.includes(refId)) denials.push(refId);
+                      }
+                      if (!data[tid]) data[tid] = {};
+                      data[tid] = { ...data[tid], denials };
+                    });
+                    setTermRenderings(data);
                     if (typeof setRenderings === 'function') setRenderings(r => r + '');
                     setDenialToggle(t => !t);
                     if (typeof onDenialsChanged === 'function') onDenialsChanged(); // <-- update labels in App
