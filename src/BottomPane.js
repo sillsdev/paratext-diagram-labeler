@@ -499,12 +499,20 @@ function BottomPane({
                               } else {
                                 console.warn(`Failed to send reference to Paratext: ${result.error}`);
                                 alert(inLang(uiStr.couldNotSendToParatext, lang) + (result.error ? ': ' + result.error : ''));
+                                return;
                               }
                             } catch (error) {
                               console.error('Error broadcasting reference:', error);
                               alert(inLang(uiStr.errorSendingToParatext, lang) + (error.message ? ': ' + error.message : ''));
+                              return;
                             }
-                            alert(inLang(uiStr.paratextInstructions, lang).replace('{reference}', prettyRef(refId)));
+                            // Use Electron's dialog which properly awaits user response
+                            await window.electronAPI.showMessageBox({
+                              type: 'info',
+                              buttons: ['OK'],
+                              title: 'Paratext',
+                              message: inLang(uiStr.paratextInstructions, lang).replace('{reference}', prettyRef(refId)),
+                            });
                             // Reload the extracted verses to reflect changes
                             if (onReloadExtractedVerses) {
                               await onReloadExtractedVerses(termId, mergeKey);

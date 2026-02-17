@@ -3104,6 +3104,17 @@ class Program
   }
 });
 
+// Handler to show a message box dialog from the renderer process
+ipcMain.handle('show-message-box', async (event, options) => {
+  try {
+    const result = await dialog.showMessageBox(mainWindow, options);
+    return result;
+  } catch (error) {
+    console.error('Error showing message box:', error);
+    return { response: 0 };
+  }
+});
+
 // Handler to restore window focus after operations that disrupt input
 ipcMain.handle('restore-window-focus', async (event) => {
   try {

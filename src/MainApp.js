@@ -1473,7 +1473,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
 
       // Get all refs for the entire map (not just the specific term)
       const collectionId = getCollectionIdFromTemplate(mapDef.template);
-      const allRefs = getRefList(mapDef.labels, collectionId);
+      const allRefs = getRefList(labels, collectionId);
 
       if (!allRefs.length) return;
 
@@ -1524,7 +1524,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [projectFolder, isInitialized, mapDef.template, mapDef.labels]
+    [projectFolder, isInitialized, mapDef.template, labels]
   );
 
   // const handleCreateRendering = useCallback(
