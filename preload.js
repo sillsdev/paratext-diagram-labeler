@@ -101,4 +101,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Remove listeners for navigation events
   removeNextLabelListener: (callback) => ipcRenderer.removeListener('next-label', callback),
   removePreviousLabelListener: (callback) => ipcRenderer.removeListener('previous-label', callback),
+
+  // Add listener for refresh-label-statuses event from menu
+  onRefreshLabelStatuses: (callback) => ipcRenderer.on('refresh-label-statuses', callback),
+
+  // Remove listener for refresh-label-statuses event
+  removeRefreshLabelStatusesListener: (callback) => ipcRenderer.removeListener('refresh-label-statuses', callback),
 });

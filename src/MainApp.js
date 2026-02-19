@@ -1611,6 +1611,29 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Add listener for refresh-label-statuses event from menu (Ctrl+R)
+  useEffect(() => {
+    if (electronAPI && electronAPI.onRefreshLabelStatuses) {
+      const handleRefreshLabelStatuses = () => {
+        console.log('Refresh Label Statuses triggered from menu');
+        setStatusRecalcTrigger(prev => ({
+          timestamp: prev.timestamp + 1,
+          affectedPlaceNameId: null,
+          affectedLabelMergeKey: null,
+        }));
+      };
+
+      electronAPI.onRefreshLabelStatuses(handleRefreshLabelStatuses);
+
+      return () => {
+        if (electronAPI.removeRefreshLabelStatusesListener) {
+          electronAPI.removeRefreshLabelStatusesListener(handleRefreshLabelStatuses);
+        }
+      };
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Add listeners for navigation events from menu
   useEffect(() => {
     if (electronAPI && electronAPI.onNextLabel && electronAPI.onPreviousLabel) {

@@ -740,6 +740,17 @@ function createMenuTemplate() {
         },
         { type: 'separator' },
         {
+          label: 'Refresh Label Statuses',
+          accelerator: 'CmdOrCtrl+R',
+          click: () => {
+            // Send IPC message to renderer to trigger status refresh
+            if (mainWindow && mainWindow.webContents) {
+              mainWindow.webContents.send('refresh-label-statuses');
+            }
+          }
+        },
+        { type: 'separator' },
+        {
           label: 'Zoom to Fit Map',
           accelerator: 'CmdOrCtrl+9',
           click: () => {
