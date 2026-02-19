@@ -1076,8 +1076,8 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
               btn.style.color = 'white';
               const updateBtn = table.querySelector(`.update-btn[data-mergekey="${mergeKey}"]`);
               if (updateBtn) {
-                updateBtn.style.background = '#4caf50';
-                updateBtn.style.color = 'white';
+                updateBtn.style.background = '#f0fbf1';
+                updateBtn.style.color = 'black';
               }
             };
           });
@@ -1351,6 +1351,12 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
     setMapPaneView(prev =>
       prev === MAP_VIEW ? TABLE_VIEW : MAP_VIEW
     );
+    // Refresh label statuses on view switch
+    setStatusRecalcTrigger(prev => ({
+      timestamp: prev.timestamp + 1,
+      affectedPlaceNameId: null,
+      affectedLabelMergeKey: null
+    }));
   }, []);
 
   // Add rendering from bottom pane selection
@@ -1996,6 +2002,12 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
               if (viewIdx === MAP_VIEW && !mapDef.mapView) return;
               // USFM view removed
               setMapPaneView(viewIdx);
+              // Refresh label statuses on view switch
+              setStatusRecalcTrigger(prev => ({
+                timestamp: prev.timestamp + 1,
+                affectedPlaceNameId: null,
+                affectedLabelMergeKey: null
+              }));
             }}
             onShowSettings={() => setShowSettings(true)} // <-- add onShowSettings
             mapDef={mapDef} // <-- pass map definition
@@ -2126,6 +2138,12 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
                 onSetView={async viewIdx => {
                   if (viewIdx === MAP_VIEW && !mapDef.mapView) return;
                   setMapPaneView(viewIdx);
+                  // Refresh label statuses on view switch
+                  setStatusRecalcTrigger(prev => ({
+                    timestamp: prev.timestamp + 1,
+                    affectedPlaceNameId: null,
+                    affectedLabelMergeKey: null
+                  }));
                 }}
                 onShowSettings={() => setShowSettings(true)}
                 mapDef={mapDef}
