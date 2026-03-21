@@ -358,6 +358,22 @@ export default function DetailsPane({
       {/* Button Row */}
       {(
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
+          {/* Browse map template button */}
+          <button
+            title={inLang(uiStr.browseTemplate, lang)}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 0,
+              marginRight: 16,
+            }}
+            onClick={onBrowseMapTemplate}
+          >
+            <span role="img" aria-label="browse" style={{ fontSize: '1.4em', color: '#fc6' }}>
+              📂
+            </span>
+          </button>
           {/* Icon view buttons */}
           <button
             onClick={() => onSetView(0)}
@@ -527,21 +543,6 @@ export default function DetailsPane({
           >
             <span role="img" aria-label="info" style={{ fontSize: '1.2em', color: '#6cf' }}>
               ℹ️
-            </span>
-          </button>
-          <button
-            title={inLang(uiStr.browseTemplate, lang)}
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              padding: 0,
-              marginLeft: 1,
-            }}
-            onClick={onBrowseMapTemplate}
-          >
-            <span role="img" aria-label="browse" style={{ fontSize: '1.2em', color: '#fc6' }}>
-              📂
             </span>
           </button>
           {templateGroupIndex >= 0 && (
