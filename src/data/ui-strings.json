@@ -299,6 +299,24 @@
     "fr": "Afficher les fractions du total",
     "ne": "गणना भिन्नहरू देखाउनुहोस्"
   },
+  "compactView": {
+    "en": "Compact View",
+    "es": "Vista compacta",
+    "fr": "Vue compacte",
+    "ne": "संक्षिप्त दृश्य"
+  },
+  "labelHeading": {
+    "en": "Label on Map",
+    "es": "Etiqueta en el Mapa",
+    "fr": "Étiquette sur la Carte",
+    "ne": "नक्सामा लेबल"
+  },
+  "paratextBiblicalTerms": {
+    "en": "Paratext Biblical Terms",
+    "es": "Términos bíblicos de Paratext",
+    "fr": "Termes bibliques Paratext",
+    "ne": "Paratext बाइबलीय शब्दहरू"
+  },
   "templateInfo": {
     "en": "Template info",
     "es": "Información de la plantilla",
@@ -330,10 +348,58 @@
     "ne": "टेम्प्लेटहरू खोज्नुहोस्..."
   },
   "anyFormat": {
-    "en": "Any Format",
-    "es": "Cualquier formato",
-    "fr": "Tout format",
-    "ne": "कुनै पनि ढाँचा"
+    "en": "InDesign or Map Creator",
+    "es": "InDesign o Map Creator",
+    "fr": "InDesign ou Map Creator",
+    "ne": "InDesign वा Map Creator"
+  },
+  "formatMapCreatorOnly": {
+    "en": "Map Creator (mapx) only",
+    "es": "Solo Map Creator (mapx)",
+    "fr": "Map Creator (mapx) uniquement",
+    "ne": "Map Creator (mapx) मात्र"
+  },
+  "formatInDesignOnly": {
+    "en": "InDesign (idml) only",
+    "es": "Solo InDesign (idml)",
+    "fr": "InDesign (idml) uniquement",
+    "ne": "InDesign (idml) मात्र"
+  },
+  "welcomeTitle": {
+    "en": "Welcome to Paratext Diagram Labeler"
+  },
+  "welcomeIntro": {
+    "en": "Let\u2019s set up a few preferences so you can get started quickly."
+  },
+  "welcomeFormatQuestion": {
+    "en": "Which map software will you be using?"
+  },
+  "welcomeBothFormats": {
+    "en": "Both InDesign and Map Creator"
+  },
+  "welcomeMapCreatorOnly": {
+    "en": "Map Creator only"
+  },
+  "welcomeInDesignOnly": {
+    "en": "InDesign only"
+  },
+  "welcomePathsTitle": {
+    "en": "Map Template Folders (optional)"
+  },
+  "welcomePathsDesc": {
+    "en": "If you have already downloaded and extracted map template files, add the folder paths here. You can also add them later in Settings."
+  },
+  "welcomeAddFolder": {
+    "en": "Add Folder"
+  },
+  "welcomeNext": {
+    "en": "Next"
+  },
+  "welcomeBack": {
+    "en": "Back"
+  },
+  "welcomeGetStarted": {
+    "en": "Get Started"
   },
   "allCollections": {
     "en": "All Collections",

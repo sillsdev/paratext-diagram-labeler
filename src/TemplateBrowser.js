@@ -47,7 +47,9 @@ export default function TemplateBrowser({
 }) {
   const [selectedTemplate, setSelectedTemplate] = useState(initialSelectedTemplate);
   const [searchTerm, setSearchTerm] = useState(initialFilters.searchTerm || '');
-  const [formatFilter, setFormatFilter] = useState(initialFilters.formatFilter || 'any');
+  const [formatFilter, setFormatFilter] = useState(() =>
+    localStorage.getItem('templateFormatFilter') || initialFilters.formatFilter || 'any'
+  );
   const [collectionFilter, setCollectionFilter] = useState(initialFilters.collectionFilter || 'all');
   const [colorFilter, setColorFilter] = useState(initialFilters.colorFilter || 'any');
   const [textureFilter, setTextureFilter] = useState(initialFilters.textureFilter || 'any');
@@ -60,6 +62,11 @@ export default function TemplateBrowser({
   const isDragging = useRef(false);
   const selectedRowRef = useRef(null);
   const searchInputRef = useRef(null);
+
+  // Persist format filter preference
+  useEffect(() => {
+    localStorage.setItem('templateFormatFilter', formatFilter);
+  }, [formatFilter]);
 
   // Focus search input when browser opens
   useEffect(() => {
@@ -535,9 +542,9 @@ export default function TemplateBrowser({
             </div>
             <div className="filter-row">
               <select value={formatFilter} onChange={e => setFormatFilter(e.target.value)}>
-                <option value="any">{inLang(uiStr.anyFormat, lang) || 'Any Format'}</option>
-                <option value="idml">IDML</option>
-                <option value="mapx">MAPX</option>
+                <option value="any">{inLang(uiStr.anyFormat, lang) || 'InDesign or Map Creator'}</option>
+                <option value="mapx">{inLang(uiStr.formatMapCreatorOnly, lang) || 'Map Creator (mapx) only'}</option>
+                <option value="idml">{inLang(uiStr.formatInDesignOnly, lang) || 'InDesign (idml) only'}</option>
               </select>
               <select value={collectionFilter} onChange={e => setCollectionFilter(e.target.value)} style={{ flex: 2 }}>
                 <option value="all">{inLang(uiStr.allCollections, lang) || 'All Collections'}</option>

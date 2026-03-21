@@ -11,6 +11,7 @@ import TableView from './TableView.js';
 import DetailsPane from './DetailsPane.js';
 import SettingsModal from './SettingsModal.js';
 import TemplateBrowser from './TemplateBrowser.js';
+import WelcomeWizard from './WelcomeWizard.js';
 // import { useInitialization, InitializationProvider } from './InitializationProvider';
 import { settingsService } from './services/SettingsService';
 import { autocorrectService } from './services/AutocorrectService';
@@ -116,6 +117,10 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
     const saved = localStorage.getItem('showFrac'); // Persist showFrac in localStorage
     return saved === 'true';
   });
+  const [compactView, setCompactView] = useState(() => {
+    const saved = localStorage.getItem('compactView');
+    return saved === 'true';
+  });
   const [templatePaths, setTemplatePaths] = useState(() => {
     const saved = localStorage.getItem('templatePaths'); // Persist templatePaths in localStorage
     return saved ? JSON.parse(saved) : [];
@@ -141,6 +146,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
 
   // Template Browser state
   const [showTemplateBrowser, setShowTemplateBrowser] = useState(false);
+  const [showWelcomeWizard, setShowWelcomeWizard] = useState(false);
   const [templateFilters, setTemplateFilters] = useState({
     format: 'any',
     collection: 'all',
@@ -165,6 +171,11 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
   useEffect(() => {
     localStorage.setItem('showFrac', showFrac.toString());
   }, [showFrac]);
+
+  // Persist compactView to localStorage
+  useEffect(() => {
+    localStorage.setItem('compactView', compactView.toString());
+  }, [compactView]);
 
   // Persist templatePaths to localStorage
   useEffect(() => {
@@ -1315,6 +1326,11 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
   useEffect(() => {
     if (!isInitialized) return; // Don't initialize map until collections are loaded
     const initializeMap = async () => {
+      // Show welcome wizard on first-ever launch
+      if (!localStorage.getItem('welcomeWizardDone')) {
+        setShowWelcomeWizard(true);
+        return; // Wizard completion will trigger browsing
+      }
       try {
         if (!settings.usfm) {
           await handleBrowseMapTemplateRef.current();
@@ -1344,6 +1360,18 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
     initializeMap();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isInitialized, settings.usfm, projectFolder]);
+
+  // Handle welcome wizard completion
+  const handleWizardDone = useCallback((formatPref, newPaths) => {
+    localStorage.setItem('welcomeWizardDone', 'true');
+    localStorage.setItem('templateFormatFilter', formatPref);
+    if (newPaths.length > 0) {
+      setTemplatePaths(prev => [...new Set([...prev, ...newPaths])]);
+    }
+    setShowWelcomeWizard(false);
+    // Open template browser to let the user pick their first diagram
+    handleBrowseMapTemplateRef.current?.();
+  }, []);
 
   // USFM View mode removed - USFM is now only used for initial template selection
   // handleSwitchView now only toggles between Map View and Table View
@@ -2054,6 +2082,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
             onNextTemplate={handleNextTemplate} // Pass next handler
             activeTab={activeTab} // Pass active placeName tab
             onActiveTabChange={setActiveTab} // Pass tab change handler
+            compactView={compactView}
           />
           </div>
         </div>
@@ -2190,6 +2219,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
                 onNextTemplate={handleNextTemplate}
                 activeTab={activeTab}
                 onActiveTabChange={setActiveTab}
+                compactView={compactView}
               />
             </div>
           </div>
@@ -2244,6 +2274,8 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
         setLang={setLang}
         showFrac={showFrac}
         setShowFrac={setShowFrac}
+        compactView={compactView}
+        setCompactView={setCompactView}
         templatePaths={templatePaths}
         setTemplatePaths={setTemplatePaths}
         projectFolder={projectFolder}
@@ -2260,6 +2292,14 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
           onSelectDiagram={handleSelectDiagram}
           onSelectGroup={handleSelectGroup}
           onClose={() => setShowTemplateBrowser(false)}
+        />
+      )}
+      {showWelcomeWizard && (
+        <WelcomeWizard
+          open={true}
+          lang={lang}
+          initialPaths={templatePaths}
+          onDone={handleWizardDone}
         />
       )}
     </div>
