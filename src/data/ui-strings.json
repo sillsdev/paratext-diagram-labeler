@@ -299,6 +299,24 @@
     "fr": "Afficher les fractions du total",
     "ne": "गणना भिन्नहरू देखाउनुहोस्"
   },
+  "compactView": {
+    "en": "Compact View",
+    "es": "Vista compacta",
+    "fr": "Vue compacte",
+    "ne": "संक्षिप्त दृश्य"
+  },
+  "labelHeading": {
+    "en": "Label on Map",
+    "es": "Etiqueta en el Mapa",
+    "fr": "Étiquette sur la Carte",
+    "ne": "नक्सामा लेबल"
+  },
+  "paratextBiblicalTerms": {
+    "en": "Paratext Biblical Terms",
+    "es": "Términos bíblicos de Paratext",
+    "fr": "Termes bibliques Paratext",
+    "ne": "Paratext बाइबलीय शब्दहरू"
+  },
   "templateInfo": {
     "en": "Template info",
     "es": "Información de la plantilla",

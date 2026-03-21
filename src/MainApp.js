@@ -116,6 +116,10 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
     const saved = localStorage.getItem('showFrac'); // Persist showFrac in localStorage
     return saved === 'true';
   });
+  const [compactView, setCompactView] = useState(() => {
+    const saved = localStorage.getItem('compactView');
+    return saved === 'true';
+  });
   const [templatePaths, setTemplatePaths] = useState(() => {
     const saved = localStorage.getItem('templatePaths'); // Persist templatePaths in localStorage
     return saved ? JSON.parse(saved) : [];
@@ -165,6 +169,11 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
   useEffect(() => {
     localStorage.setItem('showFrac', showFrac.toString());
   }, [showFrac]);
+
+  // Persist compactView to localStorage
+  useEffect(() => {
+    localStorage.setItem('compactView', compactView.toString());
+  }, [compactView]);
 
   // Persist templatePaths to localStorage
   useEffect(() => {
@@ -2054,6 +2063,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
             onNextTemplate={handleNextTemplate} // Pass next handler
             activeTab={activeTab} // Pass active placeName tab
             onActiveTabChange={setActiveTab} // Pass tab change handler
+            compactView={compactView}
           />
           </div>
         </div>
@@ -2190,6 +2200,7 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
                 onNextTemplate={handleNextTemplate}
                 activeTab={activeTab}
                 onActiveTabChange={setActiveTab}
+                compactView={compactView}
               />
             </div>
           </div>
@@ -2244,6 +2255,8 @@ function MainApp({ settings, collectionsFolder, onExit, termRenderings, setTermR
         setLang={setLang}
         showFrac={showFrac}
         setShowFrac={setShowFrac}
+        compactView={compactView}
+        setCompactView={setCompactView}
         templatePaths={templatePaths}
         setTemplatePaths={setTemplatePaths}
         projectFolder={projectFolder}

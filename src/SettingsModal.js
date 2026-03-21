@@ -21,7 +21,9 @@ export default function SettingsModal({
   setTemplatePaths,
   projectFolder,
   collectionId,
-  collectionsFolder
+  collectionsFolder,
+  compactView,
+  setCompactView,
 }) {
   const electronAPI = window.electronAPI;
   const [numberScript, setNumberScript] = useState('Latn');
@@ -245,6 +247,17 @@ export default function SettingsModal({
               style={{ transform: 'scale(1.2)' }}
             />
             {inLang(uiStr.showTallyFractions, lang)}
+          </label>
+        </div>
+        <div style={{ marginBottom: 16, textAlign: 'center' }}>
+          <label style={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+            <input
+              type="checkbox"
+              checked={compactView}
+              onChange={e => setCompactView(e.target.checked)}
+              style={{ transform: 'scale(1.2)' }}
+            />
+            {inLang(uiStr.compactView, lang)}
           </label>
         </div>
 

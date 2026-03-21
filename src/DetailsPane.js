@@ -56,6 +56,7 @@ export default function DetailsPane({
   onNextTemplate,
   activeTab = 0,
   onActiveTabChange,
+  compactView = false,
 }) {
   // Get collectionId early for use in hooks
   const collectionId = getCollectionIdFromTemplate(mapDef.template);
@@ -1075,6 +1076,11 @@ export default function DetailsPane({
           })()}
         </p>
         {/* Label vernacular box */}
+        {!compactView && (
+          <div style={{ fontWeight: 'bold', fontSize: '0.85em', color: '#555', margin: '8px 8px 2px 8px' }}>
+            {inLang(uiStr.labelHeading, lang)}
+          </div>
+        )}
         <div
           className="vernacularGroup"
           style={{
@@ -1375,6 +1381,11 @@ export default function DetailsPane({
           
           return (
             <div style={{ margin: '8px', marginTop: 12 }}>
+              {!compactView && (
+                <div style={{ fontWeight: 'bold', fontSize: '0.85em', color: '#555', marginBottom: 4 }}>
+                  {inLang(uiStr.paratextBiblicalTerms, lang)}
+                </div>
+              )}
               {/* Tabs for placeNames and rule tags */}
               {showTabs && (
                 <div style={{ display: 'flex', gap: 0, marginBottom: 0 }}>
